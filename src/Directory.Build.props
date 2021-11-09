@@ -60,7 +60,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="Common Packages" Condition="$(IsTestProject) != 'true'">
-    <PackageReference Include="Nerdbank.GitVersioning" Version="3.3.37">
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.244">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
