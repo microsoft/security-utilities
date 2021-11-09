@@ -23,14 +23,14 @@ namespace Microsoft.Security.Utilities
             if (keyLengthInBytes > MaximumGeneratedKeySize)
             {
                 throw new ArgumentException(
-                    $"Key length must be less than 4096 bytes.",
+                    "Key length must be less than 4096 bytes.",
                     nameof(keyLengthInBytes));
             }
 
             if (keyLengthInBytes < MinimumGeneratedKeySize)
             {
                 throw new ArgumentException(
-                    $"Key length must be at least 24 bytes to provide sufficient security (>128 bits of entropy).",
+                    "Key length must be at least 24 bytes to provide sufficient security (>128 bits of entropy).",
                     nameof(keyLengthInBytes));
             }
 
