@@ -119,48 +119,48 @@ namespace Microsoft.Security.Utilities
             switch (padding)
             {
                 case 2:
-                {
-                    // When we are required to left-shift the fixed signatures by two
-                    // bits, the first encoded character of the checksum will have its
-                    // first two bits set to zero, limiting encoded chars to A-P.
-                    if (firstChar < 'A' || firstChar > 'P')
                     {
-                        return false;
-                    }
+                        // When we are required to left-shift the fixed signatures by two
+                        // bits, the first encoded character of the checksum will have its
+                        // first two bits set to zero, limiting encoded chars to A-P.
+                        if (firstChar < 'A' || firstChar > 'P')
+                        {
+                            return false;
+                        }
 
-                    pattern = $"[0-9a-zA-Z\\/\\+]{{{prefixLength}}}{expectedSignature}[A-P][0-9a-zA-Z\\/\\+]{{5}}{equalsSigns}";
-                    break;
-                }
+                        pattern = $"[0-9a-zA-Z\\/\\+]{{{prefixLength}}}{expectedSignature}[A-P][0-9a-zA-Z\\/\\+]{{5}}{equalsSigns}";
+                        break;
+                    }
 
                 case 4:
-                {
-                    // When we are required to left-shift the fixed signatures by four
-                    // bits, the first encoded character of the checksum will have its
-                    // first four bits set to zero, limiting encoded chars to A-D.
-                    if (firstChar < 'A' || firstChar > 'D')
                     {
-                        return false;
-                    }
+                        // When we are required to left-shift the fixed signatures by four
+                        // bits, the first encoded character of the checksum will have its
+                        // first four bits set to zero, limiting encoded chars to A-D.
+                        if (firstChar < 'A' || firstChar > 'D')
+                        {
+                            return false;
+                        }
 
-                    pattern = $"[0-9a-zA-Z\\/\\+]{{{prefixLength}}}{expectedSignature}[A-D][0-9a-zA-Z\\/\\+]{{5}}{equalsSigns}";
-                    break;
-                }
+                        pattern = $"[0-9a-zA-Z\\/\\+]{{{prefixLength}}}{expectedSignature}[A-D][0-9a-zA-Z\\/\\+]{{5}}{equalsSigns}";
+                        break;
+                    }
 
                 default:
-                {
-                    // In this case, we have a perfect aligment between our decoded
-                    // signature and checksum and their encoded representation. As
-                    // a result, two bits of the final checksum byte will spill into
-                    // the final encoded character, followed by four zeros of padding.
-                    if (lastChar != 'A' && lastChar != 'Q' &&
-                        lastChar != 'g' && lastChar != 'w')
                     {
-                        return false;
-                    }
+                        // In this case, we have a perfect aligment between our decoded
+                        // signature and checksum and their encoded representation. As
+                        // a result, two bits of the final checksum byte will spill into
+                        // the final encoded character, followed by four zeros of padding.
+                        if (lastChar != 'A' && lastChar != 'Q' &&
+                            lastChar != 'g' && lastChar != 'w')
+                        {
+                            return false;
+                        }
 
-                    pattern = $"[0-9a-zA-Z\\/\\+]{{{prefixLength}}}{expectedSignature}[0-9a-zA-Z\\/\\+]{{5}}[AQgw]{equalsSigns}";
-                    break;
-                }
+                        pattern = $"[0-9a-zA-Z\\/\\+]{{{prefixLength}}}{expectedSignature}[0-9a-zA-Z\\/\\+]{{5}}[AQgw]{equalsSigns}";
+                        break;
+                    }
             }
 
             var regex = new Regex(pattern);
@@ -232,20 +232,20 @@ namespace Microsoft.Security.Utilities
             switch (padding)
             {
                 case 2:
-                {
-                    // Clear two bits where the signature will be left-shifted
-                    // in order to align on the base64-encoded a 6-bit boundary.
-                    mask = 0xfcffffff;
-                    break;
-                }
+                    {
+                        // Clear two bits where the signature will be left-shifted
+                        // in order to align on the base64-encoded a 6-bit boundary.
+                        mask = 0xfcffffff;
+                        break;
+                    }
 
                 case 4:
-                {
-                    // In this case, we must left-shift the signature 4 bits
-                    // to remain aligned with 6-bit base64-encoding boundaries.
-                    mask = 0xf0ffffff;
-                    break;
-                }
+                    {
+                        // In this case, we must left-shift the signature 4 bits
+                        // to remain aligned with 6-bit base64-encoding boundaries.
+                        mask = 0xf0ffffff;
+                        break;
+                    }
             }
 
             signature &= mask;
