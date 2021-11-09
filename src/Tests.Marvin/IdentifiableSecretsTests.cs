@@ -54,7 +54,7 @@ namespace Microsoft.Security.Utilities
             var isValid = IdentifiableSecrets.ValidateKey(newSecret, seed, Signature);
             Assert.IsFalse(isValid);
 
-            newSecret = secret.Remove(secret.Length - 2, 1).Insert(secret.Length - 2, "+");
+            newSecret = secret.Remove(secret.Length - 3, 2).Insert(secret.Length - 3, "++");
             isValid = IdentifiableSecrets.ValidateKey(newSecret, seed, Signature);
             Assert.IsFalse(isValid);
         }
