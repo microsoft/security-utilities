@@ -1,11 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
+using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 namespace Microsoft.Security.Utilities
 {
-    using System;
-    using FluentAssertions;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     public class CustomAlphabetEncoderTests
@@ -49,7 +50,44 @@ namespace Microsoft.Security.Utilities
             string actualEncoded = testEncoder.Encode(data);
             byte[] actualDecoded = testEncoder.Decode(actualEncoded);
 
-            AssertByteArraysAreEqual(data, actualDecoded);
+            actualDecoded.Should().BeEquivalentTo(data);
+        }
+
+        /// <summary>
+        /// Test encoding a byte array produces and then decoding the byte array produces the expected results.
+        /// </summary>
+        /// <param name="alphabet">The custom alphabet to use for encoding.</param>
+        /// <param name="input">Input used to generate a byte array for encoding/decoding.</param>
+        [TestMethod]
+        [DataRow("abc", "abc")]
+        [DataRow("abc", "abcdef")]
+        [DataRow(".!@#$%&*", "abcdef")]
+        public void CustomAlphabetEncoder_EncodeByteArrayFromStringWithCustomAlphabet(string alphabet, string input)
+        {
+            CustomAlphabetEncoder testEncoder = new CustomAlphabetEncoder(alphabet);
+            int data = input.GetHashCode();
+            byte[] expected = BitConverter.GetBytes(data);
+
+            string actualEncoded = testEncoder.Encode((uint)data);
+            byte[] actualDecoded = testEncoder.Decode(actualEncoded);
+
+            actualDecoded.Should().BeEquivalentTo(expected);
+        }
+
+        /// <summary>
+        /// Test to ensure encode and decode are not impacted by duplicate characters in a custom alphabet.
+        /// </summary>
+        /// <param name="alphabet">Custom alphabet test case with duplicate characters.</param>
+        [TestMethod]
+        [DataRow("abcabc")]
+        [DataRow("abbc")]
+        [DataRow("11 2 3")]
+        [DataRow("1 2 3 a b c")]
+        public void CustomAlphabetEncoder_ShouldThrowInvalidArgumentExceptionIfCharacterRepeats(string alphabet)
+        {
+            Action action = () => new CustomAlphabetEncoder(alphabet);
+
+            action.Should().Throw<ArgumentException>();
         }
 
         /// <summary>
@@ -93,21 +131,6 @@ namespace Microsoft.Security.Utilities
 
             Action decodeAction = () => testEncoder.Decode(data);
             decodeAction.Should().Throw<ArgumentNullException>();
-        }
-
-        /// <summary>
-        /// Compare values of a byte array instead of references of a byte array.
-        /// </summary>
-        /// <param name="expected">The expected byte array content.</param>
-        /// <param name="actual">The byte array content being tested.</param>
-        private void AssertByteArraysAreEqual(byte[] expected, byte[] actual)
-        {
-            actual.Should().BeEquivalentTo(expected);
-            
-            for(int i = 0; i < expected.Length; i++)
-            {
-                actual[i].Should().Be(expected[i]);
-            }
         }
     }
 }

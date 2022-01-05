@@ -1,13 +1,13 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
 namespace Microsoft.Security.Utilities
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
     /// <summary>
     /// Custom encoder class.
     /// </summary>
@@ -33,6 +33,12 @@ namespace Microsoft.Security.Utilities
             charToValueMap = new Dictionary<char,uint>();
             for (int i = 0; i < alphabet.Length; i++)
             {
+                // Repeated values in the custom alphabet will cause unreliable encoding/decoding.
+                if(charToValueMap.ContainsKey(alphabet[i]))
+                {
+                    throw new ArgumentException(nameof(customAlphabet));
+                }
+
                 charToValueMap[alphabet[i]] = (uint)i;
             }
         }
