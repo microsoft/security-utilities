@@ -4,6 +4,7 @@
 namespace Microsoft.Security.Utilities
 {
     using System;
+    using FluentAssertions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -65,7 +66,33 @@ namespace Microsoft.Security.Utilities
             byte[] data = BitConverter.GetBytes(testInput);
 
             Action action = () => testEncoder.Encode(data);
-            Assert.ThrowsException<ArgumentOutOfRangeException>(action);
+            action.Should().Throw<ArgumentOutOfRangeException>();
+        }
+
+        /// <summary>
+        /// Test that the correct exception is thrown if byte array input is null on encode.
+        /// </summary>
+        [TestMethod]
+        public void CustomAlphabetEncoder_ShouldThrowExceptionWithNullInputOnEncodeByteArray()
+        {
+            CustomAlphabetEncoder testEncoder = new CustomAlphabetEncoder("abc");
+            byte[] data = null;
+
+            Action encodeAction = () => testEncoder.Encode(data);
+            encodeAction.Should().Throw<ArgumentNullException>();
+        }
+
+        /// <summary>
+        /// Test that the correct exception is thrown if string input is null on decode.
+        /// </summary>
+        [TestMethod]
+        public void CustomAlphabetEncoder_ShouldThrowExceptionWithNullInputOnDecodeByteArray()
+        {
+            CustomAlphabetEncoder testEncoder = new CustomAlphabetEncoder("abc");
+            string data = null;
+
+            Action decodeAction = () => testEncoder.Decode(data);
+            decodeAction.Should().Throw<ArgumentNullException>();
         }
 
         /// <summary>
@@ -73,13 +100,13 @@ namespace Microsoft.Security.Utilities
         /// </summary>
         /// <param name="expected">The expected byte array content.</param>
         /// <param name="actual">The byte array content being tested.</param>
-        public void AssertByteArraysAreEqual(byte[] expected, byte[] actual)
+        private void AssertByteArraysAreEqual(byte[] expected, byte[] actual)
         {
-            Assert.AreEqual(expected.Length, actual.Length);
+            actual.Should().BeEquivalentTo(expected);
             
             for(int i = 0; i < expected.Length; i++)
             {
-                Assert.AreEqual(expected[i], actual[i]);
+                actual[i].Should().Be(expected[i]);
             }
         }
     }
