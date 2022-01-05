@@ -76,7 +76,7 @@ namespace Microsoft.Security.Utilities
         /// <returns>
         /// The unsigned integer encoded using the character set with which this class was instantiated.
         /// </returns>
-        public string Encode (uint data)
+        public string Encode(uint data)
         {
             sb ??= new StringBuilder();
             sb.Clear();
