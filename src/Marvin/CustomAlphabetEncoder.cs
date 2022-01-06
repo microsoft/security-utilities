@@ -16,10 +16,11 @@ namespace Microsoft.Security.Utilities
         internal const string DefaultBase62Alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
         [ThreadStatic]
-        private static StringBuilder sb;
-        private static string alphabet;
-        private static uint baseEncoding;
-        private static Dictionary<char, uint> charToValueMap;
+        private static StringBuilder s_sb;
+
+        private string alphabet;
+        private uint baseEncoding;
+        private Dictionary<char, uint> charToValueMap;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomAlphabetEncoder"/> class.
@@ -30,8 +31,8 @@ namespace Microsoft.Security.Utilities
             alphabet = string.IsNullOrWhiteSpace(customAlphabet) ? DefaultBase62Alphabet : customAlphabet;
             baseEncoding = (uint)alphabet.Length;
 
-            charToValueMap = new Dictionary<char,uint>();
-            for (int i = 0; i < alphabet.Length; i++)
+            charToValueMap = new Dictionary<char, uint>();
+            for (int i = 0; i < baseEncoding; i++)
             {
                 // Repeated values in the custom alphabet will cause unreliable encoding/decoding.
                 if(charToValueMap.ContainsKey(alphabet[i]))
@@ -44,38 +45,6 @@ namespace Microsoft.Security.Utilities
         }
 
         /// <summary>
-        /// Encode a byte array in a given character set.
-        /// </summary>
-        /// <param name="data">The byte array to encode. Must be 4 bytes or less.</param>
-        /// <returns>
-        /// The byte array encoded using the character set with which this class was instantiated.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">Thrown if 'data' is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if the length of the data array is greater than 4.</exception>
-        public string Encode(byte[] data)
-        {
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            // input 'data' is restricted to the range uint.MinValue to uint.MaxValue
-            if (data.Length < 0 || data.Length > 4)
-            {
-                throw new ArgumentOutOfRangeException(nameof(data));
-            }
-
-            if (data.Length == 0)
-            {
-                return string.Empty;
-            }
-
-            uint convertedInput = BitConverter.ToUInt32(data, 0);
-
-            return Encode(convertedInput);
-        }
-
-        /// <summary>
         /// Encode an unsigned integer (a checksum) in a given character set.
         /// </summary>
         /// <param name="data">The unsigned integer to encode.</param>
@@ -84,16 +53,16 @@ namespace Microsoft.Security.Utilities
         /// </returns>
         public string Encode(uint data)
         {
-            sb ??= new StringBuilder();
-            sb.Clear();
+            s_sb ??= new StringBuilder();
+            s_sb.Clear();
 
             while (data > 0)
             {
-                sb.Append(alphabet[(int)(data % baseEncoding)]);
+                s_sb.Append(alphabet[(int)(data % baseEncoding)]);
                 data /= baseEncoding;
             }
 
-            return new string(sb.ToString().Reverse().ToArray());
+            return new string(s_sb.ToString().Reverse().ToArray());
         }
 
         /// <summary>
