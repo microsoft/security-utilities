@@ -19,7 +19,7 @@ namespace Microsoft.Security.Utilities
         private static StringBuilder s_sb;
 
         private string alphabet;
-        private uint baseEncoding;
+        private uint alphabetLength;
         private Dictionary<char, uint> charToValueMap;
 
         /// <summary>
@@ -30,15 +30,15 @@ namespace Microsoft.Security.Utilities
         public CustomAlphabetEncoder(string customAlphabet = DefaultBase62Alphabet)
         {
             alphabet = string.IsNullOrWhiteSpace(customAlphabet) ? DefaultBase62Alphabet : customAlphabet;
-            baseEncoding = (uint)alphabet.Length;
+            alphabetLength = (uint)alphabet.Length;
 
-            if(baseEncoding < 2)
+            if(alphabetLength < 2)
             {
                 throw new ArgumentException(nameof(customAlphabet), "Alphabet must be at least 2 characters.");
             }
 
             charToValueMap = new Dictionary<char, uint>();
-            for (int i = 0; i < baseEncoding; i++)
+            for (int i = 0; i < alphabetLength; i++)
             {
                 // Repeated values in the custom alphabet will cause unreliable encoding/decoding.
                 if(charToValueMap.ContainsKey(alphabet[i]))
@@ -69,8 +69,8 @@ namespace Microsoft.Security.Utilities
 
             while (data > 0)
             {
-                s_sb.Append(alphabet[(int)(data % baseEncoding)]);
-                data /= baseEncoding;
+                s_sb.Append(alphabet[(int)(data % alphabetLength)]);
+                data /= alphabetLength;
             }
 
             return new string(s_sb.ToString().Reverse().ToArray());
@@ -99,7 +99,7 @@ namespace Microsoft.Security.Utilities
                 {
                     throw new ArgumentException(nameof(encodedValue), "Alphabet does not contain all characters in input");
                 }
-                decodedValue *= baseEncoding;
+                decodedValue *= alphabetLength;
                 decodedValue += charToValueMap[c];
             }
 
