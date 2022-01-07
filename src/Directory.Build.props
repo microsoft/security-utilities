@@ -14,7 +14,7 @@
 
   <PropertyGroup Label="AssemblyAttributes">
     <Company Condition=" '$(Company)' == '' ">Microsoft</Company>
-    <Product Condition=" '$(Product)' == '' ">Microsoft SARIF Pattern Matcher</Product>
+    <Product Condition=" '$(Product)' == '' ">Microsoft Security Utilities</Product>
     <Copyright Condition=" '$(Copyright)' == '' ">© Microsoft Corporation. All rights reserved.</Copyright>
   </PropertyGroup>
 
@@ -29,7 +29,7 @@
     <RootNamespace>Microsoft.Security.Utilities</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/microsoft/identifiable-secrets</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/microsoft/security-utilities</PackageProjectUrl>
     <!--
     Don't complain about SemVer 2.0.0-compatible version strings.
     See https://github.com/NuGet/Home/issues/4687#issuecomment-393302779.
@@ -37,7 +37,7 @@
     <NoWarn>NU5105</NoWarn>
 
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/microsoft/identifiable-secrets</RepositoryUrl>
+    <RepositoryUrl>https://github.com/microsoft/security-utilities</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
