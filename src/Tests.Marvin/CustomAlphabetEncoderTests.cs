@@ -195,21 +195,15 @@ namespace Microsoft.Security.Utilities
 
         private IEnumerable<string> GenerateValidAlphabetTestCases()
         {
-            Random random = new Random();
-
             var output = new List<string>
             {
                 String.Empty,
-                "ab",
             };
 
             // generate a sample of random test alphabets
-            for (int i = 0; i < 10; i++)
+            for (int i = 2; i < 94; i++)
             {
-                int low = random.Next(33, 120);
-                int high = random.Next(low+1, 127);
-
-                output.Add(GenerateAsciiString(low, high));
+                output.Add(GenerateAsciiString(33, (33 + i)));
             }
 
             return output;
