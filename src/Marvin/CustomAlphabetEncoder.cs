@@ -26,10 +26,16 @@ namespace Microsoft.Security.Utilities
         /// Initializes a new instance of the <see cref="CustomAlphabetEncoder"/> class.
         /// </summary>
         /// <param name="customAlphabet">The alphabet to be used for all encoding/decoding operations.</param>
+        /// <exception cref="ArgumentException">customAlphabet contains a duplicate or forbidden character.</exception>
         public CustomAlphabetEncoder(string customAlphabet = DefaultBase62Alphabet)
         {
             alphabet = string.IsNullOrWhiteSpace(customAlphabet) ? DefaultBase62Alphabet : customAlphabet;
             baseEncoding = (uint)alphabet.Length;
+
+            if(baseEncoding < 2)
+            {
+                throw new ArgumentException(nameof(customAlphabet), "Alphabet must be at least 2 characters.");
+            }
 
             charToValueMap = new Dictionary<char, uint>();
             for (int i = 0; i < baseEncoding; i++)
@@ -37,7 +43,12 @@ namespace Microsoft.Security.Utilities
                 // Repeated values in the custom alphabet will cause unreliable encoding/decoding.
                 if(charToValueMap.ContainsKey(alphabet[i]))
                 {
-                    throw new ArgumentException(nameof(customAlphabet));
+                    throw new ArgumentException(nameof(customAlphabet), "Duplicate value detected in the alphabet.");
+                }
+
+                if (Char.IsWhiteSpace(alphabet[i]) || Char.IsSurrogate(alphabet[i]) || (int)alphabet[i] > 127)
+                {
+                    throw new ArgumentException(nameof(customAlphabet), "Forbidden character type detected in the alphabet.");
                 }
 
                 charToValueMap[alphabet[i]] = (uint)i;
@@ -84,6 +95,10 @@ namespace Microsoft.Security.Utilities
 
             foreach (char c in encodedValue)
             {
+                if(!charToValueMap.ContainsKey(c))
+                {
+                    throw new ArgumentException(nameof(encodedValue), "Alphabet does not contain all characters in input");
+                }
                 decodedValue *= baseEncoding;
                 decodedValue += charToValueMap[c];
             }

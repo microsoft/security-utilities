@@ -2,6 +2,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -12,72 +16,166 @@ namespace Microsoft.Security.Utilities
     public class CustomAlphabetEncoderTests
     {
         [TestMethod]
-        [DataRow("399Wq7", 2883656711, null)]
-        [DataRow("", null, null)]
-        public void CustomAlphabetEncoder_EncodeUintWithDefaultAlphabet(string expected, uint input, string alphabet)
+        public void CustomAlphabetEncoder_EncodeUintWithTestCases()
         {
-            var testEncoder = new CustomAlphabetEncoder(alphabet);
-            string actualEncoded = testEncoder.Encode(input);
-            Assert.AreEqual(expected, actualEncoded);
+            Random random = new Random();
 
-            byte[] actualDecoded = testEncoder.Decode(actualEncoded);
-            uint actualDecodedUint = BitConverter.ToUInt32(actualDecoded, 0);
+            var testCases = new[]
+            {
+                new {
+                    Alphabet = String.Empty,
+                    Input = uint.MinValue,
+                    ExpectedEncoded = ""
+                },
+                new
+                {
+                    Alphabet = String.Empty,
+                    Input = uint.MaxValue,
+                    ExpectedEncoded = "4gfFC3"
+                },
+                new
+                {
+                    Alphabet = String.Empty,
+                    Input = (uint)2883656711,
+                    ExpectedEncoded = "399Wq7"
+                },
+                new
+                {
+                    Alphabet = "abc",
+                    Input = (uint)2883656711,
+                    ExpectedEncoded = "cbbaccccaacccbbaabac"
+                },
+                new
+                {
+                    Alphabet = "abcdef",
+                    Input = UInt32.MinValue,
+                    ExpectedEncoded = ""
+                },
+                new
+                {
+                    Alphabet = "abcdef",
+                    Input = (uint)123456,
+                    ExpectedEncoded = "cdfbdca"
+                },
+            };
 
-            Assert.AreEqual(input, actualDecodedUint);
+            foreach (var testCase in testCases)
+            {
+                var testEncoder = new CustomAlphabetEncoder(testCase.Alphabet);
+                string actualEncoded = testEncoder.Encode(testCase.Input);
+
+                byte[] actualDecoded = testEncoder.Decode(actualEncoded);
+                uint actualDecodedUint = BitConverter.ToUInt32(actualDecoded, 0);
+
+                actualEncoded.Should().Be(testCase.ExpectedEncoded);
+                actualDecodedUint.Should().Be(testCase.Input);
+            }
         }
 
         [TestMethod]
-        [DataRow("ABC123", (uint)123456)]
-        [DataRow("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.-_~", (uint)123456)]
-        [DataRow("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.-_~", UInt32.MinValue)]
-        [DataRow("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.-_~", UInt32.MaxValue)]
-        public void CustomAlphabetEncoder_EncodeByteArrayWithCustomAlphabet(string alphabet, uint input)
+        public void CustomAlphabetEncoder_ShouldEncodeAndDecodeValidAlphabets()
         {
-            var testEncoder = new CustomAlphabetEncoder(alphabet);
-            byte[] expectedDecoded = BitConverter.GetBytes(input);
+            var random = new Random();
 
-            string actualEncoded = testEncoder.Encode(input);
-            byte[] actualDecoded = testEncoder.Decode(actualEncoded);
+            var testInputs = new List<uint>
+            {
+                uint.MinValue,
+                uint.MaxValue,
+                (uint)random.Next(),
+                (uint)random.Next(),
+                (uint)random.Next()
+            };
 
-            actualDecoded.Should().BeEquivalentTo(expectedDecoded);
+            foreach(string alphabet in GenerateValidAlphabetTestCases())
+            {
+                var testEncoder = new CustomAlphabetEncoder(alphabet);
+
+                foreach (uint input in testInputs)
+                {
+                    string actualEncoded = testEncoder.Encode(input);
+
+                    byte[] actualDecoded = testEncoder.Decode(actualEncoded);
+                    uint actualDecodedUint = BitConverter.ToUInt32(actualDecoded, 0);
+
+                    actualDecodedUint.Should().Be(input);
+                }
+            }
         }
 
         [TestMethod]
-        [DataRow("abc", "abc")]
-        [DataRow("abc", "abcdef")]
-        [DataRow(".!@#$%&*", "abcdef")]
-        public void CustomAlphabetEncoder_EncodeByteArrayFromStringWithCustomAlphabet(string alphabet, string input)
+        public void CustomAlphabetEncoder_ShouldThrowInvalidArgumentExceptionIfAlphabetIsInvalid()
         {
-            var testEncoder = new CustomAlphabetEncoder(alphabet);
-            int data = input.GetHashCode();
-            byte[] expected = BitConverter.GetBytes(data);
+            var testCases = new[]
+            {
+                new {
+                    Alphabet = "a",
+                    ExpectedException = new ArgumentException("customAlphabet", "Alphabet must be at least 2 characters.")
+                },
+                new {
+                    Alphabet = "aaa",
+                    ExpectedException = new ArgumentException("customAlphabet", "Duplicate value detected in the alphabet.")
+                },
+                new {
+                    Alphabet = GenerateAsciiString(),
+                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet.")
+                },
+                new {
+                    Alphabet = "abc\uD800",
+                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet.")
+                },
+                new {
+                    Alphabet = "abc\uDC00",
+                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet.")
+                },
+                new {
+                    Alphabet = GenerateAsciiString(130,132),
+                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet.")
+                },
+                new {
+                    Alphabet = "₼abc",
+                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet.")
+                },
+                new {
+                    Alphabet = "ﺀabc",
+                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet.")
+                },
+                new {
+                    Alphabet = "∞abc",
+                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet.")
+                },
+                new {
+                    Alphabet = "µabc",
+                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet.")
+                },
+            };
 
-            string actualEncoded = testEncoder.Encode((uint)data);
-            byte[] actualDecoded = testEncoder.Decode(actualEncoded);
+            foreach(var testCase in testCases)
+            {
+                Action action = () => new CustomAlphabetEncoder(testCase.Alphabet);
 
-            actualDecoded.Should().BeEquivalentTo(expected);
+                action.Should().Throw<ArgumentException>().WithMessage(testCase.ExpectedException.Message);
+            }
         }
 
         [TestMethod]
-        [DataRow("abcabc")]
-        [DataRow("abbc")]
-        [DataRow("11 2 3")]
-        [DataRow("1 2 3 a b c")]
-        public void CustomAlphabetEncoder_ShouldThrowInvalidArgumentExceptionIfCharacterRepeats(string alphabet)
-        {
-            Action action = () => new CustomAlphabetEncoder(alphabet);
-
-            action.Should().Throw<ArgumentException>();
-        }
-
-        [TestMethod]
-        public void CustomAlphabetEncoder_ShouldThrowExceptionWithNullInputOnDecodeByteArray()
+        public void CustomAlphabetEncoder_ShouldThrowExceptionWithNullInputOnDecode()
         {
             var testEncoder = new CustomAlphabetEncoder("abc");
             string data = null;
 
             Action decodeAction = () => testEncoder.Decode(data);
             decodeAction.Should().Throw<ArgumentNullException>();
+        }
+
+        [TestMethod]
+        public void CustomAlphabetEncoder_ShouldThrowExceptionIfDecodedCharNotInAlphabet()
+        {
+            string alphabet = "abc";
+            string encodedInput = "123";
+            var testEncoder = new CustomAlphabetEncoder(alphabet);
+
+            Action decodeAction = () => testEncoder.Decode(encodedInput);
+            decodeAction.Should().Throw<ArgumentException>();
         }
 
         [TestMethod]
@@ -93,6 +191,40 @@ namespace Microsoft.Security.Utilities
             string encodedChecksum2 = testEncoder1.Encode(randomChecksum);
 
             encodedChecksum1.Should().Be(encodedChecksum2);
+        }
+
+        private IEnumerable<string> GenerateValidAlphabetTestCases()
+        {
+            Random random = new Random();
+
+            var output = new List<string>
+            {
+                String.Empty,
+                "ab",
+            };
+
+            // generate a sample of random test alphabets
+            for (int i = 0; i < 10; i++)
+            {
+                int low = random.Next(33, 120);
+                int high = random.Next(low+1, 127);
+
+                output.Add(GenerateAsciiString(low, high));
+            }
+
+            return output;
+        }
+
+        private string GenerateAsciiString(int low = 0, int high = 256)
+        {
+            var sb = new StringBuilder();
+
+            for(int i = low; i < high; i++)
+            {
+                sb.Append((char)i);
+            }
+
+            return sb.ToString();
         }
     }
 }
