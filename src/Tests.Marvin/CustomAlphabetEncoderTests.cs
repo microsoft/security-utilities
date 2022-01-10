@@ -213,7 +213,7 @@ namespace Microsoft.Security.Utilities
         {
             var sb = new StringBuilder();
 
-            for(int i = low; i < high; i++)
+            for (int i = low; i < high; i++)
             {
                 sb.Append((char)i);
             }

@@ -30,7 +30,7 @@ namespace Microsoft.Security.Utilities
         {
             alphabet = string.IsNullOrWhiteSpace(customAlphabet) ? DefaultBase62Alphabet : customAlphabet;
 
-            if(alphabet.Length < 2)
+            if (alphabet.Length < 2)
             {
                 throw new ArgumentException(nameof(customAlphabet), "Alphabet must be at least 2 characters.");
             }
