@@ -46,7 +46,7 @@ namespace Microsoft.Security.Utilities
 
                 if (Char.IsWhiteSpace(alphabet[i]) || Char.IsSurrogate(alphabet[i]) || (int)alphabet[i] > 127)
                 {
-                    throw new ArgumentException(nameof(customAlphabet), $"Forbidden character type detected in the alphabet: alphabet[i].");
+                    throw new ArgumentException(nameof(customAlphabet), $"Forbidden character type detected in the alphabet: {alphabet[i]}.");
                 }
 
                 charToValueMap[alphabet[i]] = (uint)i;
