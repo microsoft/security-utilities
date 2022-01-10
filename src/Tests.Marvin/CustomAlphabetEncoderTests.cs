@@ -109,43 +109,43 @@ namespace Microsoft.Security.Utilities
             {
                 new {
                     Alphabet = "a",
-                    ExpectedException = new ArgumentException("customAlphabet", "Alphabet must be at least 2 characters.")
+                    ExpectedMessage = "Alphabet must be at least 2 characters."
                 },
                 new {
                     Alphabet = "aaa",
-                    ExpectedException = new ArgumentException("customAlphabet", "Duplicate value detected in the alphabet.")
+                    ExpectedMessage = "Duplicate value detected in the alphabet."
                 },
                 new {
                     Alphabet = GenerateAsciiString(),
-                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet")
+                    ExpectedMessage = "Forbidden character type detected in the alphabet"
                 },
                 new {
                     Alphabet = "abc\uD800",
-                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet")
+                    ExpectedMessage = "Forbidden character type detected in the alphabet"
                 },
                 new {
                     Alphabet = "abc\uDC00",
-                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet")
+                    ExpectedMessage = "Forbidden character type detected in the alphabet"
                 },
                 new {
                     Alphabet = GenerateAsciiString(130,132),
-                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet")
+                    ExpectedMessage = "Forbidden character type detected in the alphabet"
                 },
                 new {
                     Alphabet = "₼abc",
-                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet")
+                    ExpectedMessage = "Forbidden character type detected in the alphabet"
                 },
                 new {
                     Alphabet = "ﺀabc",
-                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet")
+                    ExpectedMessage = "Forbidden character type detected in the alphabet"
                 },
                 new {
                     Alphabet = "∞abc",
-                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet")
+                    ExpectedMessage = "Forbidden character type detected in the alphabet"
                 },
                 new {
                     Alphabet = "µabc",
-                    ExpectedException = new ArgumentException("customAlphabet", "Forbidden character type detected in the alphabet")
+                    ExpectedMessage = "Forbidden character type detected in the alphabet"
                 },
             };
 
@@ -153,7 +153,7 @@ namespace Microsoft.Security.Utilities
             {
                 Action action = () => new CustomAlphabetEncoder(testCase.Alphabet);
 
-                action.Should().Throw<ArgumentException>().Where(e => e.Message.StartsWith(testCase.ExpectedException.Message));
+                action.Should().Throw<ArgumentException>().Where(e => e.Message.Contains(testCase.ExpectedMessage));
             }
         }
 
