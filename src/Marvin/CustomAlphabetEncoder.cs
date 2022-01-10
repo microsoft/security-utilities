@@ -39,14 +39,14 @@ namespace Microsoft.Security.Utilities
             for (int i = 0; i < alphabet.Length; i++)
             {
                 // Repeated values in the custom alphabet will cause unreliable encoding/decoding.
-                if(charToValueMap.ContainsKey(alphabet[i]))
+                if (charToValueMap.ContainsKey(alphabet[i]))
                 {
                     throw new ArgumentException(nameof(customAlphabet), "Duplicate value detected in the alphabet.");
                 }
 
                 if (Char.IsWhiteSpace(alphabet[i]) || Char.IsSurrogate(alphabet[i]) || (int)alphabet[i] > 127)
                 {
-                    throw new ArgumentException(nameof(customAlphabet), String.Format("Forbidden character type detected in the alphabet: {0}.", alphabet[i]));
+                    throw new ArgumentException(nameof(customAlphabet), $"Forbidden character type detected in the alphabet: alphabet[i].");
                 }
 
                 charToValueMap[alphabet[i]] = (uint)i;
@@ -90,14 +90,16 @@ namespace Microsoft.Security.Utilities
             }
 
             uint decodedValue = 0;
+            uint alphabetLength = (uint)alphabet.Length;
 
             foreach (char c in encodedValue)
             {
-                if(!charToValueMap.ContainsKey(c))
+                if (!charToValueMap.ContainsKey(c))
                 {
                     throw new ArgumentException(nameof(encodedValue), "Alphabet does not contain all characters in input");
                 }
-                decodedValue *= (uint)alphabet.Length;
+
+                decodedValue *= alphabetLength;
                 decodedValue += charToValueMap[c];
             }
 
