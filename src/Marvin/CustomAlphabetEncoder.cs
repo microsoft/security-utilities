@@ -24,7 +24,7 @@ namespace Microsoft.Security.Utilities
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomAlphabetEncoder"/> class.
         /// </summary>
-        /// <param name="customAlphabet">The alphabet to be used for all encoding/decoding operations.</param>
+        /// <param name="customAlphabet">The alphabet to be used for all encoding/decoding operations. Must consist of nonwhitespace ASCII letters, numbers, and/or punctuation.</param>
         /// <exception cref="ArgumentException">customAlphabet contains a duplicate or forbidden character.</exception>
         public CustomAlphabetEncoder(string customAlphabet = DefaultBase62Alphabet)
         {
@@ -46,7 +46,7 @@ namespace Microsoft.Security.Utilities
 
                 if (Char.IsWhiteSpace(alphabet[i]) || Char.IsSurrogate(alphabet[i]) || (int)alphabet[i] > 127)
                 {
-                    throw new ArgumentException(nameof(customAlphabet), "Forbidden character type detected in the alphabet.");
+                    throw new ArgumentException(nameof(customAlphabet), String.Format("Forbidden character type detected in the alphabet: {0}.", alphabet[i]));
                 }
 
                 charToValueMap[alphabet[i]] = (uint)i;
