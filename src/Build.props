@@ -24,7 +24,7 @@
     <AssemblyOriginatorKeyFile>$(MsBuildThisFileDirectory)Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
-  <PropertyGroup Label="Package" Condition="$(IsTestProject) != 'true'">
+  <PropertyGroup Label="Package" Condition="$(IsPackable) == 'true'">
     <Authors>Microsoft</Authors>
     <RootNamespace>Microsoft.Security.Utilities</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -44,14 +44,14 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
-  <PropertyGroup Label="SourceLink" Condition="$(IsTestProject) != 'true'">
+  <PropertyGroup Label="SourceLink" Condition="$(IsPackable) == 'true'">
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(Configuration)' == 'Release' AND $(IsTestProject) != 'true'">
+  <ItemGroup Condition=" '$(Configuration)' == 'Release' AND $(IsPackable) == 'true'">
     <SourceRoot Include="$(MSBuildThisFileDirectory)/" />
   </ItemGroup>
 
@@ -59,8 +59,8 @@
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
-  <ItemGroup Label="Common Packages" Condition="$(IsTestProject) != 'true'">
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.244">
+  <ItemGroup Label="Common Packages" Condition="$(IsPackable) == 'true'">
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.244">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
