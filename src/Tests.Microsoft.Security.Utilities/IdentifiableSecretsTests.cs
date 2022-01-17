@@ -1,7 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System;
 using System.Linq;
 using System.Text;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Security.Utilities
 {
@@ -17,22 +21,22 @@ namespace Microsoft.Security.Utilities
             ulong seed = BitConverter.ToUInt64(Encoding.ASCII.GetBytes(Seed).Reverse().ToArray(), 0);
 
             Assert.ThrowsException<ArgumentException>(() =>
-                IdentifiableSecrets.GenerateIdentifiableKey(seed,
+                IdentifiableSecrets.GenerateBase64Key(seed,
                                                             keyLengthInBytes: IdentifiableSecrets.MaximumGeneratedKeySize + 1,
                                                             base64EncodedSignature: Signature));
 
             Assert.ThrowsException<ArgumentException>(() =>
-                IdentifiableSecrets.GenerateIdentifiableKey(seed,
+                IdentifiableSecrets.GenerateBase64Key(seed,
                                                             keyLengthInBytes: IdentifiableSecrets.MinimumGeneratedKeySize - 1,
                                                             base64EncodedSignature: Signature));
 
             Assert.ThrowsException<ArgumentException>(() =>
-                IdentifiableSecrets.GenerateIdentifiableKey(seed,
+                IdentifiableSecrets.GenerateBase64Key(seed,
                                                             keyLengthInBytes: 32,
                                                             base64EncodedSignature: null));
 
             Assert.ThrowsException<ArgumentException>(() =>
-                IdentifiableSecrets.GenerateIdentifiableKey(seed,
+                IdentifiableSecrets.GenerateBase64Key(seed,
                                                             keyLengthInBytes: 32,
                                                             base64EncodedSignature: "bad-signature-length"));
         }
@@ -43,7 +47,7 @@ namespace Microsoft.Security.Utilities
             const int size = 32;
             ulong seed = BitConverter.ToUInt64(Encoding.ASCII.GetBytes(Seed).Reverse().ToArray(), 0);
 
-            string secret = IdentifiableSecrets.GenerateIdentifiableKey(seed,
+            string secret = IdentifiableSecrets.GenerateBase64Key(seed,
                                                                         keyLengthInBytes: size,
                                                                         base64EncodedSignature: Signature);
 
@@ -73,7 +77,7 @@ namespace Microsoft.Security.Utilities
 
             foreach (uint size in sizes)
             {
-                string secret = IdentifiableSecrets.GenerateIdentifiableKey(seed, keyLengthInBytes: size, base64EncodedSignature: Signature);
+                string secret = IdentifiableSecrets.GenerateBase64Key(seed, keyLengthInBytes: size, base64EncodedSignature: Signature);
 
                 var isValid = IdentifiableSecrets.ValidateKey(secret, seed, Signature);
                 Assert.IsTrue(isValid);

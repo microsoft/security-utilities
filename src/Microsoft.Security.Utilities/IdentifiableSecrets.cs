@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
@@ -16,7 +19,7 @@ namespace Microsoft.Security.Utilities
         /// <param name="keyLengthInBytes">The size of the secret.</param>
         /// <param name="base64EncodedSignature">The signature that will be encoded in the identifiable secret.</param>
         /// <returns></returns>
-        public static string GenerateIdentifiableKey(ulong checksumSeed,
+        public static string GenerateBase64Key(ulong checksumSeed,
                                                      uint keyLengthInBytes,
                                                      string base64EncodedSignature)
         {
