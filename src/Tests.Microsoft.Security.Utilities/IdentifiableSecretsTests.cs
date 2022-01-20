@@ -154,7 +154,7 @@ namespace Microsoft.Security.Utilities
             {
                 foreach (uint keyLengthInBytes in keyLengthInBytesValues)
                 {
-                    foreach (ulong seed in GenerateSeedsTheIncludeAllBits())
+                    foreach (ulong seed in GenerateSeedsThatIncludeAllBits())
                     {
                         foreach (string signature in GenerateSignaturesThatIncludeFullAlphabet(encodeForUrl))
                         {
@@ -212,7 +212,7 @@ namespace Microsoft.Security.Utilities
             Assert.IsFalse(isValid);
         }
 
-        IEnumerable<ulong> GenerateSeedsTheIncludeAllBits()
+        IEnumerable<ulong> GenerateSeedsThatIncludeAllBits()
         {
             ulong bitsObserved = 0;
 
