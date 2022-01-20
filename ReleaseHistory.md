@@ -1,6 +1,6 @@
 # Microsoft.Security.Utilities Release History
 
-## Unreleased
+## **v1.2.0** [NuGet Package](https://www.nuget.org/packages/Microsoft.Security.Utilities/1.2.0)
 * BREAKING: Renamed IdentifiableSecrets.GenerateIdentifiableKey to IdentifiableSecrets.GenerateBase64Key.
 
 ## **v1.1.0** [NuGet Package](https://www.nuget.org/packages/Microsoft.Security.Utilities/1.1.0)
