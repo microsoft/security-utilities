@@ -4,7 +4,7 @@
     <IsPackable>true</IsPackable>
     <TargetFrameworks>net452;netstandard2.0;netstandard2.1;net5.0</TargetFrameworks>
   </PropertyGroup>
-  
+
   <Import Project="$(MSBuildThisFileDirectory)..\Build.props" />
 
   <PropertyGroup Label="Package">
@@ -18,6 +18,12 @@
 
   <ItemGroup Condition="$(TargetFramework) == 'netstandard2.0'">
     <PackageReference Include="System.Memory" Version="4.5.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../ReleaseHistory.md" Pack="true" PackagePath="ReleaseHistory.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
