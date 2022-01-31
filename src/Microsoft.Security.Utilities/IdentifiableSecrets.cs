@@ -36,18 +36,62 @@ namespace Microsoft.Security.Utilities
         }
 
         /// <summary>
-        /// Generate an identifiable secret rendered in the standard base64-encoding alphabet.
+        /// Generate an identifiable secret with a URL-compatible format (replacing all '+'
+        /// characters with '-' and all '/' characters with '_') and eliding all padding
+        /// characters (unless the caller chooses to retain them). Strictly speaking, only
+        /// the '+' character is incompatible for tokens expressed as a query string
+        /// parameter. For this case, however, replacing the '/ character as well allows
+        /// for a full 64-character alphabet that can be decoded by standard API in .NET, 
+        /// Go, etc.
         /// </summary>
-        /// <param name="checksumSeed"></param>
-        /// <param name="keyLengthInBytes">The size of the secret.</param>
-        /// <param name="base64EncodedSignature">The signature that will be encoded in the identifiable secret.</param>
-        /// <param name="encodeForUrl">'true' if the returned token should be encoded in a URL-compatible form 
-        /// (replacing the '+' and '/' characters and dropping any padding).</param>
+        /// <param name="checksumSeed">A seed value that initializes the Marvin checksum algorithm.</param>
+        /// <param name="keyLengthInBytes">The size of the secret in bytes.</param>
+        /// <param name="base64EncodedSignature">The signature that will be encoded in the identifiable secret. 
+        /// This string must only contain valid URL-safe base64-encoding characters.</param>
         /// <returns></returns>
-        public static string GenerateBase64Key(ulong checksumSeed,
-                                               uint keyLengthInBytes,
-                                               string base64EncodedSignature,
-                                               bool encodeForUrl = false)
+        public static string GenerateUrlSafeBase64Key(ulong checksumSeed,
+                                                      uint keyLengthInBytes,
+                                                      string base64EncodedSignature,
+                                                      bool elidePadding)
+        {
+            string secret = GenerateBase64KeyHelper(checksumSeed,
+                                                    keyLengthInBytes,
+                                                    base64EncodedSignature,
+                                                    encodeForUrl: true);
+
+            // The '=' padding must be encoded in some URL contexts but can be 
+            // directly expressed in others, such as a query string parameter.
+            // Additionally, some URL Base64 Encoders (such as Azure's 
+            // Base64UrlEncoder class) expect padding to be removed while
+            // others (such as Go's Base64.URLEncoding helper) expect it to
+            // exist. We therefore provide an option to express it or not.
+            return elidePadding ? secret.TrimEnd('=') : secret;
+        }
+
+
+        /// </summary>
+        /// <param name="checksumSeed">A seed value that initializes the Marvin checksum algorithm.</param>
+        /// <param name="keyLengthInBytes">The size of the secret in bytes.</param>
+        /// <param name="base64EncodedSignature">The signature that will be encoded in the identifiable secret. 
+        /// This string must only contain valid base64-encoding characters.</param>
+        /// <returns></returns>
+        public static string GenerateStandardBase64Key(ulong checksumSeed,
+                                                       uint keyLengthInBytes,
+                                                       string base64EncodedSignature)
+        {
+            return GenerateBase64KeyHelper(checksumSeed,
+                                           keyLengthInBytes,
+                                           base64EncodedSignature,
+                                           encodeForUrl: false);
+        }
+
+
+        // This helper is a primary focus of unit-testing, due to the fact it
+        // contains the majority of the logic for base64-encoding scenarios.
+        internal static string GenerateBase64KeyHelper(ulong checksumSeed,
+                                                      uint keyLengthInBytes,
+                                                      string base64EncodedSignature,
+                                                      bool encodeForUrl)
         {
             if (keyLengthInBytes > MaximumGeneratedKeySize)
             {
@@ -168,7 +212,6 @@ namespace Microsoft.Security.Utilities
 
             if (equalsSignIndex > -1)
             {
-                Debug.Assert(encodeForUrl == false);
                 equalsSigns = key.Substring(equalsSignIndex);
                 prefixLength = equalsSignIndex - lengthOfEncodedChecksum - base64EncodedSignature.Length;
             }
@@ -203,7 +246,17 @@ namespace Microsoft.Security.Utilities
 
                     // The following condition should always be true, since we 
                     // have already verified the checksum earlier in this routine.
-                    Debug.Assert(firstChar >= 'A' && firstChar <= 'P');
+                    // We explode all conditions in this check in order to
+                    // 'convince' VS code coverage these conditions are 
+                    // exhaustively covered.
+                    Debug.Assert(firstChar == 'A' || firstChar == 'B' ||
+                                 firstChar == 'C' || firstChar == 'D' ||
+                                 firstChar == 'E' || firstChar == 'F' ||
+                                 firstChar == 'G' || firstChar == 'H' ||
+                                 firstChar == 'I' || firstChar == 'J' ||
+                                 firstChar == 'K' || firstChar == 'L' ||
+                                 firstChar == 'M' || firstChar == 'N' ||
+                                 firstChar == 'O' || firstChar == 'P');
                     break;
                 }
 
@@ -216,7 +269,8 @@ namespace Microsoft.Security.Utilities
 
                     // The following condition should always be true, since we 
                     // have already verified the checksum earlier in this routine.
-                    Debug.Assert(firstChar >= 'A' && firstChar <= 'D');
+                    Debug.Assert(firstChar == 'A' || firstChar == 'B' ||
+                                 firstChar == 'C' || firstChar == 'D');
                     break;
                 }
 
@@ -351,18 +405,29 @@ namespace Microsoft.Security.Utilities
             return signatureBytes;
         }
 
+        internal static string TransformToUrlSafeEncoding(string base64EncodedText)
+        {
+            return base64EncodedText.Replace('+', '-').Replace('/', '_');
+        }
+
+        internal static string TransformToStandardEncoding(string urlSafeBase64EncodedText)
+        {
+            return urlSafeBase64EncodedText.Replace('-', '+').Replace('_', '/');
+        }
+
+        internal static string RetrievePaddingForBase64EncodedText(string text)
+        {
+            int paddingCount = 4 - text.Length % 4;
+             
+            return (!text.EndsWith("=") && paddingCount < 3)
+                ? new string('=', paddingCount)
+                : string.Empty;
+        }
+
         internal static byte[] ConvertFromBase64String(string text)
         {
-            text = text.Replace('-', '+');
-            text = text.Replace('_', '/');
-
-            int paddingCount = 4 - text.Length % 4;
-
-            if (paddingCount < 3)
-            {
-                text += new string('=', paddingCount);
-            }
-
+            text = TransformToStandardEncoding(text);
+            text += RetrievePaddingForBase64EncodedText(text);
             return Convert.FromBase64String(text);
         }
 
@@ -372,11 +437,8 @@ namespace Microsoft.Security.Utilities
 
             if (encodeForUrl)
             {
-                text = text.Replace('+', '-');
-                text = text.Replace('/', '_');
-                text = text.TrimEnd('=');
+                text = TransformToUrlSafeEncoding(text);
             }
-
             return text;
         }
     }

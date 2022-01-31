@@ -4,7 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
+
+using FluentAssertions;
 
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -69,28 +72,28 @@ namespace Microsoft.Security.Utilities
             foreach (bool encodeForUrl in new[] { true, false })
             {
                 Assert.ThrowsException<ArgumentException>(() =>
-                    IdentifiableSecrets.GenerateBase64Key(seed,
-                                                          keyLengthInBytes: IdentifiableSecrets.MaximumGeneratedKeySize + 1,
-                                                          signature,
-                                                          encodeForUrl));
+                    IdentifiableSecrets.GenerateBase64KeyHelper(seed,
+                                                                keyLengthInBytes: IdentifiableSecrets.MaximumGeneratedKeySize + 1,
+                                                                signature,
+                                                                encodeForUrl));
 
                 Assert.ThrowsException<ArgumentException>(() =>
-                    IdentifiableSecrets.GenerateBase64Key(seed,
-                                                          keyLengthInBytes: IdentifiableSecrets.MinimumGeneratedKeySize - 1,
-                                                          signature,
-                                                          encodeForUrl));
+                    IdentifiableSecrets.GenerateBase64KeyHelper(seed,
+                                                                keyLengthInBytes: IdentifiableSecrets.MinimumGeneratedKeySize - 1,
+                                                                signature,
+                                                                encodeForUrl));
 
                 Assert.ThrowsException<ArgumentException>(() =>
-                    IdentifiableSecrets.GenerateBase64Key(seed,
-                                                          keyLengthInBytes: 32,
-                                                          base64EncodedSignature: null,
-                                                          encodeForUrl));
+                    IdentifiableSecrets.GenerateBase64KeyHelper(seed,
+                                                                keyLengthInBytes: 32,
+                                                                base64EncodedSignature: null,
+                                                                encodeForUrl));
 
                 Assert.ThrowsException<ArgumentException>(() =>
-                    IdentifiableSecrets.GenerateBase64Key(seed,
-                                                          keyLengthInBytes: 32,
-                                                          base64EncodedSignature: "this signature is too long",
-                                                          encodeForUrl));
+                    IdentifiableSecrets.GenerateBase64KeyHelper(seed,
+                                                                keyLengthInBytes: 32,
+                                                                base64EncodedSignature: "this signature is too long",
+                                                                encodeForUrl));
             }
         }
 
@@ -114,17 +117,21 @@ namespace Microsoft.Security.Utilities
                     // If the injected character is legal, we'll go ahead and validate everything works as expected.
                     if (alphabet.Contains(injectedChar))
                     {
-                        string secret = IdentifiableSecrets.GenerateBase64Key(seed, keyLengthInBytes, signature, encodeForUrl);
+                        string secret = IdentifiableSecrets.GenerateBase64KeyHelper(seed,
+                                                                                    keyLengthInBytes,
+                                                                                    signature,
+                                                                                    encodeForUrl);
+
                         ValidateSecret(secret, seed, signature, encodeForUrl);
                         continue;
                     }
 
                     // All illegal characters in the signature should raise an exception.
                     Assert.ThrowsException<ArgumentException>(() =>
-                        IdentifiableSecrets.GenerateBase64Key(seed,
-                                                              keyLengthInBytes,
-                                                              signature,
-                                                              encodeForUrl));
+                        IdentifiableSecrets.GenerateBase64KeyHelper(seed,
+                                                                    keyLengthInBytes,
+                                                                    signature,
+                                                                    encodeForUrl));
 
                 }
             }
@@ -171,26 +178,99 @@ namespace Microsoft.Security.Utilities
             }
         }
 
+        [TestMethod]
+        public void IdentifiableSecrets_RetrievePaddingForBase64EncodedText()
+        {
+            using var cryptoProvider = new RNGCryptoServiceProvider();
+
+            for (int i = 0; i < 256; i++)
+            {
+                var randomBytes = new byte[i];
+                cryptoProvider.GetBytes(randomBytes);
+
+                string base64Encoded = Convert.ToBase64String(randomBytes);
+
+                // First, we make sure that our helper properly recognizes existing padding on 
+                // a base64-encoded strings. Note that this helper assumes that any padding
+                // that exists is valid. I.e., is present because it needs to be, is the 
+                // appropriate # of characters, etc.
+                string reconstructed = base64Encoded;
+                reconstructed += IdentifiableSecrets.RetrievePaddingForBase64EncodedText(reconstructed);
+                reconstructed.Should().Be(base64Encoded);
+
+                // Now we trim any padding off the base64-encoded text and ensure we can restore it.
+                reconstructed = base64Encoded.TrimEnd('=');
+                reconstructed += IdentifiableSecrets.RetrievePaddingForBase64EncodedText(reconstructed);
+                reconstructed.Should().Be(base64Encoded);
+            }
+        }
+
+        private enum Base64EncodingKind
+        {
+            Unknown,
+            Standard,
+            UrlSafe
+        }
+
         private void ValidateSecret(string secret, ulong seed, string signature, bool encodeForUrl)
         {
             var isValid = IdentifiableSecrets.ValidateBase64Key(secret, seed, signature, encodeForUrl);
             Assert.IsTrue(isValid);
 
-            if (encodeForUrl)
-            {
-                // This code path ensures that our API mechanism to replace certain characters in a
-                // base64-encoded string provides the functional equivalent to calling an actual
-                // Azure API that provides URL friendly base64-encoding. We don't actually take a 
-                // dependency on this package in order to minimize the packages that our API
-                // itself has a dependency on. This ensures our behavior is strictly identical
-                // to that more official code, however.
-                byte[] apiDecodedBytes = IdentifiableSecrets.ConvertFromBase64String(secret);
-                byte[] azureDecodedBytes = Base64UrlEncoder.DecodeBytes(secret);
+            var base64EncodingKind = Base64EncodingKind.Unknown;
 
-                Assert.AreEqual(apiDecodedBytes.Length, azureDecodedBytes.Length);
-                for (int i = 0; i < apiDecodedBytes.Length; i++)
+            if (secret.Contains('+') || secret.Contains('/'))
+            {
+                base64EncodingKind = Base64EncodingKind.Standard;
+            }
+            else if (secret.Contains('-') || secret.Contains('_'))
+            {
+                base64EncodingKind = Base64EncodingKind.UrlSafe;
+            }
+
+            byte[] apiDecodedBytes = IdentifiableSecrets.ConvertFromBase64String(secret);
+
+            switch (base64EncodingKind)
+            {
+                case Base64EncodingKind.Standard:
                 {
-                    Assert.AreEqual(apiDecodedBytes[i], azureDecodedBytes[i]);
+                    byte[] dotNetDecodedBytes = Convert.FromBase64String(secret);
+                    VerifyByteArraysAreEqual(apiDecodedBytes, dotNetDecodedBytes);
+
+                    string urlSafeEncoded = Base64UrlEncoder.Encode(dotNetDecodedBytes);
+                    string base64Encoded = IdentifiableSecrets.TransformToStandardEncoding(urlSafeEncoded);
+                    base64Encoded += IdentifiableSecrets.RetrievePaddingForBase64EncodedText(base64Encoded);
+
+                    base64Encoded.Should().Be(secret);
+                    break;
+                }
+                case Base64EncodingKind.UrlSafe:
+                {
+                    byte[] azureDecodedBytes = Base64UrlEncoder.DecodeBytes(secret);
+                    VerifyByteArraysAreEqual(apiDecodedBytes, azureDecodedBytes);
+
+                    string base64Encoded = Convert.ToBase64String(azureDecodedBytes);
+                    string urlSafeEncoded = IdentifiableSecrets.TransformToUrlSafeEncoding(base64Encoded);
+
+                    string padding = IdentifiableSecrets.RetrievePaddingForBase64EncodedText(secret);
+                    urlSafeEncoded.Should().Be(secret + padding);
+                    break;
+                }
+                case Base64EncodingKind.Unknown:
+                {
+                    secret += IdentifiableSecrets.RetrievePaddingForBase64EncodedText(secret);
+                    byte[] dotNetDecodedBytes = Convert.FromBase64String(secret);
+                    byte[] azureDecodedBytes = Base64UrlEncoder.DecodeBytes(secret);
+
+                    VerifyByteArraysAreEqual(apiDecodedBytes, dotNetDecodedBytes);
+                    VerifyByteArraysAreEqual(dotNetDecodedBytes, azureDecodedBytes);
+
+                    string base64Encoded = Convert.ToBase64String(apiDecodedBytes);
+                    string urlSafeEncoded = Base64UrlEncoder.Encode(dotNetDecodedBytes);
+
+                    Assert.IsTrue(base64Encoded == secret && 
+                                  urlSafeEncoded == secret.TrimEnd('='));
+                    break;
                 }
             }
 
@@ -210,6 +290,15 @@ namespace Microsoft.Security.Utilities
             Assert.AreNotEqual(secret, newSecret);
             isValid = IdentifiableSecrets.ValidateBase64Key(newSecret, seed, signature, encodeForUrl);
             Assert.IsFalse(isValid);
+        }
+
+        private void VerifyByteArraysAreEqual(byte[] first, byte[] second)
+        {
+            Assert.AreEqual(first.Length, second.Length);
+            for (int i = 0; i < first.Length; i++)
+            {
+                Assert.AreEqual(first[i], second[i]);
+            }
         }
 
         IEnumerable<ulong> GenerateSeedsThatIncludeAllBits()
@@ -266,16 +355,29 @@ namespace Microsoft.Security.Utilities
 
             while (alphabet.Count > 0)
             {
-                string secret = IdentifiableSecrets.GenerateBase64Key(seed,
-                                                                      keyLengthInBytes,
-                                                                      signature,
-                                                                      encodeForUrl);
+                string secret;
+                if (!encodeForUrl)
+                {
+                    secret = IdentifiableSecrets.GenerateStandardBase64Key(seed,
+                                                                           keyLengthInBytes,
+                                                                           signature);
 
-                foreach (char ch in secret) { alphabet.Remove(ch); }
-                yield return secret;
+                    foreach (char ch in secret) { alphabet.Remove(ch); }
+                    yield return secret;
+                    continue;
+                }
+
+                foreach (bool elidePadding in new[] { true, false })
+                {
+                    secret = IdentifiableSecrets.GenerateUrlSafeBase64Key(seed,
+                                                                          keyLengthInBytes,
+                                                                          signature,
+                                                                          elidePadding);
+                    foreach (char ch in secret) { alphabet.Remove(ch); }
+                    yield return secret;
+                }
             }
         }
-
         private static HashSet<char> GetBase64Alphabet(bool encodeForUrl)
         {
             var alphabet = new HashSet<char>(new char[] {
