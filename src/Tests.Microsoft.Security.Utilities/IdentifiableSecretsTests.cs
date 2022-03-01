@@ -64,7 +64,7 @@ namespace Microsoft.Security.Utilities
 
         [TestMethod]
         public void IdentifiableSecrets_GenerateBase64Key_ShouldThrowExceptionForInvalidLengths()
-        {        
+        {
             const string signature = "ABCD";
             const string seedText = "DEFAULT0";
             ulong seed = BitConverter.ToUInt64(Encoding.ASCII.GetBytes(seedText).Reverse().ToArray(), 0);
@@ -170,7 +170,7 @@ namespace Microsoft.Security.Utilities
                                                                                              signature,
                                                                                              encodeForUrl))
                             {
-                                ValidateSecret(secret, seed, signature, encodeForUrl);                                
+                                ValidateSecret(secret, seed, signature, encodeForUrl);
                             }
                         }
                     }
@@ -268,7 +268,7 @@ namespace Microsoft.Security.Utilities
                     string base64Encoded = Convert.ToBase64String(apiDecodedBytes);
                     string urlSafeEncoded = Base64UrlEncoder.Encode(dotNetDecodedBytes);
 
-                    Assert.IsTrue(base64Encoded == secret && 
+                    Assert.IsTrue(base64Encoded == secret &&
                                   urlSafeEncoded == secret.TrimEnd('='));
                     break;
                 }
