@@ -48,6 +48,7 @@ namespace Microsoft.Security.Utilities
         /// <param name="keyLengthInBytes">The size of the secret in bytes.</param>
         /// <param name="base64EncodedSignature">The signature that will be encoded in the identifiable secret. 
         /// This string must only contain valid URL-safe base64-encoding characters.</param>
+        /// <param name="elidePadding">A boolean value that will remove the padding when true.</param>
         /// <returns></returns>
         public static string GenerateUrlSafeBase64Key(ulong checksumSeed,
                                                       uint keyLengthInBytes,
