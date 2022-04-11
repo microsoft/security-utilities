@@ -25,3 +25,5 @@ steps:
     command: test
     projects: $(solution)
     arguments: '--collect "Code coverage" --no-build --configuration $(buildConfiguration)'
+
+- task: ComponentGovernanceComponentDetection@0
