@@ -5,25 +5,57 @@ variables:
   solution: 'src\Microsoft.Security.Utilities.sln'
   buildConfiguration: 'Release'
 
-steps:
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet restore'
-  inputs:
-    command: 'restore'
-    projects: $(solution)
+resources:
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+extends:
+    template: v1/1ES.Unofficial.PipelineTemplate.yml@1esPipelines
+    parameters:
+      pool:
+        name: 1ES-Shared-Hosted-Pool_Windows-Server-2022
+        os: windows
+      containers:
+        default_windows_container:
+          image: 1espipelinesdevpme.azurecr.io/windows/ltsc2022/vse2022:latest
+          registry: 1espipelinesdevpme.azurecr.io
+          tenantId: PME
+          identityType: 1ESPipelineIdentity
+        
+      stages:
+      - stage: build
+        jobs:
+          - job: build
+            templateContext:
+              inputs:
+              - input: checkout
+                repository: self
+                submodules: true
+              outputs:
+              - output: pipelineArtifact
+                targetPath: $(System.DefaultWorkingDirectory)
+                artifactName: security-utilities
 
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet build'
-  inputs:
-    command: 'build'
-    projects: $(solution)
-    arguments: '--configuration $(buildConfiguration) --no-restore'
-    
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet test'
-  inputs:
-    command: test
-    projects: $(solution)
-    arguments: '--collect "Code coverage" --no-build --configuration $(buildConfiguration)'
+            steps:
 
-- task: ComponentGovernanceComponentDetection@0
+              - task: DotNetCoreCLI@2
+                displayName: 'dotnet restore'
+                inputs:
+                  command: 'restore'
+                  projects: $(solution)
+
+              - task: DotNetCoreCLI@2
+                displayName: 'dotnet build'
+                inputs:
+                  command: 'build'
+                  projects: $(solution)
+                  arguments: '--configuration $(buildConfiguration) --no-restore'
+                  
+              - task: DotNetCoreCLI@2
+                displayName: 'dotnet test'
+                inputs:
+                  command: test
+                  projects: $(solution)
+                  arguments: '--collect "Code coverage" --no-build --configuration $(buildConfiguration)'
