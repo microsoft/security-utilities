@@ -4,7 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
+using System.Xml.Schema;
 
 namespace Microsoft.Security.Utilities
 {
@@ -57,10 +59,13 @@ namespace Microsoft.Security.Utilities
         /// Encode an unsigned integer (a checksum) in a given character set.
         /// </summary>
         /// <param name="data">The unsigned integer to encode.</param>
+        /// <param name="minLength">
+        /// The minimum length for encoded result. Defaults to 6 to match common checksum implementation cases.
+        /// </param>
         /// <returns>
         /// The unsigned integer encoded using the character set with which this class was instantiated.
         /// </returns>
-        public string Encode(uint data)
+        public string Encode(uint data, int minLength = 6)
         {
             s_sb ??= new StringBuilder();
             s_sb.Clear();
@@ -69,6 +74,11 @@ namespace Microsoft.Security.Utilities
             {
                 s_sb.Append(alphabet[(int)(data % (uint)alphabet.Length)]);
                 data /= (uint)alphabet.Length;
+            }
+
+            while (s_sb.Length < minLength)
+            {
+                s_sb.Append(alphabet[0]);
             }
 
             return new string(s_sb.ToString().Reverse().ToArray());

@@ -11,10 +11,15 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Security.Utilities
 {
-
     [TestClass]
     public class CustomAlphabetEncoderTests
     {
+        private const string PasswordCharacters = "abcdefghijklmnopqrstuvwxyz" +
+                                                  "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+                                                  "1234567890" +
+                                                  ".-_~";
+
+
         [TestMethod]
         public void CustomAlphabetEncoder_EncodeUintWithTestCases()
         {
@@ -22,11 +27,6 @@ namespace Microsoft.Security.Utilities
 
             var testCases = new[]
             {
-                new {
-                    Alphabet = String.Empty,
-                    Input = uint.MinValue,
-                    ExpectedEncoded = ""
-                },
                 new
                 {
                     Alphabet = String.Empty,
@@ -48,14 +48,20 @@ namespace Microsoft.Security.Utilities
                 new
                 {
                     Alphabet = "abcdef",
-                    Input = UInt32.MinValue,
-                    ExpectedEncoded = ""
+                    Input = (uint)123456,
+                    ExpectedEncoded = "cdfbdca"
                 },
                 new
                 {
-                    Alphabet = "abcdef",
-                    Input = (uint)123456,
-                    ExpectedEncoded = "cdfbdca"
+                    Alphabet = PasswordCharacters,
+                    Input = (uint)956747778,
+                    ExpectedEncoded = "aYB6eE"
+                },
+                new
+                {
+                    Alphabet = PasswordCharacters,
+                    Input = (uint)1179413251,
+                    ExpectedEncoded = "a.kybX"
                 },
             };
 
