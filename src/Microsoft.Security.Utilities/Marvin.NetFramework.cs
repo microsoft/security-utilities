@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 namespace Microsoft.Security.Utilities
 {
     /// <summary>
-    /// This is a C# implementation of the Marvin32 checksum algorithm, the definite native code for which is
+    /// This is a C# implementation of the Marvin32 checksum algorithm, the definitive native code for which is
     /// at https://github.com/microsoft/SymCrypt/blob/master/lib/marvin32.c. This C# version is based on an
     /// implementation included in .NET, which is used to produce GetHashCode() values for strings, the code
     /// for which is at https://github.com/dotnet/corert/blob/master/src/Common/src/System/Marvin.cs. This
