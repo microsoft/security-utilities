@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		..\.github\workflows\dotnet-format.yml = ..\.github\workflows\dotnet-format.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Security.Utilities.Cli", "Microsoft.Security.Utilities.Cli\Microsoft.Security.Utilities.Cli.csproj", "{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{9F466A4A-4D9E-401B-ACBD-22AAA402E335}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F466A4A-4D9E-401B-ACBD-22AAA402E335}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F466A4A-4D9E-401B-ACBD-22AAA402E335}.Release|Any CPU.Build.0 = Release|Any CPU
+		{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

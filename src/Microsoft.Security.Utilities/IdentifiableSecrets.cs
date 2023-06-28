@@ -53,7 +53,7 @@ namespace Microsoft.Security.Utilities
         public static string GenerateUrlSafeBase64Key(ulong checksumSeed,
                                                       uint keyLengthInBytes,
                                                       string base64EncodedSignature,
-                                                      bool elidePadding)
+                                                      bool elidePadding = false)
         {
             string secret = GenerateBase64KeyHelper(checksumSeed,
                                                     keyLengthInBytes,
@@ -169,8 +169,28 @@ namespace Microsoft.Security.Utilities
         /// <param name="checksumSeed">The seed used to initialize the Marvin32 checksum algorithm.</param>
         /// <param name="base64EncodedSignature">A fixed signature that should immediately precede the checksum in the encoded secret.</param>
         /// <param name="encodeForUrl">'true' if the secret was encoded for URLs (replacing '+' and '/' characters and eliminating any padding).</param>
-        /// <returns></returns>
-        public static bool ValidateBase64Key(string key, ulong checksumSeed, string base64EncodedSignature, bool encodeForUrl)
+        /// <returns>True if the provided key contains the specified signature and contains a checksum that matches the checksum of the key computed using the specified checksum seed and false otherwise. Also returns false in cases where the input data is invalid (e.g., if it can't be base64-decoded).</returns>
+        public static bool TryValidateBase64Key(string key, ulong checksumSeed, string base64EncodedSignature, bool encodeForUrl = false)
+        {
+            try
+            {
+                return ValidateBase64Key(key, checksumSeed, base64EncodedSignature, encodeForUrl);
+            }
+            catch (ArgumentException) 
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Validate if the identifiable secret contains a valid format.
+        /// </summary>
+        /// <param name="key">A base64-encoded identifiable secret, encoded using the standard base64-alphabet or a URL friendly alternate.</param>
+        /// <param name="checksumSeed">The seed used to initialize the Marvin32 checksum algorithm.</param>
+        /// <param name="base64EncodedSignature">A fixed signature that should immediately precede the checksum in the encoded secret.</param>
+        /// <param name="encodeForUrl">'true' if the secret was encoded for URLs (replacing '+' and '/' characters and eliminating any padding).</param>
+        /// <returns>True if the provided key contains the specified signature and contains a checksum that matches the checksum of the key computed using the specified checksum seed and false otherwise.</returns>
+        public static bool ValidateBase64Key(string key, ulong checksumSeed, string base64EncodedSignature, bool encodeForUrl = false)
         {
             ValidateBase64EncodedSignature(base64EncodedSignature, encodeForUrl);
 
