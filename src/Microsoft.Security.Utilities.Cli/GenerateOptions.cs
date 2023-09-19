@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 #nullable disable
 using CommandLine;
-using System.Globalization;
 
 namespace Microsoft.Security.Utilities.Cli
 {
@@ -44,19 +43,12 @@ namespace Microsoft.Security.Utilities.Cli
         {
             get
             {
-                if (!ChecksumSeedText.StartsWith("0x") && !ChecksumSeedText.StartsWith("0X"))
+                if (ulong.TryParse(ChecksumSeedText, out var count))
                 {
-                    throw new ArgumentException("Please provide the seed in hex string format.", "seed");
+                    return count;
                 }
 
-                if (ulong.TryParse(ChecksumSeedText.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var number))
-                {
-                    return number;
-                }
-                else
-                {
-                    throw new ArgumentException("The provided seed is invalid.", "seed");
-                }
+                return 1;
             }
         }
 
