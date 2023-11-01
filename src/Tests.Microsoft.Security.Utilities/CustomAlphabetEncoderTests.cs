@@ -198,6 +198,23 @@ namespace Microsoft.Security.Utilities
 
             encodedChecksum1.Should().Be(encodedChecksum2);
         }
+        
+        [TestMethod]
+        public void CustomAlphabetEncoder_SetCustomAlphabetShouldChangeAlphabetAndWorkCorrectly()
+        {
+            var testEncoder = new CustomAlphabetEncoder("123");
+            uint input = 42;
+            string originalEncoded = testEncoder.Encode(input);
+            
+            testEncoder.SetCustomAlphabet("ABC");
+            
+            string newEncoded = testEncoder.Encode(input);
+            byte[] newDecoded = testEncoder.Decode(newEncoded);
+            uint newDecodedUint = BitConverter.ToUInt32(newDecoded, 0);
+            
+            newEncoded.Should().NotBe(originalEncoded);
+            newDecodedUint.Should().Be(input);
+        }
 
         private IEnumerable<string> GenerateValidAlphabetTestCases()
         {
