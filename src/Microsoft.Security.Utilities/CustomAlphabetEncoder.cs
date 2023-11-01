@@ -115,5 +115,41 @@ namespace Microsoft.Security.Utilities
 
             return BitConverter.GetBytes(decodedValue);
         }
+        
+        /// <summary>
+        /// Sets a custom alphabet to be used for all encoding and decoding operations.
+        /// </summary>
+        /// <param name="customAlphabet">A string representing the custom alphabet. It must consist of non-whitespace ASCII characters, including letters, numbers, and/or punctuation.</param>
+        /// <exception cref="ArgumentException">Throws an exception if the alphabet contains duplicates or contains forbidden characters.</exception>
+        /// <remarks>
+        /// This method allows dynamic changes to the alphabet used for encoding and decoding data. Before setting a new alphabet, the method performs checks for duplicates and the presence of forbidden characters.
+        /// </remarks>
+        public void SetCustomAlphabet(string customAlphabet)
+        {
+            if (customAlphabet == null)
+            {
+                throw new ArgumentNullException(nameof(customAlphabet));
+            }
+
+            Dictionary<char, uint> newCharToValueMap = new Dictionary<char, uint>();
+
+            for (int i = 0; i < customAlphabet.Length; i++)
+            {
+                if (newCharToValueMap.ContainsKey(customAlphabet[i]))
+                {
+                    throw new ArgumentException(nameof(customAlphabet), "Duplicate value detected in the new alphabet.");
+                }
+
+                if (Char.IsWhiteSpace(customAlphabet[i]) || Char.IsSurrogate(customAlphabet[i]) || (int)customAlphabet[i] > 127)
+                {
+                    throw new ArgumentException(nameof(customAlphabet), $"Forbidden character type detected in the new alphabet: {customAlphabet[i]}.");
+                }
+
+                newCharToValueMap[customAlphabet[i]] = (uint)i;
+            }
+
+            alphabet = customAlphabet;
+            charToValueMap = newCharToValueMap;
+        }
     }
 }

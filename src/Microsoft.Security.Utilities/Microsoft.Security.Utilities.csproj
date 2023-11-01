@@ -18,6 +18,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DocumentationFile>C:\Users\User\RiderProjects\Fork\bld\bin\AnyCPU_Debug\Microsoft.Security.Utilities\Microsoft.Security.Utilities.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup Condition="$(TargetFramework) == 'netstandard2.0'">
     <PackageReference Include="System.Memory" Version="4.5.4" />
   </ItemGroup>
