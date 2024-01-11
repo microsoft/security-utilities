@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
@@ -10,7 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Security.Utilities;
 
-[TestClass]
+[TestClass, ExcludeFromCodeCoverage]
 public class RegexPatternTests
 {
     private const string Id = nameof(Id);
