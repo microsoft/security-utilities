@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <IsTestProject>true</IsTestProject>
-    <TargetFrameworks>net45;net452;net461;net472;netcoreapp3.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>net45;net5.0</TargetFrameworks>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 

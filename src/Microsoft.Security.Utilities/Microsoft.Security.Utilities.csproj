@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <IsPackable>true</IsPackable>
-    <TargetFrameworks>net45;net452;netstandard2.0;netstandard2.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>net45;net5.0</TargetFrameworks>
     <EnableNETAnalyzers>false</EnableNETAnalyzers>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
@@ -14,13 +14,9 @@
     <PackageId>$(RootNamespace)</PackageId>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(TargetFramework) == 'net452' OR $(TargetFramework) == 'net45'">
+  <PropertyGroup Condition=" $(TargetFramework) == 'net45'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-
-  <ItemGroup Condition="$(TargetFramework) == 'netstandard2.0'">
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Remove="stylecop.json" />
@@ -35,6 +31,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 
   <ItemGroup>

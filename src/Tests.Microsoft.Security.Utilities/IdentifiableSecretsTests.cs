@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,7 +15,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Security.Utilities
 {
-    [TestClass]
+    [TestClass, ExcludeFromCodeCoverage]
     public class IdentifiableSecretsTests
     {
         private static Random s_random;
