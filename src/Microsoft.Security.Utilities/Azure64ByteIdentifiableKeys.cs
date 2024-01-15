@@ -123,7 +123,7 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
             return ("SEC101/184", "AzureApimIdentifiableRepositoryKey");
         }
 
-        throw new ArgumentException("Received a match that was not an APIM secret.");
+        return ("SEC102/102", "Unclassified64ByteBase64String");
     }
 
     private const string TerminalCharactersFor64ByteKey = "AQgw";

@@ -48,8 +48,7 @@ internal sealed class AzureSearchIdentifiableKeys : RegexPattern
             return ("SEC101/167", "AzureSearchIdentifiableAdminKey");
         }
 
-        // Received a match that was not an APIM secret.
-        return null;
+        return ("SEC102/101", "Unclassified32ByteBase64String");
     }
 
     public override IEnumerable<string> GenerateTestExamples()

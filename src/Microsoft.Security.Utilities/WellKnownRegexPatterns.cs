@@ -169,7 +169,7 @@ internal static class WellKnownRegexPatterns
     {
         return new("SEC101/050",
                    nameof(NpmAuthorKey),
-                   DetectionMetadata.HighEntropy,
+                   DetectionMetadata.HighConfidence | DetectionMetadata.HighEntropy,
                    @$"{PrefixBase62}(?<refine>npm_[{Base62}]{{36}}){SuffixBase62}",
                    TimeSpan.FromDays(365 * 2),
                    sampleGenerator: () => new[] { $"npm_{RandomBase62(36)}" });
