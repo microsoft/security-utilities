@@ -20,9 +20,9 @@ internal sealed class AzureSearchIdentifiableKeys : RegexPattern
 {
     public AzureSearchIdentifiableKeys()
     {
-        Pattern = $@"{WellKnownPatterns.PrefixAllBase64}" +
-                  $@"(?<refine>[{WellKnownPatterns.Base62}]{{42}}{IdentifiableMetadata.AzureSearchSignature}[A-D][{WellKnownPatterns.Base62}]{{5}})" +
-                  $@"{WellKnownPatterns.SuffixAllBase64}";
+        Pattern = $@"{WellKnownRegexPatterns.PrefixAllBase64}" +
+                  $@"(?<refine>[{WellKnownRegexPatterns.Base62}]{{42}}{IdentifiableMetadata.AzureSearchSignature}[A-D][{WellKnownRegexPatterns.Base62}]{{5}})" +
+                  $@"{WellKnownRegexPatterns.SuffixAllBase64}";
 
         Regex = new Regex(Pattern, DefaultRegexOptions);
 

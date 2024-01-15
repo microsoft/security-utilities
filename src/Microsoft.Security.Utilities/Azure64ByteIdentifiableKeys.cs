@@ -24,9 +24,9 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
 {
     public Azure64ByteIdentifiableKeys()
     {
-        Pattern = $@"{WellKnownPatterns.PrefixAllBase64}" +
-                  $@"(?<refine>[{WellKnownPatterns.Base64}]{{76}}(APIM|ACDb|\+(ABa|AMC|ASt))[{WellKnownPatterns.Base64}]{{5}}[AQgw]==)" +
-                  $@"{WellKnownPatterns.SuffixAllBase64}";
+        Pattern = $@"{WellKnownRegexPatterns.PrefixAllBase64}" +
+                  $@"(?<refine>[{WellKnownRegexPatterns.Base64}]{{76}}(APIM|ACDb|\+(ABa|AMC|ASt))[{WellKnownRegexPatterns.Base64}]{{5}}[AQgw]==)" +
+                  $@"{WellKnownRegexPatterns.SuffixAllBase64}";
 
         Regex = new Regex(Pattern, DefaultRegexOptions);
 
@@ -79,7 +79,7 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
             int index = bytes[0] % TerminalCharactersFor64ByteKey.Length;
 
             char terminal = TerminalCharactersFor64ByteKey[index];
-            yield return $"{WellKnownPatterns.RandomBase64(76)}{sniffLiteral}{WellKnownPatterns.RandomBase64(5)}{terminal}==";
+            yield return $"{WellKnownRegexPatterns.RandomBase64(76)}{sniffLiteral}{WellKnownRegexPatterns.RandomBase64(5)}{terminal}==";
         }
 
         const string signature = IdentifiableMetadata.AzureApimSignature;

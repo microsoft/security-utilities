@@ -132,7 +132,7 @@ internal static class IdentifiableMetadata
         Encoding latin1Encoding = Encoding.GetEncoding("ISO-8859-1");
         byte[] input = latin1Encoding.GetBytes(textToChecksum);
 
-#if NET45 || NET452 || NET452_OR_GREATER
+#if !NET5_0_OR_GREATER
         int checksum = Marvin.ComputeHash32(input, AadClientAppChecksumSeed, 0, input.Length);
 #else
         int checksum = Marvin.ComputeHash32(input, AadClientAppChecksumSeed);
@@ -441,7 +441,7 @@ internal static class IdentifiableMetadata
         }
         catch (FormatException) { return false; }
 
-#if NET45 || NET452
+#if !NET5_0_OR_GREATER
         int checksum = Marvin.ComputeHash32(bytes, checksumSeed, 0, bytes.Length);
 #else
         int checksum = Marvin.ComputeHash32(new ReadOnlySpan<byte>(bytes), checksumSeed);

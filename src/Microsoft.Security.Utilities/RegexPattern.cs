@@ -194,7 +194,7 @@ internal class RegexPattern
 
                 if (match.Success)
                 {
-                    Group group = match.Groups["refine"] ?? match;
+                    Group group = match.Groups["refine"].Length > 0 ? match.Groups["refine"] : match;
                     match = default;
 
                     string? sha256Hash = generateSha256Hashes && DetectionMetadata.HasFlag(DetectionMetadata.HighEntropy)
@@ -212,7 +212,14 @@ internal class RegexPattern
 
                     startIndex = group.Index + 1;
 
-                    yield return new Detection(id, name, group.Index, group.Length, DetectionMetadata, RotationPeriod, sha256Hash);
+                    yield return new Detection(id,
+                                               name, 
+                                               group.Index, 
+                                               group.Length,
+                                               DetectionMetadata,
+                                               RotationPeriod,
+                                               sha256Hash,
+                                               "+++");
                 }
                 else
                 {

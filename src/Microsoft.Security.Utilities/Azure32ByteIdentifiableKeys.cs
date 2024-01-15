@@ -35,9 +35,9 @@ internal sealed class Azure32ByteIdentifiableKeys : RegexPattern
 {
     public Azure32ByteIdentifiableKeys()
     {
-        Pattern = $@"{WellKnownPatterns.PrefixAllBase64}" +
-                  $@"(?<refine>[{WellKnownPatterns.Base64}]{{33}}(AIoT|\+(ASb|AEh|ARm))[A-P][{WellKnownPatterns.Base64}]{{5}}=)" +
-                  $@"{WellKnownPatterns.SuffixAllBase64}";
+        Pattern = $@"{WellKnownRegexPatterns.PrefixAllBase64}" +
+                  $@"(?<refine>[{WellKnownRegexPatterns.Base64}]{{33}}(AIoT|\+(ASb|AEh|ARm))[A-P][{WellKnownRegexPatterns.Base64}]{{5}}=)" +
+                  $@"{WellKnownRegexPatterns.SuffixAllBase64}";
 
         Regex = new Regex(Pattern, DefaultRegexOptions);
 
@@ -92,7 +92,7 @@ internal sealed class Azure32ByteIdentifiableKeys : RegexPattern
             index = bytes[0] % 4;
 
             char terminal = TerminalCharactersFor32ByteKey[index];
-            yield return $"{WellKnownPatterns.RandomBase64(33)}{sniffLiteral}{terminal}{WellKnownPatterns.RandomBase64(5)}=";
+            yield return $"{WellKnownRegexPatterns.RandomBase64(33)}{sniffLiteral}{terminal}{WellKnownRegexPatterns.RandomBase64(5)}=";
         }
 
         yield return IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureIotHubChecksumSeed,

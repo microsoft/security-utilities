@@ -33,9 +33,9 @@ internal sealed class Unclassified64ByteBase64String : RegexPattern
 
     public Unclassified64ByteBase64String()
     {
-        Pattern = $@"{WellKnownPatterns.PrefixAllBase64}" +
-                  $@"(?<refine>[{WellKnownPatterns.Base64}]{{86}}==)" +
-                  $@"{WellKnownPatterns.SuffixAllBase64}";
+        Pattern = $@"{WellKnownRegexPatterns.PrefixAllBase64}" +
+                  $@"(?<refine>[{WellKnownRegexPatterns.Base64}]{{86}}==)" +
+                  $@"{WellKnownRegexPatterns.SuffixAllBase64}";
 
         Regex = new Regex(Pattern, DefaultRegexOptions);
 
@@ -46,7 +46,7 @@ internal sealed class Unclassified64ByteBase64String : RegexPattern
 
     public override IEnumerable<string> GenerateTestExamples()
     {
-        yield return $"{WellKnownPatterns.RandomBase64(86)}==";
+        yield return $"{WellKnownRegexPatterns.RandomBase64(86)}==";
     }
 
     public override IEnumerable<Detection> GetDetections(string input, bool generateSha256Hashes)

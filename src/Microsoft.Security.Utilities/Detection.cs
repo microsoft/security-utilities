@@ -4,14 +4,12 @@
 #nullable enable
 
 using System;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Microsoft.Security.Utilities;
 
-internal struct Detection : IEquatable<Detection>
+internal class Detection : IEquatable<Detection>
 {
-    public Detection(string id, string name, int start, int length, DetectionMetadata metadata, TimeSpan rotationPeriod, string? sha256Hash = null, string token = DefaultRedactionToken)
+    public Detection(string id, string name, int start, int length, DetectionMetadata metadata, TimeSpan rotationPeriod = default, string? sha256Hash = null, string token = DefaultRedactionToken)
     {
         Id = id;
         Name = name;
@@ -33,13 +31,13 @@ internal struct Detection : IEquatable<Detection>
     /// </summary>
     public string Name { get; set; }
 
-    public readonly string Moniker => $"{Id}.{Name}";
+    public string Moniker => $"{Id}.{Name}";
 
     public int Start { get; set; }
 
     public int Length { get; set; }
 
-    public readonly int End => Start + Length;
+    public int End => Start + Length;
 
     public DetectionMetadata Metadata { get; set; }
 
@@ -49,10 +47,12 @@ internal struct Detection : IEquatable<Detection>
 
     private string? m_redactionToken;
 
-    public readonly string RedactionToken => m_redactionToken ?? DefaultRedactionToken;
+    public string RedactionToken => m_redactionToken ?? DefaultRedactionToken;
 
-    public readonly bool Equals(Detection other)
+    public bool Equals(Detection other)
     {
+        if (other == null) { return false; }
+
         // RotationPeriod is consciously excluded from this computation.
         return string.Equals(Id, other.Id, StringComparison.Ordinal)
             && string.Equals(Name, other.Name, StringComparison.Ordinal)
@@ -64,7 +64,7 @@ internal struct Detection : IEquatable<Detection>
     }
 
     /// <inheritdoc/>
-    public override readonly bool Equals(object? obj)
+    public override bool Equals(object? obj)
     {
         if (obj is Detection detection)
         {
@@ -74,7 +74,7 @@ internal struct Detection : IEquatable<Detection>
         return false;
     }
 
-    public override readonly int GetHashCode()
+    public override int GetHashCode()
     {
         int hashCode = 17;
 
@@ -128,6 +128,11 @@ internal struct Detection : IEquatable<Detection>
 
     public static bool operator ==(Detection left, Detection right)
     {
+        if (object.Equals(left, null))
+        {
+            return object.Equals(right, null);
+        }
+
         return left.Equals(right);
     }
 
@@ -138,7 +143,7 @@ internal struct Detection : IEquatable<Detection>
 
     public const string DefaultRedactionToken = "***";
 
-    public override readonly string ToString()
+    public override string ToString()
     {
         return $"{Id}.{Name}:{Start}-{Start + Length}:{Metadata}:{Sha256Hash}:{RedactionToken}";
     }

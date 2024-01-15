@@ -364,12 +364,11 @@ public class RegexPatternTests
 
         // It is critical that our hashing is consistent across the library's .NET FX
         // and .NET 5.0 versions, so we hard-code this test to ensure things are in sync.
-        Assert.AreEqual(replacement.Sha256Hash,
-                        "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855");
+        Assert.AreEqual("BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD", replacement.Sha256Hash);
     }
 
     [TestMethod]
-    public void GetReplacements_ReturnsEmpty_WhenNoMatchesExist()
+    public void RegexPatterns_GetDetections_ReturnsEmpty_WhenNoMatchesExist()
     {
         // Arrange
         var secret = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc");
@@ -383,7 +382,7 @@ public class RegexPatternTests
     }
 
     [TestMethod]
-    public void GetReplacements_Returns_DefaultRedactionToken()
+    public void RegexPatterns_GetDetections_Returns_DefaultRedactionToken()
     {
         // Arrange
         var secret = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc");
@@ -394,11 +393,11 @@ public class RegexPatternTests
 
         // Assert
         Assert.AreEqual(1, actual: replacements.Count());
-        Assert.AreEqual("***", actual: replacements.First().RedactionToken);
+        Assert.AreEqual("+++", actual: replacements.First().RedactionToken);
     }
 
     [TestMethod]
-    public void GetReplacements_Returns_RefinedDetection()
+    public void RegexPatterns_GetDetections_Returns_RefinedDetection()
     {
         // Arrange
         var secret = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "a(?<refine>b)c");
@@ -417,7 +416,7 @@ public class RegexPatternTests
     }
 
     [TestMethod]
-    public void GetReplacements_Returns_SecureTelemetryTokenValue_WhenMonikerSpecified()
+    public void RegexPatterns_GetDetections_Returns_SecureTelemetryTokenValue_WhenMonikerSpecified()
     {
         // Arrange
         var ruleMoniker = $"{Id}.{Name}";
@@ -432,7 +431,7 @@ public class RegexPatternTests
         // Assert
         Assert.AreEqual(1, actual: replacements.Count());
 //        Assert.AreEqual($"{ruleMoniker}:{hash}", actual: replacements.First().RedactionToken);
-        Assert.AreEqual($"***", actual: replacements.First().RedactionToken);
+        Assert.AreEqual($"+++", actual: replacements.First().RedactionToken);
     }
 
     [TestMethod]

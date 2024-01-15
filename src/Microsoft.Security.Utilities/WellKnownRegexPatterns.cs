@@ -18,7 +18,7 @@ namespace Microsoft.Security.Utilities;
 #pragma warning disable SA1203  // Constant fields should appear before non-constant fields.
 #pragma warning disable SYSLIB0023  // 'RNGCryptoServiceProvider' is obsolete.
 
-internal static class WellKnownPatterns
+internal static class WellKnownRegexPatterns
 {
     [ThreadStatic]
     private static StringBuilder s_stringBuilder;
@@ -131,7 +131,7 @@ internal static class WellKnownPatterns
         return new("SEC101/176",
                    nameof(AzureContainerRegistryIdentifiableKey),
                    DetectionMetadata.Identifiable,
-                   $@"{WellKnownPatterns.PrefixAllBase64}(?<refine>[{WellKnownPatterns.Base64}]{{42}}\+ACR[A-D][{WellKnownPatterns.Base64}]{{5}}){WellKnownPatterns.SuffixAllBase64}",
+                   $@"{WellKnownRegexPatterns.PrefixAllBase64}(?<refine>[{WellKnownRegexPatterns.Base64}]{{42}}\+ACR[A-D][{WellKnownRegexPatterns.Base64}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}",
                    TimeSpan.FromDays(365 * 2),
                    sampleGenerator: () => new[]
                    {
@@ -144,7 +144,7 @@ internal static class WellKnownPatterns
         return new("SEC101/154",
                    nameof(AzureCacheForRedisIdentifiableKey),
                    DetectionMetadata.Identifiable,
-                   $@"{WellKnownPatterns.PrefixAllBase64}(?<refine>[{WellKnownPatterns.Base62}]{{33}}{IdentifiableMetadata.AzureCacheForRedisSignature}[A-P][{WellKnownPatterns.Base62}]{{5}}=){WellKnownPatterns.SuffixAllBase64}",
+                   $@"{WellKnownRegexPatterns.PrefixAllBase64}(?<refine>[{WellKnownRegexPatterns.Base62}]{{33}}{IdentifiableMetadata.AzureCacheForRedisSignature}[A-P][{WellKnownRegexPatterns.Base62}]{{5}}=){WellKnownRegexPatterns.SuffixAllBase64}",
                    TimeSpan.FromDays(365 * 2),
                    sampleGenerator: () => new[]
                    {

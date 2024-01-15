@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-#if !NET45
+#if NET5_0_OR_GREATER
 
 using System;
 using System.Buffers.Text;
