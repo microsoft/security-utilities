@@ -1,9 +1,9 @@
-name: Playwright Tests
+name: Test Marvin (NodeJS)
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 jobs:
   test:
     timeout-minutes: 60
@@ -15,8 +15,7 @@ jobs:
         node-version: 18
     - name: Install dependencies
       run: npm ci
-    # - name: Install Playwright Browsers
-    #   run: npx playwright install --with-deps
+      
     - name: Run Playwright tests
       run: npx playwright test
     - uses: actions/upload-artifact@v3
