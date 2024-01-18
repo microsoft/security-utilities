@@ -1,0 +1,14 @@
+{
+  "name": "@microsoft/security-utilities-marvin",
+  "version": "0.0.1-alpha",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.41.0",
+    "@types/node": "^20.11.5"
+  }
+}
