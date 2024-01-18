@@ -1,4 +1,13 @@
 export class Marvin {
+  public static ComputeHash32(input: Uint8Array, seed: bigint): number {
+    const hash = Marvin.ComputeHash(input, seed);
+
+    let lo: Uint32 = Uint32.from(Number(hash & 0xffffffffn));
+    let hi: Uint32 = Uint32.from(Number((hash >> 32n) & 0xffffffffn));
+
+    return hi.XOR(lo).toRaw();
+  }
+
   public static ComputeHash(input: Uint8Array, seed: bigint): bigint {
     let p0: Uint32 = Uint32.from(Number(seed & 0xffffffffn));
     let p1: Uint32 = Uint32.from(Number((seed >> 32n) & 0xffffffffn));
