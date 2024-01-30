@@ -104,7 +104,7 @@ internal static class WellKnownRegexPatterns
     {
         return new("SEC101/156",
             "AadClientAppSecret",
-            DetectionMetadata.HighConfidence | DetectionMetadata.HighEntropy,
+            DetectionMetadata.EmbeddedChecksum | DetectionMetadata.HighEntropy,
             $"{PrefixUrlUnreserved}(?<refine>[{RegexEncodedUrlUnreserved}]{{3}}7Q~[{RegexEncodedUrlUnreserved}]{{31}}){SuffixUrlUnreserved}",
             TimeSpan.FromDays(365 * 2),
             new HashSet<string>(new[] { "7Q~" }),
@@ -159,7 +159,7 @@ internal static class WellKnownRegexPatterns
     {
         return new("SEC101/031",
                    nameof(NuGetApiKey),
-                   DetectionMetadata.HighConfidence | DetectionMetadata.HighEntropy,
+                   DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy,
                    "(^|[^0-9a-z])(?<refine>oy2[a-p][0-9a-z]{15}[aq][0-9a-z]{11}[eu][bdfhjlnprtvxz357][a-p][0-9a-z]{11}[aeimquy4])([^aeimquy4]|$)",
                    TimeSpan.FromDays(365 * 2),
                    sampleGenerator: () => new[] { $"oy2a{RandomLowercase(15)}a{RandomLowercase(11)}e7a{RandomLowercase(11)}a" });
@@ -169,7 +169,7 @@ internal static class WellKnownRegexPatterns
     {
         return new("SEC101/050",
                    nameof(NpmAuthorKey),
-                   DetectionMetadata.HighConfidence | DetectionMetadata.HighEntropy,
+                   DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy,
                    @$"{PrefixBase62}(?<refine>npm_[{Base62}]{{36}}){SuffixBase62}",
                    TimeSpan.FromDays(365 * 2),
                    sampleGenerator: () => new[] { $"npm_{RandomBase62(36)}" });

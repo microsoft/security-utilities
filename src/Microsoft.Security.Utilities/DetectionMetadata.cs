@@ -25,8 +25,6 @@ internal enum DetectionMetadata
 
     ClearSurroundingContext = 1 << 4,
 
-    HighConfidence = FixedSignature | EmbeddedChecksum | ClearSurroundingContext,
-
     Identifiable = FixedSignature | EmbeddedChecksum | HighEntropy,
 
     RequiresRotation = 1 << 5,

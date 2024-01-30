@@ -9,7 +9,17 @@ namespace Microsoft.Security.Utilities;
 
 internal class Detection : IEquatable<Detection>
 {
-    public Detection(string id, string name, int start, int length, DetectionMetadata metadata, TimeSpan rotationPeriod = default, string? sha256Hash = null, string token = DefaultRedactionToken)
+    public Detection()
+    {
+
+    }
+    public Detection(Detection other)
+        : this(other?.Id, other?.Name, other?.Start ?? default, other?.Length ?? default, other?.Metadata ?? default, other?.RotationPeriod ?? default, other?.Sha256Hash ?? default, other?.RedactionToken)
+    {
+        other = other ?? throw new ArgumentNullException(nameof(other));
+    }
+
+    public Detection(string? id, string? name, int start, int length, DetectionMetadata metadata, TimeSpan rotationPeriod = default, string? sha256Hash = null, string? token = DefaultRedactionToken)
     {
         Id = id;
         Name = name;
@@ -24,12 +34,12 @@ internal class Detection : IEquatable<Detection>
     /// <summary>
     /// Gets or sets an opaque, stable identifier for the pattern (corresponding to a SARIF 'reportingDescriptorReference.id' value).
     /// </summary>
-    public string Id { get; set; }
+    public string? Id { get; set; }
 
     /// <summary>
     /// Gets or sets a readable name for the detection.
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     public string Moniker => $"{Id}.{Name}";
 
@@ -47,20 +57,30 @@ internal class Detection : IEquatable<Detection>
 
     private string? m_redactionToken;
 
-    public string RedactionToken => m_redactionToken ?? DefaultRedactionToken;
+    public string RedactionToken
+    {
+        get
+        {
+            return m_redactionToken ?? DefaultRedactionToken;
+        }
+        set
+        {
+            m_redactionToken = value;
+        }
+    }
 
     public bool Equals(Detection other)
     {
         if (other == null) { return false; }
 
-        // RotationPeriod is consciously excluded from this computation.
         return string.Equals(Id, other.Id, StringComparison.Ordinal)
             && string.Equals(Name, other.Name, StringComparison.Ordinal)
             && string.Equals(Sha256Hash, other.Sha256Hash, StringComparison.Ordinal)
             && string.Equals(RedactionToken, other.RedactionToken, StringComparison.Ordinal)
             && Metadata.Equals(other.Metadata)
             && int.Equals(Start, other.Start)
-            && int.Equals(Length, other.Length);
+            && int.Equals(Length, other.Length)
+            && TimeSpan.Equals(RotationPeriod, other.RotationPeriod);
     }
 
     /// <inheritdoc/>
@@ -121,6 +141,7 @@ internal class Detection : IEquatable<Detection>
             hashCode = (hashCode * 31) + Start.GetHashCode();
             hashCode = (hashCode * 31) + Length.GetHashCode();
             hashCode = (hashCode * 31) + Metadata.GetHashCode();
+            hashCode = (hashCode * 31) + RotationPeriod.GetHashCode();
         }
 
         return hashCode;
@@ -143,8 +164,10 @@ internal class Detection : IEquatable<Detection>
 
     public const string DefaultRedactionToken = "***";
 
+#if DEBUG
     public override string ToString()
     {
         return $"{Id}.{Name}:{Start}-{Start + Length}:{Metadata}:{Sha256Hash}:{RedactionToken}";
     }
+#endif
 }

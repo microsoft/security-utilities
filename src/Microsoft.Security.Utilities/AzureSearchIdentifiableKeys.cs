@@ -48,7 +48,7 @@ internal sealed class AzureSearchIdentifiableKeys : RegexPattern
             return ("SEC101/167", "AzureSearchIdentifiableAdminKey");
         }
 
-        return ("SEC102/101", "Unclassified32ByteBase64String");
+        return null;
     }
 
     public override IEnumerable<string> GenerateTestExamples()

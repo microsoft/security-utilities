@@ -53,7 +53,7 @@ internal sealed class Unclassified32ByteBase64String : RegexPattern
         foreach (Detection detection in base.GetDetections(input, generateSha256Hashes))
         {
             string match = input.Substring(detection.Start, detection.Length);
-            if (azure32ByteIdentifiableKeys.GetDetections(match, generateSha256Hashes).FirstOrDefault() != default)
+            if (!object.Equals(azure32ByteIdentifiableKeys.GetDetections(match, generateSha256Hashes).FirstOrDefault(), default))
             {
                 continue;
             }

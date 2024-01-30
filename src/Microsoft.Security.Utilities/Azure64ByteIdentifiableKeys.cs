@@ -46,6 +46,11 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
 
     public override (string id, string name)? GetMatchIdAndName(string match)
     {
+        if (match.Length < 81)
+        {
+            return null;
+        }
+
         string signature = match.Substring(76, 4);
 
         return signature switch
@@ -55,17 +60,12 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
             IdentifiableMetadata.AzureStorageSignature => ("SEC101/152", "AzureStorageAccountIdentifiableKey"),
             IdentifiableMetadata.AzureCosmosDBSignature => ("SEC101/160", "AzureCosmosDbIdentifiableKeyResource"),
             IdentifiableMetadata.AzureMLClassicSignature => ("SEC101/170", "AzureMLWebServiceClassicIdentifiableKey"),
-            _ => throw new ArgumentException($"Unknown signature: {signature}"),
+            _ => null,
         };
     }
 
     public override IEnumerable<string> GenerateTestExamples()
     {
-        if (SniffLiterals == null)
-        {
-            yield break;
-        }
-
         foreach (string sniffLiteral in SniffLiterals)
         {
             if (sniffLiteral == "APIM")
@@ -101,7 +101,7 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
                                                                    signature);
     }
 
-    private static (string id, string name) GetApimMatchIdAndName(string match)
+    private static (string id, string name)? GetApimMatchIdAndName(string match)
     {
         if (IdentifiableMetadata.IsAzureApimIdentifiableDirectManagementKey(match))
         {
@@ -110,7 +110,7 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
 
         if (IdentifiableMetadata.IsAzureApimIdentifiableSubscriptionKey(match))
         {
-            return ("SEC101/182", "AzureApimIdentifiableRepositoryKey");
+            return ("SEC101/182", "AzureApimIdentifiableSubscriptionKey");
         }
 
         if (IdentifiableMetadata.IsAzureApimIdentifiableGatewayKey(match))
@@ -123,7 +123,7 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
             return ("SEC101/184", "AzureApimIdentifiableRepositoryKey");
         }
 
-        return ("SEC102/102", "Unclassified64ByteBase64String");
+        return null;
     }
 
     private const string TerminalCharactersFor64ByteKey = "AQgw";

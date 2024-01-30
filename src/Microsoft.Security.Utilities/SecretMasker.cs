@@ -4,16 +4,21 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
 
 namespace Microsoft.Security.Utilities;
 
-#nullable enable
-
+/// <summary>
+/// A callback method that accepts and encodes or escapes a literal.
+/// </summary>
+/// <param name="literal">The string literal to escape or encode.</param>
+/// <returns>The escaped or encoded literal.</returns>
 public delegate string LiteralEncoder(string literal);
 
+[ExcludeFromCodeCoverage]
 internal class SecretMasker : ISecretMasker, IDisposable
 {
     public SecretMasker(IEnumerable<RegexPattern>? regexSecrets, bool generateSha256Hashes = false)
@@ -35,6 +40,11 @@ internal class SecretMasker : ISecretMasker, IDisposable
         : this(new HashSet<RegexPattern>())
     {
     }
+
+    // We don't permit secrets great than 5 characters in length to be
+    // skipped at masking time. The secrets that will be ignored when
+    // masking will N - 1 of this property value.
+    public static int MinimumSecretLengthCeiling { get; set; }
 
     private SecretMasker(SecretMasker copy)
     {
@@ -63,7 +73,7 @@ internal class SecretMasker : ISecretMasker, IDisposable
     public virtual HashSet<RegexPattern> RegexPatterns { get; protected set; }
 
     /// <summary>
-    /// Total time in ticks spent masking content for the lifetime of this masker instance.
+    /// Gets the total time in ticks spent masking content for the lifetime of this masker instance.
     /// </summary>
     public long ElapsedMaskingTime { get; private set; }
 
@@ -87,7 +97,7 @@ internal class SecretMasker : ISecretMasker, IDisposable
         }
     }
 
-    public string? MaskSecrets(string input)
+    public string MaskSecrets(string input)
     {
         if (input == null)
         {
@@ -104,10 +114,10 @@ internal class SecretMasker : ISecretMasker, IDisposable
 
         // Merge positions into ranges of characters to replace.
         var currentDetections = new List<Detection>();
-        Detection currentDetection = default;
+        Detection? currentDetection = default;
         foreach (Detection detection in detections.OrderBy(x => x.Start))
         {
-            if (currentDetection == null)
+            if (object.Equals(currentDetection, null))
             {
                 currentDetection =
                     new Detection(detection.Id,
@@ -125,7 +135,7 @@ internal class SecretMasker : ISecretMasker, IDisposable
             {
                 if (detection.Start <= currentDetection.End)
                 {
-                    // Overlapping case.
+                    // Overlapping case or contiguous case.
                     currentDetection.Length = Math.Max(currentDetection.End, detection.End) - currentDetection.Start;
                 }
                 else
@@ -170,20 +180,16 @@ internal class SecretMasker : ISecretMasker, IDisposable
     /// <summary>
     /// Gets or sets the minimum allowable size of a string that's a candidate for masking.
     /// </summary>
-    virtual public int MinimumSecretLength { get; set; }
-
-    // We don't permit secrets great than 5 characters in length to be
-    // skipped at masking time. The secrets that will be ignored when
-    // masking will N - 1 of this property value.
-    public static int MinimumSecretLengthCeiling { get; set; }
+    public virtual int MinimumSecretLength { get; set; }
 
     /// <summary>
     /// This implementation assumes no more than one thread is adding regexes, values, or encoders at any given time.
     /// </summary>
-    public void AddValue(String value)
+    [ExcludeFromCodeCoverage]
+    public void AddValue(string value)
     {
         // Test for empty.
-        if (String.IsNullOrEmpty(value))
+        if (string.IsNullOrEmpty(value))
         {
             return;
         }
@@ -221,8 +227,8 @@ internal class SecretMasker : ISecretMasker, IDisposable
         // Compute the encoded values.
         foreach (LiteralEncoder literalEncoder in literalEncoders)
         {
-            String encodedValue = literalEncoder(value);
-            if (!String.IsNullOrEmpty(encodedValue) && encodedValue.Length >= MinimumSecretLength)
+            string encodedValue = literalEncoder(value);
+            if (!string.IsNullOrEmpty(encodedValue) && encodedValue.Length >= MinimumSecretLength)
             {
                 secretLiterals.Add(new SecretLiteral(encodedValue));
             }
@@ -234,10 +240,10 @@ internal class SecretMasker : ISecretMasker, IDisposable
             m_lock.EnterWriteLock();
 
             // Add the values.
-            m_explicitlyAddedSecretLiterals.Add(secretLiterals[0]);
+            _ = m_explicitlyAddedSecretLiterals.Add(secretLiterals[0]);
             foreach (SecretLiteral secretLiteral in secretLiterals)
             {
-                m_encodedSecretLiterals.Add(secretLiteral);
+                _ = m_encodedSecretLiterals.Add(secretLiteral);
             }
         }
         finally
@@ -281,8 +287,8 @@ internal class SecretMasker : ISecretMasker, IDisposable
         var encodedSecrets = new List<SecretLiteral>();
         foreach (SecretLiteral originalSecret in originalSecrets)
         {
-            String encodedValue = encoder(originalSecret.m_value);
-            if (!String.IsNullOrEmpty(encodedValue) && encodedValue.Length >= MinimumSecretLength)
+            string encodedValue = encoder(originalSecret.m_value);
+            if (!string.IsNullOrEmpty(encodedValue) && encodedValue.Length >= MinimumSecretLength)
             {
                 encodedSecrets.Add(new SecretLiteral(encodedValue));
             }
@@ -294,12 +300,12 @@ internal class SecretMasker : ISecretMasker, IDisposable
             m_lock.EnterWriteLock();
 
             // Add the encoder.
-            m_literalEncoders.Add(encoder);
+            _ = m_literalEncoders.Add(encoder);
 
             // Add the values.
             foreach (SecretLiteral encodedSecret in encodedSecrets)
             {
-                m_encodedSecretLiterals.Add(encodedSecret);
+                _ = m_encodedSecretLiterals.Add(encodedSecret);
             }
         }
         finally
@@ -364,6 +370,11 @@ internal class SecretMasker : ISecretMasker, IDisposable
         GC.SuppressFinalize(this);
     }
 
+    internal SecretMasker Clone()
+    {
+        return new SecretMasker(this);
+    }
+
     protected virtual void Dispose(bool disposing)
     {
         if (disposing && !m_disposed)
@@ -373,15 +384,11 @@ internal class SecretMasker : ISecretMasker, IDisposable
         }
     }
 
-    internal SecretMasker Clone()
-    {
-        return new SecretMasker(this);
-    }
-
-    private bool m_disposed;
     private readonly bool m_generateSha256Hashes;
     private readonly HashSet<LiteralEncoder> m_literalEncoders;
     private readonly HashSet<SecretLiteral> m_encodedSecretLiterals;
     private readonly HashSet<SecretLiteral> m_explicitlyAddedSecretLiterals;
-    private ReaderWriterLockSlim m_lock = new(LockRecursionPolicy.NoRecursion);
+    private readonly ReaderWriterLockSlim m_lock = new(LockRecursionPolicy.NoRecursion);
+
+    private bool m_disposed;
 }

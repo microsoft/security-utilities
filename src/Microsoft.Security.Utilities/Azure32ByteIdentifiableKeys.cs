@@ -56,6 +56,11 @@ internal sealed class Azure32ByteIdentifiableKeys : RegexPattern
 
     public override (string id, string name)? GetMatchIdAndName(string match)
     {
+        if (match.Length < 38)
+        {
+            return null;
+        }
+
         string signature = match.Substring(33, 4);
 
         return signature switch
@@ -64,17 +69,12 @@ internal sealed class Azure32ByteIdentifiableKeys : RegexPattern
             IdentifiableMetadata.AzureRelaySignature => ("SEC101/173", "AzureRelayIdentifiableKey"),
             IdentifiableMetadata.AzureEventHubSignature => ("SEC101/172", "AzureEventHubIdentifiableKey"),
             IdentifiableMetadata.AzureServiceBusSignature => ("SEC101/171", "AzureServiceBusIdentifiableKey"),
-            _ => throw new ArgumentException($"Unknown signature: {signature}"),
+            _ => null,
         };
     }
 
     public override IEnumerable<string> GenerateTestExamples()
     {
-        if (SniffLiterals == null)
-        {
-            yield break;
-        }
-
         const string aiotSignature = IdentifiableMetadata.AzureIotSignature;
 
         foreach (string sniffLiteral in SniffLiterals)
