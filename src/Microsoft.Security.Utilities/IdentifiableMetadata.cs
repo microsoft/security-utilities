@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-#pragma warning disable IDE0073 // A source file contains a header that does not match the required text.
 #nullable enable
 
 // Copyright (c) Microsoft Corporation.
@@ -13,9 +12,6 @@ using System.Text;
 
 namespace Microsoft.Security.Utilities;
 
-#pragma warning disable R9A044  // Assign array of literal values to static field for improved performance.
-#pragma warning disable S109    // Assign this magic number to a variable or constant.
-#pragma warning disable S2148   // Add underscores to this numeric value for readability.
 #pragma warning disable SA1501  // Statement should not be on a single line.
 
 /// <summary>

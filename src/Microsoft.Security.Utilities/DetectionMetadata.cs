@@ -1,7 +1,7 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+﻿
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-#pragma warning disable IDE0073 // A source file contains a header that does not match the required text.
 
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.

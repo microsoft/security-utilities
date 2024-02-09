@@ -70,9 +70,7 @@ public static class IdentifiableSecrets
         // Base64UrlEncoder class) expect padding to be removed while
         // others (such as Go's Base64.URLEncoding helper) expect it to
         // exist. We therefore provide an option to express it or not.
-#pragma warning disable R9A044 // Assign array of literal values to a static field for improved performance
         return elidePadding ? secret.TrimEnd('=') : secret;
-#pragma warning restore R9A044 // Assign array of literal values to a static field for improved performance
     }
 
     /// <summary>
@@ -247,11 +245,8 @@ public static class IdentifiableSecrets
             equalsSigns = key.Substring(equalsSignIndex);
             prefixLength = equalsSignIndex - lengthOfEncodedChecksum - base64EncodedSignature.Length;
         }
-#pragma warning disable R9A044 // Assign array of literal values to a static field for improved performance
 
         string trimmedKey = key.Trim('=');
-#pragma warning restore R9A044 // Assign array of literal values to a static field for improved performance
-
         int signatureOffset = trimmedKey.Length - lengthOfEncodedChecksum - base64EncodedSignature.Length;
         if (base64EncodedSignature != trimmedKey.Substring(signatureOffset, base64EncodedSignature.Length))
         {

@@ -8,12 +8,6 @@ using System.Text;
 
 namespace Microsoft.Security.Utilities;
 
-#pragma warning disable IDE1006 // Naming rule violation.
-#pragma warning disable R9A015  // Use R9 ArgumentOutOfRangeException helper.
-#pragma warning disable R9A044  // Assign array of literal values to static field for improved performance.
-#pragma warning disable S103    // Split this long line.
-#pragma warning disable S109    // Assign this magic number to a variable or constant.
-#pragma warning disable S3995   // Convert this return type to 'System.Uri'.
 #pragma warning disable SA1202  // 'public' members should come before 'private' members.
 #pragma warning disable SA1203  // Constant fields should appear before non-constant fields.
 #pragma warning disable SYSLIB0023  // 'RNGCryptoServiceProvider' is obsolete.

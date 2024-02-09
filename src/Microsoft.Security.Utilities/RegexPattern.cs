@@ -301,9 +301,7 @@ internal class RegexPattern
     /// performance as these calls are typically much faster than
     /// equivalent regular expressions.
     /// </remarks>
-#pragma warning disable CA2227 // Change to read read-only by removing the property setter.
     public ISet<string>? SniffLiterals { get; protected set; }
-#pragma warning restore CA2227
 
     private readonly Func<string[]>? m_sampleGenerator;
 
