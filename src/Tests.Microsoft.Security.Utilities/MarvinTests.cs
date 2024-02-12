@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -9,11 +10,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Security.Utilities
 {
-    [TestClass]
+    [TestClass, ExcludeFromCodeCoverage]
     public class MarvinTests : MarvinShared
     {
-#if NET45_OR_GREATER || NETCOREAPP3_1
-
         /// <summary>
         /// Compare a Marvin checksum against a well-known test case from the native code.
         /// </summary>
@@ -30,10 +29,10 @@ namespace Microsoft.Security.Utilities
 
             long expected = 0x22c74339492769bf;
 
-#if NETCOREAPP3_1
+#if NET5_0_OR_GREATER
             long marvin = Marvin.ComputeHash(input.AsSpan(), seed);
             Assert.AreEqual(expected, marvin);
-#elif NET45_OR_GREATER
+#else
             long marvin = Marvin.ComputeHash(input, seed, 0, input.Length);
             Assert.AreEqual(expected, marvin);
 #endif
@@ -54,10 +53,10 @@ namespace Microsoft.Security.Utilities
             byte[] input = Encoding.ASCII.GetBytes(text);
 
             long expected = unchecked((long)0xa128eb7e7260aca2);
-#if NETCOREAPP3_1
+#if NET5_0_OR_GREATER
             long marvin = Marvin.ComputeHash(input.AsSpan(), seed);
             Assert.AreEqual(expected, marvin);
-#elif NET45_OR_GREATER
+#else
             long marvin = Marvin.ComputeHash(input, seed, 0, input.Length);
             Assert.AreEqual(expected, marvin);
 #endif
@@ -79,7 +78,7 @@ namespace Microsoft.Security.Utilities
 
                 long expected64 = (long)testCase.Checksum;
 
-#if NETCOREAPP3_1
+#if NET5_0_OR_GREATER
                 Span<byte> bytes = input.AsSpan();
                 long marvin64 = Marvin.ComputeHash(bytes, seed);
                 int expected32 = (int)(marvin64 ^ marvin64 >> 32);
@@ -93,7 +92,7 @@ namespace Microsoft.Security.Utilities
                 // string.GetHashCode(). This code path processes
                 // a UTF16 representation of inputs.
                 ValidateDotNetStringHashMatchesMarvin(text);
-#elif NET45_OR_GREATER
+#else
                 long marvin64 = Marvin.ComputeHash(input, seed, 0, input.Length);
                 int expected32 = (int)(marvin64 ^ marvin64 >> 32);
                 Assert.AreEqual(expected64, marvin64);
@@ -145,8 +144,6 @@ namespace Microsoft.Security.Utilities
 
 #endif
 
-#endif
-
         /// <summary>
         /// Test partial checksums of input bytes.
         /// </summary>
@@ -163,10 +160,10 @@ namespace Microsoft.Security.Utilities
                     byte[] buffer = new byte[length + 16];
                     byte[] testData = Encoding.ASCII.GetBytes(new string('+', length));
 
-#if NET45_OR_GREATER
-                    int expectedChecksum = Marvin.ComputeHash32(testData, seed, 0, testData.Length);
+#if NET5_0_OR_GREATER
+                    int expectedChecksum = Marvin.ComputeHash32(testData.AsSpan(), seed);
 #else
-                    int expectedChecksum = Marvin.ComputeHash32(testData, seed);
+                    int expectedChecksum = Marvin.ComputeHash32(testData, seed, 0, testData.Length);
 #endif
 
                     for (int j = 0; j < 16; j++)
@@ -174,27 +171,20 @@ namespace Microsoft.Security.Utilities
                         rng.GetBytes(buffer);
                         testData.CopyTo(buffer, j);
 
-#if NET45_OR_GREATER
-                        int actualChecksum = Marvin.ComputeHash32(buffer, seed, j, length);
-                        Assert.AreEqual(expectedChecksum, actualChecksum);
-#else
+#if NET5_0_OR_GREATER
                         var testDataSpan = new ReadOnlySpan<byte>(testData);
                         var bufferInternalSpan = new ReadOnlySpan<byte>(buffer, j, length);
 
-#if NETCOREAPP3_1
                         int actualChecksum = Marvin.ComputeHash32(testDataSpan, seed);
                         Assert.AreEqual(expectedChecksum, actualChecksum);
 
                         actualChecksum = Marvin.ComputeHash32(bufferInternalSpan, seed);
                         Assert.AreEqual(expectedChecksum, actualChecksum);
 #else
-                        int actualChecksum = Marvin.ComputeHash32(testDataSpan, seed);
+                        int actualChecksum = Marvin.ComputeHash32(buffer, seed, j, length);
                         Assert.AreEqual(expectedChecksum, actualChecksum);
+#endif
 
-                        actualChecksum = Marvin.ComputeHash32(bufferInternalSpan, seed);
-                        Assert.AreEqual(expectedChecksum, actualChecksum);
-#endif
-#endif
                     }
                 }
             }
@@ -222,36 +212,21 @@ namespace Microsoft.Security.Utilities
                     int testDataLength = random.Next(0, length - i);
                     byte[] testData = Encoding.ASCII.GetBytes(new string('!', testDataLength));
                     testData.CopyTo(buffer, i);
-#if NET45_OR_GREATER
+
+#if NET5_0_OR_GREATER
+                    int expectedChecksum = Marvin.ComputeHash32(testData.AsSpan(), seed);
+                    int actualChecksum = Marvin.ComputeHash32(buffer.AsSpan().Slice(start: i, length: testDataLength), seed);
+                    Assert.AreEqual(expectedChecksum, actualChecksum);
+#else
                     int expectedChecksum = Marvin.ComputeHash32(testData, seed, 0, testData.Length);
-
                     int actualChecksum = Marvin.ComputeHash32(buffer, seed, offset: i, testDataLength);
-
                     Assert.AreEqual(expectedChecksum, actualChecksum);
-#else
-                    var testDataSpan = new ReadOnlySpan<byte>(testData);
-                    var bufferInternalSpan = new ReadOnlySpan<byte>(buffer, i, testDataLength);
-                    int expectedChecksum = Marvin.ComputeHash32(testData, seed);
-
-#if NETCOREAPP3_1
-                    int actualChecksum = Marvin.ComputeHash32(testDataSpan, seed);
-                    Assert.AreEqual(expectedChecksum, actualChecksum);
-
-                    actualChecksum = Marvin.ComputeHash32(bufferInternalSpan, seed);
-                    Assert.AreEqual(expectedChecksum, actualChecksum);
-#else
-                    int actualChecksum = Marvin.ComputeHash32(testDataSpan, seed);
-                    Assert.AreEqual(expectedChecksum, actualChecksum);
-
-                    actualChecksum = Marvin.ComputeHash32(bufferInternalSpan, seed);
-                    Assert.AreEqual(expectedChecksum, actualChecksum);
-#endif
 #endif
                 }
             }
         }
 
-#if !NET45_OR_GREATER
+#if NET5_0_OR_GREATER
         /// <summary>
         /// Ensure that the Marvin checksum matches the .NET behavior. This test
         /// will only execute in cases where Marvin itself is implemented as

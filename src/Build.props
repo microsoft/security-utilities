@@ -2,7 +2,7 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Label="Build">
-    <LangVersion>8</LangVersion>
+    <LangVersion>10</LangVersion>
     <OutputSubDir>$(Platform)_$(Configuration)</OutputSubDir>
     <IntermediateOutputPath>$(MsBuildThisFileDirectory)..\bld\obj\$(OutputSubDir)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <OutputPath>$(MsBuildThisFileDirectory)..\bld\bin\$(OutputSubDir)\$(MSBuildProjectName)\</OutputPath>

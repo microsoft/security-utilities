@@ -4,6 +4,7 @@
 #if NET5_0_OR_GREATER
 
 using System;
+using System.Buffers.Text;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -21,12 +22,31 @@ namespace Microsoft.Security.Utilities
         /// Compute a Marvin hash and collapse it into a 32-bit hash.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int ComputeHash32(ReadOnlySpan<byte> data, ulong seed) => ComputeHash32(ref MemoryMarshal.GetReference(data), (uint)data.Length, (uint)seed, (uint)(seed >> 32));
+        public static long ComputeHash(ReadOnlySpan<byte> data, ulong seed)
+        {
+            uint p0 = (uint)seed;
+            uint p1 = (uint)(seed >> 32);
+            ComputeHash(ref MemoryMarshal.GetReference(data), (uint)data.Length, ref p0, ref p1);
+            return (((long)p1) << 32) | p0;
+        }
+
 
         /// <summary>
         /// Compute a Marvin hash and collapse it into a 32-bit hash.
         /// </summary>
-        public static int ComputeHash32(ref byte data, uint count, uint p0, uint p1)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int ComputeHash32(ReadOnlySpan<byte> data, ulong seed)
+        {
+            uint p0 = (uint)seed;
+            uint p1 = (uint)(seed >> 32);
+            ComputeHash(ref MemoryMarshal.GetReference(data), (uint)data.Length, ref p0, ref p1);
+            return (int)(p1 ^ p0);
+        }
+
+        /// <summary>
+        /// Compute a Marvin hash and collapse it into a 32-bit hash.
+        /// </summary>
+        private static void ComputeHash(ref byte data, uint count, ref uint p0, ref uint p1)
         {
             // Control flow of this method generally flows top-to-bottom, trying to
             // minimize the number of branches taken for large (>= 8 bytes, 4 chars) inputs.
@@ -152,7 +172,7 @@ namespace Microsoft.Security.Utilities
             Block(ref p0, ref p1);
             Block(ref p0, ref p1);
 
-            return (int)(p1 ^ p0);
+            return;
 
         InputTooSmallToEnterMainLoop:
 

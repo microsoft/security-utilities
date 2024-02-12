@@ -2,12 +2,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Security.Utilities
 {
+    [ExcludeFromCodeCoverage]
     public abstract class MarvinShared
     {
         /// <summary>

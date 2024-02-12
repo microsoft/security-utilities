@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 using FluentAssertions;
@@ -11,7 +12,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Security.Utilities
 {
-    [TestClass]
+    [TestClass, ExcludeFromCodeCoverage]
     public class CustomAlphabetEncoderTests
     {
         private const string PasswordCharacters = "abcdefghijklmnopqrstuvwxyz" +
