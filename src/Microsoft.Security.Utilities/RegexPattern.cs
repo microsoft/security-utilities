@@ -10,8 +10,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using Microsoft.RE2.Managed;
-
 namespace Microsoft.Security.Utilities;
 
 public class RegexPattern
@@ -169,7 +167,7 @@ public class RegexPattern
         return result;
     }
 
-    public virtual IEnumerable<Detection> GetDetections(string input, bool generateSha256Hashes, IRegex? regexEngine = null)
+    public virtual IEnumerable<Detection> GetDetections(string input, bool generateSha256Hashes, IRegexEngine? regexEngine = null)
     {
         if (input == null)
         {
@@ -192,10 +190,10 @@ public class RegexPattern
 
         if (runRegexes)
         {
-            regexEngine ??= RE2Regex.Instance;
+            regexEngine ??= CachedDotNetRegex.Instance;
 
             int startIndex = 0;
-            foreach (FlexMatch match in regexEngine.Matches(input, Pattern, m_regexOptions, captureGroup: "refine"))
+            foreach (UniversalMatch match in regexEngine.Matches(input, Pattern, m_regexOptions, captureGroup: "refine"))
             {
                 startIndex = match.Index + 1;
 

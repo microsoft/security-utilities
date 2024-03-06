@@ -6,8 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-using Microsoft.RE2.Managed;
-
 namespace Microsoft.Security.Utilities;
 
 #pragma warning disable SA1600  // Elements should be documented.
@@ -35,7 +33,7 @@ internal sealed class Unclassified64ByteBase64String : RegexPattern
         yield return $"{WellKnownRegexPatterns.RandomBase64(86)}==";
     }
 
-    public override IEnumerable<Detection> GetDetections(string input, bool generateSha256Hashes, IRegex regexEngine = default)
+    public override IEnumerable<Detection> GetDetections(string input, bool generateSha256Hashes, IRegexEngine regexEngine = default)
     {
         foreach (Detection detection in base.GetDetections(input, generateSha256Hashes))
         {

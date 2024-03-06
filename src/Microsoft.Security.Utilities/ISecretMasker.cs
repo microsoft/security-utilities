@@ -11,5 +11,5 @@ namespace Microsoft.Security.Utilities;
 public interface ISecretMasker
 {
     ICollection<Detection> DetectSecrets(string input);
-    string MaskSecrets(String input);
+    string MaskSecrets(string input);
 }

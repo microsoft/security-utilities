@@ -186,7 +186,6 @@ public class RegexPatternTests
         var sampleGenerator = () => { return new[] { "abc" }; };
 
         // Arrange
-        RegexOptions regexOptions = RegexOptions.IgnoreCase;
         var secret1 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", sampleGenerator: sampleGenerator);
         var secret2 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", sampleGenerator: sampleGenerator);
 

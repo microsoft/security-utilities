@@ -9,8 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-using Microsoft.RE2.Managed;
-
 #nullable enable
 
 namespace Microsoft.Security.Utilities;
@@ -25,9 +23,9 @@ public delegate string LiteralEncoder(string literal);
 [ExcludeFromCodeCoverage]
 public class SecretMasker : ISecretMasker, IDisposable
 {
-    IRegex? _regexEngine;
+    IRegexEngine? _regexEngine;
 
-    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets, bool generateSha256Hashes = false, IRegex? regexEngine = default)
+    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets, bool generateSha256Hashes = false, IRegexEngine? regexEngine = default)
     {
         m_disposed = false;
 
@@ -41,7 +39,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         m_encodedSecretLiterals = new HashSet<SecretLiteral>();
         m_literalEncoders = new HashSet<LiteralEncoder>();
 
-        _regexEngine ??= RE2Regex.Instance;
+        _regexEngine = regexEngine ??= CachedDotNetRegex.Instance;
     }
 
     public SecretMasker()
@@ -349,7 +347,7 @@ public class SecretMasker : ISecretMasker, IDisposable
             // Get indexes and lengths of all substrings that will be replaced.
             foreach (RegexPattern regexSecret in RegexPatterns)
             {
-                var found = regexSecret.GetDetections(input, m_generateSha256Hashes);
+                var found = regexSecret.GetDetections(input, m_generateSha256Hashes, _regexEngine);
                 detections.AddRange(found);
             }
 

@@ -19,16 +19,26 @@ public class SecretMaskerTests
     [TestMethod]
     public void TryClassify_HighConfidenceSecurityModels()
     {
-        ValidateSecurityModels(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels, lowEntropyModels: true);
+        foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
+        {
+            ValidateSecurityModels(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
+                                   engine,
+                                   lowEntropyModels: false);
+        }
     }
 
     [TestMethod]
     public void TryClassify_LowConfidenceSecurityModels()
     {
-        ValidateSecurityModels(WellKnownRegexPatterns.LowConfidenceMicrosoftSecurityModels, lowEntropyModels: true);
+        foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
+        {
+            ValidateSecurityModels(WellKnownRegexPatterns.LowConfidenceMicrosoftSecurityModels,
+                                   engine,
+                                   lowEntropyModels: false);
+        }
     }
 
-    private void ValidateSecurityModels(IEnumerable<RegexPattern> patterns, bool lowEntropyModels)
+    private void ValidateSecurityModels(IEnumerable<RegexPattern> patterns, IRegexEngine engine, bool lowEntropyModels)
     {
         // These tests generate randomized values. It may be useful to
         // bump up the # of iterations on an ad hoc basis to flush
@@ -40,7 +50,7 @@ public class SecretMaskerTests
 
             foreach (bool generateSha256Hashes in new[] { true, false })
             {
-                using var secretMasker = new SecretMasker(patterns, generateSha256Hashes);
+                using var secretMasker = new SecretMasker(patterns, generateSha256Hashes, engine);
 
                 foreach (var pattern in patterns)
                 {
@@ -61,7 +71,7 @@ public class SecretMaskerTests
                         // 3. All high entropy secret kinds should generate a fingerprint, but only
                         //    if the masker was initialized to produce them. Every low entropy model
                         //    should refuse to generate a fingerprint, no matter how the masker is configured.
-                        detection.Sha256Hash.Should().Be(generateSha256Hashes && lowEntropyModels ? sha256Hash : null);
+                        detection.Sha256Hash.Should().Be((generateSha256Hashes && !lowEntropyModels) ? sha256Hash : null);
 
                         // 4. Moniker that flows to classified secret should match the detection.
                         result = detection.Moniker.Equals(moniker);

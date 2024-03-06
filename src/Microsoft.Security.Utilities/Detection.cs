@@ -89,7 +89,7 @@ public class Detection : IEquatable<Detection>
         }
     }
 
-    public bool Equals(Detection other)
+    public bool Equals(Detection? other)
     {
         if (object.Equals(other, null))
         {

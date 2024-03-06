@@ -15,7 +15,7 @@ internal class SecretLiteral
         m_value = value ?? throw new ArgumentNullException(nameof(value));
     }
 
-    public override Boolean Equals(Object obj)
+    public override bool Equals(object? obj)
     {
         var item = obj as SecretLiteral;
         if (item == null)
@@ -25,13 +25,13 @@ internal class SecretLiteral
         return string.Equals(m_value, item.m_value, StringComparison.Ordinal);
     }
 
-    public override Int32 GetHashCode() => m_value.GetHashCode();
+    public override int GetHashCode() => m_value.GetHashCode();
 
     public IEnumerable<Detection> GetDetections(string input)
     {
-        if (!String.IsNullOrEmpty(input) && !String.IsNullOrEmpty(m_value))
+        if (!string.IsNullOrEmpty(input) && !string.IsNullOrEmpty(m_value))
         {
-            Int32 startIndex = 0;
+            int startIndex = 0;
             while (startIndex > -1 &&
                    startIndex < input.Length &&
                    input.Length - startIndex >= m_value.Length) // remaining substring longer than secret value
@@ -46,5 +46,5 @@ internal class SecretLiteral
         }
     }
 
-    internal readonly String m_value;
+    internal readonly string m_value;
 }

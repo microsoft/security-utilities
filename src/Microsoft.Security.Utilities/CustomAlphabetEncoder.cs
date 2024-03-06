@@ -44,7 +44,7 @@ namespace Microsoft.Security.Utilities
                     throw new ArgumentException(nameof(customAlphabet), "Duplicate value detected in the alphabet.");
                 }
 
-                if (Char.IsWhiteSpace(alphabet[i]) || Char.IsSurrogate(alphabet[i]) || (int)alphabet[i] > 127)
+                if (char.IsWhiteSpace(alphabet[i]) || char.IsSurrogate(alphabet[i]) || (int)alphabet[i] > 127)
                 {
                     throw new ArgumentException(nameof(customAlphabet), $"Forbidden character type detected in the alphabet: {alphabet[i]}.");
                 }
