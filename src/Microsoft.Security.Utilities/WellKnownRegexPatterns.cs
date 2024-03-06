@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -12,7 +12,7 @@ namespace Microsoft.Security.Utilities;
 #pragma warning disable SA1203  // Constant fields should appear before non-constant fields.
 #pragma warning disable SYSLIB0023  // 'RNGCryptoServiceProvider' is obsolete.
 
-internal static class WellKnownRegexPatterns
+public static class WellKnownRegexPatterns
 {
     [ThreadStatic]
     private static StringBuilder s_stringBuilder;
@@ -167,6 +167,16 @@ internal static class WellKnownRegexPatterns
                    @$"{PrefixBase62}(?<refine>npm_[{Base62}]{{36}}){SuffixBase62}",
                    TimeSpan.FromDays(365 * 2),
                    sampleGenerator: () => new[] { $"npm_{RandomBase62(36)}" });
+    }
+
+    public static RegexPattern SecretScanningSampleToken()
+    {
+        return new("SEC101/565",
+                   nameof(SecretScanningSampleToken),
+                   DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy,
+                   @$"{PrefixBase62}(?P<secret>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{5}){SuffixBase62}",
+                   sampleGenerator: () => new[] { $"secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_{RandomBase62(5)}" });
+
     }
 
     public static string RandomUrlUnreserved(int count, bool sparse = false)

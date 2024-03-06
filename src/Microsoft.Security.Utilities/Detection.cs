@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #nullable enable
@@ -7,12 +7,12 @@ using System;
 
 namespace Microsoft.Security.Utilities;
 
-internal class Detection : IEquatable<Detection>
+public class Detection : IEquatable<Detection>
 {
     public Detection()
     {
-
     }
+
     public Detection(Detection other)
         : this(other?.Id, other?.Name, other?.Start ?? default, other?.Length ?? default, other?.Metadata ?? default, other?.RotationPeriod ?? default, other?.Sha256Hash ?? default, other?.RedactionToken)
     {
@@ -55,6 +55,26 @@ internal class Detection : IEquatable<Detection>
 
     public string? Sha256Hash { get; set; }
 
+    public string? SecureCorrelationHash => CreateSecureCorrelationHash();
+
+    private string? secureCorrelationHash;
+
+    private string? CreateSecureCorrelationHash()
+    {
+        if (Sha256Hash == null)
+        {
+            return null;
+        }
+
+        if (secureCorrelationHash == null)
+        {
+            string correlationHash = $"CrossMicrosoftCorrelatingId:{Sha256Hash}";
+            secureCorrelationHash = RegexPattern.GenerateSha256Hash(correlationHash).Substring(0, 32);
+        }
+
+        return secureCorrelationHash;
+    }
+
     private string? m_redactionToken;
 
     public string RedactionToken
@@ -71,7 +91,10 @@ internal class Detection : IEquatable<Detection>
 
     public bool Equals(Detection other)
     {
-        if (other == null) { return false; }
+        if (object.Equals(other, null))
+        {
+            return false;
+        }
 
         return string.Equals(Id, other.Id, StringComparison.Ordinal)
             && string.Equals(Name, other.Name, StringComparison.Ordinal)

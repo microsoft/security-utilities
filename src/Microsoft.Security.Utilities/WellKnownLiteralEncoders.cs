@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +14,7 @@ namespace Microsoft.Security.Utilities
         {
             // Use the relaxed encoder to prefer quotes that aren't rendered
             // as embedded unicode, e.g., '\u0022' rather than '\"'.
-            return JsonEncodedText.Encode(value, JavaScriptEncoder.UnsafeRelaxedJsonEscaping).Value;
+            return JsonEncodedText.Encode(value, JavaScriptEncoder.UnsafeRelaxedJsonEscaping).ToString();
         }
 
         public static string UnescapeBackslashes(string value)

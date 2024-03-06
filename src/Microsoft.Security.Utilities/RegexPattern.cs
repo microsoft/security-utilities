@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #nullable enable
@@ -8,12 +8,13 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+
+using Microsoft.RE2.Managed;
 
 namespace Microsoft.Security.Utilities;
 
-internal class RegexPattern
+public class RegexPattern
 {
     public RegexPattern(string id,
                         string name,
@@ -37,6 +38,10 @@ internal class RegexPattern
         RotationPeriod = rotationPeriod;
         m_sampleGenerator = sampleGenerator;
         DetectionMetadata = patternMetadata;
+
+#if !NET7_0_OR_GREATER
+        pattern = NormalizeGroupsPattern(pattern);
+#endif
 
         Regex = new Regex(pattern, regexOptions);
     }
@@ -164,7 +169,7 @@ internal class RegexPattern
         return result;
     }
 
-    public virtual IEnumerable<Detection> GetDetections(string input, bool generateSha256Hashes)
+    public virtual IEnumerable<Detection> GetDetections(string input, bool generateSha256Hashes, IRegex? regexEngine = null)
     {
         if (input == null)
         {
@@ -187,45 +192,36 @@ internal class RegexPattern
 
         if (runRegexes)
         {
+            regexEngine ??= RE2Regex.Instance;
+
             int startIndex = 0;
-            while (startIndex < input.Length)
+            foreach (FlexMatch match in regexEngine.Matches(input, Pattern, m_regexOptions, captureGroup: "refine"))
             {
-                Match? match = Regex.Match(input, startIndex);
+                startIndex = match.Index + 1;
 
-                if (match.Success)
+                string? sha256Hash = generateSha256Hashes && DetectionMetadata.HasFlag(DetectionMetadata.HighEntropy)
+                    ? GenerateSha256Hash(match.Value)
+                    : null;
+
+                var moniker = GetMatchIdAndName(match.Value);
+                if (!moniker.HasValue)
                 {
-                    Group group = match.Groups["refine"].Length > 0 ? match.Groups["refine"] : match;
-                    match = default;
-
-                    startIndex = group.Index + 1;
-
-                    string? sha256Hash = generateSha256Hashes && DetectionMetadata.HasFlag(DetectionMetadata.HighEntropy)
-                        ? GenerateSha256Hash(group.Value)
-                        : null;
-
-                    var moniker = GetMatchIdAndName(group.Value);
-                    if (!moniker.HasValue)
-                    {
-                        continue;
-                    }
-
-                    string id = moniker.Value.id;
-                    string name = moniker.Value.name;
-
-                    yield return new Detection(id,
-                                               name, 
-                                               group.Index, 
-                                               group.Length,
-                                               DetectionMetadata,
-                                               RotationPeriod,
-                                               sha256Hash,
-                                               "+++");
+                    continue;
                 }
-                else
-                {
-                    yield break;
-                }
+
+                string id = moniker.Value.id;
+                string name = moniker.Value.name;
+
+                yield return new Detection(id,
+                                           name,
+                                           match.Index,
+                                           match.Length,
+                                           DetectionMetadata,
+                                           RotationPeriod,
+                                           sha256Hash,
+                                           "+++");
             }
+
         }
     }
 
@@ -314,11 +310,13 @@ internal class RegexPattern
     /// provide regex processing.</remarks>
     public DetectionMetadata DetectionMetadata { get; protected set; }
 
-    public bool ShouldSerializeSniffLiterals() => SniffLiterals != null && SniffLiterals.Count > 0;
+    internal static string NormalizeGroupsPattern(string pattern)
+    {
+        if (pattern.IndexOf("?P<") != -1)
+        {
+            return pattern.Replace("?P<", "?<");
+        }
 
-    public bool ShouldSerializeRotationPeriod() => false;
-
-    public bool ShouldSerializeId() => !string.IsNullOrWhiteSpace(Id);
-
-    public bool ShouldSerializeName() => !string.IsNullOrWhiteSpace(Name);
+        return pattern;
+    }
 }

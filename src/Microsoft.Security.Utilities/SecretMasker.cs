@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -8,6 +8,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
+
+using Microsoft.RE2.Managed;
+
+#nullable enable
 
 namespace Microsoft.Security.Utilities;
 
@@ -19,9 +23,11 @@ namespace Microsoft.Security.Utilities;
 public delegate string LiteralEncoder(string literal);
 
 [ExcludeFromCodeCoverage]
-internal class SecretMasker : ISecretMasker, IDisposable
+public class SecretMasker : ISecretMasker, IDisposable
 {
-    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets, bool generateSha256Hashes = false)
+    IRegex? _regexEngine;
+
+    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets, bool generateSha256Hashes = false, IRegex? regexEngine = default)
     {
         m_disposed = false;
 
@@ -34,6 +40,8 @@ internal class SecretMasker : ISecretMasker, IDisposable
         m_explicitlyAddedSecretLiterals = new HashSet<SecretLiteral>();
         m_encodedSecretLiterals = new HashSet<SecretLiteral>();
         m_literalEncoders = new HashSet<LiteralEncoder>();
+
+        _regexEngine ??= RE2Regex.Instance;
     }
 
     public SecretMasker()

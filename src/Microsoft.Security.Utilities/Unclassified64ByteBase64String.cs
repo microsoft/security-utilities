@@ -1,10 +1,12 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
+
+using Microsoft.RE2.Managed;
 
 namespace Microsoft.Security.Utilities;
 
@@ -33,7 +35,7 @@ internal sealed class Unclassified64ByteBase64String : RegexPattern
         yield return $"{WellKnownRegexPatterns.RandomBase64(86)}==";
     }
 
-    public override IEnumerable<Detection> GetDetections(string input, bool generateSha256Hashes)
+    public override IEnumerable<Detection> GetDetections(string input, bool generateSha256Hashes, IRegex regexEngine = default)
     {
         foreach (Detection detection in base.GetDetections(input, generateSha256Hashes))
         {
