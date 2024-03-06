@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Microsoft.Security.Utilities.Cli": {
+      "commandName": "Project",
+      "commandLineArgs": "export --output d:\\repros\\"
+    }
+  }
+}

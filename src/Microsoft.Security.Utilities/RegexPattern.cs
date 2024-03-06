@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities;
@@ -312,4 +313,12 @@ internal class RegexPattern
     /// <remarks>Options may not be available when .NET is not used to
     /// provide regex processing.</remarks>
     public DetectionMetadata DetectionMetadata { get; protected set; }
+
+    public bool ShouldSerializeSniffLiterals() => SniffLiterals != null && SniffLiterals.Count > 0;
+
+    public bool ShouldSerializeRotationPeriod() => false;
+
+    public bool ShouldSerializeId() => !string.IsNullOrWhiteSpace(Id);
+
+    public bool ShouldSerializeName() => !string.IsNullOrWhiteSpace(Name);
 }
