@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 
 using FluentAssertions;
+using FluentAssertions.Execution;
 
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -28,6 +29,26 @@ namespace Microsoft.Security.Utilities
         }
 
         private static string s_base62Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+        [TestMethod]
+        public void IdentifiableSecrets_CloudAnnotatedSecurityKeys()
+        {
+            using var assertionScope = new AssertionScope();
+            int iterations = 10;
+            for (byte i = 0; i < iterations; i++)
+            {
+                for (short j = 0; j < iterations; i++)
+                {
+                    for (byte k = 0; k < iterations; i++)
+                    {
+                        ulong checksumSeed = (ulong)Guid.NewGuid().ToString().GetHashCode();
+                        string signature = Guid.NewGuid().ToString("N").Substring(0, 4);
+                        string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(checksumSeed, signature, false, default, default, default, default);
+                        key.Should().BeNull();
+                    }
+                }
+            }
+        }
 
         [TestMethod]
         public void IdentifiableSecrets_Base62AlphabetRecognized()
