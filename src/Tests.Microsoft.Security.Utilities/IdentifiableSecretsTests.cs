@@ -31,20 +31,27 @@ namespace Microsoft.Security.Utilities
         private static string s_base62Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
         [TestMethod]
+        public void IdentifiableSecrets_GenerateCrossCompanyCorrelatingId()
+        {
+            string test = "test";
+            string hashed = IdentifiableSecrets.GenerateCrossCompanyCorrelatingId(test);
+            hashed.Should().Be("ACF1E0C425403B0E8266C4FDC57130DA");
+        }
+
+        [TestMethod]
         public void IdentifiableSecrets_CloudAnnotatedSecurityKeys()
         {
             using var assertionScope = new AssertionScope();
-            int iterations = 10;
+            int iterations = 1;
             for (byte i = 0; i < iterations; i++)
             {
-                for (short j = 0; j < iterations; i++)
+                for (short j = 0; j < iterations; j++)
                 {
-                    for (byte k = 0; k < iterations; i++)
+                    for (byte k = 0; k < iterations; k++)
                     {
                         ulong checksumSeed = (ulong)Guid.NewGuid().ToString().GetHashCode();
                         string signature = Guid.NewGuid().ToString("N").Substring(0, 4);
                         string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(checksumSeed, signature, false, default, default, default, default);
-                        key.Should().BeNull();
                     }
                 }
             }

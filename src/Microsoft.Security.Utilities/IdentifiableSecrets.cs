@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities;
@@ -39,6 +40,28 @@ public static class IdentifiableSecrets
                ch == '-' ||
                ch == '_';
     }
+
+    public static string GenerateCrossCompanyCorrelatingId(string secret)
+    {
+        string sha256 = GenerateSha256Hash(secret);
+        string correlationHash = $"CrossMicrosoftCorrelatingId:{sha256}";
+        correlationHash = GenerateSha256Hash(correlationHash).Substring(0, 32);
+        return correlationHash;
+    }
+
+    public static string GenerateSha256Hash(string text)
+    {
+        using var sha = SHA256.Create();
+        byte[] byteHash = Encoding.UTF8.GetBytes(text);
+        byte[] checksum = sha.ComputeHash(byteHash);
+
+#if NET5_0_OR_GREATER
+        return BitConverter.ToString(checksum).Replace("-", string.Empty, StringComparison.Ordinal);
+#else
+        return BitConverter.ToString(checksum).Replace("-", string.Empty);
+#endif
+    }
+
 
     public static bool TryValidateCommonAnnotatedKey(string key,
                                                      ulong checksumSeed,
@@ -389,7 +412,7 @@ public static class IdentifiableSecrets
 
         const int checksumSizeInBytes = sizeof(uint);
 
-#if NET6_0_OR_GREATER
+#if NET5_0_OR_GREATER
             var bytes = new ReadOnlySpan<byte>(ConvertFromBase64String(key));
             int expectedChecksum = BitConverter.ToInt32(bytes.Slice(bytes.Length - checksumSizeInBytes, checksumSizeInBytes).ToArray(), 0);
             int actualChecksum = Marvin.ComputeHash32(bytes.Slice(0, bytes.Length - checksumSizeInBytes), checksumSeed);
@@ -564,7 +587,7 @@ public static class IdentifiableSecrets
         // aren't relevant to that computation.
         const int sizeOfChecksumInBytes = sizeof(uint);
 
-#if NET6_0_OR_GREATER
+#if NET5_0_OR_GREATER
         var checksumInput = new ReadOnlySpan<byte>(keyValue).Slice(0, keyValue.Length - sizeOfChecksumInBytes);
         int checksum = Marvin.ComputeHash32(checksumInput, checksumSeed);
 #else
