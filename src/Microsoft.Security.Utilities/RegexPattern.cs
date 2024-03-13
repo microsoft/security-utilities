@@ -306,4 +306,6 @@ public class RegexPattern
 
         return pattern;
     }
+
+    public bool ShouldSerializeRotationPeriod() => false;
 }
