@@ -19,9 +19,7 @@ internal sealed class Unclassified32ByteBase64String : RegexPattern
         Pattern = $@"{WellKnownRegexPatterns.PrefixAllBase64}" +
                   $@"(?<refine>[{WellKnownRegexPatterns.Base64}]{{43}}=)" +
                   $@"{WellKnownRegexPatterns.SuffixAllBase64}";
-
-        Regex = new Regex(Pattern, DefaultRegexOptions);
-
+        
         DetectionMetadata = DetectionMetadata.HighEntropy;
     }
 

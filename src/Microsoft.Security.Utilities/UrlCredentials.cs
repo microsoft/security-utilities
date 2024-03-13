@@ -30,8 +30,6 @@ internal sealed class UrlCredentials : RegexPattern
 
         Pattern = $"(?<=//[^:/?#\\n]+:){Url}(?=@)";
 
-        Regex = new Regex(Pattern, DefaultRegexOptions);
-
         DetectionMetadata = DetectionMetadata.None;
 
         SniffLiterals = new HashSet<string>(new[]

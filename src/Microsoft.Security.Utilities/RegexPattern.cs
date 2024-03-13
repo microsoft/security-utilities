@@ -36,12 +36,6 @@ public class RegexPattern
         RotationPeriod = rotationPeriod;
         m_sampleGenerator = sampleGenerator;
         DetectionMetadata = patternMetadata;
-
-#if !NET7_0_OR_GREATER
-        pattern = NormalizeGroupsPattern(pattern);
-#endif
-
-        Regex = new Regex(pattern, regexOptions);
     }
 
 #pragma warning disable CS8618
@@ -192,7 +186,7 @@ public class RegexPattern
         {
             regexEngine ??= CachedDotNetRegex.Instance;
 
-            int startIndex = 0;
+            int startIndex;
             foreach (UniversalMatch match in regexEngine.Matches(input, Pattern, m_regexOptions, captureGroup: "refine"))
             {
                 startIndex = match.Index + 1;
@@ -253,7 +247,7 @@ public class RegexPattern
 
     public virtual (string id, string name)? GetMatchIdAndName(string match) => new(Id, Name);
 
-    public string Pattern { get; protected set; }
+    public virtual string Pattern { get; protected set; }
 
 #if NET7_0_OR_GREATER
     protected const RegexOptions DefaultRegexOptions = RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.NonBacktracking;
@@ -274,11 +268,6 @@ public class RegexPattern
     public TimeSpan RotationPeriod { get; set; }
 
     /// <summary>
-    /// Gets or sets the regular expression that comprises the core detection.
-    /// </summary>
-    protected Regex Regex { get; set; }
-
-    /// <summary>
     /// Gets or sets one or more regular expression options.
     /// </summary>
     /// <remarks>Options may not be available when .NET is not used to
@@ -296,7 +285,7 @@ public class RegexPattern
     /// performance as these calls are typically much faster than
     /// equivalent regular expressions.
     /// </remarks>
-    public ISet<string>? SniffLiterals { get; protected set; }
+    public virtual ISet<string>? SniffLiterals { get; protected set; }
 
     private readonly Func<string[]>? m_sampleGenerator;
 
