@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <IsPackable>true</IsPackable>
-    <TargetFrameworks>net462;net6.0</TargetFrameworks>
+    <TargetFrameworks>net462;net6.0;netstandard2.0</TargetFrameworks>
     <EnableNETAnalyzers>false</EnableNETAnalyzers>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
@@ -14,7 +14,7 @@
     <PackageId>$(RootNamespace)</PackageId>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" $(TargetFramework) == 'net462'">
+  <PropertyGroup Condition=" $(TargetFramework) != 'net6.0'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
