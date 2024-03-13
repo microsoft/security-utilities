@@ -60,13 +60,16 @@ public class SecretMaskerTests
                         string sha256Hash = RegexPattern.GenerateSha256Hash(secretValue);
 
                         // 1. All generated test patterns should be detected by the masker.
-                        secretMasker.DetectSecrets(secretValue).Count().Should().Be(1);
+                        var detections = secretMasker.DetectSecrets(secretValue);
+                        bool result = detections.Count() == 1;
+                        result.Should().BeTrue(because: $"'{secretValue}' should result in a single '{moniker}' finding.");
+
                         Detection detection = secretMasker.DetectSecrets(secretValue).FirstOrDefault();
-                        detection.Should().NotBe((Detection)default);
+                        detection.Should().NotBe(default);
                         detection.Moniker.Should().Be(moniker);
 
                         // 2. All identifiable or high confidence findings should be marked as high entropy.
-                        bool result = lowEntropyModels ? true : detection.Metadata.HasFlag(DetectionMetadata.HighEntropy);
+                        result = lowEntropyModels ? true : detection.Metadata.HasFlag(DetectionMetadata.HighEntropy);
                         result.Should().BeTrue(because: $"{moniker} finding should be classified as high entropy");
 
                         // 3. All high entropy secret kinds should generate a fingerprint, but only

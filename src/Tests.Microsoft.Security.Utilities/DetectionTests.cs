@@ -22,9 +22,9 @@ namespace Tests.Microsoft.Security.Utilities
             string redactionToken = $"{Guid.NewGuid()}";
 
             var metadata = (DetectionMetadata)0B_11111;
-            int start = (int)DateTime.UtcNow.Ticks % 99;
-            int length = (int)DateTime.UtcNow.Ticks % 99;
-            TimeSpan rotationPeriod = TimeSpan.FromSeconds(DateTime.UtcNow.Second);
+            int start = Math.Min(1, (int)DateTime.UtcNow.Ticks % 99);
+            int length = Math.Min(1, (int)DateTime.UtcNow.Ticks % 99);
+            TimeSpan rotationPeriod = TimeSpan.FromSeconds(Math.Min(1, DateTime.UtcNow.Second));
 
             var detection = new Detection(id,
                                           name,

@@ -69,9 +69,9 @@ public static class WellKnownRegexPatterns
         AzureRelayIdentifiableKey(),
         AzureEventHubIdentifiableKey(),
         AzureServiceBusIdentifiableKey(),
-        AzureIotHubIdentifiableKey(),
-        AzureIotDeviceIdentifiableKey(),
-        AzureIotDeviceProvisioningIdentifiableKey(),
+        new AzureIotHubIdentifiableKey(),
+        new AzureIotDeviceIdentifiableKey(),
+        new AzureIotDeviceProvisioningIdentifiableKey(),
         new AzureStorageAccountIdentifiableKey(),
         new AzureCosmosDbIdentifiableKey(),
         new AzureBatchIdentifiableKey(),
@@ -148,57 +148,6 @@ public static class WellKnownRegexPatterns
                    {
                        AzureSearchIdentifiableKeys.GenerateAdminKeyTestExample(),
                    });
-    }
-
-    public static RegexPattern AzureIotHubIdentifiableKey()
-    {
-        return new("SEC101/178",
-                   nameof(AzureIotHubIdentifiableKey),
-                   DetectionMetadata.Identifiable,
-                  $@"{PrefixAllBase64}(?<refine>[{Base64}]{{33}}AIoT[A-P][{Base64}]{{5}}=){SuffixAllBase64}",
-                   TimeSpan.FromDays(365 * 2),
-                   new HashSet<string>(new[] { IdentifiableMetadata.AzureIotSignature }),
-                   sampleGenerator: () => new[]
-                   {
-                       IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureIotHubChecksumSeed,
-                                                                   32,
-                                                                   IdentifiableMetadata.AzureIotSignature),
-                   });
-
-    }
-
-    public static RegexPattern AzureIotDeviceProvisioningIdentifiableKey()
-    {
-        return new("SEC101/179",
-                   nameof(AzureIotDeviceProvisioningIdentifiableKey),
-                   DetectionMetadata.Identifiable,
-                  $@"{PrefixAllBase64}(?<refine>[{Base64}]{{33}}AIoT[A-P][{Base64}]{{5}}=){SuffixAllBase64}",
-                   TimeSpan.FromDays(365 * 2),
-                   new HashSet<string>(new[] { IdentifiableMetadata.AzureIotSignature }),
-                   sampleGenerator: () => new[]
-                   {
-                       IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureIotDeviceProvisioningChecksumSeed,
-                                                                   32,
-                                                                   IdentifiableMetadata.AzureIotSignature),
-                   });
-
-    }
-
-    public static RegexPattern AzureIotDeviceIdentifiableKey()
-    {
-        return new("SEC101/180",
-                   nameof(AzureIotDeviceIdentifiableKey),
-                   DetectionMetadata.Identifiable,
-                  $@"{PrefixAllBase64}(?<refine>[{Base64}]{{33}}AIoT[A-P][{Base64}]{{5}}=){SuffixAllBase64}",
-                   TimeSpan.FromDays(365 * 2),
-                   new HashSet<string>(new[] { IdentifiableMetadata.AzureIotSignature }),
-                   sampleGenerator: () => new[]
-                   {
-                       IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureIotDeviceChecksumSeed,
-                                                                   32,
-                                                                   IdentifiableMetadata.AzureIotSignature),
-                   });
-
     }
 
     public static RegexPattern AzureServiceBusIdentifiableKey()
