@@ -17,7 +17,7 @@ namespace Microsoft.Security.Utilities;
 public class SecretMaskerTests
 {
     [TestMethod]
-    public void TryClassify_HighConfidenceSecurityModels()
+    public void SecretMasker_HighConfidenceSecurityModels()
     {
         foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
         {
@@ -28,7 +28,7 @@ public class SecretMaskerTests
     }
 
     [TestMethod]
-    public void TryClassify_LowConfidenceSecurityModels()
+    public void SecretMasker_LowConfidenceSecurityModels()
     {
         foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
         {
@@ -63,6 +63,7 @@ public class SecretMaskerTests
                         secretMasker.DetectSecrets(secretValue).Count().Should().Be(1);
                         Detection detection = secretMasker.DetectSecrets(secretValue).FirstOrDefault();
                         detection.Should().NotBe((Detection)default);
+                        detection.Moniker.Should().Be(moniker);
 
                         // 2. All identifiable or high confidence findings should be marked as high entropy.
                         bool result = lowEntropyModels ? true : detection.Metadata.HasFlag(DetectionMetadata.HighEntropy);

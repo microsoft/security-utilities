@@ -8,7 +8,6 @@ namespace Microsoft.Security.Utilities.Cli
     {
         public static int Main(string[] args)
         {
-
             try
             {
                 return Parser.Default.ParseArguments<

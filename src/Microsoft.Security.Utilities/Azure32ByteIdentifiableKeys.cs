@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities;
 
@@ -23,8 +22,6 @@ internal sealed class Azure32ByteIdentifiableKeys : RegexPattern
         Pattern = $@"{WellKnownRegexPatterns.PrefixAllBase64}" +
                   $@"(?<refine>[{WellKnownRegexPatterns.Base64}]{{33}}(AIoT|\+(ASb|AEh|ARm))[A-P][{WellKnownRegexPatterns.Base64}]{{5}}=)" +
                   $@"{WellKnownRegexPatterns.SuffixAllBase64}";
-
-        Regex = new Regex(Pattern, DefaultRegexOptions);
 
         RotationPeriod = TimeSpan.FromDays(365 * 2);
 

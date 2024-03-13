@@ -20,9 +20,7 @@ internal sealed class Unclassified64ByteBase64String : RegexPattern
         Pattern = $@"{WellKnownRegexPatterns.PrefixAllBase64}" +
                   $@"(?<refine>[{WellKnownRegexPatterns.Base64}]{{86}}==)" +
                   $@"{WellKnownRegexPatterns.SuffixAllBase64}";
-
-        Regex = new Regex(Pattern, DefaultRegexOptions);
-
+        
         DetectionMetadata = DetectionMetadata.HighEntropy;
     }
 

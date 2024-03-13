@@ -23,8 +23,6 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
                   $@"(?<refine>[{WellKnownRegexPatterns.Base64}]{{76}}(APIM|ACDb|\+(ABa|AMC|ASt))[{WellKnownRegexPatterns.Base64}]{{5}}[AQgw]==)" +
                   $@"{WellKnownRegexPatterns.SuffixAllBase64}";
 
-        Regex = new Regex(Pattern, DefaultRegexOptions);
-
         RotationPeriod = TimeSpan.FromDays(365 * 2);
 
         DetectionMetadata = DetectionMetadata.Identifiable;
