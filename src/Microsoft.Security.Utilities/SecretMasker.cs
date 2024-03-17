@@ -20,7 +20,6 @@ namespace Microsoft.Security.Utilities;
 /// <returns>The escaped or encoded literal.</returns>
 public delegate string LiteralEncoder(string literal);
 
-[ExcludeFromCodeCoverage]
 public class SecretMasker : ISecretMasker, IDisposable
 {
     IRegexEngine? _regexEngine;
@@ -75,6 +74,8 @@ public class SecretMasker : ISecretMasker, IDisposable
 
     [ThreadStatic]
     private static StringBuilder? s_stringBuilder;
+
+    public virtual string DefaultRedactionToken => "+++";
 
     public virtual HashSet<RegexPattern> RegexPatterns { get; protected set; }
 
@@ -132,7 +133,6 @@ public class SecretMasker : ISecretMasker, IDisposable
                                   detection.Length,
                                   detection.Metadata,
                                   detection.RotationPeriod,
-                                  detection.Sha256Hash,
                                   detection.RedactionToken);
 
                 currentDetections.Add(currentDetection);
@@ -155,7 +155,6 @@ public class SecretMasker : ISecretMasker, IDisposable
                                       detection.Length,
                                       detection.Metadata,
                                       detection.RotationPeriod,
-                                      detection.Sha256Hash,
                                       detection.RedactionToken);
 
                     currentDetections.Add(currentDetection);
@@ -170,7 +169,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         foreach (var detection in currentDetections)
         {
             _ = s_stringBuilder.Append(input.Substring(startIndex, detection.Start - startIndex))
-                    .Append(detection.RedactionToken);
+                    .Append(detection);
 
             startIndex = detection.Start + detection.Length;
         }
@@ -347,7 +346,7 @@ public class SecretMasker : ISecretMasker, IDisposable
             // Get indexes and lengths of all substrings that will be replaced.
             foreach (RegexPattern regexSecret in RegexPatterns)
             {
-                var found = regexSecret.GetDetections(input, m_generateSha256Hashes, _regexEngine);
+                var found = regexSecret.GetDetections(input, m_generateSha256Hashes, DefaultRedactionToken, _regexEngine);
                 detections.AddRange(found);
             }
 

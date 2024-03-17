@@ -352,10 +352,10 @@ public class RegexPatternTests
     public void RegexPattern_GetHashCode_ReturnsConsistentTelemetry_AcrossDotNetFrameworkVersions()
     {
         // Arrange
-        var secret = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", regexOptions: RegexOptions.Multiline);
+        var secret = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "test", regexOptions: RegexOptions.Multiline);
 
         // Act
-        var replacements = secret.GetDetections("abc", generateSha256Hashes: true);
+        var replacements = secret.GetDetections("test", generateCrossCompanyCorrelatingIds: true);
 
         // Assert
         Assert.AreEqual(1, actual: replacements.Count());
@@ -363,7 +363,7 @@ public class RegexPatternTests
 
         // It is critical that our hashing is consistent across the library's .NET FX
         // and .NET 5.0 versions, so we hard-code this test to ensure things are in sync.
-        Assert.AreEqual("BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD", replacement.Sha256Hash);
+        Assert.AreEqual("ACF1E0C425403B0E8266C4FDC57130DA", replacement.RedactionToken);
     }
 
     [TestMethod]
@@ -374,25 +374,10 @@ public class RegexPatternTests
         var input = "defdefdef";
 
         // Act
-        var replacements = secret.GetDetections(input, generateSha256Hashes: true);
+        var replacements = secret.GetDetections(input, generateCrossCompanyCorrelatingIds: true);
 
         // Assert
         Assert.AreEqual(0, actual: replacements.Count());
-    }
-
-    [TestMethod]
-    public void RegexPatterns_GetDetections_Returns_DefaultRedactionToken()
-    {
-        // Arrange
-        var secret = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc");
-        var input = "abc";
-
-        // Act
-        var replacements = secret.GetDetections(input, generateSha256Hashes: true);
-
-        // Assert
-        Assert.AreEqual(1, actual: replacements.Count());
-        Assert.AreEqual("+++", actual: replacements.First().RedactionToken);
     }
 
     [TestMethod]
@@ -403,15 +388,15 @@ public class RegexPatternTests
         var input = "abc";
 
         // Act
-        var detections = secret.GetDetections(input, generateSha256Hashes: true);
+        var detections = secret.GetDetections(input, generateCrossCompanyCorrelatingIds: true);
         Detection detection = detections.First();
-        var hash = RegexPattern.GenerateSha256Hash("b");
+        var hash = RegexPattern.GenerateCrossCompanyCorrelatingId("b");
 
         // Assert
         Assert.AreEqual(1, actual: detections.Count());
 
         Assert.AreEqual("b", actual: input.Substring(detection.Start, detection.Length));
-        Assert.AreEqual(hash, actual: detection.Sha256Hash);
+        Assert.AreEqual(hash, actual: detection.RedactionToken);
     }
 
     [TestMethod]
@@ -422,15 +407,14 @@ public class RegexPatternTests
         var secret = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc");
         var input = "abc";
 
-        var hash = RegexPattern.GenerateSha256Hash(input);
+        var hash = RegexPattern.GenerateCrossCompanyCorrelatingId(input);
 
         // Act
-        var replacements = secret.GetDetections(input, generateSha256Hashes: true);
+        var replacements = secret.GetDetections(input, generateCrossCompanyCorrelatingIds: true);
 
         // Assert
         Assert.AreEqual(1, actual: replacements.Count());
-//        Assert.AreEqual($"{ruleMoniker}:{hash}", actual: replacements.First().RedactionToken);
-        Assert.AreEqual($"+++", actual: replacements.First().RedactionToken);
+        Assert.AreEqual(hash, actual: replacements.First().RedactionToken);
     }
 
     [TestMethod]

@@ -161,7 +161,12 @@ public class RegexPattern
         return result;
     }
 
-    public virtual IEnumerable<Detection> GetDetections(string input, bool generateSha256Hashes, IRegexEngine? regexEngine = null)
+    public const string DefaultRedactionToken = "***";
+
+    public virtual IEnumerable<Detection> GetDetections(string input, 
+                                                        bool generateCrossCompanyCorrelatingIds,
+                                                        string defaultRedactionToken = DefaultRedactionToken,
+                                                        IRegexEngine? regexEngine = null)
     {
         if (input == null)
         {
@@ -191,9 +196,10 @@ public class RegexPattern
             {
                 startIndex = match.Index + 1;
 
-                string? sha256Hash = generateSha256Hashes && DetectionMetadata.HasFlag(DetectionMetadata.HighEntropy)
-                    ? GenerateSha256Hash(match.Value)
-                    : null;
+                string? redactionToken =
+                    generateCrossCompanyCorrelatingIds && DetectionMetadata.HasFlag(DetectionMetadata.HighEntropy)
+                        ? $"{Id}:{GenerateCrossCompanyCorrelatingId(match.Value)}"
+                        : defaultRedactionToken;
 
                 var moniker = GetMatchIdAndName(match.Value);
                 if (!moniker.HasValue)
@@ -210,8 +216,7 @@ public class RegexPattern
                                            match.Length,
                                            DetectionMetadata,
                                            RotationPeriod,
-                                           sha256Hash,
-                                           "+++");
+                                           redactionToken);
             }
 
         }
@@ -228,6 +233,15 @@ public class RegexPattern
         {
             yield return example;
         }
+    }
+
+    public static string GenerateCrossCompanyCorrelatingId(string text)
+    {
+        string hash = RegexPattern.GenerateSha256Hash(text);
+
+        hash = $"CrossMicrosoftCorrelatingId:{hash}";
+
+        return RegexPattern.GenerateSha256Hash(hash).Substring(0, 32);
     }
 
     public static string GenerateSha256Hash(string text)

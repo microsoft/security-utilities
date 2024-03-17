@@ -31,12 +31,19 @@ internal sealed class Unclassified64ByteBase64String : RegexPattern
         yield return $"{WellKnownRegexPatterns.RandomBase64(86)}==";
     }
 
-    public override IEnumerable<Detection> GetDetections(string input, bool generateSha256Hashes, IRegexEngine regexEngine = default)
+    public override IEnumerable<Detection> GetDetections(string input,
+                                                         bool generateSha256Hashes,
+                                                         string defaultRedactionToken = RegexPattern.DefaultRedactionToken,
+                                                         IRegexEngine regexEngine = default)
     {
-        foreach (Detection detection in base.GetDetections(input, generateSha256Hashes))
+        foreach (Detection detection in base.GetDetections(input, generateSha256Hashes, defaultRedactionToken, regexEngine))
         {
             string match = input.Substring(detection.Start, detection.Length);
-            if (!object.Equals(azure64ByteIdentifiableKeys.GetDetections(match, generateSha256Hashes).FirstOrDefault(), default))
+
+            if (!object.Equals(azure64ByteIdentifiableKeys.GetDetections(match,
+                                                                         generateSha256Hashes,
+                                                                         defaultRedactionToken,
+                                                                         regexEngine).FirstOrDefault(), objB: default))
             {
                 continue;
             }

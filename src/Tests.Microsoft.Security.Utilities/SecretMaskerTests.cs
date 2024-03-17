@@ -17,28 +17,28 @@ namespace Microsoft.Security.Utilities;
 public class SecretMaskerTests
 {
     [TestMethod]
-    public void SecretMasker_HighConfidenceSecurityModels()
+    public void SecretMasker_HighConfidenceSecurityModels_Detections()
     {
         foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
         {
-            ValidateSecurityModels(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
-                                   engine,
-                                   lowEntropyModels: false);
+            ValidateSecurityModelsDetections(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
+                                             engine,
+                                             lowEntropyModels: false);
         }
     }
 
     [TestMethod]
-    public void SecretMasker_LowConfidenceSecurityModels()
+    public void SecretMasker_LowConfidenceSecurityModels_Detections()
     {
         foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
         {
-            ValidateSecurityModels(WellKnownRegexPatterns.LowConfidenceMicrosoftSecurityModels,
-                                   engine,
-                                   lowEntropyModels: false);
+            ValidateSecurityModelsDetections(WellKnownRegexPatterns.LowConfidenceMicrosoftSecurityModels,
+                                             engine,
+                                             lowEntropyModels: false);
         }
     }
 
-    private void ValidateSecurityModels(IEnumerable<RegexPattern> patterns, IRegexEngine engine, bool lowEntropyModels)
+    private void ValidateSecurityModelsDetections(IEnumerable<RegexPattern> patterns, IRegexEngine engine, bool lowEntropyModels)
     {
         // These tests generate randomized values. It may be useful to
         // bump up the # of iterations on an ad hoc basis to flush
@@ -75,7 +75,7 @@ public class SecretMaskerTests
                         // 3. All high entropy secret kinds should generate a fingerprint, but only
                         //    if the masker was initialized to produce them. Every low entropy model
                         //    should refuse to generate a fingerprint, no matter how the masker is configured.
-                        detection.Sha256Hash.Should().Be((generateSha256Hashes && !lowEntropyModels) ? sha256Hash : null);
+                        detection.RedactionToken.Should().Be((generateSha256Hashes && !lowEntropyModels) ? sha256Hash : null);
 
                         // 4. Moniker that flows to classified secret should match the detection.
                         result = detection.Moniker.Equals(moniker);
@@ -85,6 +85,61 @@ public class SecretMaskerTests
             }
         }
     }
+
+    [TestMethod]
+    public void SecretMasker_HighConfidenceSecurityModels_Masking()
+    {
+        foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
+        {
+            ValidateSecurityModelsMasking(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
+                                          engine,
+                                          lowEntropyModels: false);
+        }
+    }
+
+    [TestMethod]
+    public void SecretMasker_LowConfidenceSecurityModels_Masking()
+    {
+        foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
+        {
+            ValidateSecurityModelsMasking(WellKnownRegexPatterns.LowConfidenceMicrosoftSecurityModels,
+                                          engine,
+                                          lowEntropyModels: false);
+        }
+    }
+
+    private void ValidateSecurityModelsMasking(IEnumerable<RegexPattern> patterns, IRegexEngine engine, bool lowEntropyModels)
+
+    {
+        // These tests generate randomized values. It may be useful to
+        // bump up the # of iterations on an ad hoc basis to flush
+        // out non-deterministic failures (typically based on the
+        // characters chosen from the secret alphabet for the pattern).
+        for (int i = 0; i < 1; i++)
+        {
+            using var scope = new AssertionScope();
+
+            foreach (bool generateSha256Hashes in new[] { true, false })
+            {
+                using var secretMasker = new SecretMasker(patterns, generateSha256Hashes, engine);
+
+                foreach (var pattern in patterns)
+                {
+                    foreach (string secretValue in pattern.GenerateTestExamples())
+                    {
+                        string moniker = pattern.GetMatchMoniker(secretValue);
+                        string sha256Hash = RegexPattern.GenerateSha256Hash(secretValue);
+
+                        // 1. All generated test patterns should be detected by the masker.
+                        string redacted = secretMasker.MaskSecrets(secretValue);
+                        bool result = redacted.Equals(secretValue);
+                        result.Should().BeFalse(because: $"'{secretValue}' should be redacted from scan text.");
+                    }
+                }
+            }
+        }
+    }
+
     private SecretMasker InitializeTestMasker()
     {
         var testSecretMasker = new SecretMasker();

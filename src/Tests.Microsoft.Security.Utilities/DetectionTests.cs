@@ -32,8 +32,7 @@ namespace Tests.Microsoft.Security.Utilities
                                           length,
                                           metadata,
                                           rotationPeriod,
-                                          sha256Hash,
-                                          redactionToken);
+                                          sha256Hash);
 
             Assert.AreEqual(id, detection.Id);
             Assert.AreEqual(name, detection.Name);
@@ -42,8 +41,7 @@ namespace Tests.Microsoft.Security.Utilities
             Assert.AreEqual(metadata, detection.Metadata);
             Assert.AreEqual(start + length, detection.End);
             Assert.AreEqual(rotationPeriod, detection.RotationPeriod);
-            Assert.AreEqual(sha256Hash, detection.Sha256Hash);
-            Assert.AreEqual(redactionToken, detection.RedactionToken);
+            Assert.AreEqual(sha256Hash, detection.RedactionToken);
 
             detection = new Detection(string.Empty,
                                       string.Empty,
@@ -51,7 +49,6 @@ namespace Tests.Microsoft.Security.Utilities
                                       int.MaxValue,
                                       0,
                                       rotationPeriod: default,
-                                      string.Empty,
                                       string.Empty);
 
             Assert.AreNotEqual(id, detection.Id);
@@ -61,8 +58,7 @@ namespace Tests.Microsoft.Security.Utilities
             Assert.AreNotEqual(metadata, detection.Metadata);
             Assert.AreNotEqual(start + length, detection.End);
             Assert.AreNotEqual(rotationPeriod, detection.RotationPeriod);
-            Assert.AreNotEqual(sha256Hash, detection.Sha256Hash);
-            Assert.AreNotEqual(redactionToken, detection.RedactionToken);
+            Assert.AreNotEqual(sha256Hash, detection.RedactionToken);
         }
 
         [TestMethod]
@@ -86,8 +82,7 @@ namespace Tests.Microsoft.Security.Utilities
                 Length = length,
                 Metadata = metadata,
                 RotationPeriod = rotationPeriod,
-                Sha256Hash = sha256Hash,
-                RedactionToken = redactionToken
+                RedactionToken = sha256Hash,
             };
 
             Assert.AreEqual(id, detection.Id);
@@ -97,8 +92,7 @@ namespace Tests.Microsoft.Security.Utilities
             Assert.AreEqual(metadata, detection.Metadata);
             Assert.AreEqual(start + length, detection.End);
             Assert.AreEqual(rotationPeriod, detection.RotationPeriod);
-            Assert.AreEqual(sha256Hash, detection.Sha256Hash);
-            Assert.AreEqual(redactionToken, detection.RedactionToken);
+            Assert.AreEqual(sha256Hash, detection.RedactionToken);
 
             detection = new Detection
             {
@@ -108,7 +102,6 @@ namespace Tests.Microsoft.Security.Utilities
                 Length = int.MaxValue,
                 Metadata = 0,
                 RotationPeriod = default,
-                Sha256Hash = string.Empty,
                 RedactionToken = string.Empty
             };
 
@@ -119,8 +112,7 @@ namespace Tests.Microsoft.Security.Utilities
             Assert.AreNotEqual(metadata, detection.Metadata);
             Assert.AreNotEqual(start + length, detection.End);
             Assert.AreNotEqual(rotationPeriod, detection.RotationPeriod);
-            Assert.AreNotEqual(sha256Hash, detection.Sha256Hash);
-            Assert.AreNotEqual(redactionToken, detection.RedactionToken);
+            Assert.AreNotEqual(sha256Hash, detection.RedactionToken);
         }
 
         [TestMethod]
@@ -144,8 +136,7 @@ namespace Tests.Microsoft.Security.Utilities
                 Length = length,
                 Metadata = metadata,
                 RotationPeriod = rotationPeriod,
-                Sha256Hash = sha256Hash,
-                RedactionToken = redactionToken
+                RedactionToken = sha256Hash,
             };
 
             var emptyDefaultDetection = new Detection();
@@ -174,10 +165,6 @@ namespace Tests.Microsoft.Security.Utilities
 
             previousHashCode = detection.GetHashCode();
             detection.RotationPeriod = default;
-            Assert.AreNotEqual(detection.GetHashCode(), previousHashCode);
-
-            previousHashCode = detection.GetHashCode();
-            detection.Sha256Hash = default;
             Assert.AreNotEqual(detection.GetHashCode(), previousHashCode);
 
             previousHashCode = detection.GetHashCode();
@@ -229,14 +216,11 @@ namespace Tests.Microsoft.Security.Utilities
             previousDetection = new Detection(currentDetection);
             Assert.AreEqual(currentDetection, previousDetection);
 
-            currentDetection.Sha256Hash = $"{Guid.NewGuid()}"; ;
+            currentDetection.RedactionToken = $"{Guid.NewGuid()}"; ;
             Assert.AreNotEqual(currentDetection, previousDetection);
 
             previousDetection = new Detection(currentDetection);
             Assert.AreEqual(currentDetection, previousDetection);
-
-            currentDetection.RedactionToken = $"{Guid.NewGuid()}"; ;
-            Assert.AreNotEqual(currentDetection, previousDetection);
 
             // At this point, we should have reset our entire object to its
             // default state and GetHashCode() should be equivalent.

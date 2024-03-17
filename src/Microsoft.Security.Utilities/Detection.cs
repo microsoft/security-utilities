@@ -14,20 +14,19 @@ public class Detection : IEquatable<Detection>
     }
 
     public Detection(Detection other)
-        : this(other?.Id, other?.Name, other?.Start ?? default, other?.Length ?? default, other?.Metadata ?? default, other?.RotationPeriod ?? default, other?.Sha256Hash ?? default, other?.RedactionToken)
+        : this(other?.Id, other?.Name, other?.Start ?? default, other?.Length ?? default, other?.Metadata ?? default, other?.RotationPeriod ?? default, other?.RedactionToken ?? default)
     {
         other = other ?? throw new ArgumentNullException(nameof(other));
     }
 
-    public Detection(string? id, string? name, int start, int length, DetectionMetadata metadata, TimeSpan rotationPeriod = default, string? sha256Hash = null, string? token = DefaultRedactionToken)
+    public Detection(string? id, string? name, int start, int length, DetectionMetadata metadata, TimeSpan rotationPeriod = default, string? redactionToken = null)
     {
         Id = id;
         Name = name;
         Start = start;
         Length = length;
         Metadata = metadata;
-        Sha256Hash = sha256Hash;
-        m_redactionToken = token;
+        RedactionToken = redactionToken;
         RotationPeriod = rotationPeriod;
     }
 
@@ -53,41 +52,7 @@ public class Detection : IEquatable<Detection>
 
     public TimeSpan RotationPeriod { get; set; }
 
-    public string? Sha256Hash { get; set; }
-
-    public string? SecureCorrelationHash => CreateSecureCorrelationHash();
-
-    private string? secureCorrelationHash;
-
-    private string? CreateSecureCorrelationHash()
-    {
-        if (Sha256Hash == null)
-        {
-            return null;
-        }
-
-        if (secureCorrelationHash == null)
-        {
-            string correlationHash = $"CrossMicrosoftCorrelatingId:{Sha256Hash}";
-            secureCorrelationHash = RegexPattern.GenerateSha256Hash(correlationHash).Substring(0, 32);
-        }
-
-        return secureCorrelationHash;
-    }
-
-    private string? m_redactionToken;
-
-    public string RedactionToken
-    {
-        get
-        {
-            return m_redactionToken ?? DefaultRedactionToken;
-        }
-        set
-        {
-            m_redactionToken = value;
-        }
-    }
+    public string? RedactionToken { get; set; }
 
     public bool Equals(Detection? other)
     {
@@ -98,7 +63,6 @@ public class Detection : IEquatable<Detection>
 
         return string.Equals(Id, other.Id, StringComparison.Ordinal)
             && string.Equals(Name, other.Name, StringComparison.Ordinal)
-            && string.Equals(Sha256Hash, other.Sha256Hash, StringComparison.Ordinal)
             && string.Equals(RedactionToken, other.RedactionToken, StringComparison.Ordinal)
             && Metadata.Equals(other.Metadata)
             && int.Equals(Start, other.Start)
@@ -143,21 +107,12 @@ public class Detection : IEquatable<Detection>
 #endif
             }
 
-            if (Sha256Hash != null)
+            if (RedactionToken != null)
             {
 #if NET5_0_OR_GREATER
-                hashCode = (hashCode * 31) + Sha256Hash.GetHashCode(StringComparison.Ordinal);
+                hashCode = (hashCode * 31) + RedactionToken.GetHashCode(StringComparison.Ordinal);
 #else
-                hashCode = (hashCode * 31) + Sha256Hash.GetHashCode();
-#endif
-            }
-
-            if (m_redactionToken != null)
-            {
-#if NET5_0_OR_GREATER
-                hashCode = (hashCode * 31) + m_redactionToken.GetHashCode(StringComparison.Ordinal);
-#else
-                hashCode = (hashCode * 31) + m_redactionToken.GetHashCode();
+                hashCode = (hashCode * 31) + RedactionToken.GetHashCode();
 #endif
             }
 
@@ -185,12 +140,11 @@ public class Detection : IEquatable<Detection>
         return !(left == right);
     }
 
-    public const string DefaultRedactionToken = "***";
 
 #if DEBUG
     public override string ToString()
     {
-        return $"{Id}.{Name}:{Start}-{Start + Length}:{Metadata}:{Sha256Hash}:{RedactionToken}";
+        return $"{Id}.{Name}:{Start}-{Start + Length}:{Metadata}:{RedactionToken}";
     }
 #endif
 }
