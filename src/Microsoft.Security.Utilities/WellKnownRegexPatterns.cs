@@ -139,7 +139,7 @@ public static class WellKnownRegexPatterns
     public static RegexPattern AzureSearchIdentifiableAdminKey()
     {
         return new("SEC101/166",
-                   nameof(AzureSearchIdentifiableQueryKey),
+                   nameof(AzureSearchIdentifiableAdminKey),
                    DetectionMetadata.Identifiable,
                   $@"{PrefixAllBase64}(?<refine>[{Base62}]{{42}}{IdentifiableMetadata.AzureSearchSignature}[A-D][{Base62}]{{5}}){SuffixAllBase64}",
                    TimeSpan.FromDays(365 * 2),

@@ -90,7 +90,7 @@ public static class IdentifiableSecrets
 
         if (metadata1 >= 64)
         {
-            throw new ArgumentOutOfRangeException(nameof(metadata1), "Cloud value must be less than 64.");
+            throw new ArgumentOutOfRangeException(nameof(metadata1), "Metadata value must be less than 64.");
         }
 
         if (!metadata2.HasValue)
@@ -100,7 +100,7 @@ public static class IdentifiableSecrets
 
         if (metadata2 >= 64)
         {
-            throw new ArgumentOutOfRangeException(nameof(metadata2), "Cloud value must be less than 64.");
+            throw new ArgumentOutOfRangeException(nameof(metadata2), "Metadata value must be less than 64.");
         }
 
         if (!metadata3.HasValue)
@@ -110,7 +110,7 @@ public static class IdentifiableSecrets
 
         if (metadata3 >= 64)
         {
-            throw new ArgumentOutOfRangeException(nameof(metadata3), "Cloud value must be less than 64.");
+            throw new ArgumentOutOfRangeException(nameof(metadata3), "Metadata value must be less than 64.");
         }
 
         if (!metadata4.HasValue)
@@ -120,7 +120,7 @@ public static class IdentifiableSecrets
 
         if (metadata4 >= 64)
         {
-            throw new ArgumentOutOfRangeException(nameof(metadata4), "Cloud value must be less than 64.");
+            throw new ArgumentOutOfRangeException(nameof(metadata4), "Metadata value must be less than 64.");
         }
 
         base64EncodedSignature = customerManagedKey 
@@ -133,8 +133,8 @@ public static class IdentifiableSecrets
 
         while (true)
         {
-            int keyLengthInBytes = 66;
-            byte[] keyBytes = new byte[(int)66];
+            int keyLengthInBytes = 64;
+            byte[] keyBytes = new byte[(int)64];
 
             using var generator = RandomNumberGenerator.Create();
             generator.GetBytes(keyBytes, 0, (int)keyLengthInBytes);
@@ -153,9 +153,9 @@ public static class IdentifiableSecrets
             int reserved = (sixBitsReserved1 << 18) | (sixBitsReserved2 << 12) | (sixBitsReserved3 << 6) | sixBitsReserved4;
             byte[] reservedBytes = BitConverter.GetBytes(reserved);
 
-            keyBytes[keyBytes.Length - 15] = reservedBytes[2];
-            keyBytes[keyBytes.Length - 14] = reservedBytes[1];
-            keyBytes[keyBytes.Length - 13] = reservedBytes[0];
+            keyBytes[keyBytes.Length - 16] = reservedBytes[2];
+            keyBytes[keyBytes.Length - 15] = reservedBytes[1];
+            keyBytes[keyBytes.Length - 14] = reservedBytes[0];
 
             // Currently unused.
             byte sixBitsReserved5 = defaultBase64EncodedCharacter;
@@ -168,37 +168,39 @@ public static class IdentifiableSecrets
             reserved = (yearsSince2024 << 18) | (zeroIndexedMonth << 12) | (sixBitsReserved5 << 6) | sixBitsReserved6;
             reservedBytes = BitConverter.GetBytes(reserved);
 
-            keyBytes[keyBytes.Length - 12] = reservedBytes[2];
-            keyBytes[keyBytes.Length - 11] = reservedBytes[1];
-            keyBytes[keyBytes.Length - 10] = reservedBytes[0];
+            keyBytes[keyBytes.Length - 13] = reservedBytes[2];
+            keyBytes[keyBytes.Length - 12] = reservedBytes[1];
+            keyBytes[keyBytes.Length - 11] = reservedBytes[0];
 
             int? metadata = (metadata1 << 18) | (metadata2 << 12) | (metadata3 << 6) | metadata4;
             byte[] metadataBytes = BitConverter.GetBytes(metadata.Value);
 
-            keyBytes[keyBytes.Length - 9] = metadataBytes[2];
-            keyBytes[keyBytes.Length - 8] = metadataBytes[1];
-            keyBytes[keyBytes.Length - 7] = metadataBytes[0];
+            keyBytes[keyBytes.Length - 10] = metadataBytes[2];
+            keyBytes[keyBytes.Length - 9] = metadataBytes[1];
+            keyBytes[keyBytes.Length - 8] = metadataBytes[0];
 
-            int signatureOffset = keyBytes.Length - 6;
+            int signatureOffset = keyBytes.Length - 7;
             byte[] sigBytes = Convert.FromBase64String(base64EncodedSignature);
             sigBytes.CopyTo(keyBytes, signatureOffset);
 
 #if NET5_0_OR_GREATER
-            var checksumInput = new ReadOnlySpan<byte>(keyBytes).Slice(0, keyBytes.Length - 3);
+            var checksumInput = new ReadOnlySpan<byte>(keyBytes).Slice(0, keyBytes.Length - 4);
             int checksum = Marvin.ComputeHash32(checksumInput, checksumSeed);
 #else
-            int checksum = Marvin.ComputeHash32(keyBytes, checksumSeed, 0, keyBytes.Length - 3);
+            int checksum = Marvin.ComputeHash32(keyBytes, checksumSeed, 0, keyBytes.Length - 4);
 #endif
 
             byte[] checksumBytes = BitConverter.GetBytes(checksum);
 
-            keyBytes[keyBytes.Length - 3] = checksumBytes[0];
-            keyBytes[keyBytes.Length - 2] = checksumBytes[1];
-            keyBytes[keyBytes.Length - 1] = checksumBytes[2];
+            keyBytes[keyBytes.Length - 4] = checksumBytes[0];
+            keyBytes[keyBytes.Length - 3] = checksumBytes[1];
+            keyBytes[keyBytes.Length - 2] = checksumBytes[2];
+            keyBytes[keyBytes.Length - 1] = checksumBytes[3];
 
             key = Convert.ToBase64String(keyBytes);
             if (!key.Contains("+") && !key.Contains("/"))
             {
+                key = key.Substring(0, key.Length - 3);
                 break;
             }
         }

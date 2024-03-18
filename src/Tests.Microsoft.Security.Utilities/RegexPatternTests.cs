@@ -363,7 +363,7 @@ public class RegexPatternTests
 
         // It is critical that our hashing is consistent across the library's .NET FX
         // and .NET 5.0 versions, so we hard-code this test to ensure things are in sync.
-        Assert.AreEqual("ACF1E0C425403B0E8266C4FDC57130DA", replacement.RedactionToken);
+        Assert.AreEqual($"{Id}:ACF1E0C425403B0E8266C4FDC57130DA", replacement.RedactionToken);
     }
 
     [TestMethod]
@@ -386,17 +386,18 @@ public class RegexPatternTests
         // Arrange
         var secret = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "a(?<refine>b)c");
         var input = "abc";
+        var match = "b";
 
         // Act
         var detections = secret.GetDetections(input, generateCrossCompanyCorrelatingIds: true);
         Detection detection = detections.First();
-        var hash = RegexPattern.GenerateCrossCompanyCorrelatingId("b");
+        var redactionToken = $"{Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(match)}";
 
         // Assert
         Assert.AreEqual(1, actual: detections.Count());
 
-        Assert.AreEqual("b", actual: input.Substring(detection.Start, detection.Length));
-        Assert.AreEqual(hash, actual: detection.RedactionToken);
+        Assert.AreEqual(match, actual: input.Substring(detection.Start, detection.Length));
+        Assert.AreEqual(redactionToken, actual: detection.RedactionToken);
     }
 
     [TestMethod]
@@ -407,14 +408,14 @@ public class RegexPatternTests
         var secret = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc");
         var input = "abc";
 
-        var hash = RegexPattern.GenerateCrossCompanyCorrelatingId(input);
+        var redactionToken = $"{Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(input)}";
 
         // Act
         var replacements = secret.GetDetections(input, generateCrossCompanyCorrelatingIds: true);
 
         // Assert
         Assert.AreEqual(1, actual: replacements.Count());
-        Assert.AreEqual(hash, actual: replacements.First().RedactionToken);
+        Assert.AreEqual(redactionToken, actual: replacements.First().RedactionToken);
     }
 
     [TestMethod]

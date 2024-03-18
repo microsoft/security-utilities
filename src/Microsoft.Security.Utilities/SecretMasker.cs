@@ -39,6 +39,9 @@ public class SecretMasker : ISecretMasker, IDisposable
         m_literalEncoders = new HashSet<LiteralEncoder>();
 
         _regexEngine = regexEngine ??= CachedDotNetRegex.Instance;
+
+        DefaultRegexRedactionToken = "+++";
+        DefaultLiteralRedactionToken = "***";
     }
 
     public SecretMasker()
@@ -58,6 +61,8 @@ public class SecretMasker : ISecretMasker, IDisposable
         {
             copy.m_lock.EnterReadLock();
             MinimumSecretLength = copy.MinimumSecretLength;
+            DefaultRegexRedactionToken = copy.DefaultRegexRedactionToken;
+            DefaultLiteralRedactionToken = copy.DefaultLiteralRedactionToken;
             RegexPatterns = new HashSet<RegexPattern>(copy.RegexPatterns);
             m_literalEncoders = new HashSet<LiteralEncoder>(copy.m_literalEncoders);
             m_encodedSecretLiterals = new HashSet<SecretLiteral>(copy.m_encodedSecretLiterals);
@@ -75,7 +80,9 @@ public class SecretMasker : ISecretMasker, IDisposable
     [ThreadStatic]
     private static StringBuilder? s_stringBuilder;
 
-    public virtual string DefaultRedactionToken => "+++";
+    public virtual string DefaultRegexRedactionToken { get; set; }
+
+    public virtual string DefaultLiteralRedactionToken { get; set; }
 
     public virtual HashSet<RegexPattern> RegexPatterns { get; protected set; }
 
@@ -169,7 +176,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         foreach (var detection in currentDetections)
         {
             _ = s_stringBuilder.Append(input.Substring(startIndex, detection.Start - startIndex))
-                    .Append(detection);
+                    .Append(detection.RedactionToken);
 
             startIndex = detection.Start + detection.Length;
         }
@@ -346,13 +353,13 @@ public class SecretMasker : ISecretMasker, IDisposable
             // Get indexes and lengths of all substrings that will be replaced.
             foreach (RegexPattern regexSecret in RegexPatterns)
             {
-                var found = regexSecret.GetDetections(input, m_generateSha256Hashes, DefaultRedactionToken, _regexEngine);
+                var found = regexSecret.GetDetections(input, m_generateSha256Hashes, DefaultRegexRedactionToken, _regexEngine);
                 detections.AddRange(found);
             }
 
             foreach (SecretLiteral secretLiteral in m_encodedSecretLiterals)
             {
-                var found = secretLiteral.GetDetections(input);
+                var found = secretLiteral.GetDetections(input, DefaultLiteralRedactionToken);
                 detections.AddRange(found);
             }
 

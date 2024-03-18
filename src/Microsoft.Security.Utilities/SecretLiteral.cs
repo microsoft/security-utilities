@@ -27,7 +27,7 @@ internal class SecretLiteral
 
     public override int GetHashCode() => m_value.GetHashCode();
 
-    public IEnumerable<Detection> GetDetections(string input)
+    public IEnumerable<Detection> GetDetections(string input, string redactionToken)
     {
         if (!string.IsNullOrEmpty(input) && !string.IsNullOrEmpty(m_value))
         {
@@ -39,7 +39,7 @@ internal class SecretLiteral
                 startIndex = input.IndexOf(m_value, startIndex, StringComparison.Ordinal);
                 if (startIndex > -1)
                 {
-                    yield return new Detection(null, null, startIndex, m_value.Length, 0);
+                    yield return new Detection(null, null, startIndex, m_value.Length, 0, default, redactionToken);
                     ++startIndex;
                 }
             }

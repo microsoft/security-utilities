@@ -75,7 +75,8 @@ public class SecretMaskerTests
                         // 3. All high entropy secret kinds should generate a fingerprint, but only
                         //    if the masker was initialized to produce them. Every low entropy model
                         //    should refuse to generate a fingerprint, no matter how the masker is configured.
-                        detection.RedactionToken.Should().Be((generateSha256Hashes && !lowEntropyModels) ? sha256Hash : null);
+                        string redactionToken = $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(secretValue)}";
+                        detection.RedactionToken.Should().Be((generateSha256Hashes && !lowEntropyModels) ? redactionToken : "+++");
 
                         // 4. Moniker that flows to classified secret should match the detection.
                         result = detection.Moniker.Equals(moniker);
