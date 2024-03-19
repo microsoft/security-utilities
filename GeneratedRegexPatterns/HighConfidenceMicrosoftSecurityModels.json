@@ -32,21 +32,33 @@
     "DetectionMetadata": "Identifiable"
   },
   {
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
-    "Id": "SEC101/166",
-    "Name": "AzureSearchIdentifiableQueryKey",
+    "Signature": "AzSe",
+    "ChecksumSeeds": [
+      5869709231681187888
+    ],
+    "KeyLength": 32,
+    "RegexNormalizedSignature": "AzSe",
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AzSe[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
     "SniffLiterals": [
       "AzSe"
     ],
+    "Id": "SEC101/166",
+    "Name": "AzureSearchIdentifiableQueryKey",
     "DetectionMetadata": "Identifiable"
   },
   {
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
-    "Id": "SEC101/166",
-    "Name": "AzureSearchIdentifiableAdminKey",
+    "Signature": "AzSe",
+    "ChecksumSeeds": [
+      5783013817603469360
+    ],
+    "KeyLength": 32,
+    "RegexNormalizedSignature": "AzSe",
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AzSe[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
     "SniffLiterals": [
       "AzSe"
     ],
+    "Id": "SEC101/167",
+    "Name": "AzureSearchIdentifiableAdminKey",
     "DetectionMetadata": "Identifiable"
   },
   {
