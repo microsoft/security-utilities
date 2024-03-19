@@ -64,8 +64,8 @@ public static class WellKnownRegexPatterns
         AadClientAppSecretCurrent(),
         AadClientAppSecretPrevious(),
         AzureFunctionIdentifiableKey(),
-        AzureSearchIdentifiableQueryKey(),
-        AzureSearchIdentifiableAdminKey(),
+        new AzureSearchIdentifiableQueryKey(),
+        new AzureSearchIdentifiableAdminKey(),
         AzureRelayIdentifiableKey(),
         AzureEventHubIdentifiableKey(),
         AzureServiceBusIdentifiableKey(),
@@ -120,34 +120,6 @@ public static class WellKnownRegexPatterns
             TimeSpan.FromDays(365 * 2),
             new HashSet<string>(new[] { "7Q~" }),
             sampleGenerator: () => new[] { $"{RandomUrlUnreserved(3)}7Q~{RandomUrlUnreserved(31)}" });
-    }
-
-    public static RegexPattern AzureSearchIdentifiableQueryKey()
-    {
-        return new("SEC101/166",
-                   nameof(AzureSearchIdentifiableQueryKey),
-                   DetectionMetadata.Identifiable,
-                  $@"{PrefixAllBase64}(?<refine>[{Base62}]{{42}}{IdentifiableMetadata.AzureSearchSignature}[A-D][{Base62}]{{5}}){SuffixAllBase64}",
-                   TimeSpan.FromDays(365 * 2),
-                   new HashSet<string>(new[] { IdentifiableMetadata.AzureSearchSignature }),
-                   sampleGenerator: () => new[]
-                   {
-                       AzureSearchIdentifiableKeys.GenerateQueryKeyTestExample(),
-                   });
-    }
-
-    public static RegexPattern AzureSearchIdentifiableAdminKey()
-    {
-        return new("SEC101/166",
-                   nameof(AzureSearchIdentifiableAdminKey),
-                   DetectionMetadata.Identifiable,
-                  $@"{PrefixAllBase64}(?<refine>[{Base62}]{{42}}{IdentifiableMetadata.AzureSearchSignature}[A-D][{Base62}]{{5}}){SuffixAllBase64}",
-                   TimeSpan.FromDays(365 * 2),
-                   new HashSet<string>(new[] { IdentifiableMetadata.AzureSearchSignature }),
-                   sampleGenerator: () => new[]
-                   {
-                       AzureSearchIdentifiableKeys.GenerateAdminKeyTestExample(),
-                   });
     }
 
     public static RegexPattern AzureServiceBusIdentifiableKey()

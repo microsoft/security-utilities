@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -48,39 +49,42 @@ public class SecretMaskerTests
         {
             using var scope = new AssertionScope();
 
-            foreach (bool generateSha256Hashes in new[] { true, false })
+            foreach (IRegexEngine regexEngine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
             {
-                using var secretMasker = new SecretMasker(patterns, generateSha256Hashes, engine);
-
-                foreach (var pattern in patterns)
+                foreach (bool generateSha256Hashes in new[] { true, false })
                 {
-                    foreach (string secretValue in pattern.GenerateTestExamples())
+                    using var secretMasker = new SecretMasker(patterns, generateSha256Hashes, engine);
+
+                    foreach (var pattern in patterns)
                     {
-                        string moniker = pattern.GetMatchMoniker(secretValue);
-                        string sha256Hash = RegexPattern.GenerateSha256Hash(secretValue);
+                        foreach (string secretValue in pattern.GenerateTestExamples())
+                        {
+                            string moniker = pattern.GetMatchMoniker(secretValue);
+                            string sha256Hash = RegexPattern.GenerateSha256Hash(secretValue);
 
-                        // 1. All generated test patterns should be detected by the masker.
-                        var detections = secretMasker.DetectSecrets(secretValue);
-                        bool result = detections.Count() == 1;
-                        result.Should().BeTrue(because: $"'{secretValue}' should result in a single '{moniker}' finding.");
+                            // 1. All generated test patterns should be detected by the masker.
+                            var detections = secretMasker.DetectSecrets(secretValue);
+                            bool result = detections.Count() == 1;
+                            result.Should().BeTrue(because: $"'{secretValue}' should result in a single '{moniker}' finding");
 
-                        Detection detection = secretMasker.DetectSecrets(secretValue).FirstOrDefault();
-                        detection.Should().NotBe(default);
-                        detection.Moniker.Should().Be(moniker);
+                            Detection detection = secretMasker.DetectSecrets(secretValue).FirstOrDefault();
+                            detection.Should().NotBe(default);
+                            detection.Moniker.Should().Be(moniker);
 
-                        // 2. All identifiable or high confidence findings should be marked as high entropy.
-                        result = lowEntropyModels ? true : detection.Metadata.HasFlag(DetectionMetadata.HighEntropy);
-                        result.Should().BeTrue(because: $"{moniker} finding should be classified as high entropy");
+                            // 2. All identifiable or high confidence findings should be marked as high entropy.
+                            result = lowEntropyModels ? true : detection.Metadata.HasFlag(DetectionMetadata.HighEntropy);
+                            result.Should().BeTrue(because: $"{moniker} finding should be classified as high entropy");
 
-                        // 3. All high entropy secret kinds should generate a fingerprint, but only
-                        //    if the masker was initialized to produce them. Every low entropy model
-                        //    should refuse to generate a fingerprint, no matter how the masker is configured.
-                        string redactionToken = $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(secretValue)}";
-                        detection.RedactionToken.Should().Be((generateSha256Hashes && !lowEntropyModels) ? redactionToken : "+++");
+                            // 3. All high entropy secret kinds should generate a fingerprint, but only
+                            //    if the masker was initialized to produce them. Every low entropy model
+                            //    should refuse to generate a fingerprint, no matter how the masker is configured.
+                            string redactionToken = $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(secretValue)}";
+                            detection.RedactionToken.Should().Be((generateSha256Hashes && !lowEntropyModels) ? redactionToken : "+++");
 
-                        // 4. Moniker that flows to classified secret should match the detection.
-                        result = detection.Moniker.Equals(moniker);
-                        result.Should().BeTrue(because: $"{moniker} finding should not be reported as {detection.Moniker} for test data {secretValue}");
+                            // 4. Moniker that flows to classified secret should match the detection.
+                            result = detection.Moniker.Equals(moniker);
+                            result.Should().BeTrue(because: $"{moniker} finding should not be reported as {detection.Moniker} for test data {secretValue}");
+                        }
                     }
                 }
             }
@@ -120,21 +124,24 @@ public class SecretMaskerTests
         {
             using var scope = new AssertionScope();
 
-            foreach (bool generateSha256Hashes in new[] { true, false })
+            foreach (IRegexEngine regexEngine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
             {
-                using var secretMasker = new SecretMasker(patterns, generateSha256Hashes, engine);
-
-                foreach (var pattern in patterns)
+                foreach (bool generateSha256Hashes in new[] { true, false })
                 {
-                    foreach (string secretValue in pattern.GenerateTestExamples())
-                    {
-                        string moniker = pattern.GetMatchMoniker(secretValue);
-                        string sha256Hash = RegexPattern.GenerateSha256Hash(secretValue);
+                    using var secretMasker = new SecretMasker(patterns, generateSha256Hashes, engine);
 
-                        // 1. All generated test patterns should be detected by the masker.
-                        string redacted = secretMasker.MaskSecrets(secretValue);
-                        bool result = redacted.Equals(secretValue);
-                        result.Should().BeFalse(because: $"'{secretValue}' should be redacted from scan text.");
+                    foreach (var pattern in patterns)
+                    {
+                        foreach (string secretValue in pattern.GenerateTestExamples())
+                        {
+                            string moniker = pattern.GetMatchMoniker(secretValue);
+                            string sha256Hash = RegexPattern.GenerateSha256Hash(secretValue);
+
+                            // 1. All generated test patterns should be detected by the masker.
+                            string redacted = secretMasker.MaskSecrets(secretValue);
+                            bool result = redacted.Equals(secretValue);
+                            result.Should().BeFalse(because: $"'{secretValue}' should be redacted from scan text.");
+                        }
                     }
                 }
             }
