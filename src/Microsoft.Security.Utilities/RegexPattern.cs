@@ -202,13 +202,13 @@ public class RegexPattern
                         : defaultRedactionToken;
 
                 var moniker = GetMatchIdAndName(match.Value);
-                if (!moniker.HasValue)
+                if (moniker == default)
                 {
                     continue;
                 }
 
-                string id = moniker.Value.id;
-                string name = moniker.Value.name;
+                string id = moniker.Item1;
+                string name = moniker.Item2;
 
                 yield return new Detection(id,
                                            name,
@@ -257,9 +257,9 @@ public class RegexPattern
 #endif
     }
 
-    public virtual string GetMatchMoniker(string match) => $"{GetMatchIdAndName(match)!.Value.id}.{GetMatchIdAndName(match)!.Value.name}";
+    public virtual string GetMatchMoniker(string match) => $"{GetMatchIdAndName(match)!.Item1}.{GetMatchIdAndName(match)!.Item2}";
 
-    public virtual (string id, string name)? GetMatchIdAndName(string match) => new(Id, Name);
+    public virtual Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>(Id, Name);
 
     public virtual string Pattern { get; protected set; }
 

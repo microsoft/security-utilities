@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -24,7 +25,7 @@ internal sealed class Unclassified64ByteBase64String : RegexPattern
         DetectionMetadata = DetectionMetadata.HighEntropy;
     }
 
-    public override (string id, string name)? GetMatchIdAndName(string match) => ("SEC102/102", "Unclassified64ByteBase64String");
+    public override Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>("SEC102/102", "Unclassified64ByteBase64String");
 
     public override IEnumerable<string> GenerateTestExamples()
     {

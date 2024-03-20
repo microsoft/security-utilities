@@ -36,7 +36,7 @@ internal sealed class Azure32ByteIdentifiableKeys : RegexPattern
         });
     }
 
-    public override (string id, string name)? GetMatchIdAndName(string match)
+    public override Tuple<string, string>? GetMatchIdAndName(string match)
     {
         if (match.Length < 38)
         {
@@ -48,9 +48,9 @@ internal sealed class Azure32ByteIdentifiableKeys : RegexPattern
         return signature switch
         {
             IdentifiableMetadata.AzureIotSignature => GetAIoTMatchIdAndName(match),
-            IdentifiableMetadata.AzureRelaySignature => ("SEC101/173", "AzureRelayIdentifiableKey"),
-            IdentifiableMetadata.AzureEventHubSignature => ("SEC101/172", "AzureEventHubIdentifiableKey"),
-            IdentifiableMetadata.AzureServiceBusSignature => ("SEC101/171", "AzureServiceBusIdentifiableKey"),
+            IdentifiableMetadata.AzureRelaySignature => new Tuple<string, string>("SEC101/173", "AzureRelayIdentifiableKey"),
+            IdentifiableMetadata.AzureEventHubSignature => new Tuple<string, string>("SEC101/172", "AzureEventHubIdentifiableKey"),
+            IdentifiableMetadata.AzureServiceBusSignature => new Tuple<string, string>("SEC101/171", "AzureServiceBusIdentifiableKey"),
             _ => null,
         };
     }
@@ -90,21 +90,21 @@ internal sealed class Azure32ByteIdentifiableKeys : RegexPattern
                                                                    aiotSignature);
     }
 
-    private static (string id, string name) GetAIoTMatchIdAndName(string match)
+    private static Tuple<string, string> GetAIoTMatchIdAndName(string match)
     {
         if (IdentifiableMetadata.IsAzureIotHubIdentifiableKey(match))
         {
-            return ("SEC101/178", "AzureIotHubIdentifiableKey");
+            return new Tuple<string, string>("SEC101/178", "AzureIotHubIdentifiableKey");
         }
 
         if (IdentifiableMetadata.IsAzureIotDeviceProvisioningIdentifiableKey(match))
         {
-            return ("SEC101/179", "AzureIotDeviceProvisioningIdentifiableKey");
+            return new Tuple<string, string>("SEC101/179", "AzureIotDeviceProvisioningIdentifiableKey");
         }
 
         if (IdentifiableMetadata.IsAzureIotDeviceIdentifiableKey(match))
         {
-            return ("SEC101/180", "AzureIotDeviceIdentifiableKey");
+            return new Tuple<string, string>("SEC101/180", "AzureIotDeviceIdentifiableKey");
         }
 
         throw new ArgumentException("Received a match that was not an APIM secret.");

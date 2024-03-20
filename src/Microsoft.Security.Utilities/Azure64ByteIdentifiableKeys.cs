@@ -37,7 +37,7 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
         });
     }
 
-    public override (string id, string name)? GetMatchIdAndName(string match)
+    public override Tuple<string, string>? GetMatchIdAndName(string match)
     {
         if (match.Length < 81)
         {
@@ -49,10 +49,10 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
         return signature switch
         {
             IdentifiableMetadata.AzureApimSignature => GetApimMatchIdAndName(match),
-            IdentifiableMetadata.AzureBatchSignature => ("SEC101/163", "AzureBatchIdentifiableKey"),
-            IdentifiableMetadata.AzureStorageSignature => ("SEC101/152", "AzureStorageAccountIdentifiableKey"),
-            IdentifiableMetadata.AzureCosmosDBSignature => ("SEC101/160", "AzureCosmosDbIdentifiableKeyResource"),
-            IdentifiableMetadata.AzureMLClassicSignature => ("SEC101/170", "AzureMLWebServiceClassicIdentifiableKey"),
+            IdentifiableMetadata.AzureBatchSignature => new Tuple<string, string>("SEC101/163", "AzureBatchIdentifiableKey"),
+            IdentifiableMetadata.AzureStorageSignature => new Tuple<string, string>("SEC101/152", "AzureStorageAccountIdentifiableKey"),
+            IdentifiableMetadata.AzureCosmosDBSignature => new Tuple<string, string>("SEC101/160", "AzureCosmosDbIdentifiableKeyResource"),
+            IdentifiableMetadata.AzureMLClassicSignature => new Tuple<string, string>("SEC101/170", "AzureMLWebServiceClassicIdentifiableKey"),
             _ => null,
         };
     }
@@ -94,26 +94,26 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
                                                                    signature);
     }
 
-    private static (string id, string name)? GetApimMatchIdAndName(string match)
+    private static Tuple<string, string>? GetApimMatchIdAndName(string match)
     {
         if (IdentifiableMetadata.IsAzureApimIdentifiableDirectManagementKey(match))
         {
-            return ("SEC101/181", "AzureApimIdentifiableDirectManagementKey");
+            return new Tuple<string, string>("SEC101/181", "AzureApimIdentifiableDirectManagementKey");
         }
 
         if (IdentifiableMetadata.IsAzureApimIdentifiableSubscriptionKey(match))
         {
-            return ("SEC101/182", "AzureApimIdentifiableSubscriptionKey");
+            return new Tuple<string, string>("SEC101/182", "AzureApimIdentifiableSubscriptionKey");
         }
 
         if (IdentifiableMetadata.IsAzureApimIdentifiableGatewayKey(match))
         {
-            return ("SEC101/183", "AzureApimIdentifiableGatewayKey");
+            return new Tuple<string, string>("SEC101/183", "AzureApimIdentifiableGatewayKey");
         }
 
         if (IdentifiableMetadata.IsAzureApimIdentifiableRepositoryKey(match))
         {
-            return ("SEC101/184", "AzureApimIdentifiableRepositoryKey");
+            return new Tuple<string, string>("SEC101/184", "AzureApimIdentifiableRepositoryKey");
         }
 
         return null;

@@ -343,7 +343,7 @@ public class SecretMaskerTests
     public void SecretMasker_Encoder_EscapeJsonString()
     {
         using var secretMasker = new SecretMasker();
-        secretMasker.AddLiteralEncoder(WellKnownLiteralEncoders.EscapeJsonString);
+        secretMasker.AddLiteralEncoder(WellKnownTestLiteralEncoders.EscapeJsonString);
         secretMasker.AddValue("carriage-return\r_newline\n_tab\t_backslash\\_double-quote\"");
         Assert.AreEqual("***", secretMasker.MaskSecrets("carriage-return\r_newline\n_tab\t_backslash\\_double-quote\""));
         Assert.AreEqual("***", secretMasker.MaskSecrets("carriage-return\\r_newline\\n_tab\\t_backslash\\\\_double-quote\\\""));

@@ -1,22 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Microsoft.Security.Utilities
 {
     internal class WellKnownLiteralEncoders
     {
-        public static string EscapeJsonString(string value)
-        {
-            // Use the relaxed encoder to prefer quotes that aren't rendered
-            // as embedded unicode, e.g., '\u0022' rather than '\"'.
-            return JsonEncodedText.Encode(value, JavaScriptEncoder.UnsafeRelaxedJsonEscaping).ToString();
-        }
-
         public static string UnescapeBackslashes(string value)
         {
             return value.Replace("\\\\", "\\")

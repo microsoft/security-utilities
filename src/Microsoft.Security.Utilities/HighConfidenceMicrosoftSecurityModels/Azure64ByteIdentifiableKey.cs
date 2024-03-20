@@ -44,7 +44,7 @@ namespace Microsoft.Security.Utilities
             protected set => _sniffLiterals = value;
         }
 
-        public override (string id, string name)? GetMatchIdAndName(string match)
+        public override Tuple<string, string>? GetMatchIdAndName(string match)
         {
             foreach (ulong checksumSeed in ChecksumSeeds)
             {
@@ -52,7 +52,7 @@ namespace Microsoft.Security.Utilities
                                                           checksumSeed,
                                                           Signature))
                 {
-                    return (Id, Name);
+                    return new Tuple<string, string>(Id, Name);
                 }
             }
 

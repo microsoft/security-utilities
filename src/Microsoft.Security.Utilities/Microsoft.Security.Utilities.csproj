@@ -31,19 +31,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="../../ReleaseHistory.md" Pack="true" PackagePath="ReleaseHistory.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Text.Json">
-      <Version>8.0.1</Version>
-    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
