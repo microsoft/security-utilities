@@ -5,13 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
+#nullable enable
 #pragma warning disable SYSLIB0023  // 'RNGCryptoServiceProvider' is obsolete.
 
 namespace Microsoft.Security.Utilities
 {
     public abstract class Azure32ByteIdentifiableKey : RegexPattern, IIdentifiableKey
     {
-        private ISet<string> _sniffLiterals;
+        private ISet<string>? _sniffLiterals;
 
         public Azure32ByteIdentifiableKey()
         {
@@ -32,7 +33,7 @@ namespace Microsoft.Security.Utilities
             get => @$"{WellKnownRegexPatterns.PrefixAllBase64}(?<refine>[{WellKnownRegexPatterns.Base64}]{{33}}{Signature}[A-P][{WellKnownRegexPatterns.Base64}]{{5}}=){WellKnownRegexPatterns.SuffixAllBase64}";
             protected set => base.Pattern = value;
         }
-        public override ISet<string> SniffLiterals
+        public override ISet<string>? SniffLiterals
         {
             get
             {

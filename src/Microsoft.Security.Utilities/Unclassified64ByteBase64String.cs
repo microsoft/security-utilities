@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities;
 
+#nullable enable
 #pragma warning disable SA1600  // Elements should be documented.
 
 [ExcludeFromCodeCoverage]
@@ -35,7 +36,7 @@ internal sealed class Unclassified64ByteBase64String : RegexPattern
     public override IEnumerable<Detection> GetDetections(string input,
                                                          bool generateSha256Hashes,
                                                          string defaultRedactionToken = RegexPattern.DefaultRedactionToken,
-                                                         IRegexEngine regexEngine = default)
+                                                         IRegexEngine? regexEngine = null)
     {
         foreach (Detection detection in base.GetDetections(input, generateSha256Hashes, defaultRedactionToken, regexEngine))
         {

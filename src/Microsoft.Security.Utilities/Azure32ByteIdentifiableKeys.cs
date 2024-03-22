@@ -12,6 +12,8 @@ using System.Security.Cryptography;
 
 namespace Microsoft.Security.Utilities;
 
+#nullable enable
+
 #pragma warning disable SA1600  // Elements should be documented.
 #pragma warning disable SYSLIB0023  // 'RNGCryptoServiceProvider' is obsolete.
 
@@ -59,7 +61,7 @@ internal sealed class Azure32ByteIdentifiableKeys : RegexPattern
     {
         const string aiotSignature = IdentifiableMetadata.AzureIotSignature;
 
-        foreach (string sniffLiteral in SniffLiterals)
+        foreach (string sniffLiteral in SniffLiterals!)
         {
             if (sniffLiteral == aiotSignature)
             {

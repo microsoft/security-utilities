@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities;
 
+#nullable enable
 #pragma warning disable SYSLIB0023  // 'RNGCryptoServiceProvider' is obsolete.
 
 internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
@@ -59,7 +60,7 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
 
     public override IEnumerable<string> GenerateTestExamples()
     {
-        foreach (string sniffLiteral in SniffLiterals)
+        foreach (string sniffLiteral in SniffLiterals!)
         {
             if (sniffLiteral == "APIM")
             {
