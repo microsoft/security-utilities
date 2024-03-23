@@ -145,10 +145,10 @@ public static class IdentifiableSecrets
 
             keyBytes = Convert.FromBase64String(key);
 
-            byte sixBitsReserved1 = defaultBase64EncodedCharacter;
-            byte sixBitsReserved2 = defaultBase64EncodedCharacter;
-            byte sixBitsReserved3 = defaultBase64EncodedCharacter;
-            byte sixBitsReserved4 = defaultBase64EncodedCharacter;
+            byte sixBitsReserved1 = 'J' - 'A';
+            byte sixBitsReserved2 = 'Q' - 'A';
+            byte sixBitsReserved3 = 'Q' - 'A';
+            byte sixBitsReserved4 = 'J' - 'A';
 
             int reserved = (sixBitsReserved1 << 18) | (sixBitsReserved2 << 12) | (sixBitsReserved3 << 6) | sixBitsReserved4;
             byte[] reservedBytes = BitConverter.GetBytes(reserved);
@@ -165,7 +165,7 @@ public static class IdentifiableSecrets
             byte yearsSince2024 = (byte)(DateTime.UtcNow.Year - 2024);
             byte zeroIndexedMonth = (byte)(DateTime.UtcNow.Month - 1);
 
-            reserved = (yearsSince2024 << 18) | (zeroIndexedMonth << 12) | (sixBitsReserved5 << 6) | sixBitsReserved6;
+            reserved = (sixBitsReserved5 << 18) | (sixBitsReserved6 << 12) | (yearsSince2024 << 6) | zeroIndexedMonth;
             reservedBytes = BitConverter.GetBytes(reserved);
 
             keyBytes[keyBytes.Length - 13] = reservedBytes[2];
