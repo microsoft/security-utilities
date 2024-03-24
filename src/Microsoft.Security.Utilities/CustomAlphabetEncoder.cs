@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
     /// </summary>
     public class CustomAlphabetEncoder
     {
-        internal const string DefaultBase62Alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        public const string DefaultBase62Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
         [ThreadStatic]
         private static StringBuilder s_sb;

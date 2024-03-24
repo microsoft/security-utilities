@@ -48,7 +48,7 @@ public static class IdentifiableSecrets
         base64EncodedSignature = customerManagedKey
                 ? base64EncodedSignature.ToUpperInvariant()
                 : base64EncodedSignature.ToLowerInvariant();
-        
+
         string componentToChecksum = key.Substring(0, key.Length - 4);
         string checksumText = key.Substring(key.Length - 4);
 
@@ -80,6 +80,25 @@ public static class IdentifiableSecrets
                                                     byte? metadata2,
                                                     byte? metadata3,
                                                     byte? metadata4)
+    {
+        return GenerateCommonAnnotatedTestKey(checksumSeed,
+                                              base64EncodedSignature,
+                                              customerManagedKey,
+                                              metadata1,
+                                              metadata2,
+                                              metadata3,
+                                              metadata4,
+                                              testChar: null);
+    }
+
+    public static string GenerateCommonAnnotatedTestKey(ulong checksumSeed,
+                                                    string base64EncodedSignature,
+                                                    bool customerManagedKey,
+                                                    byte? metadata1,
+                                                    byte? metadata2,
+                                                    byte? metadata3,
+                                                    byte? metadata4,
+                                                    char? testChar)
     {
         byte defaultBase64EncodedCharacter = (byte)61;
 
@@ -136,12 +155,19 @@ public static class IdentifiableSecrets
             int keyLengthInBytes = 64;
             byte[] keyBytes = new byte[(int)64];
 
-            using var generator = RandomNumberGenerator.Create();
-            generator.GetBytes(keyBytes, 0, (int)keyLengthInBytes);
+            if (testChar == null)
+            {
+                using var generator = RandomNumberGenerator.Create();
+                generator.GetBytes(keyBytes, 0, (int)keyLengthInBytes);
 
-            key = Convert.ToBase64String(keyBytes);
-            key = key.Replace('+', 'm');
-            key = key.Replace('/', 'f');
+                key = Convert.ToBase64String(keyBytes);
+                key = key.Replace('+', 'm');
+                key = key.Replace('/', 'f');
+            }
+            else
+            {
+                key = $"{new string(testChar!.Value, 86)}==";
+            }
 
             keyBytes = Convert.FromBase64String(key);
 
@@ -184,7 +210,7 @@ public static class IdentifiableSecrets
             sigBytes.CopyTo(keyBytes, signatureOffset);
 
 #if NET5_0_OR_GREATER
-            var checksumInput = new ReadOnlySpan<byte>(keyBytes).Slice(0, keyBytes.Length - 4);
+                var checksumInput = new ReadOnlySpan<byte>(keyBytes).Slice(0, keyBytes.Length - 4);
             int checksum = Marvin.ComputeHash32(checksumInput, checksumSeed);
 #else
             int checksum = Marvin.ComputeHash32(keyBytes, checksumSeed, 0, keyBytes.Length - 4);
@@ -192,15 +218,25 @@ public static class IdentifiableSecrets
 
             byte[] checksumBytes = BitConverter.GetBytes(checksum);
 
+            checksumBytes = BitConverter.GetBytes(checksum);
+
             keyBytes[keyBytes.Length - 4] = checksumBytes[0];
             keyBytes[keyBytes.Length - 3] = checksumBytes[1];
             keyBytes[keyBytes.Length - 2] = checksumBytes[2];
             keyBytes[keyBytes.Length - 1] = checksumBytes[3];
 
             key = Convert.ToBase64String(keyBytes);
+
             if (!key.Contains("+") && !key.Contains("/"))
             {
                 key = key.Substring(0, key.Length - 3);
+                break;
+            }
+            else if (testChar != null)
+            {
+                // We could not produce a valid test key given the current signature,
+                // checksum seed, reserved bits and specified test character.
+                key = null;
                 break;
             }
         }
