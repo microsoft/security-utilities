@@ -85,7 +85,6 @@ public class Detection : IEquatable<Detection>
     {
         int hashCode = 17;
 
-        // RotationPeriod is consciously excluded from this computation.
         unchecked
         {
             if (Id != null)

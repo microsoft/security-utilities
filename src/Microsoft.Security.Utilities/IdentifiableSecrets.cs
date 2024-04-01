@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Specialized;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
@@ -79,7 +80,9 @@ public static class IdentifiableSecrets
                                                     byte? metadata1,
                                                     byte? metadata2,
                                                     byte? metadata3,
-                                                    byte? metadata4)
+                                                    byte? metadata4,
+                                                    byte? metadata5,
+                                                    byte? metadata6)
     {
         return GenerateCommonAnnotatedTestKey(checksumSeed,
                                               base64EncodedSignature,
@@ -88,6 +91,8 @@ public static class IdentifiableSecrets
                                               metadata2,
                                               metadata3,
                                               metadata4,
+                                              metadata5,
+                                              metadata6,
                                               testChar: null);
     }
 
@@ -98,6 +103,8 @@ public static class IdentifiableSecrets
                                                     byte? metadata2,
                                                     byte? metadata3,
                                                     byte? metadata4,
+                                                    byte? metadata5,
+                                                    byte? metadata6,
                                                     char? testChar)
     {
         byte defaultBase64EncodedCharacter = (byte)61;
@@ -142,6 +149,26 @@ public static class IdentifiableSecrets
             throw new ArgumentOutOfRangeException(nameof(metadata4), "Metadata value must be less than 64.");
         }
 
+        if (!metadata5.HasValue)
+        {
+            metadata5 = defaultBase64EncodedCharacter;
+        }
+
+        if (metadata5 >= 64)
+        {
+            throw new ArgumentOutOfRangeException(nameof(metadata5), "Metadata value must be less than 64.");
+        }
+
+        if (!metadata6.HasValue)
+        {
+            metadata6 = defaultBase64EncodedCharacter;
+        }
+
+        if (metadata6 >= 64)
+        {
+            throw new ArgumentOutOfRangeException(nameof(metadata6), "Metadata value must be less than 64.");
+        }
+
         base64EncodedSignature = customerManagedKey 
                 ? base64EncodedSignature.ToUpperInvariant()
                 : base64EncodedSignature.ToLowerInvariant();
@@ -176,30 +203,38 @@ public static class IdentifiableSecrets
             byte sixBitsReserved3 = 'Q' - 'A';
             byte sixBitsReserved4 = 'J' - 'A';
 
-            int reserved = (sixBitsReserved1 << 18) | (sixBitsReserved2 << 12) | (sixBitsReserved3 << 6) | sixBitsReserved4;
+            byte randomByte = keyBytes[keyBytes.Length - 18];
+
+            int reserved = (randomByte << 12) | (sixBitsReserved1 << 6) | sixBitsReserved2;
             byte[] reservedBytes = BitConverter.GetBytes(reserved);
 
-            keyBytes[keyBytes.Length - 16] = reservedBytes[2];
-            keyBytes[keyBytes.Length - 15] = reservedBytes[1];
-            keyBytes[keyBytes.Length - 14] = reservedBytes[0];
+            keyBytes[keyBytes.Length - 18] = reservedBytes[1];
+            keyBytes[keyBytes.Length - 17] = reservedBytes[0];
 
             // Currently unused.
             byte sixBitsReserved5 = defaultBase64EncodedCharacter;
             byte sixBitsReserved6 = defaultBase64EncodedCharacter;
 
+            reserved = (sixBitsReserved3 << 18) | (sixBitsReserved4 << 12) | (sixBitsReserved5 << 6) | sixBitsReserved6;
+            reservedBytes = BitConverter.GetBytes(reserved);
+
+            keyBytes[keyBytes.Length - 16] = reservedBytes[2];
+            keyBytes[keyBytes.Length - 15] = reservedBytes[1];
+            keyBytes[keyBytes.Length - 14] = reservedBytes[0];
+
+            int? metadata = (metadata1 << 18) | (metadata2 << 12) | (metadata3 << 6) | metadata4;
+            byte[] metadataBytes = BitConverter.GetBytes(metadata.Value);
+
+            keyBytes[keyBytes.Length - 13] = metadataBytes[2];
+            keyBytes[keyBytes.Length - 12] = metadataBytes[1];
+            keyBytes[keyBytes.Length - 11] = metadataBytes[0];
+
             // Simplistic timestamp computation.
             byte yearsSince2024 = (byte)(DateTime.UtcNow.Year - 2024);
             byte zeroIndexedMonth = (byte)(DateTime.UtcNow.Month - 1);
 
-            reserved = (sixBitsReserved5 << 18) | (sixBitsReserved6 << 12) | (yearsSince2024 << 6) | zeroIndexedMonth;
-            reservedBytes = BitConverter.GetBytes(reserved);
-
-            keyBytes[keyBytes.Length - 13] = reservedBytes[2];
-            keyBytes[keyBytes.Length - 12] = reservedBytes[1];
-            keyBytes[keyBytes.Length - 11] = reservedBytes[0];
-
-            int? metadata = (metadata1 << 18) | (metadata2 << 12) | (metadata3 << 6) | metadata4;
-            byte[] metadataBytes = BitConverter.GetBytes(metadata.Value);
+            metadata = (yearsSince2024 << 18) | (zeroIndexedMonth << 12) | (metadata5 << 6) | metadata6;
+            metadataBytes = BitConverter.GetBytes(metadata.Value);
 
             keyBytes[keyBytes.Length - 10] = metadataBytes[2];
             keyBytes[keyBytes.Length - 9] = metadataBytes[1];
@@ -210,7 +245,7 @@ public static class IdentifiableSecrets
             sigBytes.CopyTo(keyBytes, signatureOffset);
 
 #if NET5_0_OR_GREATER
-                var checksumInput = new ReadOnlySpan<byte>(keyBytes).Slice(0, keyBytes.Length - 4);
+            var checksumInput = new ReadOnlySpan<byte>(keyBytes).Slice(0, keyBytes.Length - 4);
             int checksum = Marvin.ComputeHash32(checksumInput, checksumSeed);
 #else
             int checksum = Marvin.ComputeHash32(keyBytes, checksumSeed, 0, keyBytes.Length - 4);
@@ -229,7 +264,7 @@ public static class IdentifiableSecrets
 
             if (!key.Contains("+") && !key.Contains("/"))
             {
-                key = key.Substring(0, key.Length - 3);
+                key = key.Substring(0, key.Length - 4);
                 break;
             }
             else if (testChar != null)

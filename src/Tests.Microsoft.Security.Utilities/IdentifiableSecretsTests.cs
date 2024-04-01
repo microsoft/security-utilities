@@ -43,7 +43,7 @@ namespace Microsoft.Security.Utilities
                     {
                         ulong checksumSeed = (ulong)Guid.NewGuid().ToString().GetHashCode();
                         string signature = Guid.NewGuid().ToString("N").Substring(0, 4);
-                        string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(checksumSeed, signature, false, default, default, default, default);
+                        string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(checksumSeed, signature, false, default, default, default, default, default, default);
                     }
                 }
             }
