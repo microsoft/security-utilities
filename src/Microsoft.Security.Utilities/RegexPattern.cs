@@ -245,7 +245,10 @@ public class RegexPattern
         byte[] byteHash = Encoding.UTF8.GetBytes(text);
         byte[] checksum = sha.ComputeHash(byteHash);
 
-        return Convert.ToBase64String(checksum).Substring(0, 20);
+        byte[] toEncode = new byte[15];
+        Array.Copy(checksum, 0, toEncode, 0, toEncode.Length);
+
+        return Convert.ToBase64String(toEncode);
     }
 
     public static string GenerateSha256Hash(string text)
