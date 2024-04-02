@@ -26,7 +26,7 @@ namespace Microsoft.Security.Utilities;
 /// The most recent version of this algorithm, if helpful in the future, is located at:
 /// https://github.com/dotnet/runtime/blob/57bfe474518ab5b7cfe6bf7424a79ce3af9d6657/src/libraries/System.Private.CoreLib/src/System/Marvin.cs.
 /// </summary>
-internal static class Marvin
+public static class Marvin
 {
     /// <summary>
     /// Convenience method to compute a Marvin hash and collapse it into a 32-bit hash.
