@@ -363,7 +363,7 @@ public class RegexPatternTests
 
         // It is critical that our hashing is consistent across the library's .NET FX
         // and .NET 5.0 versions, so we hard-code this test to ensure things are in sync.
-        Assert.AreEqual($"{Id}:n4bQgYhMfWWaL+qgxVrQ", replacement.RedactionToken);
+        Assert.AreEqual($"{Id}:rPHgxCVAOw6CZsT9xXEw", replacement.RedactionToken);
     }
 
     [TestMethod]

@@ -242,7 +242,7 @@ public class RegexPattern
         hash = $"CrossMicrosoftCorrelatingId:{hash}";
 
         using var sha = SHA256.Create();
-        byte[] byteHash = Encoding.UTF8.GetBytes(text);
+        byte[] byteHash = Encoding.UTF8.GetBytes(hash);
         byte[] checksum = sha.ComputeHash(byteHash);
 
         byte[] toEncode = new byte[15];
