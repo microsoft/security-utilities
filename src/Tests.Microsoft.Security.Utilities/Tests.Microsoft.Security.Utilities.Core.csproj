@@ -23,6 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Security.Utilities\Microsoft.Security.Utilities.csproj" />
+    <ProjectReference Include="..\Microsoft.Security.Utilities\Microsoft.Security.Utilities.Core.csproj" />
   </ItemGroup>
 </Project>
