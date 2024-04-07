@@ -203,8 +203,8 @@ internal static class IdentifiableMetadata
             try
             {
                 if (IdentifiableSecrets.ValidateBase64Key(secret,
-                                                           checksumSeed,
-                                                           AzureEventHubSignature))
+                                                          checksumSeed,
+                                                          AzureEventHubSignature))
                 {
                     return true;
                 }
@@ -392,8 +392,8 @@ internal static class IdentifiableMetadata
             try
             {
                 if (IdentifiableSecrets.ValidateBase64Key(secret,
-                                                           checksumSeed,
-                                                           AzureServiceBusSignature))
+                                                          checksumSeed,
+                                                          AzureServiceBusSignature))
                 {
                     return true;
                 }

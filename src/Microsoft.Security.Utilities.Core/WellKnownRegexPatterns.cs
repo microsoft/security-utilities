@@ -60,15 +60,18 @@ public static class WellKnownRegexPatterns
 
     public static IEnumerable<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } = new[]
     {
+        new AdoPat(),
+        new AzureStorageAccountLegacyCredentials(),
+        new AzureCosmosDBLegacyCredentials(),
         NuGetApiKey(),
         AadClientAppIdentifiableCredentialsCurrent(),
         AadClientAppIdentifiableCredentialsPrevious(),
         AzureFunctionIdentifiableKey(),
         new AzureSearchIdentifiableQueryKey(),
         new AzureSearchIdentifiableAdminKey(),
-        AzureRelayIdentifiableKey(),
-        AzureEventHubIdentifiableKey(),
-        AzureServiceBusIdentifiableKey(),
+        new AzureRelayIdentifiableKey(),
+        new AzureEventHubIdentifiableKey(),
+        new AzureServiceBusIdentifiableKey(),
         new AzureIotHubIdentifiableKey(),
         new AzureIotDeviceIdentifiableKey(),
         new AzureIotDeviceProvisioningIdentifiableKey(),
@@ -80,7 +83,7 @@ public static class WellKnownRegexPatterns
         new AzureApimIdentifiableSubscriptionKey(),
         new AzureApimIdentifiableGatewayKey(),
         new AzureApimIdentifiableRepositoryKey(),
-        AzureCacheForRedisIdentifiableKey(),
+        new AzureCacheForRedisIdentifiableKey(),
         AzureContainerRegistryIdentifiableKey(),
     };
 
@@ -122,65 +125,6 @@ public static class WellKnownRegexPatterns
             sampleGenerator: () => new[] { $"{RandomUrlUnreserved(3)}7Q~{RandomUrlUnreserved(31)}" });
     }
 
-    public static RegexPattern AzureServiceBusIdentifiableKey()
-    {
-        return new("SEC101/171",
-                   nameof(AzureServiceBusIdentifiableKey),
-                   DetectionMetadata.Identifiable,
-                  $@"{PrefixAllBase64}(?<refine>[{Base64}]{{33}}\+ASb[A-P][{Base64}]{{5}}=){SuffixAllBase64}",
-                   TimeSpan.FromDays(365 * 2),
-                   new HashSet<string>(new[] { IdentifiableMetadata.AzureServiceBusSignature }),
-                   sampleGenerator: () => new[]
-                   {
-                       IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureServiceBusOrEventHubSystemKeySeed,
-                                                                   32,
-                                                                   IdentifiableMetadata.AzureServiceBusSignature),
-                   });
-
-    }
-
-    public static RegexPattern AzureEventHubIdentifiableKey()
-    {
-        return new("SEC101/172",
-                   nameof(AzureEventHubIdentifiableKey),
-                   DetectionMetadata.Identifiable,
-                  $@"{PrefixAllBase64}(?<refine>[{Base64}]{{33}}\+AEh[A-P][{Base64}]{{5}}=){SuffixAllBase64}",
-                   TimeSpan.FromDays(365 * 2),
-                   new HashSet<string>(new[] { IdentifiableMetadata.AzureEventHubSignature }),
-                   sampleGenerator: () => new[]
-                   {
-                       IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureServiceBusOrEventHubSystemKeySeed,
-                                                                   32,
-                                                                   IdentifiableMetadata.AzureEventHubSignature),
-                   });
-
-    }
-
-    public static RegexPattern AzureRelayIdentifiableKey()
-    {
-        return new("SEC101/173",
-                   nameof(AzureRelayIdentifiableKey),
-                   DetectionMetadata.Identifiable,
-                  $@"{PrefixAllBase64}(?<refine>[{Base64}]{{33}}\+ARm[A-P][{Base64}]{{5}}=){SuffixAllBase64}",
-                   TimeSpan.FromDays(365 * 2),
-                   new HashSet<string>(new[] { IdentifiableMetadata.AzureRelaySignature }),
-                   sampleGenerator: () => new[]
-                   {
-                       IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureMessagingSendKeyChecksumSeed,
-                                                                   32,
-                                                                   IdentifiableMetadata.AzureRelaySignature),
-                       IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureMessagingManageKeyChecksumSeed,
-                                                                   32,
-                                                                   IdentifiableMetadata.AzureRelaySignature),
-                       IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureMessagingSendKeyChecksumSeed,
-                                                                   32,
-                                                                   IdentifiableMetadata.AzureRelaySignature),
-                       IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureMessagingUnknownSeed,
-                                                                   32,
-                                                                   IdentifiableMetadata.AzureRelaySignature),
-                   });
-    }
-
     public static RegexPattern AzureFunctionIdentifiableKey()
     {
         return new("SEC101/158",
@@ -206,22 +150,6 @@ public static class WellKnownRegexPatterns
                    sampleGenerator: () => new[]
                    {
                        IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureContainerRegistryChecksumSeed, 39, IdentifiableMetadata.AzureContainerRegistrySignature),
-                   });
-    }
-
-    public static RegexPattern AzureCacheForRedisIdentifiableKey()
-    {
-        return new("SEC101/154",
-                   nameof(AzureCacheForRedisIdentifiableKey),
-                   DetectionMetadata.Identifiable,
-                   $@"{PrefixAllBase64}(?<refine>[{Base62}]{{33}}{IdentifiableMetadata.AzureCacheForRedisSignature}[A-P][{Base62}]{{5}}=){SuffixAllBase64}",
-                   TimeSpan.FromDays(365 * 2),
-                   sampleGenerator: () => new[]
-                   {
-                       IdentifiableSecrets.GenerateStandardBase64Key(
-                            IdentifiableMetadata.AzureCacheForRedisChecksumSeed, 32, IdentifiableMetadata.AzureCacheForRedisSignature)
-                                .Replace('/', 'F')
-                                .Replace('+', 'P')
                    });
     }
 

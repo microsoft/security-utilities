@@ -24,7 +24,7 @@ public class SecretMasker : ISecretMasker, IDisposable
 {
     IRegexEngine? _regexEngine;
 
-    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets, bool generateSha256Hashes = false, IRegexEngine? regexEngine = default)
+    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets, bool generateCorrelatingIds = false, IRegexEngine? regexEngine = default)
     {
         m_disposed = false;
 
@@ -32,7 +32,7 @@ public class SecretMasker : ISecretMasker, IDisposable
             ? new HashSet<RegexPattern>(regexSecrets)
             : new HashSet<RegexPattern>();
 
-        m_generateSha256Hashes = generateSha256Hashes;
+        m_generateCorrelatingIds = generateCorrelatingIds;
 
         m_explicitlyAddedSecretLiterals = new HashSet<SecretLiteral>();
         m_encodedSecretLiterals = new HashSet<SecretLiteral>();
@@ -353,7 +353,7 @@ public class SecretMasker : ISecretMasker, IDisposable
             // Get indexes and lengths of all substrings that will be replaced.
             foreach (RegexPattern regexSecret in RegexPatterns)
             {
-                var found = regexSecret.GetDetections(input, m_generateSha256Hashes, DefaultRegexRedactionToken, _regexEngine);
+                var found = regexSecret.GetDetections(input, m_generateCorrelatingIds, DefaultRegexRedactionToken, _regexEngine);
                 detections.AddRange(found);
             }
 
@@ -396,7 +396,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
     }
 
-    private readonly bool m_generateSha256Hashes;
+    private readonly bool m_generateCorrelatingIds;
     private readonly HashSet<LiteralEncoder> m_literalEncoders;
     private readonly HashSet<SecretLiteral> m_encodedSecretLiterals;
     private readonly HashSet<SecretLiteral> m_explicitlyAddedSecretLiterals;

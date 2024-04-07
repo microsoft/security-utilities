@@ -10,7 +10,12 @@ namespace Microsoft.Security.Utilities.Cli
         [Option(
             "input",
             Required = true,
-            HelpText = "A specifier that resolves to one or more files from which secrets should be removed.")]
+            HelpText = "An input directory that contains one or more files from which secrets should be removed.")]
         public string Input { get; set; }
+
+        [Option(
+            "output",
+            HelpText = "An optional output directory to which redacted content should be written.")]
+        public string Output { get; set; }
     }
 }
