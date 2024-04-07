@@ -61,8 +61,8 @@ public static class WellKnownRegexPatterns
     public static IEnumerable<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } = new[]
     {
         NuGetApiKey(),
-        AadClientAppSecretCurrent(),
-        AadClientAppSecretPrevious(),
+        AadClientAppIdentifiableCredentialsCurrent(),
+        AadClientAppIdentifiableCredentialsPrevious(),
         AzureFunctionIdentifiableKey(),
         new AzureSearchIdentifiableQueryKey(),
         new AzureSearchIdentifiableAdminKey(),
@@ -100,10 +100,10 @@ public static class WellKnownRegexPatterns
     }
 
     // AAD client app, most recent two versions.
-    public static RegexPattern AadClientAppSecretCurrent()
+    public static RegexPattern AadClientAppIdentifiableCredentialsCurrent()
     {
         return new("SEC101/156",
-                   "AadClientAppSecret",
+                   "AadClientAppIdentifiableCredentials",
                    DetectionMetadata.Identifiable,
                    $"{PrefixUrlUnreserved}(?<refine>[{RegexEncodedUrlUnreserved}]{{3}}8Q~[{RegexEncodedUrlUnreserved}]{{34}}){SuffixUrlUnreserved}",
                    TimeSpan.FromDays(365 * 2),
@@ -111,11 +111,11 @@ public static class WellKnownRegexPatterns
                    sampleGenerator: () => new[] { $"{RandomUrlUnreserved(3)}8Q~{RandomUrlUnreserved(34)}" });
     }
 
-    public static RegexPattern AadClientAppSecretPrevious()
+    public static RegexPattern AadClientAppIdentifiableCredentialsPrevious()
     {
         return new("SEC101/156",
-            "AadClientAppSecret",
-            DetectionMetadata.EmbeddedChecksum | DetectionMetadata.HighEntropy,
+            "AadClientAppIdentifiableCredentials",
+            DetectionMetadata.HighEntropy,
             $"{PrefixUrlUnreserved}(?<refine>[{RegexEncodedUrlUnreserved}]{{3}}7Q~[{RegexEncodedUrlUnreserved}]{{31}}){SuffixUrlUnreserved}",
             TimeSpan.FromDays(365 * 2),
             new HashSet<string>(new[] { "7Q~" }),

@@ -5,8 +5,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities.Cli
 {

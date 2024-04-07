@@ -6,15 +6,13 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureSearchIdentifiableAdminKey : Azure32ByteIdentifiableKey
+    internal class AzureSearchIdentifiableAdminKey : AzureSearchIdentifiableQueryKey
     {
         public AzureSearchIdentifiableAdminKey()
         {
             Id = "SEC101/167";
             Name = nameof(AzureSearchIdentifiableAdminKey);
         }
-
-        public override string Signature => IdentifiableMetadata.AzureSearchSignature;
 
         public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureSearchAdminKeyChecksumSeed };
     }
