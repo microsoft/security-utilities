@@ -30,13 +30,20 @@ namespace Microsoft.Security.Utilities
 
         public override IEnumerable<string> GenerateTestExamples()
         {
-            return new[]
-                   {
-                       IdentifiableSecrets.GenerateStandardBase64Key(
-                            IdentifiableMetadata.AzureCacheForRedisChecksumSeed, 32, IdentifiableMetadata.AzureCacheForRedisSignature)
-                                .Replace('/', 'F')
-                                .Replace('+', 'P')
-            };
+            while (true)
+            {
+                string key =
+                    IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureCacheForRedisChecksumSeed,
+                                                                  32,
+                                                                  IdentifiableMetadata.AzureCacheForRedisSignature);
+
+                if (key.Contains("/") || key.Contains("+"))
+                {
+                    continue;
+                }
+                yield return key;
+                break;
+            }
         }
     }
 }
