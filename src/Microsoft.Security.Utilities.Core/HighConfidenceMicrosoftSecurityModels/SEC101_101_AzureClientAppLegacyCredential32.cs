@@ -23,7 +23,7 @@ namespace Microsoft.Security.Utilities
             Id = "SEC101/101";
             Name = AadClientAppLegacyCredentials;
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat;
-            Pattern = $"^(?i)[a-z0-9.=\\-:[_@\\/*\\]+?]{32}$";
+            Pattern = $"^(?i)[a-z0-9.=\\-:[_@\\/*\\]+?]{{32}}$";
         }
 
         public override Tuple<string, string> GetMatchIdAndName(string match)
@@ -40,7 +40,7 @@ namespace Microsoft.Security.Utilities
         {
             while (true)
             {
-                string key = WellKnownRegexPatterns.RandomUrlUnreserved(34);
+                string key = WellKnownRegexPatterns.GenerateString($"{WellKnownRegexPatterns.Base62}.=-:[_@/*]+?", 32);
                 if (HasAtLeastOneSymbol(key))
                 {
                     yield return key;
