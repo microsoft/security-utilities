@@ -11,7 +11,7 @@
 
   <PropertyGroup Label="Package">
     <Title>$(RootNamespace)</Title>
-    <PackageId>$(RootNamespace)</PackageId>
+    <PackageId>$(RootNamespace).Core</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition=" $(TargetFramework) != 'net6.0'">
