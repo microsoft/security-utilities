@@ -68,7 +68,7 @@ public class SecretMaskerTests
                             result.Should().BeTrue(because: $"'{secretValue}' should result in a single '{moniker}' finding");
 
                             Detection detection = secretMasker.DetectSecrets(secretValue).FirstOrDefault();
-                            detection.Should().NotBe(default);
+                            detection.Should().NotBe(null);
                             detection.Moniker.Should().Be(moniker);
 
                             // 2. All identifiable or high confidence findings should be marked as high entropy.

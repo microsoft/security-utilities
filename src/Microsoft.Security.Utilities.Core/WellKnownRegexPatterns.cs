@@ -51,15 +51,16 @@ public static class WellKnownRegexPatterns
         }
     }
 
-    public static IEnumerable<RegexPattern> LowConfidenceMicrosoftSecurityModels { get; } = new[]
+    public static IEnumerable<RegexPattern> LowConfidenceMicrosoftSecurityModels { get; } = new RegexPattern[]
     {
-        LegacyAadClientAppSecret(),
         new Unclassified32ByteBase64String(),
         new Unclassified64ByteBase64String(),
     };
 
     public static IEnumerable<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } = new[]
     {
+        new AadClientAppLegacyCredentials32(), // SEC101/101
+        new AadClientAppLegacyCredentials34(), // SEC101/101
         new AdoPat(),
         new AzureStorageAccountLegacyCredentials(),
         new AzureCosmosDBLegacyCredentials(),
@@ -85,22 +86,13 @@ public static class WellKnownRegexPatterns
         new AzureApimIdentifiableRepositoryKey(),
         new AzureCacheForRedisIdentifiableKey(),
         AzureContainerRegistryIdentifiableKey(),
+        new SecretScanningSampleToken(),
     };
 
     public static IEnumerable<RegexPattern> HighConfidenceThirdPartySecurityModels { get; } = new List<RegexPattern>
     {
         NpmAuthorKey(),
     };
-
-    public static RegexPattern LegacyAadClientAppSecret()
-    {
-        return new("SEC101/156",
-                   nameof(LegacyAadClientAppSecret),
-                   DetectionMetadata.ObsoleteFormat | DetectionMetadata.HighEntropy,
-                   $"{PrefixUrlUnreserved}(?<refine>[{RegexEncodedUrlUnreserved}]{{34}}){SuffixUrlUnreserved}",
-                   TimeSpan.FromDays(365 * 2),
-                   sampleGenerator: () => new[] { $"{RandomUrlUnreserved(34)}" });
-    }
 
     // AAD client app, most recent two versions.
     public static RegexPattern AadClientAppIdentifiableCredentialsCurrent()
@@ -173,15 +165,6 @@ public static class WellKnownRegexPatterns
                    sampleGenerator: () => new[] { $"npm_{RandomBase62(36)}" });
     }
 
-    public static RegexPattern SecretScanningSampleToken()
-    {
-        return new("SEC101/565",
-                   nameof(SecretScanningSampleToken),
-                   DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy,
-                   @$"{PrefixBase62}(?P<secret>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{5}){SuffixBase62}",
-                   sampleGenerator: () => new[] { $"secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_{RandomBase62(5)}" });
-
-    }
 
     public static string RandomUrlUnreserved(int count, bool sparse = false)
     {
@@ -253,7 +236,7 @@ public static class WellKnownRegexPatterns
     private const string Start = "^";
 
     private const string RegexEncodedUrlSafeBase64 = @$"{Base62}\-_";
-    private const string RegexEncodedUrlUnreserved = @$"{RegexEncodedUrlSafeBase64}~.";
+    public const string RegexEncodedUrlUnreserved = @$"{RegexEncodedUrlSafeBase64}~.";
     public const string PrefixUrlSafeBase64 = $"({Start}|[^{RegexEncodedUrlSafeBase64}])";
     public const string SuffixUrlSafeBase64 = $"([^{RegexEncodedUrlSafeBase64}]|{End})";
 
