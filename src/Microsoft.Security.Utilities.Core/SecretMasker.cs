@@ -24,8 +24,12 @@ public class SecretMasker : ISecretMasker, IDisposable
 {
     IRegexEngine? _regexEngine;
 
-    public Version Version = new(1, 4, 10, 0);
+    public static Version Version = RetrieveVersion();
 
+    private static Version RetrieveVersion()
+    {
+        return new Version(ThisAssembly.AssemblyFileVersion);
+    }
 
     public SecretMasker(IEnumerable<RegexPattern>? regexSecrets, bool generateCorrelatingIds = false, IRegexEngine? regexEngine = default)
     {
