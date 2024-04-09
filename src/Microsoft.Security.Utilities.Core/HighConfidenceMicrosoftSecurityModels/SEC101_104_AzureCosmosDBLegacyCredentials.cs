@@ -12,7 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/104";
             Name = nameof(AzureCosmosDBLegacyCredentials);
-            DetectionMetadata = DetectionMetadata.HighEntropy;
+            DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat;
             Pattern = "(?i)\\.documents\\.azure\\.com.+(?:^|[^0-9a-z\\/+])(?P<refine>[0-9a-z\\/+]{86}==)(?:[^=]|$)";
         }
 

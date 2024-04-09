@@ -6,6 +6,7 @@ using Microsoft.Security.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -174,6 +175,11 @@ public static class WellKnownRegexPatterns
     public static string RandomLowercase(int count, bool sparse = false)
     {
         return GenerateString(sparse ? SparseLowercase : Lowercase, count);
+    }
+
+    public static string RandomHexadecimal(int count)
+    {
+        return GenerateString($"{Digit}abcdef", count);
     }
 
     public static string RandomBase62(int count, bool sparse = false)

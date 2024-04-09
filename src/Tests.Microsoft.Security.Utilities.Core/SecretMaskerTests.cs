@@ -481,6 +481,22 @@ public class SecretMaskerTests
     }
 
     [TestMethod]
+    public void SecretMasker_TestCorrelatingId()
+    {
+        string suffix = "00000";
+        string secret = $"secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_{suffix}";
+        using var secretMasker = new SecretMasker(new[] { new SecretScanningSampleToken() }, generateCorrelatingIds: true);
+        var detections = secretMasker.DetectSecrets(secret);
+        detections.Count().Should().Be(1);
+        Detection detection = detections.First();
+        
+        int colonIndex = detection.RedactionToken.IndexOf(':');
+        string correlatingId = detection.RedactionToken.Substring(colonIndex + 1);
+        correlatingId.Should().Be("0W7kMOsBl4huQu/6Rekx");
+        RegexPattern.GenerateCrossCompanyCorrelatingId(secret).Should().Be(correlatingId);
+    }
+
+    [TestMethod]
     public void SecretMasker_HandlesNoMasks()
     {
         using var secretMasker = new SecretMasker();
