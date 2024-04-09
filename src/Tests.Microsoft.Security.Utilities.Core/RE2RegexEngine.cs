@@ -5,6 +5,7 @@ using Microsoft.RE2.Managed;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities
@@ -17,13 +18,20 @@ namespace Microsoft.Security.Utilities
         {
             foreach (FlexMatch flexMatch in RE2Regex.Instance.Matches(input, pattern, options, timeout, captureGroup))
             {
-                yield return new UniversalMatch
+                if (captureGroup != null)
                 {
-                    Index = flexMatch.Index,
-                    Length = flexMatch.Length,
-                    Value = flexMatch.Value,
-                    Success = flexMatch.Success
-                };
+                    yield return CachedDotNetRegex.Instance.Matches(input, pattern, options, timeout, captureGroup).First();
+                }
+                else
+                {
+                    yield return new UniversalMatch
+                    {
+                        Index = flexMatch.Index,
+                        Length = flexMatch.Length,
+                        Value = flexMatch.Value,
+                        Success = flexMatch.Success
+                    };
+                }
             }
         }
     }

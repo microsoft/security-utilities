@@ -399,6 +399,14 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
     }
 
+    internal void AddPatterns(IEnumerable<RegexPattern> regexPatterns)
+    {
+        foreach(var regexPattern in regexPatterns)
+        {
+            AddRegex(regexPattern);
+        } 
+    }
+
     private readonly bool m_generateCorrelatingIds;
     private readonly HashSet<LiteralEncoder> m_literalEncoders;
     private readonly HashSet<SecretLiteral> m_encodedSecretLiterals;

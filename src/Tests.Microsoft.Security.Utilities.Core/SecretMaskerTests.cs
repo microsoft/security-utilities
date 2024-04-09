@@ -33,7 +33,7 @@ public class SecretMaskerTests
     {
         foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
         {
-            ValidateSecurityModelsDetections(WellKnownRegexPatterns.LowConfidenceMicrosoftSecurityModels,
+            ValidateSecurityModelsDetections(WellKnownRegexPatterns.LowConfidencePotentialSecurityKeys,
                                              engine,
                                              lowEntropyModels: false);
         }
@@ -51,24 +51,25 @@ public class SecretMaskerTests
 
             foreach (IRegexEngine regexEngine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
             {
-                foreach (bool generateSha256Hashes in new[] { true, false })
+                foreach (bool generateCrossCompanyCorrelatingIds in new[] { true, false })
                 {
-                    using var secretMasker = new SecretMasker(patterns, generateSha256Hashes, engine);
+                    using var secretMasker = new SecretMasker(patterns, generateCrossCompanyCorrelatingIds, engine);
 
                     foreach (var pattern in patterns)
                     {
-                        foreach (string secretValue in pattern.GenerateTestExamples())
+                        foreach (string testExample in pattern.GenerateTestExamples())
                         {
-                            string moniker = pattern.GetMatchMoniker(secretValue);
-                            string sha256Hash = RegexPattern.GenerateSha256Hash(secretValue);
+                            string context = testExample;
+                            string standaloneSecret = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine").First().Value;
+
+                            string moniker = pattern.GetMatchMoniker(context);
 
                             // 1. All generated test patterns should be detected by the masker.
-                            var detections = secretMasker.DetectSecrets(secretValue);
+                            var detections = secretMasker.DetectSecrets(context);
                             bool result = detections.Count() == 1;
-                            result.Should().BeTrue(because: $"'{secretValue}' should result in a single '{moniker}' finding");
+                            result.Should().BeTrue(because: $"'{context}' should result in a single '{moniker}' finding");
 
-                            Detection detection = secretMasker.DetectSecrets(secretValue).FirstOrDefault();
-                            detection.Should().NotBe(null);
+                            Detection detection = detections.First();
                             detection.Moniker.Should().Be(moniker);
 
                             // 2. All identifiable or high confidence findings should be marked as high entropy.
@@ -78,12 +79,12 @@ public class SecretMaskerTests
                             // 3. All high entropy secret kinds should generate a fingerprint, but only
                             //    if the masker was initialized to produce them. Every low entropy model
                             //    should refuse to generate a fingerprint, no matter how the masker is configured.
-                            string redactionToken = $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(secretValue)}";
-                            detection.RedactionToken.Should().Be((generateSha256Hashes && !lowEntropyModels) ? redactionToken : "+++");
+                            string redactionToken = $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(standaloneSecret)}";
+                            detection.RedactionToken.Should().Be((generateCrossCompanyCorrelatingIds && !lowEntropyModels) ? redactionToken : "+++");
 
                             // 4. Moniker that flows to classified secret should match the detection.
                             result = detection.Moniker.Equals(moniker);
-                            result.Should().BeTrue(because: $"{moniker} finding should not be reported as {detection.Moniker} for test data {secretValue}");
+                            result.Should().BeTrue(because: $"{moniker} finding should not be reported as {detection.Moniker} for test data {context}");
                         }
                     }
                 }
@@ -107,7 +108,7 @@ public class SecretMaskerTests
     {
         foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
         {
-            ValidateSecurityModelsMasking(WellKnownRegexPatterns.LowConfidenceMicrosoftSecurityModels,
+            ValidateSecurityModelsMasking(WellKnownRegexPatterns.LowConfidencePotentialSecurityKeys,
                                           engine,
                                           lowEntropyModels: false);
         }
@@ -126,21 +127,22 @@ public class SecretMaskerTests
 
             foreach (IRegexEngine regexEngine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
             {
-                foreach (bool generateSha256Hashes in new[] { true, false })
+                foreach (bool generateCrossCompanyCorrelatingIds in new[] { true, false })
                 {
-                    using var secretMasker = new SecretMasker(patterns, generateSha256Hashes, engine);
+                    using var secretMasker = new SecretMasker(patterns, generateCrossCompanyCorrelatingIds, engine);
 
                     foreach (var pattern in patterns)
                     {
-                        foreach (string secretValue in pattern.GenerateTestExamples())
+                        foreach (string testExample in pattern.GenerateTestExamples())
                         {
+                            string secretValue = testExample;
                             string moniker = pattern.GetMatchMoniker(secretValue);
                             string sha256Hash = RegexPattern.GenerateSha256Hash(secretValue);
 
                             // 1. All generated test patterns should be detected by the masker.
                             string redacted = secretMasker.MaskSecrets(secretValue);
                             bool result = redacted.Equals(secretValue);
-                            result.Should().BeFalse(because: $"'{secretValue}' should be redacted from scan text.");
+                            result.Should().BeFalse(because: $"'{secretValue}' for '{moniker}' should be redacted from scan text.");
                         }
                     }
                 }

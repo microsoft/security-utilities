@@ -31,7 +31,7 @@ public static class WellKnownRegexPatterns
             yield return detection;
         }
 
-        foreach (RegexPattern detection in LowConfidenceMicrosoftSecurityModels)
+        foreach (RegexPattern detection in LowConfidencePotentialSecurityKeys)
         {
             yield return detection;
         }
@@ -52,20 +52,15 @@ public static class WellKnownRegexPatterns
         }
     }
 
-    public static IEnumerable<RegexPattern> LowConfidenceMicrosoftSecurityModels { get; } = new RegexPattern[]
+    public static IEnumerable<RegexPattern> LowConfidencePotentialSecurityKeys { get; } = new RegexPattern[]
     {
         new Unclassified32ByteBase64String(),
         new Unclassified64ByteBase64String(),
+        new Unclassified16ByteHexadecimalString(),
     };
 
     public static IEnumerable<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } = new[]
     {
-        new AadClientAppLegacyCredentials32(), // SEC101/101
-        new AadClientAppLegacyCredentials34(), // SEC101/101
-        new AdoPat(),
-        new AzureStorageAccountLegacyCredentials(),
-        new AzureCosmosDBLegacyCredentials(),
-        NuGetApiKey(),
         AadClientAppIdentifiableCredentialsCurrent(),
         AadClientAppIdentifiableCredentialsPrevious(),
         AzureFunctionIdentifiableKey(),
@@ -88,6 +83,14 @@ public static class WellKnownRegexPatterns
         new AzureCacheForRedisIdentifiableKey(),
         AzureContainerRegistryIdentifiableKey(),
         new SecretScanningSampleToken(),
+        NuGetApiKey(),
+        new AadClientAppLegacyCredentials32(),      // SEC101/101
+        new AadClientAppLegacyCredentials34(),      // SEC101/101
+        new AdoPat(),                               // SEC101/102
+        new AzureCosmosDBLegacyCredentials(),       // SEC101/104
+        new AzureStorageAccountLegacyCredentials(), // SEC101/106
+        new AzureMessageLegacyCredentials(),
+        new AzureDatabricksPat(),
     };
 
     public static IEnumerable<RegexPattern> HighConfidenceThirdPartySecurityModels { get; } = new List<RegexPattern>
@@ -179,7 +182,7 @@ public static class WellKnownRegexPatterns
 
     public static string RandomHexadecimal(int count)
     {
-        return GenerateString($"{Digit}abcdef", count);
+        return GenerateString(Hexadecimal, count);
     }
 
     public static string RandomBase62(int count, bool sparse = false)
@@ -230,6 +233,7 @@ public static class WellKnownRegexPatterns
     private const string SparseUrlUnreserved = $"{SparseUrlSafeBase64}~"; // Period elided.
 
     public const string Digit = "1234567890";
+    public const string Hexadecimal = $"{Digit}abcdef";
     public const string Lowercase = "abcdefghijklmnopqrstuvwxyz";
     public const string Uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public const string Alpha = $"{Lowercase}{Uppercase}";
@@ -252,4 +256,8 @@ public static class WellKnownRegexPatterns
     public const string SuffixBase62 = $"([^{Base62}]|{End})";
     public const string PrefixAllBase64 = $"({Start}|[^{Base64}-_=])";
     public const string SuffixAllBase64 = $"([^{Base64}-_=]|{End})";
+    public const string PrefixHexadecimal = $"({Start}|[^{Hexadecimal}])";
+    public const string SuffixHexadecimal = $"([^{Hexadecimal}]|{End})";
+
+
 }
