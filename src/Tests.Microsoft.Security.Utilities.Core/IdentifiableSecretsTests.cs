@@ -16,7 +16,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Security.Utilities
 {
-    [TestClass, ExcludeFromCodeCoverage]
+    [TestClass]
     public class IdentifiableSecretsTests
     {
         private static Random s_random;
@@ -29,6 +29,43 @@ namespace Microsoft.Security.Utilities
         }
 
         private static string s_base62Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+        [TestMethod]
+        public void IdentifiableSecrets_DerivedSymmetricKeys()
+        {
+            using var assertionScope = new AssertionScope();
+
+            foreach (RegexPattern pattern in WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels)
+            {
+                if (!pattern.DetectionMetadata.HasFlag(DetectionMetadata.Identifiable)) 
+                {
+                    continue; 
+                }
+
+                foreach (string testExample in pattern.GenerateTestExamples())
+                {
+                    IIdentifiableKey identifiablePattern = pattern as IIdentifiableKey;
+                    if (identifiablePattern == null) { continue; }
+
+                    bool matched = false;
+
+                    foreach (ulong checksumSeed in identifiablePattern.ChecksumSeeds)
+                    {
+                        if (IdentifiableSecrets.TryValidateBase64Key(testExample, checksumSeed, identifiablePattern.Signature))                        
+                        {
+                            matched = true;
+                            string salt = $"{Guid.NewGuid()}";
+
+                            // We found the seed for this test example.
+                            string derivedKey = IdentifiableSecrets.GenerateDerivedSymmetricKey(testExample, checksumSeed, salt);
+                            bool isValid = IdentifiableSecrets.TryValidateBase64Key(derivedKey, ~checksumSeed, identifiablePattern.Signature);
+                            isValid.Should().BeTrue(because: $"the '{pattern.Name} derived key '{derivedKey}' should validate");
+                        }
+                    }
+                    matched.Should().BeTrue(because: $"each {pattern.Name} test pattern should match a documented checksum seed");
+                }
+            }
+        }
 
         [TestMethod]
         public void IdentifiableSecrets_CloudAnnotatedSecurityKeys()

@@ -7,6 +7,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities;
@@ -279,6 +280,33 @@ public static class IdentifiableSecrets
         return key;
     }
 
+    public static string GenerateDerivedSymmetricKey(string key, ulong checksumSeed, string salt)
+    {
+        string signature = key.Trim('=');
+        signature = signature.Substring(signature.Length - 10, 4);
+
+        bool encodeForUrl = key.Contains("-") || key.Contains("_");
+
+        if (!TryValidateBase64Key(key, checksumSeed, signature, encodeForUrl))
+        {
+            throw new ArgumentException("The provided key is not a valid identifiable secret.");
+        }
+
+        string derivedKey;
+        byte[] keyBytes = Convert.FromBase64String(key);
+
+        using var hmac = new HMACSHA256(keyBytes);
+        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(salt));
+
+        derivedKey = GenerateBase64KeyHelper(~checksumSeed,
+                                             (uint)hashBytes.Length,
+                                             signature,
+                                             encodeForUrl: false,
+                                             hashBytes);
+
+        return derivedKey;
+    }
+
     /// <summary>
     /// Generate an identifiable secret with a URL-compatible format (replacing all '+'
     /// characters with '-' and all '/' characters with '_') and eliding all padding
@@ -299,10 +327,16 @@ public static class IdentifiableSecrets
                                                   string base64EncodedSignature,
                                                   bool elidePadding = false)
     {
+        byte[] randomBytes = new byte[(int)keyLengthInBytes];
+
+        using var generator = RandomNumberGenerator.Create();
+        generator.GetBytes(randomBytes, 0, (int)keyLengthInBytes);
+
         string secret = GenerateBase64KeyHelper(checksumSeed,
                                                 keyLengthInBytes,
                                                 base64EncodedSignature,
-                                                encodeForUrl: true);
+                                                encodeForUrl: true,
+                                                randomBytes);
 
         // The '=' padding must be encoded in some URL contexts but can be 
         // directly expressed in others, such as a query string parameter.
@@ -321,21 +355,28 @@ public static class IdentifiableSecrets
     /// </summary>
     /// <returns>A generated identifiable key expressed as a base64-encoded value.</returns>
     public static string GenerateStandardBase64Key(ulong checksumSeed,
-                                                       uint keyLengthInBytes,
-                                                       string base64EncodedSignature)
+                                                   uint keyLengthInBytes,
+                                                   string base64EncodedSignature)
     {
+        byte[] randomBytes = new byte[(int)keyLengthInBytes];
+
+        using var generator = RandomNumberGenerator.Create();
+        generator.GetBytes(randomBytes, 0, (int)keyLengthInBytes);
+
         return GenerateBase64KeyHelper(checksumSeed,
                                        keyLengthInBytes,
                                        base64EncodedSignature,
-                                       encodeForUrl: false);
+                                       encodeForUrl: false,
+                                       randomBytes);
     }
 
     // This helper is a primary focus of unit-testing, due to the fact it
     // contains the majority of the logic for base64-encoding scenarios.
     internal static string GenerateBase64KeyHelper(ulong checksumSeed,
-                                                  uint keyLengthInBytes,
-                                                  string base64EncodedSignature,
-                                                  bool encodeForUrl)
+                                                   uint keyLengthInBytes,
+                                                   string base64EncodedSignature,
+                                                   bool encodeForUrl,
+                                                   byte[] randomBytes = null)
     {
         if (keyLengthInBytes > MaximumGeneratedKeySize)
         {
@@ -348,6 +389,13 @@ public static class IdentifiableSecrets
         {
             throw new ArgumentException(
                 "Key length must be at least 24 bytes to provide sufficient security (>128 bits of entropy).",
+                nameof(keyLengthInBytes));
+        }
+
+        if (randomBytes != null && randomBytes.Length != keyLengthInBytes)
+        {
+            throw new ArgumentException(
+                "Specified key length did not match 'randomBytes' length.",
                 nameof(keyLengthInBytes));
         }
 
@@ -367,10 +415,13 @@ public static class IdentifiableSecrets
         //
         // 'S' == signature byte : 'C' == checksum byte : '?' == sensitive byte
         // ????????????????????????????????????????????????????????????????????????????SSSSCCCCCC==
-        byte[] randomBytes = new byte[(int)keyLengthInBytes];
 
-        using var generator = RandomNumberGenerator.Create();
-        generator.GetBytes(randomBytes, 0, (int)keyLengthInBytes);
+        if (randomBytes == null)
+        {
+            randomBytes = new byte[(int)keyLengthInBytes];
+            using var generator = RandomNumberGenerator.Create();
+            generator.GetBytes(randomBytes, 0, (int)keyLengthInBytes);
+        }
 
         return GenerateKeyWithAppendedSignatureAndChecksum(randomBytes,
                                                            base64EncodedSignature,
@@ -571,7 +622,7 @@ public static class IdentifiableSecrets
 
             default:
             {
-                // In this case, we have a perfect aligment between our decoded
+                // In this case, we have a perfect alignment between our decoded
                 // signature and checksum and their encoded representation. As
                 // a result, two bits of the final checksum byte will spill into
                 // the final encoded character, followed by four zeros of padding.
