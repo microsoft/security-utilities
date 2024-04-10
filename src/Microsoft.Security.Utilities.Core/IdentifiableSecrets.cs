@@ -280,12 +280,10 @@ public static class IdentifiableSecrets
         return key;
     }
 
-    public static string GenerateDerivedSymmetricKey(string key, ulong checksumSeed, string salt)
+    public static string ComputeDerivedSymmetricKey(string key, ulong checksumSeed, string textToSign, bool encodeForUrl = false)
     {
         string signature = key.Trim('=');
         signature = signature.Substring(signature.Length - 10, 4);
-
-        bool encodeForUrl = key.Contains("-") || key.Contains("_");
 
         if (!TryValidateBase64Key(key, checksumSeed, signature, encodeForUrl))
         {
@@ -296,7 +294,7 @@ public static class IdentifiableSecrets
         byte[] keyBytes = Convert.FromBase64String(key);
 
         using var hmac = new HMACSHA256(keyBytes);
-        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(salt));
+        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(textToSign));
 
         byte[] derivedKeyBytes = new byte[39];
         Array.Copy(hashBytes, derivedKeyBytes, hashBytes.Length);

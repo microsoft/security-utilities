@@ -28,7 +28,8 @@ public class SecretMasker : ISecretMasker, IDisposable
 
     private static Version RetrieveVersion()
     {
-        return new Version(ThisAssembly.AssemblyFileVersion);
+        var version = new Version(ThisAssembly.AssemblyFileVersion);
+        return new Version(version.Major, version.Minor, version.Build);
     }
 
     public SecretMasker(IEnumerable<RegexPattern>? regexSecrets, bool generateCorrelatingIds = false, IRegexEngine? regexEngine = default)

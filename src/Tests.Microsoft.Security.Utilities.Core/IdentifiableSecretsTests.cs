@@ -54,10 +54,10 @@ namespace Microsoft.Security.Utilities
                         if (IdentifiableSecrets.TryValidateBase64Key(testExample, checksumSeed, identifiablePattern.Signature))                        
                         {
                             matched = true;
-                            string salt = $"{Guid.NewGuid()}";
+                            string textToSign = $"{Guid.NewGuid()}";
 
                             // We found the seed for this test example.
-                            string derivedKey = IdentifiableSecrets.GenerateDerivedSymmetricKey(testExample, checksumSeed, salt);
+                            string derivedKey = IdentifiableSecrets.ComputeDerivedSymmetricKey(testExample, checksumSeed, textToSign);
                             bool isValid = IdentifiableSecrets.TryValidateBase64Key(derivedKey, ~checksumSeed, identifiablePattern.Signature);
                             isValid.Should().BeTrue(because: $"the '{pattern.Name} derived key '{derivedKey}' should validate");
                         }
