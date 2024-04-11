@@ -296,10 +296,15 @@ public static class IdentifiableSecrets
         using var hmac = new HMACSHA256(keyBytes);
         byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(textToSign));
 
-        byte[] derivedKeyBytes = new byte[39];
+        byte[] derivedKeyBytes = new byte[42];
         Array.Copy(hashBytes, derivedKeyBytes, hashBytes.Length);
 
-        derivedKey = GenerateBase64KeyHelper(~checksumSeed,
+        derivedKeyBytes[31] = (byte)((derivedKeyBytes[31] & 0xC0) | 0b0111);
+        derivedKeyBytes[32] = 0b01011110;
+        derivedKeyBytes[33] = 0b10101110;
+        derivedKeyBytes[34] = 0b00101111;
+
+        derivedKey = GenerateBase64KeyHelper(checksumSeed,
                                              (uint)derivedKeyBytes.Length,
                                              signature,
                                              encodeForUrl: false,

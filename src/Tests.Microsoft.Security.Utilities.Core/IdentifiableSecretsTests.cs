@@ -58,8 +58,12 @@ namespace Microsoft.Security.Utilities
 
                             // We found the seed for this test example.
                             string derivedKey = IdentifiableSecrets.ComputeDerivedSymmetricKey(testExample, checksumSeed, textToSign);
-                            bool isValid = IdentifiableSecrets.TryValidateBase64Key(derivedKey, ~checksumSeed, identifiablePattern.Signature);
+                            bool isValid = IdentifiableSecrets.TryValidateBase64Key(derivedKey, checksumSeed, identifiablePattern.Signature);
                             isValid.Should().BeTrue(because: $"the '{pattern.Name} derived key '{derivedKey}' should validate");
+
+                            derivedKey.Length.Should().Be(56, because: $"the '{pattern.Name} derived key should be 56 characters long");
+                            derivedKey.Substring(42, 4).Should().Be("deri", because: $"the '{pattern.Name} derived key should contain the 'deri' signature");
+                            derivedKey.Substring(46, 4).Should().Be(identifiablePattern.Signature, because: $"the '{pattern.Name} derived key should contain the '{identifiablePattern.Signature}' signature");
                         }
                     }
                     matched.Should().BeTrue(because: $"each {pattern.Name} test pattern should match a documented checksum seed");
