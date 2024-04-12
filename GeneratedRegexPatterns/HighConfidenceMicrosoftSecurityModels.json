@@ -1,15 +1,8 @@
 [
   {
-    "Pattern": "(^|[^0-9a-z])(?<refine>oy2[a-p][0-9a-z]{15}[aq][0-9a-z]{11}[eu][bdfhjlnprtvxz357][a-p][0-9a-z]{11}[aeimquy4])([^aeimquy4]|$)",
-    "Id": "SEC101/031",
-    "Name": "NuGetApiKey",
-    "SniffLiterals": null,
-    "DetectionMetadata": "HighEntropy, FixedSignature"
-  },
-  {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{3}8Q~[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{34})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=]|$)",
     "Id": "SEC101/156",
-    "Name": "AadClientAppSecret",
+    "Name": "AadClientAppIdentifiableCredentials",
     "SniffLiterals": [
       "8Q~"
     ],
@@ -18,11 +11,11 @@
   {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{3}7Q~[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{31})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=]|$)",
     "Id": "SEC101/156",
-    "Name": "AadClientAppSecret",
+    "Name": "AadClientAppIdentifiableCredentials",
     "SniffLiterals": [
       "7Q~"
     ],
-    "DetectionMetadata": "HighEntropy, EmbeddedChecksum"
+    "DetectionMetadata": "HighEntropy"
   },
   {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_]{44}AzFu[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_]|$)",
@@ -36,56 +29,74 @@
     "ChecksumSeeds": [
       5869709231681187888
     ],
-    "KeyLength": 32,
-    "RegexNormalizedSignature": "AzSe",
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AzSe[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
-    "SniffLiterals": [
-      "AzSe"
-    ],
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
+    "KeyLength": 52,
     "Id": "SEC101/166",
     "Name": "AzureSearchIdentifiableQueryKey",
-    "DetectionMetadata": "Identifiable"
+    "SniffLiterals": null,
+    "DetectionMetadata": "None"
   },
   {
-    "Signature": "AzSe",
     "ChecksumSeeds": [
       5783013817603469360
     ],
-    "KeyLength": 32,
-    "RegexNormalizedSignature": "AzSe",
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AzSe[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
-    "SniffLiterals": [
-      "AzSe"
-    ],
+    "Signature": "AzSe",
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
+    "KeyLength": 52,
     "Id": "SEC101/167",
     "Name": "AzureSearchIdentifiableAdminKey",
-    "DetectionMetadata": "Identifiable"
+    "SniffLiterals": null,
+    "DetectionMetadata": "None"
   },
   {
+    "Signature": "+ARm",
+    "ChecksumSeeds": [
+      6009330654380044336,
+      5506058963192262704,
+      5575859178286952496
+    ],
+    "KeyLength": 32,
+    "RegexNormalizedSignature": "\\+ARm",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+ARm[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
-    "Id": "SEC101/173",
-    "Name": "AzureRelayIdentifiableKey",
     "SniffLiterals": [
       "+ARm"
     ],
+    "Id": "SEC101/173",
+    "Name": "AzureRelayIdentifiableKey",
     "DetectionMetadata": "Identifiable"
   },
   {
+    "Signature": "+AEh",
+    "ChecksumSeeds": [
+      6009330654380044336,
+      5506058963192262704,
+      5575859178286952496
+    ],
+    "KeyLength": 32,
+    "RegexNormalizedSignature": "\\+AEh",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+AEh[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
-    "Id": "SEC101/172",
-    "Name": "AzureEventHubIdentifiableKey",
     "SniffLiterals": [
       "+AEh"
     ],
+    "Id": "SEC101/172",
+    "Name": "AzureEventHubIdentifiableKey",
     "DetectionMetadata": "Identifiable"
   },
   {
+    "Signature": "+ASb",
+    "ChecksumSeeds": [
+      6009330654380044336,
+      5506058963192262704,
+      5575859178286952496
+    ],
+    "KeyLength": 32,
+    "RegexNormalizedSignature": "\\+ASb",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+ASb[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
-    "Id": "SEC101/171",
-    "Name": "AzureServiceBusIdentifiableKey",
     "SniffLiterals": [
       "+ASb"
     ],
+    "Id": "SEC101/171",
+    "Name": "AzureServiceBusIdentifiableKey",
     "DetectionMetadata": "Identifiable"
   },
   {
@@ -260,10 +271,18 @@
     "DetectionMetadata": "Identifiable"
   },
   {
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{33}AzCa[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
+    "Signature": "AzCa",
+    "ChecksumSeeds": [
+      4711718922539446320
+    ],
+    "KeyLength": 32,
+    "RegexNormalizedSignature": "AzCa",
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AzCa[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
+    "SniffLiterals": [
+      "AzCa"
+    ],
     "Id": "SEC101/154",
     "Name": "AzureCacheForRedisIdentifiableKey",
-    "SniffLiterals": null,
     "DetectionMetadata": "Identifiable"
   },
   {
@@ -272,5 +291,68 @@
     "Name": "AzureContainerRegistryIdentifiableKey",
     "SniffLiterals": null,
     "DetectionMetadata": "Identifiable"
+  },
+  {
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<secret>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]|$)",
+    "Id": "SEC101/565",
+    "Name": "SecretScanningSampleToken",
+    "SniffLiterals": null,
+    "DetectionMetadata": "HighEntropy, FixedSignature"
+  },
+  {
+    "Pattern": "(^|[^0-9a-z])(?<refine>oy2[a-p][0-9a-z]{15}[aq][0-9a-z]{11}[eu][bdfhjlnprtvxz357][a-p][0-9a-z]{11}[aeimquy4])([^aeimquy4]|$)",
+    "Id": "SEC101/031",
+    "Name": "NuGetApiKey",
+    "SniffLiterals": null,
+    "DetectionMetadata": "HighEntropy, FixedSignature"
+  },
+  {
+    "Pattern": "^(?i)[a-z0-9.=\\-:[_@\\/*\\]+?]{32}$",
+    "Id": "SEC101/101",
+    "Name": "AadClientAppLegacyCredentials",
+    "SniffLiterals": null,
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
+  },
+  {
+    "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{34}$",
+    "Id": "SEC101/101",
+    "Name": "AadClientAppLegacyCredentials",
+    "SniffLiterals": null,
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
+  },
+  {
+    "Pattern": "(?:[^2-7a-z]|^)(?<refine>[2-7a-z]{52})(?:[^2-7a-z]|$)",
+    "Id": "SEC101/102",
+    "Name": "AdoPat",
+    "SniffLiterals": null,
+    "DetectionMetadata": "HighEntropy, EmbeddedChecksum"
+  },
+  {
+    "Pattern": "(?i)\\.documents\\.azure\\.com.+(?:^|[^0-9a-z\\/+])(?P<refine>[0-9a-z\\/+]{86}==)(?:[^=]|$)",
+    "Id": "SEC101/104",
+    "Name": "AzureCosmosDBLegacyCredentials",
+    "SniffLiterals": null,
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
+  },
+  {
+    "Pattern": "(?i)(?:AccountName|StorageName|StorageAccount)\\s*=.+(?:Account|Storage)Key\\s*=\\s*(?<refine>[0-9a-z\\\\\\/+]{86}==)(?:[^=]|$)",
+    "Id": "SEC101/106",
+    "Name": "AzureStorageAccountLegacyCredentials",
+    "SniffLiterals": null,
+    "DetectionMetadata": "HighEntropy"
+  },
+  {
+    "Pattern": "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)",
+    "Id": "SEC101/105",
+    "Name": "AzureMessageLegacyCredentials",
+    "SniffLiterals": null,
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
+  },
+  {
+    "Pattern": "(?:^|[^0-9a-f\\-])(?P<refine>dapi[0-9a-f\\-]{32,34})(?:[^0-9a-f\\-]|$)",
+    "Id": "SEC101/110",
+    "Name": "AzureDatabricksPat",
+    "SniffLiterals": null,
+    "DetectionMetadata": "HighEntropy"
   }
 ]
