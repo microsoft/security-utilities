@@ -75,8 +75,8 @@ namespace Tests.Microsoft.Security.Utilities
             string redactionToken = $"{Guid.NewGuid()}";
 
             var metadata = (DetectionMetadata)0B_11111;
-            int start = (int)DateTime.UtcNow.Ticks % 99;
-            int length = (int)DateTime.UtcNow.Ticks % 99;
+            int start = Math.Min(1, (int)DateTime.UtcNow.Ticks % 99);
+            int length = Math.Min(1, (int)DateTime.UtcNow.Ticks % 99);
             TimeSpan rotationPeriod = TimeSpan.FromSeconds(DateTime.UtcNow.Second);
 
             while (rotationPeriod == default)
@@ -134,8 +134,8 @@ namespace Tests.Microsoft.Security.Utilities
             string redactionToken = $"{Guid.NewGuid()}";
 
             var metadata = (DetectionMetadata)0B_11111;
-            int start = (int)DateTime.UtcNow.Ticks % 99;
-            int length = (int)DateTime.UtcNow.Ticks % 99;
+            int start = Math.Min(1, (int)DateTime.UtcNow.Ticks % 99);
+            int length = Math.Min(1, (int)DateTime.UtcNow.Ticks % 99);
             TimeSpan rotationPeriod = TimeSpan.FromSeconds(DateTime.UtcNow.Second);
 
             while (rotationPeriod == default)
@@ -212,13 +212,13 @@ namespace Tests.Microsoft.Security.Utilities
             previousDetection = new Detection(currentDetection);
             Assert.AreEqual(currentDetection, previousDetection);
 
-            currentDetection.Start = (int)DateTime.UtcNow.Ticks % 99;
+            currentDetection.Start = Math.Min(1, (int)DateTime.UtcNow.Ticks % 99);
             Assert.AreNotEqual(currentDetection, previousDetection);
 
             previousDetection = new Detection(currentDetection);
             Assert.AreEqual(currentDetection, previousDetection);
 
-            currentDetection.Length = (int)DateTime.UtcNow.Ticks % 99;
+            currentDetection.Length = Math.Min(1, (int)DateTime.UtcNow.Ticks % 99);
             Assert.AreNotEqual(currentDetection, previousDetection);
 
             previousDetection = new Detection(currentDetection);
