@@ -174,8 +174,6 @@ public static class IdentifiableSecrets
                 ? base64EncodedSignature.ToUpperInvariant()
                 : base64EncodedSignature.ToLowerInvariant();
 
-        ValidateCommonAnnotatedKeySignature(base64EncodedSignature);
-
         string key = null;
 
         while (true)
@@ -223,18 +221,18 @@ public static class IdentifiableSecrets
             keyBytes[keyBytes.Length - 15] = reservedBytes[1];
             keyBytes[keyBytes.Length - 14] = reservedBytes[0];
 
-            int? metadata = (metadata1 << 18) | (metadata2 << 12) | (metadata3 << 6) | metadata4;
+            // Simplistic timestamp computation.
+            byte yearsSince2024 = (byte)(DateTime.UtcNow.Year - 2024);
+            byte zeroIndexedMonth = (byte)(DateTime.UtcNow.Month - 1);
+
+            int? metadata = (yearsSince2024 << 18) | (zeroIndexedMonth << 12) | (metadata1 << 6) | metadata2;
             byte[] metadataBytes = BitConverter.GetBytes(metadata.Value);
 
             keyBytes[keyBytes.Length - 13] = metadataBytes[2];
             keyBytes[keyBytes.Length - 12] = metadataBytes[1];
             keyBytes[keyBytes.Length - 11] = metadataBytes[0];
 
-            // Simplistic timestamp computation.
-            byte yearsSince2024 = (byte)(DateTime.UtcNow.Year - 2024);
-            byte zeroIndexedMonth = (byte)(DateTime.UtcNow.Month - 1);
-
-            metadata = (yearsSince2024 << 18) | (zeroIndexedMonth << 12) | (metadata5 << 6) | metadata6;
+            metadata = (metadata3 << 18) | (metadata4 << 12) | (metadata5 << 6) | metadata6;
             metadataBytes = BitConverter.GetBytes(metadata.Value);
 
             keyBytes[keyBytes.Length - 10] = metadataBytes[2];
