@@ -404,7 +404,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
     }
 
-    internal void AddPatterns(IEnumerable<RegexPattern> regexPatterns)
+    public void AddPatterns(IEnumerable<RegexPattern> regexPatterns)
     {
         foreach(var regexPattern in regexPatterns)
         {
