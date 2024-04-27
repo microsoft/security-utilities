@@ -204,6 +204,8 @@ public static class IdentifiableSecrets
 
             byte randomByte = keyBytes[keyBytes.Length - 18];
 
+            randomByte = (byte)(randomByte >> 4);
+
             int reserved = (randomByte << 12) | (sixBitsReserved1 << 6) | sixBitsReserved2;
             byte[] reservedBytes = BitConverter.GetBytes(reserved);
 
