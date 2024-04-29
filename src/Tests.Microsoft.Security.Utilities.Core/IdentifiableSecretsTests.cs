@@ -72,10 +72,14 @@ namespace Microsoft.Security.Utilities
         }
 
         [TestMethod]
-        public void IdentifiableSecrets_CloudAnnotatedSecurityKeys()
+        public void IdentifiableSecrets_PlatformAnnotatedSecurityKeys()
         {
-            using var assertionScope = new AssertionScope();
             int iterations = 10;
+            ulong keysGenerated = 0;
+            const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+            using var assertionScope = new AssertionScope();
+
             for (byte i = 0; i < iterations; i++)
             {
                 for (short j = 0; j < iterations; j++)
@@ -84,7 +88,61 @@ namespace Microsoft.Security.Utilities
                     {
                         ulong checksumSeed = (ulong)Guid.NewGuid().ToString().GetHashCode();
                         string signature = Guid.NewGuid().ToString("N").Substring(0, 4);
-                        string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(checksumSeed, signature, false, default, default, default, default, default, default);
+
+                        signature = $"{alphabet[(int)keysGenerated % alphabet.Length]}{ signature.Substring(1)}";
+
+                        byte[] platformReserved = new byte[9];
+                        byte[] providerReserved = new byte[3];
+
+                        int cBits = 28;
+                        int pBits = 41;
+                        int rBits = 43;
+                        int tBits = 45;
+
+                        int? metadata = (cBits << 18) | (cBits << 12) | (cBits << 6) | cBits;
+                        byte[] metadataBytes = BitConverter.GetBytes(metadata.Value);
+
+                        platformReserved[0] = metadataBytes[2];
+                        platformReserved[1] = metadataBytes[1];
+                        platformReserved[2] = metadataBytes[0];
+
+                        metadata = (rBits << 18) | (rBits << 12) | (rBits << 6) | rBits;
+                        metadataBytes = BitConverter.GetBytes(metadata.Value);
+
+                        platformReserved[3] = metadataBytes[2];
+                        platformReserved[4] = metadataBytes[1];
+                        platformReserved[5] = metadataBytes[0];
+
+                        metadata = (tBits << 18) | (tBits << 12) | (tBits << 6) | tBits;
+                        metadataBytes = BitConverter.GetBytes(metadata.Value);
+
+                        platformReserved[6] = metadataBytes[2];
+                        platformReserved[7] = metadataBytes[1];
+                        platformReserved[8] = metadataBytes[0];
+
+                        metadata = (pBits << 18) | (pBits << 12) | (pBits << 6) | pBits;
+                        metadataBytes = BitConverter.GetBytes(metadata.Value);
+
+                        providerReserved[0] = metadataBytes[2];
+                        providerReserved[1] = metadataBytes[1];
+                        providerReserved[2] = metadataBytes[0];
+
+                        foreach (bool customerManaged in new[] { true, false })
+                        {
+                            string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(checksumSeed,
+                                                                                        signature,
+                                                                                        customerManaged,
+                                                                                        platformReserved, 
+                                                                                        providerReserved);
+
+                            bool result = IdentifiableSecrets.CommonAnnotatedKeyRegex.IsMatch(key);
+                            result.Should().BeTrue(because: $"the key '{key}' should match the common annotated key regex");
+
+                            result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, checksumSeed, signature, customerManaged);
+                            result.Should().BeTrue(because: $"the key '{key}' should comprise an HIS v2-conformant pattern");
+
+                            keysGenerated++;
+                        }
                     }
                 }
             }

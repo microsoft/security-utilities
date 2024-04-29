@@ -2,13 +2,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Specialized;
-using System.Data.Common;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Base62;
 
 namespace Microsoft.Security.Utilities;
 
@@ -17,6 +16,10 @@ namespace Microsoft.Security.Utilities;
 /// </summary>
 public static class IdentifiableSecrets
 {
+    public const string CommonAnnotatedKeyRegexPattern = "[A-Za-z0-9]{52}JQQJ99[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
+
+    public static readonly Regex CommonAnnotatedKeyRegex = new(CommonAnnotatedKeyRegexPattern, RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+
     public static uint MaximumGeneratedKeySize => 4096;
 
     public static uint MinimumGeneratedKeySize => 24;
@@ -78,96 +81,48 @@ public static class IdentifiableSecrets
     public static string GenerateCommonAnnotatedKey(ulong checksumSeed,
                                                     string base64EncodedSignature,
                                                     bool customerManagedKey,
-                                                    byte? metadata1,
-                                                    byte? metadata2,
-                                                    byte? metadata3,
-                                                    byte? metadata4,
-                                                    byte? metadata5,
-                                                    byte? metadata6)
+                                                    byte[] platformReserved,
+                                                    byte[] providerReserved)
     {
         return GenerateCommonAnnotatedTestKey(checksumSeed,
                                               base64EncodedSignature,
                                               customerManagedKey,
-                                              metadata1,
-                                              metadata2,
-                                              metadata3,
-                                              metadata4,
-                                              metadata5,
-                                              metadata6,
+                                              platformReserved,
+                                              providerReserved,
                                               testChar: null);
     }
 
     public static string GenerateCommonAnnotatedTestKey(ulong checksumSeed,
                                                     string base64EncodedSignature,
                                                     bool customerManagedKey,
-                                                    byte? metadata1,
-                                                    byte? metadata2,
-                                                    byte? metadata3,
-                                                    byte? metadata4,
-                                                    byte? metadata5,
-                                                    byte? metadata6,
+                                                    byte[] platformReserved,
+                                                    byte[] providerReserved,
                                                     char? testChar)
     {
-        byte defaultBase64EncodedCharacter = (byte)61;
+        const char defaultBase64EncodedCharacter = 'z';
+        const int platformReservedLength = 9; 
+        const int providerReservedLength = 3;
 
-        if (!metadata1.HasValue)
+        if (platformReserved != null && platformReserved?.Length != platformReservedLength)
         {
-            metadata1 = defaultBase64EncodedCharacter;
+            throw new ArgumentOutOfRangeException(nameof(platformReserved), 
+                                                  $"When provided, there must be {platformReservedLength} reserved bytes for platform metadata.");
         }
 
-        if (metadata1 >= 64)
+        if (providerReserved != null && providerReserved?.Length != providerReservedLength)
         {
-            throw new ArgumentOutOfRangeException(nameof(metadata1), "Metadata value must be less than 64.");
+            throw new ArgumentOutOfRangeException(nameof(providerReserved),
+                                                  $"When provided, there must be {providerReservedLength} reserved bytes for resource provider metadata.");
         }
 
-        if (!metadata2.HasValue)
+        if (platformReserved == null)
         {
-            metadata2 = defaultBase64EncodedCharacter;
+            platformReserved =  new byte[platformReservedLength];
         }
 
-        if (metadata2 >= 64)
+        if (providerReserved == null)
         {
-            throw new ArgumentOutOfRangeException(nameof(metadata2), "Metadata value must be less than 64.");
-        }
-
-        if (!metadata3.HasValue)
-        {
-            metadata3 = defaultBase64EncodedCharacter;
-        }
-
-        if (metadata3 >= 64)
-        {
-            throw new ArgumentOutOfRangeException(nameof(metadata3), "Metadata value must be less than 64.");
-        }
-
-        if (!metadata4.HasValue)
-        {
-            metadata4 = defaultBase64EncodedCharacter;
-        }
-
-        if (metadata4 >= 64)
-        {
-            throw new ArgumentOutOfRangeException(nameof(metadata4), "Metadata value must be less than 64.");
-        }
-
-        if (!metadata5.HasValue)
-        {
-            metadata5 = defaultBase64EncodedCharacter;
-        }
-
-        if (metadata5 >= 64)
-        {
-            throw new ArgumentOutOfRangeException(nameof(metadata5), "Metadata value must be less than 64.");
-        }
-
-        if (!metadata6.HasValue)
-        {
-            metadata6 = defaultBase64EncodedCharacter;
-        }
-
-        if (metadata6 >= 64)
-        {
-            throw new ArgumentOutOfRangeException(nameof(metadata6), "Metadata value must be less than 64.");
+            providerReserved = new byte[providerReservedLength];
         }
 
         base64EncodedSignature = customerManagedKey 
@@ -178,17 +133,16 @@ public static class IdentifiableSecrets
 
         while (true)
         {
-            int keyLengthInBytes = 64;
-            byte[] keyBytes = new byte[(int)64];
+            int keyLengthInBytes = 66;
+            byte[] keyBytes = new byte[keyLengthInBytes];
 
             if (testChar == null)
             {
                 using var generator = RandomNumberGenerator.Create();
                 generator.GetBytes(keyBytes, 0, (int)keyLengthInBytes);
 
-                key = Convert.ToBase64String(keyBytes);
-                key = key.Replace('+', 'm');
-                key = key.Replace('/', 'f');
+                key = keyBytes.ToBase62().Substring(0, 86);
+                key = $"{key}==";
             }
             else
             {
@@ -197,49 +151,40 @@ public static class IdentifiableSecrets
 
             keyBytes = Convert.FromBase64String(key);
 
-            byte sixBitsReserved1 = 'J' - 'A';
-            byte sixBitsReserved2 = 'Q' - 'A';
-            byte sixBitsReserved3 = 'Q' - 'A';
-            byte sixBitsReserved4 = 'J' - 'A';
+            byte jBits = 'J' - 'A';
+            byte qBits = 'Q' - 'A';
 
-            byte randomByte = keyBytes[keyBytes.Length - 18];
-
-            randomByte = (byte)(randomByte >> 4);
-
-            int reserved = (randomByte << 12) | (sixBitsReserved1 << 6) | sixBitsReserved2;
+            int reserved = (jBits << 18) | (qBits << 12) | (qBits << 6) | jBits;
             byte[] reservedBytes = BitConverter.GetBytes(reserved);
 
-            keyBytes[keyBytes.Length - 18] = reservedBytes[1];
-            keyBytes[keyBytes.Length - 17] = reservedBytes[0];
-
-            // Currently unused.
-            byte sixBitsReserved5 = defaultBase64EncodedCharacter;
-            byte sixBitsReserved6 = defaultBase64EncodedCharacter;
-
-            reserved = (sixBitsReserved3 << 18) | (sixBitsReserved4 << 12) | (sixBitsReserved5 << 6) | sixBitsReserved6;
-            reservedBytes = BitConverter.GetBytes(reserved);
-
-            keyBytes[keyBytes.Length - 16] = reservedBytes[2];
-            keyBytes[keyBytes.Length - 15] = reservedBytes[1];
-            keyBytes[keyBytes.Length - 14] = reservedBytes[0];
+            keyBytes[keyBytes.Length - 25] = reservedBytes[2];
+            keyBytes[keyBytes.Length - 24] = reservedBytes[1];
+            keyBytes[keyBytes.Length - 23] = reservedBytes[0];
 
             // Simplistic timestamp computation.
             byte yearsSince2024 = (byte)(DateTime.UtcNow.Year - 2024);
             byte zeroIndexedMonth = (byte)(DateTime.UtcNow.Month - 1);
 
-            int? metadata = (yearsSince2024 << 18) | (zeroIndexedMonth << 12) | (metadata1 << 6) | metadata2;
+            int? metadata = (61 << 18) | (61 << 12) | (yearsSince2024 << 6) | zeroIndexedMonth;
             byte[] metadataBytes = BitConverter.GetBytes(metadata.Value);
 
-            keyBytes[keyBytes.Length - 13] = metadataBytes[2];
-            keyBytes[keyBytes.Length - 12] = metadataBytes[1];
-            keyBytes[keyBytes.Length - 11] = metadataBytes[0];
+            keyBytes[keyBytes.Length - 22] = metadataBytes[2];
+            keyBytes[keyBytes.Length - 21] = metadataBytes[1];
+            keyBytes[keyBytes.Length - 20] = metadataBytes[0];
 
-            metadata = (metadata3 << 18) | (metadata4 << 12) | (metadata5 << 6) | metadata6;
-            metadataBytes = BitConverter.GetBytes(metadata.Value);
+            keyBytes[keyBytes.Length - 19] = platformReserved[0];
+            keyBytes[keyBytes.Length - 18] = platformReserved[1];
+            keyBytes[keyBytes.Length - 17] = platformReserved[2];
+            keyBytes[keyBytes.Length - 16] = platformReserved[3];
+            keyBytes[keyBytes.Length - 15] = platformReserved[4];
+            keyBytes[keyBytes.Length - 14] = platformReserved[5];
+            keyBytes[keyBytes.Length - 13] = platformReserved[6];
+            keyBytes[keyBytes.Length - 12] = platformReserved[7];
+            keyBytes[keyBytes.Length - 11] = platformReserved[8];
 
-            keyBytes[keyBytes.Length - 10] = metadataBytes[2];
-            keyBytes[keyBytes.Length - 9] = metadataBytes[1];
-            keyBytes[keyBytes.Length - 8] = metadataBytes[0];
+            keyBytes[keyBytes.Length - 10] = providerReserved[0];
+            keyBytes[keyBytes.Length - 9] = providerReserved[1];
+            keyBytes[keyBytes.Length - 8] = providerReserved[2];
 
             int signatureOffset = keyBytes.Length - 7;
             byte[] sigBytes = Convert.FromBase64String(base64EncodedSignature);
