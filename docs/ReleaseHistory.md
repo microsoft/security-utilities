@@ -8,7 +8,7 @@
 - NEW -> New API or feature.
 - PRF => Performance work.
 
-## 1.4.15 - 04/29/2024
+## 1.4.16 - 04/30/2024
 - BRK: Update common annotated security key format with new requirements. The format is still not fixed.
 - NEW: Make `SecurityMasker.AddPatterns` public.
 
