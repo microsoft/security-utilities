@@ -159,6 +159,14 @@ namespace Tests.Microsoft.Security.Utilities
                 RedactionToken = sha256Hash,
             };
 
+            Assert.AreNotEqual(detection.Id, default);
+            Assert.AreNotEqual(detection.Name, default);
+            Assert.AreNotEqual(detection.Start, default);
+            Assert.AreNotEqual(detection.Length, default);
+            Assert.AreNotEqual(detection.Metadata, default);
+            Assert.AreNotEqual(detection.RotationPeriod, default);
+            Assert.AreNotEqual(detection.RedactionToken, default);
+
             var emptyDefaultDetection = new Detection();
 
             Assert.AreNotEqual(emptyDefaultDetection.GetHashCode(), detection.GetHashCode());
