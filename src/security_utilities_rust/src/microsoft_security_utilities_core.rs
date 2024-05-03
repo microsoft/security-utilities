@@ -4,3 +4,4 @@
 pub mod marvin;
 pub mod identifiable_secrets;
 pub mod cross_company_correlating_id;
+pub mod identifiable_scans;
