@@ -6,10 +6,8 @@ const HIS2_UTF8_SHORT_LEN: usize = 84;
 
 const HIS2_UTF16_LEN: usize = HIS2_UTF8_LEN * 2;
 const HIS2_UTF16_SHORT_LEN: usize = HIS2_UTF8_SHORT_LEN * 2;
+const HIS2_UTF16_SHORT_LEN_BE: usize = HIS2_UTF16_SHORT_LEN - 1;
 
-/* BE trailing edge cases */
-const HIS2_UTF16_BE_LEN: usize = HIS2_UTF16_LEN - 1;
-const HIS2_UTF16_BE_SHORT_LEN: usize = HIS2_UTF16_SHORT_LEN - 1;
 
 pub enum ScanMatchType {
     His2Utf8,
@@ -133,7 +131,7 @@ impl PossibleScanMatch {
         }
 
         for b in &data[86..] {
-            if !b != b'=' {
+            if *b != b'=' {
                 return HIS2_UTF8_SHORT_LEN;
             }
         }
@@ -161,9 +159,9 @@ impl PossibleScanMatch {
         for (i, b) in data16.iter().enumerate() {
             let b = *b;
 
-            /* Non-ASCII means invalid signature */
+            /* Stop on Non-ASCII */
             if b > 255 {
-                return 0;
+                return i;
             }
 
             utf8[i] = b as u8;
@@ -178,7 +176,7 @@ impl PossibleScanMatch {
         want_text: bool) -> Option<ScanMatch> {
         match data.len() {
             /* UTF8 */
-            HIS2_UTF8_LEN | HIS2_UTF8_SHORT_LEN => {
+            HIS2_UTF8_SHORT_LEN ..= HIS2_UTF8_LEN => {
                 let len = Self::his2_matched_bytes(&data);
 
                 if len == 0 {
@@ -190,28 +188,22 @@ impl PossibleScanMatch {
                         ScanMatchType::His2Utf8,
                         start,
                         len as u64,
-                        &data,
+                        &data[0..len],
                         want_text))
             },
 
-            /* UTF16 BE */
-            HIS2_UTF16_BE_SHORT_LEN | HIS2_UTF16_BE_LEN => {
-                /*
-                 * Rare edge case where data is UTF16 BE encoded
-                 * and last byte in data.
-                 */
+            /* UTF16 */
+            HIS2_UTF16_SHORT_LEN_BE ..= HIS2_UTF16_LEN => {
                 let mut bytes: [u8; HIS2_UTF8_LEN] = [0; HIS2_UTF8_LEN];
                 let mut count = Self::convert_utf16(data, &mut bytes);
 
-                if count == 0 {
-                    return None;
+                if data.len() & 1 == 1 {
+                    /* Add trailing unaligned byte edge case */
+                    bytes[count] = data[data.len()-1];
+                    count += 1;
                 }
 
-                /* Add trailing unaligned byte edge case */
-                bytes[count] = data[data.len()-1];
-                count += 1;
-
-                let len = Self::his2_matched_bytes(&bytes[0..count]);
+                let len = Self::his2_matched_bytes(&bytes[..count]);
 
                 if len == 0 {
                     return None;
@@ -221,32 +213,8 @@ impl PossibleScanMatch {
                     ScanMatch::new(
                         ScanMatchType::His2Utf16,
                         start,
-                        (len * 2) as u64,
-                        &bytes[0..count],
-                        want_text))
-            },
-
-            /* UTF16 LE */
-            HIS2_UTF16_LEN | HIS2_UTF16_SHORT_LEN => {
-                let mut bytes: [u8; HIS2_UTF8_LEN] = [0; HIS2_UTF8_LEN];
-                let count = Self::convert_utf16(data, &mut bytes);
-
-                if count == 0 {
-                    return None;
-                }
-
-                let len = Self::his2_matched_bytes(&bytes[0..count]);
-
-                if len == 0 {
-                    return None;
-                }
-
-                Some(
-                    ScanMatch::new(
-                        ScanMatchType::His2Utf16,
-                        start,
-                        (len * 2) as u64,
-                        &bytes[0..count],
+                        (count * 2) as u64,
+                        &bytes[..count],
                         want_text))
             },
             
@@ -266,6 +234,8 @@ impl PossibleScanMatch {
                     std::io::ErrorKind::Other,
                     "Buffer not big enough"));
         }
+
+        reader.seek(std::io::SeekFrom::Start(self.start()))?;
 
         let len = self.len();
         let mut read = 0;
@@ -425,7 +395,36 @@ mod tests {
     use super::*;
 
     #[test]
-    fn his_v2_scan() {
+    fn his_v2_scan_files() {
+        let mut scan = Scan::new();
+        let mut buf: [u8; 4096] = [0; 4096];
+
+        /* 50 long, 50 short, UTF8 */
+        let mut reader = std::fs::File::open("test_files/his2_utf8.bin").unwrap();
+
+        scan.parse_reader(&mut reader, &mut buf).unwrap();
+        assert!(scan.has_possible_matches());
+        assert_eq!(100, scan.possible_matches().len());
+
+        let mut case = 1;
+        for m in scan.possible_matches() {
+            let result = m.matches_reader(&mut reader, &mut buf, true).unwrap();
+
+            assert!(result.is_some(), "Case {}", case);
+            let result = result.unwrap();
+
+            if case > 50 {
+                assert_eq!(HIS2_UTF8_SHORT_LEN as u64, result.len());
+            } else {
+                assert_eq!(HIS2_UTF8_LEN as u64, result.len());
+            }
+
+            case += 1;
+        }
+    }
+
+    #[test]
+    fn his_v2_scan_bytes() {
         let mut scan = Scan::new();
         let empty: [u8; 0] = [0; 0];
 
@@ -440,11 +439,13 @@ mod tests {
 
         /* Valid Cases */
         let mut cases = Vec::new();
-        cases.push("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJQQJ99ADccccrrrrttttppppe81dNrKF");
-        cases.push("1111111111111111111111111111111111111111111111111111JQQJ99ADccccrrrrttttppppe81dNrKF");
-        cases.push("0000000000000000000000000000000000000000000000000000JQQJ99ADccccrrrrttttppppe81dNrKF");
-        cases.push("0000000000000000000000000000000000000000000000000000JQQJ99ADccccrrrrttttppppe81dNrKFAA==");
-        cases.push("0000000000000000000000000000000000000000000000000000JQQJ99ADccccrrrrttttppppe81dNrKFAA==ZZZZZZZ");
+        cases.push("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHJQQJ99AEAAAAAAAAAAAAAAAAAZFU03Ml");
+        cases.push("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIJQQJ99AEAAAAAAAAAAAAAAAAAZFUq6gN");
+        cases.push("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKJQQJ99AEAAAAAAAAAAAAAAAAAZFUtUkH");
+        cases.push("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLJQQJ99AEAAAAAAAAAAAAAAAAAZFUcfkX");
+        cases.push("6666666666666666666666666666666666666666666666666666JQQJ99AEAAAAAAAAAAAAAAAAAZFUrS9sdA==");
+        cases.push("7777777777777777777777777777777777777777777777777777JQQJ99AEAAAAAAAAAAAAAAAAAZFUSHua5Q==");
+        cases.push("8888888888888888888888888888888888888888888888888888JQQJ99AEAAAAAAAAAAAAAAAAAZFUT8jEyQ==ZZZZ");
 
         for (i, case) in cases.iter().enumerate() {
             let match_str = if case.len() < HIS2_UTF8_LEN {
