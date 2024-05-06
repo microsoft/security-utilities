@@ -8,6 +8,11 @@
 - NEW -> New API or feature.
 - PRF => Performance work.
 
+# 1.4.17 - 05/05/2024
+- PRF: Remove `SHA256` instance creation from `RegexPattern.GenerateCrossCompanyCorrelatingId` to avoid expensive object initialization costs.
+- PRF: Add `RegexOption.NonBacktracking` as a default option when available to improve .NET regex engine performance.
+- PRF: Add some preliminary benchmarks to solution.
+
 ## 1.4.16 - 04/30/2024
 - BRK: Update common annotated security key format with new requirements. The format is still not fixed.
 - NEW: Make `SecurityMasker.AddPatterns` public.
