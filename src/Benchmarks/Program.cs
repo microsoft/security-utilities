@@ -3,5 +3,4 @@ using BenchmarkDotNet.Running;
 
 using Benchmarks;
 
-new RegexEngineDetectionBenchmarks().RE2();
-//var summary = BenchmarkRunner.Run<RegexEngineDetectionBenchmarks>();
+var summary = BenchmarkRunner.Run<RegexEngineDetectionBenchmarks>();
