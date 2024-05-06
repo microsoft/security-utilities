@@ -1,15 +1,10 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Security.Utilities;
-
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities;
 

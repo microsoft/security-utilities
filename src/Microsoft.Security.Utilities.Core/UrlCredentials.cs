@@ -3,9 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-
-using static System.Net.WebRequestMethods;
 
 namespace Microsoft.Security.Utilities;
 

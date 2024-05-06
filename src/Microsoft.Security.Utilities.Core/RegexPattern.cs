@@ -69,12 +69,12 @@ public class RegexPattern
             return false;
         }
 
-        if (DetectionMetadata!= item.DetectionMetadata)
+        if (DetectionMetadata != item.DetectionMetadata)
         {
             return false;
         }
 
-        if (RotationPeriod != item.RotationPeriod) 
+        if (RotationPeriod != item.RotationPeriod)
         {
             return false;
         }
@@ -163,7 +163,7 @@ public class RegexPattern
 
     public const string DefaultRedactionToken = "***";
 
-    public virtual IEnumerable<Detection> GetDetections(string input, 
+    public virtual IEnumerable<Detection> GetDetections(string input,
                                                         bool generateCrossCompanyCorrelatingIds,
                                                         string defaultRedactionToken = DefaultRedactionToken,
                                                         IRegexEngine? regexEngine = null)
@@ -235,15 +235,18 @@ public class RegexPattern
         }
     }
 
+    [ThreadStatic]
+    private static SHA256? s_sha;
+
     public static string GenerateCrossCompanyCorrelatingId(string text)
     {
         string hash = RegexPattern.GenerateSha256Hash(text);
 
         hash = $"CrossMicrosoftCorrelatingId:{hash}";
 
-        using var sha = SHA256.Create();
+        s_sha ??= SHA256.Create();
         byte[] byteHash = Encoding.UTF8.GetBytes(hash);
-        byte[] checksum = sha.ComputeHash(byteHash);
+        byte[] checksum = s_sha.ComputeHash(byteHash);
 
         byte[] toEncode = new byte[15];
         Array.Copy(checksum, 0, toEncode, 0, toEncode.Length);
@@ -253,9 +256,9 @@ public class RegexPattern
 
     public static string GenerateSha256Hash(string text)
     {
-        using var sha = SHA256.Create();
+        s_sha ??= SHA256.Create();
         byte[] byteHash = Encoding.UTF8.GetBytes(text);
-        byte[] checksum = sha.ComputeHash(byteHash);
+        byte[] checksum = s_sha.ComputeHash(byteHash);
 
 #if NETCOREAPP3_1_OR_GREATER
         return BitConverter.ToString(checksum).Replace("-", string.Empty, StringComparison.Ordinal);

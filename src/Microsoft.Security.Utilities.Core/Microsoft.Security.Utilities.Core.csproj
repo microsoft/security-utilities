@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
     <PackageReference Include="Nerdbank.GitVersioning" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>

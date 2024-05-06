@@ -34,7 +34,11 @@ namespace Microsoft.Security.Utilities
         {
             pattern = NormalizeGroupsPattern(pattern);
             var key = Tuple.Create(pattern, options);
+#if NET7_0_OR_GREATER
+            return RegexCache.GetOrAdd(key, _ => new Regex(pattern, options | RegexOptions.Compiled | RegexOptions.NonBacktracking));
+#else
             return RegexCache.GetOrAdd(key, _ => new Regex(pattern, options | RegexOptions.Compiled));
+#endif
         }
 
         public bool IsMatch(string input, string pattern, RegexOptions options = RegexDefaults.DefaultOptionsCaseSensitive, TimeSpan timeout = default, string captureGroup = null)

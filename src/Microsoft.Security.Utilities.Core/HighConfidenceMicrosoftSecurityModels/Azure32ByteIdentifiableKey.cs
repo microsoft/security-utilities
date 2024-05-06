@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 
 #nullable enable
 #pragma warning disable SYSLIB0023  // 'RNGCryptoServiceProvider' is obsolete.

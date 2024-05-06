@@ -18,7 +18,7 @@ public static class IdentifiableSecrets
 {
     public const string CommonAnnotatedKeyRegexPattern = "[A-Za-z0-9]{52}JQQJ99[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
 
-    public static readonly Regex CommonAnnotatedKeyRegex = new(CommonAnnotatedKeyRegexPattern, RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+    public static readonly Regex CommonAnnotatedKeyRegex = new(CommonAnnotatedKeyRegexPattern, RegexDefaults.DefaultOptionsCaseSensitive);
 
     public static uint MaximumGeneratedKeySize => 4096;
 
@@ -99,7 +99,6 @@ public static class IdentifiableSecrets
                                                     byte[] providerReserved,
                                                     char? testChar)
     {
-        const char defaultBase64EncodedCharacter = 'z';
         const int platformReservedLength = 9; 
         const int providerReservedLength = 3;
 

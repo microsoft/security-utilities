@@ -7,6 +7,10 @@ namespace Microsoft.Security.Utilities
 {
     public static class RegexDefaults
     {
+#if NET7_0_OR_GREATER
+        public const RegexOptions DefaultOptionsCaseSensitive = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.NonBacktracking;
+#else
         public const RegexOptions DefaultOptionsCaseSensitive = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
+#endif
     }
 }
