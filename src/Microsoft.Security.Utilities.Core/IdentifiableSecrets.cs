@@ -94,6 +94,10 @@ public static class IdentifiableSecrets
             throw new ArgumentException("The versioned literal must be 8 characters long and end with a digit.");
         }
 
+        // We obtain the bytes of the string literal, reverse them and then convert them to a ulong.
+        // Because the string literal has a trailing number, if this number is incremented, the next
+        // version of the seed will be very close in number to previous versions. All of this work
+        // attempting to ensure the versionability of seeds is future-proofing of uncertain value.
         ulong result = BitConverter.ToUInt64(Encoding.ASCII.GetBytes(versionedKeyKind).Reverse().ToArray(), 0);
 
         hexFormatted = $"0x{result.ToString("X").ToLowerInvariant()}";
