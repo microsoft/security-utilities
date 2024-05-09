@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -29,6 +28,58 @@ namespace Microsoft.Security.Utilities
         }
 
         private static string s_base62Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+        [TestMethod]
+        public void IdentifiableSecrets_ComputeChecksumSeed_EnforcesLengthRequirement()
+        {
+            using var assertionScope = new AssertionScope();
+
+            for (int i = 0; i < 16; i++)
+            {
+                string literal = $"{new string('A', i)}0";
+                Action action = () => IdentifiableSecrets.ComputeChecksumSeed(literal, out _);
+                if (i == 7)
+                {
+                    action.Should().NotThrow(because: $"literal '{literal}' should generate a valid seed");
+                }
+                else
+                {
+                    action.Should().Throw<ArgumentException>(because: $"literal '{literal}' should raise an exception as it's not the correct length");
+                }
+            }
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_ComputeChecksumSeed_EnforcesNumericSuffix()
+        {
+            string literal = $"{new string('A', 8)}";
+            Action action = () => IdentifiableSecrets.ComputeChecksumSeed(literal, out _);
+            action.Should().Throw<ArgumentException>(because: $"literal '{literal}' should raise an exception as it has no trailing number");
+
+            for (int i = 0; i < 10; i++)
+            {
+                literal = $"{new string('A', 7)}{i}";
+                action.Should().NotThrow(because: $"literal '{literal}' should generate a valid seed");
+            }
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_ComputeChecksumSeed()
+        {
+            using var assertionScope = new AssertionScope();
+
+            var tests = new (string literal, ulong seed)[]
+            {
+                ("ROSeed00", 0x526561644f6e6c79),
+                ("RWSeed00", 0x5265616457726974)
+            };
+
+            foreach (var test in tests)
+            {
+                IdentifiableSecrets.ComputeChecksumSeed(test.literal, out string hexFormatted).Should().Be(test.seed);
+                ulong.Parse(hexFormatted.Substring(2), System.Globalization.NumberStyles.HexNumber).Should().Be(test.seed);
+            }
+        }
 
         [TestMethod]
         public void IdentifiableSecrets_DerivedSymmetricKeys()

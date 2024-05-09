@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -77,6 +78,29 @@ public static class IdentifiableSecrets
 
         return encoded == checksumText;
     }
+
+    public static ulong ComputeChecksumSeed(string versionedKeyKind, out string hexFormatted)
+    {
+        hexFormatted = null;
+
+        if (versionedKeyKind == null)
+        {
+            throw new ArgumentNullException(nameof(versionedKeyKind));
+        }
+
+        if (versionedKeyKind.Length != 8 ||
+            !char.IsDigit(versionedKeyKind[7]))
+        {
+            throw new ArgumentException("The versioned literal must be 8 characters long and end with a digit.");
+        }
+
+        ulong result = BitConverter.ToUInt64(Encoding.ASCII.GetBytes(versionedKeyKind).Reverse().ToArray(), 0);
+
+        hexFormatted = $"0x{result.ToString("X").ToLowerInvariant()}";
+
+        return result;
+    }
+
 
     public static string GenerateCommonAnnotatedKey(ulong checksumSeed,
                                                     string base64EncodedSignature,
