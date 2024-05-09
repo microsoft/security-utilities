@@ -37,7 +37,7 @@ namespace Microsoft.Security.Utilities
             for (int i = 0; i < 16; i++)
             {
                 string literal = $"{new string('A', i)}0";
-                Action action = () => IdentifiableSecrets.ComputeChecksumSeed(literal, out _);
+                Action action = () => IdentifiableSecrets.ComputeChecksumSeed(literal);
                 if (i == 7)
                 {
                     action.Should().NotThrow(because: $"literal '{literal}' should generate a valid seed");
@@ -53,7 +53,7 @@ namespace Microsoft.Security.Utilities
         public void IdentifiableSecrets_ComputeChecksumSeed_EnforcesNumericSuffix()
         {
             string literal = $"{new string('A', 8)}";
-            Action action = () => IdentifiableSecrets.ComputeChecksumSeed(literal, out _);
+            Action action = () => IdentifiableSecrets.ComputeChecksumSeed(literal);
             action.Should().Throw<ArgumentException>(because: $"literal '{literal}' should raise an exception as it has no trailing number");
 
             for (int i = 0; i < 10; i++)
@@ -76,8 +76,7 @@ namespace Microsoft.Security.Utilities
 
             foreach (var test in tests)
             {
-                IdentifiableSecrets.ComputeChecksumSeed(test.literal, out string hexFormatted).Should().Be(test.seed);
-                ulong.Parse(hexFormatted.Substring(2), System.Globalization.NumberStyles.HexNumber).Should().Be(test.seed);
+                IdentifiableSecrets.ComputeChecksumSeed(test.literal).Should().Be(test.seed);
             }
         }
 

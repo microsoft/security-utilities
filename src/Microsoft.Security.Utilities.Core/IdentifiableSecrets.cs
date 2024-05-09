@@ -79,10 +79,18 @@ public static class IdentifiableSecrets
         return encoded == checksumText;
     }
 
-    public static ulong ComputeChecksumSeed(string versionedKeyKind, out string hexFormatted)
+    /// <summary>
+    /// Generate a <see cref="ulong"/> checksum seed from a string literal that is 8 characters
+    /// long and ends with at least one digit, e.g., 'ReadKey0', 'RWSeed00', etc. The checksum
+    /// seed is used to initialize the Marvin32 algorithm to watermark a specific class of
+    /// generated security keys.
+    /// </summary>
+    /// <param name="versionedKeyKind">A readable name that identifies a specific set of generated keys with at least one trailing digit in the name.</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    public static ulong ComputeChecksumSeed(string versionedKeyKind)
     {
-        hexFormatted = null;
-
         if (versionedKeyKind == null)
         {
             throw new ArgumentNullException(nameof(versionedKeyKind));
@@ -99,8 +107,6 @@ public static class IdentifiableSecrets
         // version of the seed will be very close in number to previous versions. All of this work
         // attempting to ensure the versionability of seeds is future-proofing of uncertain value.
         ulong result = BitConverter.ToUInt64(Encoding.ASCII.GetBytes(versionedKeyKind).Reverse().ToArray(), 0);
-
-        hexFormatted = $"0x{result.ToString("X").ToLowerInvariant()}";
 
         return result;
     }
