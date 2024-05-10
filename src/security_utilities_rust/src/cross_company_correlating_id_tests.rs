@@ -1,13 +1,9 @@
 #[cfg(test)]
 use super::*;
 
-/// Compare a Marvin checksum against a well-known test case from the native code.
+/// Compare a Rust generated C3Id against a well-known test case from C#.
 #[test]
-fn validate_cross_company_correlation_id() {
-    // This test verifies that our Rust implementation provides
-    // the same result as SymCrypt for their standard test.
-    // https://github.com/microsoft/SymCrypt/blob/master/lib/marvin32.c#L316
-    
+fn validate_cross_company_correlation_id() {    
     // Assume
     let secret = "test";
     let expected_c3id = "rPHgxCVAOw6CZsT9xXEw";
