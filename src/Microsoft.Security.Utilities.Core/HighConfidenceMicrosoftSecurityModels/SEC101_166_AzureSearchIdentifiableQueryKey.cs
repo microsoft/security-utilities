@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureSearchIdentifiableQueryKey : RegexPattern, IIdentifiableKey
+    internal class AzureSearchIdentifiableQueryKey : IdentifiableKey
     {
         public AzureSearchIdentifiableQueryKey()
         {
@@ -13,9 +13,9 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AzureSearchIdentifiableQueryKey);
         }
 
-        public string Signature => IdentifiableMetadata.AzureSearchSignature;
+        override public string Signature => IdentifiableMetadata.AzureSearchSignature;
 
-        public virtual IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureSearchQueryKeyChecksumSeed };
+        override public IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureSearchQueryKeyChecksumSeed };
 
         public override string Pattern
         {
@@ -23,6 +23,6 @@ namespace Microsoft.Security.Utilities
             protected set => base.Pattern = value;
         }
 
-        public uint KeyLength => 52;
+        override public uint KeyLength => 39;
     }
 }

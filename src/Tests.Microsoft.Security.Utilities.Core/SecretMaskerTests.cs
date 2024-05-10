@@ -68,7 +68,7 @@ public class SecretMaskerTests
                             string context = testExample;
                             string standaloneSecret = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine").First().Value;
 
-                            string moniker = pattern.GetMatchMoniker(context);
+                            string moniker = pattern.GetMatchMoniker(standaloneSecret);
 
                             // 1. All generated test patterns should be detected by the masker.
                             var detections = secretMasker.DetectSecrets(context);

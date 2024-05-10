@@ -136,7 +136,6 @@ namespace Microsoft.Security.Utilities
                 {
                     for (byte k = 0; k < iterations; k++)
                     {
-                        ulong checksumSeed = (ulong)Guid.NewGuid().ToString().GetHashCode();
                         string signature = Guid.NewGuid().ToString("N").Substring(0, 4);
 
                         signature = $"{alphabet[(int)keysGenerated % alphabet.Length]}{ signature.Substring(1)}";
@@ -179,8 +178,7 @@ namespace Microsoft.Security.Utilities
 
                         foreach (bool customerManaged in new[] { true, false })
                         {
-                            string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(checksumSeed,
-                                                                                        signature,
+                            string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature,
                                                                                         customerManaged,
                                                                                         platformReserved, 
                                                                                         providerReserved);
@@ -188,7 +186,7 @@ namespace Microsoft.Security.Utilities
                             bool result = IdentifiableSecrets.CommonAnnotatedKeyRegex.IsMatch(key);
                             result.Should().BeTrue(because: $"the key '{key}' should match the common annotated key regex");
 
-                            result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, checksumSeed, signature, customerManaged);
+                            result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, signature);
                             result.Should().BeTrue(because: $"the key '{key}' should comprise an HIS v2-conformant pattern");
 
                             keysGenerated++;
