@@ -11,7 +11,7 @@
 - FNS => Flase negative reduction in static analysis.
 
 # 1.4.19 - 05/10/2024
-- NEW: Add `IIdenfitiableKey.EncodeForUrl` property for keys with URL-safe encodings. Also adds `IdentifiableKey` base class for shared 32-bit and 64-bit logic.
+- NEW: Add `IIdentifiableKey.EncodeForUrl` property for keys with URL-safe encodings. Also adds `IdentifiableKey` base class for shared 32-bit and 64-bit logic.
 - FNS: Correct length for `SEC101/166.AzureSearchIdentifiableQueryKey` and `SEC101/167.AzureSearchIdentifiableAdminKey`.
 
 # 1.4.18 - 05/10/2024
