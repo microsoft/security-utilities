@@ -17,6 +17,8 @@ namespace Microsoft.Security.Utilities;
 /// </summary>
 public static class IdentifiableSecrets
 {
+    public static readonly ulong VersionTwoChecksumSeed = ComputeHisV1ChecksumSeed("Default0");
+
     public const string CommonAnnotatedKeyRegexPattern = "[A-Za-z0-9]{52}JQQJ99[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
 
     public static readonly Regex CommonAnnotatedKeyRegex = new(CommonAnnotatedKeyRegexPattern, RegexDefaults.DefaultOptionsCaseSensitive);
@@ -47,13 +49,9 @@ public static class IdentifiableSecrets
     }
 
     public static bool TryValidateCommonAnnotatedKey(string key,
-                                                     ulong checksumSeed,
-                                                     string base64EncodedSignature,
-                                                     bool customerManagedKey)
+                                                     string base64EncodedSignature)
     {
-        base64EncodedSignature = customerManagedKey
-                ? base64EncodedSignature.ToUpperInvariant()
-                : base64EncodedSignature.ToLowerInvariant();
+        ulong checksumSeed = VersionTwoChecksumSeed;
 
         string componentToChecksum = key.Substring(0, key.Length - 4);
         string checksumText = key.Substring(key.Length - 4);
@@ -112,26 +110,26 @@ public static class IdentifiableSecrets
     }
 
 
-    public static string GenerateCommonAnnotatedKey(ulong checksumSeed,
-                                                    string base64EncodedSignature,
+    public static string GenerateCommonAnnotatedKey(string base64EncodedSignature,
                                                     bool customerManagedKey,
                                                     byte[] platformReserved,
-                                                    byte[] providerReserved)
+                                                    byte[] providerReserved,
+                                                    char? testChar = null)
     {
-        return GenerateCommonAnnotatedTestKey(checksumSeed,
+        return GenerateCommonAnnotatedTestKey(VersionTwoChecksumSeed,
                                               base64EncodedSignature,
                                               customerManagedKey,
                                               platformReserved,
                                               providerReserved,
-                                              testChar: null);
+                                              testChar);
     }
 
     public static string GenerateCommonAnnotatedTestKey(ulong checksumSeed,
-                                                    string base64EncodedSignature,
-                                                    bool customerManagedKey,
-                                                    byte[] platformReserved,
-                                                    byte[] providerReserved,
-                                                    char? testChar)
+                                                        string base64EncodedSignature,
+                                                        bool customerManagedKey,
+                                                        byte[] platformReserved,
+                                                        byte[] providerReserved,
+                                                        char? testChar)
     {
         const int platformReservedLength = 9; 
         const int providerReservedLength = 3;

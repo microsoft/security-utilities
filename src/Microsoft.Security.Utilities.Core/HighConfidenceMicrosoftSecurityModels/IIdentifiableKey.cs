@@ -14,6 +14,8 @@ namespace Microsoft.Security.Utilities
         public string Signature { get; }
 
         public uint KeyLength { get; }
+        
+        public bool EncodeForUrl { get; }
 
         public IEnumerable<ulong> ChecksumSeeds { get; }
     }

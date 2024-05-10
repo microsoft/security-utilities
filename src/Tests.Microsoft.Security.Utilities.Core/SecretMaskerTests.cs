@@ -20,7 +20,7 @@ public class SecretMaskerTests
     public void SecretMasker_Version()
     {
         Version version = SecretMasker.Version;
-        version.ToString().Should().Be("1.4.18");
+        version.ToString().Should().Be("1.4.19");
     }
 
     [TestMethod]
@@ -68,7 +68,7 @@ public class SecretMaskerTests
                             string context = testExample;
                             string standaloneSecret = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine").First().Value;
 
-                            string moniker = pattern.GetMatchMoniker(context);
+                            string moniker = pattern.GetMatchMoniker(standaloneSecret);
 
                             // 1. All generated test patterns should be detected by the masker.
                             var detections = secretMasker.DetectSecrets(context);
