@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -21,7 +20,7 @@ public class SecretMaskerTests
     public void SecretMasker_Version()
     {
         Version version = SecretMasker.Version;
-        version.ToString().Should().Be("1.4.17");
+        version.ToString().Should().Be("1.4.18");
     }
 
     [TestMethod]

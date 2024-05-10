@@ -2,9 +2,6 @@
 
 #nullable disable
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-
 
 namespace Microsoft.Security.Utilities.Cli
 {

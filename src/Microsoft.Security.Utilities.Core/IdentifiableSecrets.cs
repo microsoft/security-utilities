@@ -80,16 +80,16 @@ public static class IdentifiableSecrets
     }
 
     /// <summary>
-    /// Generate a <see cref="ulong"/> checksum seed from a string literal that is 8 characters
-    /// long and ends with at least one digit, e.g., 'ReadKey0', 'RWSeed00', etc. The checksum
-    /// seed is used to initialize the Marvin32 algorithm to watermark a specific class of
-    /// generated security keys.
+    /// Generate a <see cref="ulong"/> an HIS v1 compliant checksum seed from a string literal
+    /// that is 8 characters long and ends with at least one digit, e.g., 'ReadKey0', 'RWSeed00',
+    /// etc. The checksum seed is used to initialize the Marvin32 algorithm to watermark a
+    /// specific class of generated security keys.
     /// </summary>
     /// <param name="versionedKeyKind">A readable name that identifies a specific set of generated keys with at least one trailing digit in the name.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentException"></exception>
-    public static ulong ComputeChecksumSeed(string versionedKeyKind)
+    public static ulong ComputeHisV1ChecksumSeed(string versionedKeyKind)
     {
         if (versionedKeyKind == null)
         {

@@ -5,8 +5,6 @@ using BenchmarkDotNet.Attributes;
 
 using Microsoft.Security.Utilities;
 
-using System;
-
 namespace Benchmarks
 {
     public class RegexEngineMaskingBenchmarks
