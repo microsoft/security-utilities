@@ -15,7 +15,7 @@ fn marvin_basic() {
     let expected: i64 = 0x22c74339492769bf;
 
     // Act
-    let marvin: i64 = microsoft_security_utilities::marvin::compute_hash(&input, seed, 0, input.len() as i32);
+    let marvin: i64 = microsoft_security_utilities_core::marvin::compute_hash(&input, seed, 0, input.len() as i32);
     
     // Assert
     assert_eq!(expected, marvin);
@@ -37,7 +37,7 @@ fn marvin_longer_string()
     let expected: i64 = 0xa128eb7e7260aca2;
 
     // Act
-    let marvin: i64 = microsoft_security_utilities::marvin::compute_hash(&input, seed, 0, input.len() as i32);
+    let marvin: i64 = microsoft_security_utilities_core::marvin::compute_hash(&input, seed, 0, input.len() as i32);
 
     // Assert
     assert_eq!(expected, marvin);
@@ -120,8 +120,8 @@ fn marvin_various_cases()
         let expected32: i32 = (expected64 ^ expected64 >> 32) as i32;
 
         // Act
-        let marvin64 = microsoft_security_utilities::marvin::compute_hash(input, seed, 0, input.len() as i32);
-        let marvin32: i32 = microsoft_security_utilities::marvin::compute_hash32(input, seed, 0, input.len() as i32);
+        let marvin64 = microsoft_security_utilities_core::marvin::compute_hash(input, seed, 0, input.len() as i32);
+        let marvin32: i32 = microsoft_security_utilities_core::marvin::compute_hash32(input, seed, 0, input.len() as i32);
 
         // Assert
         assert_eq!(expected64, marvin64);
@@ -134,7 +134,7 @@ fn marvin_various_cases()
 fn marvin_compute_hash_panic_if_invalid_args_1()
 {
     let input = "".as_bytes();
-    microsoft_security_utilities::marvin::compute_hash(input, 0, -1, 0);
+    microsoft_security_utilities_core::marvin::compute_hash(input, 0, -1, 0);
 }
 
 #[test]
@@ -142,7 +142,7 @@ fn marvin_compute_hash_panic_if_invalid_args_1()
 fn marvin_compute_hash_panic_if_invalid_args_2()
 {
     let input = "".as_bytes();
-    microsoft_security_utilities::marvin::compute_hash(input, 0, 5, 0);
+    microsoft_security_utilities_core::marvin::compute_hash(input, 0, 5, 0);
 }
 
 #[test]
@@ -150,7 +150,7 @@ fn marvin_compute_hash_panic_if_invalid_args_2()
 fn marvin_compute_hash_panic_if_invalid_args_3()
 {
     let input = "".as_bytes();
-    microsoft_security_utilities::marvin::compute_hash(input, 0, 1, -1);
+    microsoft_security_utilities_core::marvin::compute_hash(input, 0, 1, -1);
 }
 
 #[test]
@@ -158,5 +158,5 @@ fn marvin_compute_hash_panic_if_invalid_args_3()
 fn marvin_compute_hash_panic_if_invalid_args_4()
 {
     let input = "".as_bytes();
-    microsoft_security_utilities::marvin::compute_hash(input, 0, 3, 3);
+    microsoft_security_utilities_core::marvin::compute_hash(input, 0, 3, 3);
 }

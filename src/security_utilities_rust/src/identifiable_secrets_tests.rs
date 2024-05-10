@@ -23,7 +23,7 @@ fn identifiable_secrets_base62_alphabet_recognized()
     for i in 0..256
     {
         let c: char = unsafe {char::from_u32_unchecked(i)};
-        assert_eq!(alphabet.contains(&c), microsoft_security_utilities::identifiable_secrets::is_base62_encoding_char(c));
+        assert_eq!(alphabet.contains(&c), microsoft_security_utilities_core::identifiable_secrets::is_base62_encoding_char(c));
     }
 }
 
@@ -43,7 +43,7 @@ fn identifiable_secrets_base64_alphabet_recognized()
     for i in 0..256
     {
         let c: char = unsafe {char::from_u32_unchecked(i)};
-        assert_eq!(alphabet.contains(&c), microsoft_security_utilities::identifiable_secrets::is_base64_encoding_char(c));
+        assert_eq!(alphabet.contains(&c), microsoft_security_utilities_core::identifiable_secrets::is_base64_encoding_char(c));
     }
 }
 
@@ -63,7 +63,7 @@ fn identifiable_secrets_base64_url_alphabet_recognized()
     for i in 0..256
     {
         let c: char = unsafe {char::from_u32_unchecked(i)};
-        assert_eq!(alphabet.contains(&c), microsoft_security_utilities::identifiable_secrets::is_base64_url_encoding_char(c));
+        assert_eq!(alphabet.contains(&c), microsoft_security_utilities_core::identifiable_secrets::is_base64_url_encoding_char(c));
     }
 }
 
@@ -73,23 +73,23 @@ fn identifiable_secrets_generate_standard_base64_key_should_throw_exception_for_
     let signature = "ABCD";
     let seed = 0;
     
-    let mut result = std::panic::catch_unwind(|| microsoft_security_utilities::identifiable_secrets::generate_standard_safe_base64_key
+    let mut result = std::panic::catch_unwind(|| microsoft_security_utilities_core::identifiable_secrets::generate_standard_safe_base64_key
                                                                                   (seed,
-                                                                            microsoft_security_utilities::identifiable_secrets::MAXIMUM_GENERATED_KEY_SIZE + 1,
+                                                                            microsoft_security_utilities_core::identifiable_secrets::MAXIMUM_GENERATED_KEY_SIZE + 1,
                                                                 signature)
                                                             );
     assert!(result.is_err());
 
     result = std::panic::catch_unwind(|| 
-        microsoft_security_utilities::identifiable_secrets::generate_standard_safe_base64_key
+        microsoft_security_utilities_core::identifiable_secrets::generate_standard_safe_base64_key
         (seed,
-            microsoft_security_utilities::identifiable_secrets::MINIMUM_GENERATED_KEY_SIZE - 1,
+            microsoft_security_utilities_core::identifiable_secrets::MINIMUM_GENERATED_KEY_SIZE - 1,
             signature)
         );
     assert!(result.is_err());
 
     result = std::panic::catch_unwind(|| 
-        microsoft_security_utilities::identifiable_secrets::generate_standard_safe_base64_key
+        microsoft_security_utilities_core::identifiable_secrets::generate_standard_safe_base64_key
         (seed,
             32,
             "")
@@ -97,7 +97,7 @@ fn identifiable_secrets_generate_standard_base64_key_should_throw_exception_for_
     assert!(result.is_err());
 
     result = std::panic::catch_unwind(|| 
-        microsoft_security_utilities::identifiable_secrets::generate_standard_safe_base64_key
+        microsoft_security_utilities_core::identifiable_secrets::generate_standard_safe_base64_key
         (seed,
             32,
             "this signature is too long")
@@ -112,25 +112,25 @@ fn identifiable_secrets_generate_url_base64_key_should_throw_exception_for_inval
     let seed = 0;
     
     let mut result = std::panic::catch_unwind(|| 
-                                                            microsoft_security_utilities::identifiable_secrets::generate_url_safe_base64_key
+                                                            microsoft_security_utilities_core::identifiable_secrets::generate_url_safe_base64_key
                                                             (seed,
-                                                                microsoft_security_utilities::identifiable_secrets::MAXIMUM_GENERATED_KEY_SIZE + 1,
+                                                                microsoft_security_utilities_core::identifiable_secrets::MAXIMUM_GENERATED_KEY_SIZE + 1,
                                                                 signature,
                                                                 true),
                                                             );
     assert!(result.is_err());
 
     result = std::panic::catch_unwind(|| 
-        microsoft_security_utilities::identifiable_secrets::generate_url_safe_base64_key
+        microsoft_security_utilities_core::identifiable_secrets::generate_url_safe_base64_key
         (seed,
-            microsoft_security_utilities::identifiable_secrets::MINIMUM_GENERATED_KEY_SIZE - 1,
+            microsoft_security_utilities_core::identifiable_secrets::MINIMUM_GENERATED_KEY_SIZE - 1,
             signature,
             true)
         );
     assert!(result.is_err());
 
     result = std::panic::catch_unwind(|| 
-        microsoft_security_utilities::identifiable_secrets::generate_url_safe_base64_key
+        microsoft_security_utilities_core::identifiable_secrets::generate_url_safe_base64_key
         (seed,
             32,
             "",
@@ -139,7 +139,7 @@ fn identifiable_secrets_generate_url_base64_key_should_throw_exception_for_inval
     assert!(result.is_err());
 
     result = std::panic::catch_unwind(|| 
-        microsoft_security_utilities::identifiable_secrets::generate_url_safe_base64_key
+        microsoft_security_utilities_core::identifiable_secrets::generate_url_safe_base64_key
         (seed,
             32,
             "this signature is too long",
@@ -154,7 +154,7 @@ fn identifiable_secrets_generate_standard_base64_key_should_panic_for_invalid_si
 {
     let mut rng = ChaCha20Rng::from_entropy();
     let seed = rng.gen::<u64>();
-    let key_length_in_bytes: u32 = rng.gen_range(microsoft_security_utilities::identifiable_secrets::MINIMUM_GENERATED_KEY_SIZE..microsoft_security_utilities::identifiable_secrets::MAXIMUM_GENERATED_KEY_SIZE);
+    let key_length_in_bytes: u32 = rng.gen_range(microsoft_security_utilities_core::identifiable_secrets::MINIMUM_GENERATED_KEY_SIZE..microsoft_security_utilities_core::identifiable_secrets::MAXIMUM_GENERATED_KEY_SIZE);
 
     let alphabet: HashSet<char> = add_to_set(false);
     
@@ -170,7 +170,7 @@ fn identifiable_secrets_generate_standard_base64_key_should_panic_for_invalid_si
         {
            // All illegal characters in the signature should raise an exception.
         let result = std::panic::catch_unwind(|| 
-            microsoft_security_utilities::identifiable_secrets::generate_standard_safe_base64_key
+            microsoft_security_utilities_core::identifiable_secrets::generate_standard_safe_base64_key
             (seed,
                 key_length_in_bytes,
                 signature.as_str()
@@ -185,7 +185,7 @@ fn identifiable_secrets_generate_url_base64_key_should_panic_for_invalid_signatu
 {
     let mut rng = ChaCha20Rng::from_entropy();
     let seed = rng.gen::<u64>();
-    let key_length_in_bytes: u32 = rng.gen_range(microsoft_security_utilities::identifiable_secrets::MINIMUM_GENERATED_KEY_SIZE..microsoft_security_utilities::identifiable_secrets::MAXIMUM_GENERATED_KEY_SIZE);
+    let key_length_in_bytes: u32 = rng.gen_range(microsoft_security_utilities_core::identifiable_secrets::MINIMUM_GENERATED_KEY_SIZE..microsoft_security_utilities_core::identifiable_secrets::MAXIMUM_GENERATED_KEY_SIZE);
 
     let alphabet: HashSet<char> = add_to_set(true);
     
@@ -201,7 +201,7 @@ fn identifiable_secrets_generate_url_base64_key_should_panic_for_invalid_signatu
         {
            // All illegal characters in the signature should raise an exception.
             let result = std::panic::catch_unwind(|| 
-            microsoft_security_utilities::identifiable_secrets::generate_url_safe_base64_key
+            microsoft_security_utilities_core::identifiable_secrets::generate_url_safe_base64_key
             (seed,
                 key_length_in_bytes,
                 signature.as_str(),
@@ -217,7 +217,7 @@ fn identifiable_secrets_generate_standard_base64_key_basic()
 {
     let mut rng = ChaCha20Rng::from_entropy();
     let seed = rng.gen::<u64>();
-    let key_length_in_bytes: u32 = rng.gen_range(microsoft_security_utilities::identifiable_secrets::MINIMUM_GENERATED_KEY_SIZE..microsoft_security_utilities::identifiable_secrets::MAXIMUM_GENERATED_KEY_SIZE);
+    let key_length_in_bytes: u32 = rng.gen_range(microsoft_security_utilities_core::identifiable_secrets::MINIMUM_GENERATED_KEY_SIZE..microsoft_security_utilities_core::identifiable_secrets::MAXIMUM_GENERATED_KEY_SIZE);
 
     let alphabet: HashSet<char> = add_to_set(false);
     
@@ -226,7 +226,7 @@ fn identifiable_secrets_generate_standard_base64_key_basic()
         let mut signature: String = String::from("XXX");
         signature.push(*injected_char);
 
-        let secret =  microsoft_security_utilities::identifiable_secrets::generate_standard_safe_base64_key(seed,
+        let secret =  microsoft_security_utilities_core::identifiable_secrets::generate_standard_safe_base64_key(seed,
         key_length_in_bytes,
         signature.as_str());
         
@@ -239,7 +239,7 @@ fn identifiable_secrets_generate_url_base64_key_basic()
 {
     let mut rng = ChaCha20Rng::from_entropy();
     let seed = rng.gen::<u64>();
-    let key_length_in_bytes: u32 = rng.gen_range(microsoft_security_utilities::identifiable_secrets::MINIMUM_GENERATED_KEY_SIZE..microsoft_security_utilities::identifiable_secrets::MAXIMUM_GENERATED_KEY_SIZE);
+    let key_length_in_bytes: u32 = rng.gen_range(microsoft_security_utilities_core::identifiable_secrets::MINIMUM_GENERATED_KEY_SIZE..microsoft_security_utilities_core::identifiable_secrets::MAXIMUM_GENERATED_KEY_SIZE);
 
     let alphabet: HashSet<char> = add_to_set(true);
     
@@ -248,7 +248,7 @@ fn identifiable_secrets_generate_url_base64_key_basic()
         let mut signature: String = String::from("XXX");
         signature.push(*injected_char);
 
-        let secret =  microsoft_security_utilities::identifiable_secrets::generate_url_safe_base64_key(seed,
+        let secret =  microsoft_security_utilities_core::identifiable_secrets::generate_url_safe_base64_key(seed,
         key_length_in_bytes,
         signature.as_str(),
         false);
@@ -286,7 +286,7 @@ fn add_to_set(encode_for_url: bool) -> HashSet<char>
 
 fn validate_secret(secret: String, seed: u64, signature: String, encode_for_url: bool)
 {
-    let is_valid = crate::microsoft_security_utilities::identifiable_secrets::validate_base64_key(secret, seed, signature, encode_for_url);
+    let is_valid = crate::microsoft_security_utilities_core::identifiable_secrets::validate_base64_key(secret, seed, signature, encode_for_url);
     assert!(is_valid);
 }
 
