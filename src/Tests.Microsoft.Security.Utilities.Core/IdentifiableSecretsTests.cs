@@ -34,17 +34,20 @@ namespace Microsoft.Security.Utilities
         {
             using var assertionScope = new AssertionScope();
 
-            for (int i = 0; i < 16; i++)
+            for (uint i = 0; i < 20; i++)
             {
-                string literal = $"{new string('A', i)}0";
-                Action action = () => IdentifiableSecrets.ComputeChecksumSeed(literal);
-                if (i == 7)
+                for (uint j = 0; j < 100; j++)
                 {
-                    action.Should().NotThrow(because: $"literal '{literal}' should generate a valid seed");
-                }
-                else
-                {
-                    action.Should().Throw<ArgumentException>(because: $"literal '{literal}' should raise an exception as it's not the correct length");
+                    string literal = $"{new string('A', (int)i)}";
+                    Action action = () => IdentifiableSecrets.ComputeChecksumSeed(literal, j);
+                    if (i == 6)
+                    {
+                        action.Should().NotThrow(because: $"literal '{literal}' should generate a valid seed");
+                    }
+                    else
+                    {
+                        action.Should().Throw<ArgumentException>(because: $"literal '{literal}' should raise an exception as it's not the correct length");
+                    }
                 }
             }
         }
@@ -52,14 +55,26 @@ namespace Microsoft.Security.Utilities
         [TestMethod]
         public void IdentifiableSecrets_ComputeChecksumSeed_EnforcesNumericSuffix()
         {
+            using var assertionScope = new AssertionScope();
+
+            uint version = 0;
             string literal = $"{new string('A', 8)}";
-            Action action = () => IdentifiableSecrets.ComputeChecksumSeed(literal);
+            var action = () => IdentifiableSecrets.ComputeChecksumSeed(literal, version);
             action.Should().Throw<ArgumentException>(because: $"literal '{literal}' should raise an exception as it has no trailing number");
 
-            for (int i = 0; i < 10; i++)
+            for (uint i = 0; i < 200; i++)
             {
-                literal = $"{new string('A', 7)}{i}";
-                action.Should().NotThrow(because: $"literal '{literal}' should generate a valid seed");
+                string literalSuffix = $"{i:D2}";
+                literal = $"{new string('A', 8 - literalSuffix.Length)}";
+                action = () => IdentifiableSecrets.ComputeChecksumSeed(literal, i);
+                if (i < 100)
+                {
+                    action.Should().NotThrow(because: $"literal '{literal}{literalSuffix}' should generate a valid seed");
+                }
+                else
+                {
+                    action.Should().Throw<ArgumentException>(because: $"literal '{literal}{literalSuffix}' should not generate a valid seed");
+                }
             }
         }
 
@@ -70,13 +85,13 @@ namespace Microsoft.Security.Utilities
 
             var tests = new (string literal, ulong seed)[]
             {
-                ("ROSeed00", 0x526561644f6e6c79),
-                ("RWSeed00", 0x5265616457726974)
+                ("ROSeed", 0x524f536565643030),
+                ("RWSeed", 0x5257536565643030)
             };
 
             foreach (var test in tests)
             {
-                IdentifiableSecrets.ComputeChecksumSeed(test.literal).Should().Be(test.seed);
+                IdentifiableSecrets.ComputeChecksumSeed(test.literal, 0).Should().Be(test.seed);
             }
         }
 

@@ -85,28 +85,34 @@ public static class IdentifiableSecrets
     /// seed is used to initialize the Marvin32 algorithm to watermark a specific class of
     /// generated security keys.
     /// </summary>
-    /// <param name="versionedKeyKind">A readable name that identifies a specific set of generated keys with at least one trailing digit in the name.</param>
-    /// <returns></returns>
+    /// <param name="keyKind">A 6-character readable name that identifies a specific set of generated keys.</param>
+    /// <param name="version">A number between 0 - 99 to encode in the checksum seed as a version.</param>
+    /// <returns>A checksum seed derived from the readable key kind name.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentException"></exception>
-    public static ulong ComputeChecksumSeed(string versionedKeyKind)
+    public static ulong ComputeChecksumSeed(string keyKind, uint version)
     {
-        if (versionedKeyKind == null)
+        if (keyKind == null)
         {
-            throw new ArgumentNullException(nameof(versionedKeyKind));
+            throw new ArgumentNullException(nameof(keyKind));
         }
 
-        if (versionedKeyKind.Length != 8 ||
-            !char.IsDigit(versionedKeyKind[7]))
+        if (keyKind.Length != 8 - $"{version:D2}".Length)
         {
-            throw new ArgumentException("The versioned literal must be 8 characters long and end with a digit.");
+            throw new ArgumentException("The keyKind value must be 6 characters long.");
+        }
+
+        if (version > 99)
+        {
+            throw new ArgumentException("Version value must be between 0 - 99.");
         }
 
         // We obtain the bytes of the string literal, reverse them and then convert them to a ulong.
         // Because the string literal has a trailing number, if this number is incremented, the next
         // version of the seed will be very close in number to previous versions. All of this work
         // attempting to ensure the versionability of seeds is future-proofing of uncertain value.
-        ulong result = BitConverter.ToUInt64(Encoding.ASCII.GetBytes(versionedKeyKind).Reverse().ToArray(), 0);
+        string fullLiteral = $"{keyKind}{version:D2}";
+        ulong result = BitConverter.ToUInt64(Encoding.ASCII.GetBytes(fullLiteral).Reverse().ToArray(), 0);
 
         return result;
     }
