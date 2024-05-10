@@ -8,8 +8,8 @@
 - NEW -> New API or feature.
 - PRF => Performance work.
 
-# 1.4.18 - 05/09/2024
-- NEW: Add `IdentifiableSecrets._ComputeChecksumSeed` to derive checksum seeds from versioned string literals, e.g., `ReadKey0`.
+# 1.4.18 - 05/10/2024
+- NEW: Add `IdentifiableSecrets.ComputeHisV1ChecksumSeed` to derive checksum seeds from versioned string literals, e.g., `ReadKey0`.
 
 # 1.4.17 - 05/05/2024
 - PRF: Remove `SHA256` instance creation from `RegexPattern.GenerateCrossCompanyCorrelatingId` to avoid expensive object initialization costs.
