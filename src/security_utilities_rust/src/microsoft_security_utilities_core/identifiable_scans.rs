@@ -28,13 +28,18 @@ impl Base64 for u8 {
     }
 }
 
+/*
+ * NOTE:
+ * These are exposed for FFI, we must keep the numbers consistent.
+ */
+#[derive(Copy, Clone)]
 pub enum ScanMatchType {
-    His32Utf8,
-    His32Utf16,
-    His64Utf8,
-    His64Utf16,
-    His2Utf8,
-    His2Utf16,
+    His32Utf8 = 1,
+    His32Utf16 = 2,
+    His64Utf8 = 3,
+    His64Utf16 = 4,
+    His2Utf8 = 5,
+    His2Utf16 = 6,
 }
 
 pub struct ScanMatch {
@@ -107,6 +112,8 @@ impl PossibleScanMatch {
             ScanMatchType::His64Utf16 => { HIS_64_UTF16_LEN },
         }
     }
+
+    pub fn match_type(&self) -> &ScanMatchType { &self.mtype }
 
     fn his_32_matched_bytes(data: &[u8]) -> usize {
         /*
@@ -188,6 +195,10 @@ impl PossibleScanMatch {
          * Checks are equivalent to this regex:
          * [A-Za-z0-9]{52}JQQJ99[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?
          */
+        if data.len() < HIS2_UTF8_SHORT_LEN {
+            return 0;
+        }
+
         for b in &data[0..52] {
             if !b.is_ascii_alphanumeric() {
                 return 0;
