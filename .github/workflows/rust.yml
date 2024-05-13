@@ -12,15 +12,16 @@ env:
 jobs:
   build:
     name: Test Rust implementations on ${{ matrix.os }})
-    defaults:
-      run:
-        working-directory: ./src/security-utilities-rust
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
     - uses: actions/checkout@v4
+    - name: List Directory Contents
+      run: |
+          echo "Working Directory Contents:"
+          ls -al
     - name: Build
       run: cargo build --verbose
     - name: Run tests
