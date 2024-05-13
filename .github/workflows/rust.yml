@@ -18,10 +18,11 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
     - uses: actions/checkout@v4
+    - run: cd src
     - name: List Directory Contents
       run: |
           echo "Working Directory Contents:"
-          ls -Rd 1 .
+          ls -al
     - name: Build
       run: cargo build --verbose
     - name: Run tests
