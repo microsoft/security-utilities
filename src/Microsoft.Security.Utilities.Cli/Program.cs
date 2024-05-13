@@ -13,11 +13,13 @@ namespace Microsoft.Security.Utilities.Cli
                 return Parser.Default.ParseArguments<
                     RedactOptions,
                     GenerateOptions,
-                    ExportDetectionsOptions> (args)
+                    ExportDetectionsOptions,
+		    ScanOptions> (args)
                   .MapResult(
                     (RedactOptions options) => new RedactCommand().Run(options),
                     (GenerateOptions options) => new GenerateCommand().Run(options),
                     (ExportDetectionsOptions options) => new ExportDetectionsCommand().Run(options),
+                    (ScanOptions options) => new ScanCommand().Run(options),
                     _ => 1);
             }
             catch (Exception e)
