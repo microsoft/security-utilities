@@ -11,13 +11,16 @@ env:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    name: Test Rust implementations on ${{ matrix.os }})
+    defaults:
+      run:
+        working-directory: ./src/security-utilities-rust
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
     - uses: actions/checkout@v4
-    - name: Change directory to src/security-utilities-rust
-      run:  ls
     - name: Build
       run: cargo build --verbose
     - name: Run tests
