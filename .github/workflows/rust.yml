@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Change directory to src/security-utilities-rust
-      run:  cd src/security-utilities-rust
+      run:  ls
     - name: Build
       run: cargo build --verbose
     - name: Run tests
