@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     defaults:
       run:
-        working-directory: ./src/security-utilities-rust
+        working-directory: ./src/security_utilities_rust
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
