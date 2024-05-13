@@ -21,7 +21,7 @@ jobs:
     - name: List Directory Contents
       run: |
           echo "Working Directory Contents:"
-          ls -al
+          ls /src/security-utilities-rust
     - name: Build
       run: cargo build --verbose
     - name: Run tests
