@@ -256,28 +256,20 @@ impl PossibleScanMatch {
         utf16: &[u8],
         utf8: &mut [u8]) -> usize {
         let len = utf16.len() / 2;
-
-        let data16: &[u16] = unsafe {
-            std::slice::from_raw_parts(
-                utf16.as_ptr() as _,
-                len)
-        };
+        let mut u = 0;
 
         /* Check once */
-        if utf8.len() < data16.len() {
+        if utf8.len() < len || len == 0 {
             return 0;
         }
 
         /* Validate and convert to UTF8 */
-        for (i, b) in data16.iter().enumerate() {
-            let b = *b;
-
-            /* Stop on Non-ASCII */
-            if b > 255 {
+        for i in 0..len {
+            if utf16[u+1] != 0 {
                 return i;
             }
-
-            utf8[i] = b as u8;
+            utf8[i] = utf16[u];
+            u += 2;
         }
 
         len
