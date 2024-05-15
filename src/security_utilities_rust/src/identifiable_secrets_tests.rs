@@ -11,6 +11,36 @@ use rand_chacha::ChaCha20Rng;
 static S_BASE62_ALPHABET: &str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
 #[test]
+fn identifiable_secrets_compute_checksum_seed_enforces_length_requirement() {
+    for i in 0..16 {
+        let literal = "A".repeat(i) + "0";
+
+        let mut result = std::panic::catch_unwind(|| microsoft_security_utilities_core::identifiable_secrets::compute_his_v1_checksum_seed(&literal));
+
+        if i == 7 {
+            assert!(result.is_ok(), "literal '{}' should generate a valid seed", literal);
+        } else {
+            assert!(result.is_err(), "literal '{}' should raise an exception as it's not the correct length", literal);
+        }
+    }
+}
+
+#[test]
+fn identifiable_secrets_compute_checksum_seed()
+{
+    let input_literal1 = "ROSeed00";
+    let input_literal2 = "RWSeed00";
+    let expected_checksum_seed1 = 0x524f536565643030;
+    let expected_checksum_seed2 = 0x5257536565643030;
+
+    let checksum_seed1 = microsoft_security_utilities_core::identifiable_secrets::compute_his_v1_checksum_seed(input_literal1);
+    let checksum_seed2 = microsoft_security_utilities_core::identifiable_secrets::compute_his_v1_checksum_seed(input_literal2);
+
+    assert_eq!(checksum_seed1, expected_checksum_seed1);
+    assert_eq!(checksum_seed2, expected_checksum_seed2);
+}
+
+#[test]
 fn identifiable_secrets_base62_alphabet_recognized()
 {
     let mut alphabet = HashSet::new();

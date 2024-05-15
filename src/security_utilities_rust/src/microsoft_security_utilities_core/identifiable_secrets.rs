@@ -3,12 +3,19 @@
 
 use base64::{engine::general_purpose, Engine as _};
 use core::panic;
+use lazy_static::lazy_static;
 use std::{mem};
 use super::*;
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 use regex::Regex;
 use substring::Substring;
+
+pub static COMMON_ANNOTATED_KEY_REGEX_PATTERN: &str = "?-i:[A-Za-z0-9]{52}JQQJ99[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
+
+lazy_static! {
+    pub static ref COMMON_ANNOTATED_KEY_REGEX: Regex = Regex::new(COMMON_ANNOTATED_KEY_REGEX_PATTERN).unwrap();
+    }
 
 pub static MAXIMUM_GENERATED_KEY_SIZE: u32 = 4096;
 pub static MINIMUM_GENERATED_KEY_SIZE: u32 = 24;
@@ -35,6 +42,34 @@ pub fn is_base64_url_encoding_char(ch: char) -> bool
     return is_base62_encoding_char(ch) ||
                    ch == '-' ||
                    ch == '_';
+}
+
+/// Generate a u64 an HIS v1 compliant checksum seed from a string literal
+/// that is 8 characters long and ends with at least one digit, e.g., 'ReadKey0', 'RWSeed00',
+/// etc. The checksum seed is used to initialize the Marvin32 algorithm to watermark a
+/// specific class of generated security keys.
+///
+/// # Arguments
+///
+/// * `versioned_key_kind` - A readable name that identifies a specific set of generated keys with at least one trailing digit in the name.
+///
+/// # Returns
+///
+/// The computed checksum seed as a u64.
+///
+/// # Errors
+///
+/// This function will return an error if the `versioned_key_kind` does not meet the required criteria.
+pub fn compute_his_v1_checksum_seed(versioned_key_kind: &str) -> u64 {
+    
+    if versioned_key_kind.len() != 8 || !versioned_key_kind.chars().nth(7).unwrap().is_digit(10) {
+        panic!("The versioned literal must be 8 characters long and end with a digit.");
+    }
+
+    let bytes = versioned_key_kind.as_bytes().iter().rev().cloned().collect::<Vec<u8>>();
+    let result = u64::from_le_bytes(bytes.try_into().unwrap());
+
+    result
 }
 
 /// Generate an identifiable secret with a URL-compatible format (replacing all '+'
