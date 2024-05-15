@@ -486,8 +486,8 @@ impl PossibleScanMatch {
                     ScanMatch::new(
                         ScanMatchType::His32Utf16,
                         start,
-                        (count * 2) as u64,
-                        &bytes[0..count],
+                        (len * 2) as u64,
+                        &bytes[0..len],
                         want_text))
             },
 
@@ -511,8 +511,8 @@ impl PossibleScanMatch {
                     ScanMatch::new(
                         ScanMatchType::His64Utf16,
                         start,
-                        (count * 2) as u64,
-                        &bytes[0..count],
+                        (len * 2) as u64,
+                        &bytes[0..len],
                         want_text))
             },
 
@@ -552,8 +552,8 @@ impl PossibleScanMatch {
                     ScanMatch::new(
                         ScanMatchType::His39Utf16,
                         start,
-                        (count * 2) as u64,
-                        &bytes[0..count],
+                        (len * 2) as u64,
+                        &bytes[0..len],
                         want_text))
             },
 
@@ -593,8 +593,8 @@ impl PossibleScanMatch {
                     ScanMatch::new(
                         ScanMatchType::His40Utf16,
                         start,
-                        (count * 2) as u64,
-                        &bytes[0..count],
+                        (len * 2) as u64,
+                        &bytes[0..len],
                         want_text))
             },
 
@@ -634,8 +634,8 @@ impl PossibleScanMatch {
                     ScanMatch::new(
                         ScanMatchType::HisA7Utf16,
                         start,
-                        (count * 2) as u64,
-                        &bytes[0..count],
+                        (len * 2) as u64,
+                        &bytes[0..len],
                         want_text))
             },
 
@@ -675,8 +675,8 @@ impl PossibleScanMatch {
                     ScanMatch::new(
                         ScanMatchType::HisA8Utf16,
                         start,
-                        (count * 2) as u64,
-                        &bytes[0..count],
+                        (len * 2) as u64,
+                        &bytes[0..len],
                         want_text))
             },
 
@@ -1379,6 +1379,9 @@ mod tests {
         cases.push(Case::new(
             "zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
             "zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"));
+        cases.push(Case::new(
+            "zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzZZZ",
+            "zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"));
 
         /* 32-byte cases */
         cases.push(Case::new(
@@ -1408,6 +1411,12 @@ mod tests {
         cases.push(Case::new(
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbAZEGLiQbng=",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbAZEGLiQbng="));
+        cases.push(Case::new(
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbAZEGLiQbng=ZZZZ",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbAZEGLiQbng="));
+        cases.push(Case::new(
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbAZEGLiQbngZZZZ",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbAZEGLiQbng"));
 
         /* 39-byte cases */
         cases.push(Case::new(
@@ -1419,6 +1428,9 @@ mod tests {
         cases.push(Case::new(
             "dddddddddddddddddddddddddddddddddddddddddd+ACRCUDxQE",
             "dddddddddddddddddddddddddddddddddddddddddd+ACRCUDxQE"));
+        cases.push(Case::new(
+            "dddddddddddddddddddddddddddddddddddddddddd+ACRCUDxQEZZZZZ",
+            "dddddddddddddddddddddddddddddddddddddddddd+ACRCUDxQE"));
 
         /* 40-byte cases */
         cases.push(Case::new(
@@ -1427,6 +1439,9 @@ mod tests {
         cases.push(Case::new(
             "ddddddddddddddddddddddddddddddddddddddddddddAzFu182vhA==",
             "ddddddddddddddddddddddddddddddddddddddddddddAzFu182vhA=="));
+        cases.push(Case::new(
+            "ddddddddddddddddddddddddddddddddddddddddddddAzFu182vhAZZZZZ",
+            "ddddddddddddddddddddddddddddddddddddddddddddAzFu182vhA"));
 
         /* 64-byte cases */
         cases.push(Case::new(
@@ -1444,6 +1459,12 @@ mod tests {
         cases.push(Case::new(
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAPIMHbKhsQ==",
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAPIMHbKhsQ=="));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAPIMHbKhsQ==ZZZZZ",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAPIMHbKhsQ=="));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAPIMHbKhsQZZZZZ",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAPIMHbKhsQ"));
 
         for (i, case) in cases.iter().enumerate() {
             let match_str = case.expected;
