@@ -101,13 +101,13 @@ namespace Microsoft.Security.Utilities
 
                     foreach (ulong checksumSeed in identifiablePattern.ChecksumSeeds)
                     {
-                        if (IdentifiableSecrets.TryValidateBase64Key(testExample, checksumSeed, identifiablePattern.Signature))                        
+                        if (IdentifiableSecrets.TryValidateBase64Key(testExample, checksumSeed, identifiablePattern.Signature, identifiablePattern.EncodeForUrl))                        
                         {
                             matched = true;
                             string textToSign = $"{Guid.NewGuid()}";
 
                             // We found the seed for this test example.
-                            string derivedKey = IdentifiableSecrets.ComputeDerivedSymmetricKey(testExample, checksumSeed, textToSign);
+                            string derivedKey = IdentifiableSecrets.ComputeDerivedSymmetricKey(testExample, checksumSeed, textToSign, identifiablePattern.EncodeForUrl);
                             bool isValid = IdentifiableSecrets.TryValidateBase64Key(derivedKey, checksumSeed, identifiablePattern.Signature);
                             isValid.Should().BeTrue(because: $"the '{pattern.Name} derived key '{derivedKey}' should validate");
 

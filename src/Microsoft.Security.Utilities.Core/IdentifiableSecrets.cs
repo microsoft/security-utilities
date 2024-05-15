@@ -267,6 +267,7 @@ public static class IdentifiableSecrets
         }
 
         string derivedKey;
+        key = key.Replace('-', '+').Replace('_', '/');
         byte[] keyBytes = Convert.FromBase64String(key);
 
         using var hmac = new HMACSHA256(keyBytes);

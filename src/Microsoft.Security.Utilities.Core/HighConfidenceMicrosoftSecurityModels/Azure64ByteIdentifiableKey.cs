@@ -11,8 +11,6 @@ namespace Microsoft.Security.Utilities
 {
     public abstract class Azure64ByteIdentifiableKey : IdentifiableKey
     {
-        public string RegexNormalizedSignature => Signature.Replace("+", "\\+");
-
         public override uint KeyLength => 64;
 
         public override string Pattern

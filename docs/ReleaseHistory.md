@@ -31,4 +31,3 @@
 
 ## 1.4.15 - 04/16/2024
 - NEW: Implement `IdentifiableSecrets.ComputeDerivedSymmetricKey` to generate identifiable derived keys from arbitrary identifiable secrets.
-- 
