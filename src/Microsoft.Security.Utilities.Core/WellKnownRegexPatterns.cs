@@ -58,7 +58,7 @@ public static class WellKnownRegexPatterns
     {
         AadClientAppIdentifiableCredentialsCurrent(),
         AadClientAppIdentifiableCredentialsPrevious(),
-        AzureFunctionIdentifiableKey(),
+        new AzureFunctionIdentifiableKey(),
         new AzureSearchIdentifiableQueryKey(),
         new AzureSearchIdentifiableAdminKey(),
         new AzureRelayIdentifiableKey(),
@@ -76,7 +76,7 @@ public static class WellKnownRegexPatterns
         new AzureApimIdentifiableGatewayKey(),
         new AzureApimIdentifiableRepositoryKey(),
         new AzureCacheForRedisIdentifiableKey(),
-        AzureContainerRegistryIdentifiableKey(),
+        new AzureContainerRegistryIdentifiableKey(),
         new SecretScanningSampleToken(),
         NuGetApiKey(),
         new AadClientAppLegacyCredentials32(),      // SEC101/101
@@ -86,6 +86,7 @@ public static class WellKnownRegexPatterns
         new AzureStorageAccountLegacyCredentials(), // SEC101/106
         new AzureMessageLegacyCredentials(),
         new AzureDatabricksPat(),
+        new AzureEventGridIdentifiableKey(),
     };
 
     public static IEnumerable<RegexPattern> HighConfidenceThirdPartySecurityModels { get; } = new List<RegexPattern>
@@ -102,7 +103,7 @@ public static class WellKnownRegexPatterns
                    $"{PrefixUrlUnreserved}(?<refine>[{RegexEncodedUrlUnreserved}]{{3}}8Q~[{RegexEncodedUrlUnreserved}]{{34}}){SuffixUrlUnreserved}",
                    TimeSpan.FromDays(365 * 2),
                    new HashSet<string>(new[] { "8Q~" }),
-                   sampleGenerator: () => new[] { $"{RandomUrlUnreserved(3)}8Q~{RandomUrlUnreserved(34)}" });
+                   sampleGenerator: () => new[] { $"zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz" });
     }
 
     public static RegexPattern AadClientAppIdentifiableCredentialsPrevious()
@@ -113,35 +114,7 @@ public static class WellKnownRegexPatterns
             $"{PrefixUrlUnreserved}(?<refine>[{RegexEncodedUrlUnreserved}]{{3}}7Q~[{RegexEncodedUrlUnreserved}]{{31}}){SuffixUrlUnreserved}",
             TimeSpan.FromDays(365 * 2),
             new HashSet<string>(new[] { "7Q~" }),
-            sampleGenerator: () => new[] { $"{RandomUrlUnreserved(3)}7Q~{RandomUrlUnreserved(31)}" });
-    }
-
-    public static RegexPattern AzureFunctionIdentifiableKey()
-    {
-        return new("SEC101/158",
-                   nameof(AzureFunctionIdentifiableKey),
-                   DetectionMetadata.Identifiable,
-                   @$"{PrefixUrlSafeBase64}(?<refine>[{RegexEncodedUrlSafeBase64}]{{44}}AzFu[{RegexEncodedUrlSafeBase64}]{{5}}[AQgw]==){SuffixUrlSafeBase64}",
-                   TimeSpan.FromDays(365 * 2),
-                   sampleGenerator: () => new[]
-                   {
-                       IdentifiableSecrets.GenerateUrlSafeBase64Key(IdentifiableMetadata.AzureFunctionKeyChecksumSeed, 40, IdentifiableMetadata.AzureFunctionSignature),
-                       IdentifiableSecrets.GenerateUrlSafeBase64Key(IdentifiableMetadata.AzureFunctionSystemKeyChecksumSeed, 40, IdentifiableMetadata.AzureFunctionSignature),
-                       IdentifiableSecrets.GenerateUrlSafeBase64Key(IdentifiableMetadata.AzureFunctionMasterKeyChecksumSeed, 40, IdentifiableMetadata.AzureFunctionSignature),
-                   });
-    }
-
-    public static RegexPattern AzureContainerRegistryIdentifiableKey()
-    {
-        return new("SEC101/176",
-                   nameof(AzureContainerRegistryIdentifiableKey),
-                   DetectionMetadata.Identifiable,
-                   $@"{PrefixAllBase64}(?<refine>[{Base64}]{{42}}\+ACR[A-D][{Base64}]{{5}}){SuffixAllBase64}",
-                   TimeSpan.FromDays(365 * 2),
-                   sampleGenerator: () => new[]
-                   {
-                       IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureContainerRegistryChecksumSeed, 39, IdentifiableMetadata.AzureContainerRegistrySignature),
-                   });
+            sampleGenerator: () => new[] { $"zzz7Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz" });
     }
 
     public static RegexPattern NuGetApiKey()
@@ -240,7 +213,7 @@ public static class WellKnownRegexPatterns
     private const string End = "$";
     private const string Start = "^";
 
-    private const string RegexEncodedUrlSafeBase64 = @$"{Base62}\-_";
+    public const string RegexEncodedUrlSafeBase64 = @$"{Base62}\-_";
     public const string RegexEncodedUrlUnreserved = @$"{RegexEncodedUrlSafeBase64}~.";
     public const string PrefixUrlSafeBase64 = $"({Start}|[^{RegexEncodedUrlSafeBase64}])";
     public const string SuffixUrlSafeBase64 = $"([^{RegexEncodedUrlSafeBase64}]|{End})";
@@ -253,6 +226,4 @@ public static class WellKnownRegexPatterns
     public const string SuffixAllBase64 = $"([^{Base64}-_=]|{End})";
     public const string PrefixHexadecimal = $"({Start}|[^{Hexadecimal}])";
     public const string SuffixHexadecimal = $"([^{Hexadecimal}]|{End})";
-
-
 }

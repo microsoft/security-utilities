@@ -1,0 +1,27 @@
+name: Test Rust
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Test Rust implementations on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ./src/security_utilities_rust
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build
+      run: cargo build
+    - name: Run tests
+      run: cargo test

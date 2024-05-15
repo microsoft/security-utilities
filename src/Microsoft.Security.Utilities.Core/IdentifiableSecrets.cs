@@ -266,7 +266,10 @@ public static class IdentifiableSecrets
             throw new ArgumentException("The provided key is not a valid identifiable secret.");
         }
 
-        string derivedKey;
+        key = encodeForUrl
+            ? key.Replace('-', '+').Replace('_', '/')
+            : key;
+
         byte[] keyBytes = Convert.FromBase64String(key);
 
         using var hmac = new HMACSHA256(keyBytes);
@@ -280,11 +283,11 @@ public static class IdentifiableSecrets
         derivedKeyBytes[33] = 0b10101110;
         derivedKeyBytes[34] = 0b00101111;
 
-        derivedKey = GenerateBase64KeyHelper(checksumSeed,
-                                             (uint)derivedKeyBytes.Length,
-                                             signature,
-                                             encodeForUrl: false,
-                                             derivedKeyBytes);
+        string derivedKey = GenerateBase64KeyHelper(checksumSeed,
+                                                    (uint)derivedKeyBytes.Length,
+                                                    signature,
+                                                    encodeForUrl: false,
+                                                     derivedKeyBytes);
 
         return derivedKey;
     }

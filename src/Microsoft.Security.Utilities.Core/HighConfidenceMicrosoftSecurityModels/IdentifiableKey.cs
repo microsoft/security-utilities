@@ -18,6 +18,8 @@ namespace Microsoft.Security.Utilities
             DetectionMetadata = DetectionMetadata.Identifiable;
         }
 
+        public string RegexNormalizedSignature => Signature.Replace("+", "\\+");
+
         public abstract string Signature { get; }
 
         public virtual uint KeyLength => 32;
