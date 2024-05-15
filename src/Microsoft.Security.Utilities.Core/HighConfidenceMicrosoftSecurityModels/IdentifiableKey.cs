@@ -18,6 +18,8 @@ namespace Microsoft.Security.Utilities
             DetectionMetadata = DetectionMetadata.Identifiable;
         }
 
+        public string RegexNormalizedSignature => Signature.Replace("+", "\\+");
+
         public abstract string Signature { get; }
 
         public virtual uint KeyLength => 32;
@@ -32,7 +34,8 @@ namespace Microsoft.Security.Utilities
             {
                 if (IdentifiableSecrets.ValidateBase64Key(match,
                                                           checksumSeed,
-                                                          Signature))
+                                                          Signature,
+                                                          EncodeForUrl))
                 {
                     return new Tuple<string, string>(Id, Name);
                 }

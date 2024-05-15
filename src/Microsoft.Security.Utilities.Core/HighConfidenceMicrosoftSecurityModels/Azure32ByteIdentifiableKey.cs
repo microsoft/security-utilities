@@ -11,8 +11,6 @@ namespace Microsoft.Security.Utilities
 {
     public abstract class Azure32ByteIdentifiableKey : IdentifiableKey
     {
-        public string RegexNormalizedSignature => Signature.Replace("+", "\\+");
-
         public override string Pattern
         {
             get => @$"{WellKnownRegexPatterns.PrefixAllBase64}(?<refine>[{WellKnownRegexPatterns.Base64}]{{33}}{RegexNormalizedSignature}[A-P][{WellKnownRegexPatterns.Base64}]{{5}}=){WellKnownRegexPatterns.SuffixAllBase64}";
