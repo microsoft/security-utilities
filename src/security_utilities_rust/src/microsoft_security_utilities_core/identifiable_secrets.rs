@@ -11,6 +11,10 @@ use rand_chacha::ChaCha20Rng;
 use regex::Regex;
 use substring::Substring;
 
+lazy_static! {
+    pub static ref VERSION_TWO_CHECKSUM_SEED: u64 = compute_his_v1_checksum_seed("Default0");
+}
+
 pub static COMMON_ANNOTATED_KEY_REGEX_PATTERN: &str = "?-i:[A-Za-z0-9]{52}JQQJ99[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
 
 lazy_static! {
@@ -61,7 +65,7 @@ pub fn is_base64_url_encoding_char(ch: char) -> bool
 ///
 /// This function will return an error if the `versioned_key_kind` does not meet the required criteria.
 pub fn compute_his_v1_checksum_seed(versioned_key_kind: &str) -> u64 {
-    
+
     if versioned_key_kind.len() != 8 || !versioned_key_kind.chars().nth(7).unwrap().is_digit(10) {
         panic!("The versioned literal must be 8 characters long and end with a digit.");
     }
@@ -70,6 +74,24 @@ pub fn compute_his_v1_checksum_seed(versioned_key_kind: &str) -> u64 {
     let result = u64::from_le_bytes(bytes.try_into().unwrap());
 
     result
+}
+
+pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &str) -> bool {
+    let checksum_seed: u64 = VERSION_TWO_CHECKSUM_SEED.clone();
+
+    let component_to_checksum = &key[..key.len() - 4];
+    let checksum_text = &key[key.len() - 4..];
+
+    let key_bytes = base64::decode(component_to_checksum).unwrap();
+
+    let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, (key_bytes.len() as i32));
+
+    let checksum_bytes = checksum.to_be_bytes();
+    let truncated_checksum_bytes = &checksum_bytes[..3];
+
+    let encoded = base64::encode(truncated_checksum_bytes);
+
+    encoded == checksum_text
 }
 
 /// Generate an identifiable secret with a URL-compatible format (replacing all '+'
