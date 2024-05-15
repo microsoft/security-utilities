@@ -11,7 +11,7 @@ const HIS2_UTF16_SHORT_LEN_BE: usize = HIS2_UTF16_SHORT_LEN - 1;
 const HIS_A7_UTF8_LEN: usize = 37;
 const HIS_A8_UTF8_LEN: usize = 40;
 const HIS_32_UTF8_LEN: usize = 44;
-const HIS_39_UTF8_LEN: usize = 53;
+const HIS_39_UTF8_LEN: usize = 52;
 const HIS_40_UTF8_LEN: usize = 56;
 const HIS_64_UTF8_LEN: usize = 88;
 
@@ -153,7 +153,7 @@ impl PossibleScanMatch {
 
     fn his_a7_matched_bytes(data: &[u8]) -> usize {
         /*
-         * 3 Base64 + 3 signature + 31 Base64 + optional 1 [=]
+         * 3 url unreserved + 3 signature + 31 url unreserved
          */
         if data.len() < HIS_A7_UTF8_LEN {
             return 0;
@@ -164,6 +164,8 @@ impl PossibleScanMatch {
                 return 0;
             }
         }
+
+        /* NOTE: We skip the signature since we already checked */
 
         for b in &data[6..37] {
             if !b.is_url_unreserved() {
@@ -176,7 +178,7 @@ impl PossibleScanMatch {
 
     fn his_a8_matched_bytes(data: &[u8]) -> usize {
         /*
-         * 3 Base64 + 3 signature + 34 Base64 + optional 1 [=]
+         * 3 url unreserved + 3 signature + 34 url unreserved
          */
         if data.len() < HIS_A8_UTF8_LEN {
             return 0;
@@ -187,6 +189,8 @@ impl PossibleScanMatch {
                 return 0;
             }
         }
+
+        /* NOTE: We skip the signature since we already checked */
 
         for b in &data[6..40] {
             if !b.is_url_unreserved() {
@@ -199,9 +203,9 @@ impl PossibleScanMatch {
 
     fn his_39_matched_bytes(data: &[u8]) -> usize {
         /*
-         * 42 Base64 + 4 signature + 1 [A-D] + 5 Base64 + optional 1 [=]
+         * 42 Base64 + 4 signature + 1 [A-D] + 5 Base64
          */
-        if data.len() < 52 {
+        if data.len() < HIS_39_UTF8_LEN {
             return 0;
         }
 
@@ -223,18 +227,12 @@ impl PossibleScanMatch {
             }
         }
 
-        if data.len() >= HIS_39_UTF8_LEN {
-            if data[52] == b'=' {
-                return HIS_39_UTF8_LEN;
-            }
-        }
-
-        52
+        HIS_39_UTF8_LEN
     }
 
     fn his_40_matched_bytes(data: &[u8]) -> usize {
         /*
-         * 44 Base64 + 4 signature + 5 Base64 + [AOgw] + optional 2 [=]
+         * 44 Base64 + 4 signature + 5 Base64 + [AQgw] + optional 2 [=]
          */
         if data.len() < 54 {
             return 0;
@@ -255,7 +253,7 @@ impl PossibleScanMatch {
         }
 
         match data[53] {
-            b'A' | b'O' | b'g' | b'w' => { },
+            b'A' | b'Q' | b'g' | b'w' => { },
             _ => { return 0; },
         }
 
@@ -1422,9 +1420,6 @@ mod tests {
         cases.push(Case::new(
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAzSeCjhzCu",
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAzSeCjhzCu"));
-        cases.push(Case::new(
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAzSeCjhzCu=",
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAzSeCjhzCu="));
         cases.push(Case::new(
             "dddddddddddddddddddddddddddddddddddddddddd+ACRCUDxQE",
             "dddddddddddddddddddddddddddddddddddddddddd+ACRCUDxQE"));
