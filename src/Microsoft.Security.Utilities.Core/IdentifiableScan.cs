@@ -25,7 +25,11 @@ public class IdentifiableScan: IDisposable
         U39Utf16 = 8,
         U40Utf8 = 9,
         U40Utf16 = 10,
-        Unknown = 11,
+        A7Utf8 = 11,
+        A7Utf16 = 12,
+        A8Utf8 = 13,
+        A8Utf16 = 14,
+        Unknown = 15,
     }
 
     [DllImport("microsoft_security_utilities_core")]

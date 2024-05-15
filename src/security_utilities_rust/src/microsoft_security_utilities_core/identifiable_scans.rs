@@ -8,11 +8,15 @@ const HIS2_UTF16_LEN: usize = HIS2_UTF8_LEN * 2;
 const HIS2_UTF16_SHORT_LEN: usize = HIS2_UTF8_SHORT_LEN * 2;
 const HIS2_UTF16_SHORT_LEN_BE: usize = HIS2_UTF16_SHORT_LEN - 1;
 
+const HIS_A7_UTF8_LEN: usize = 37;
+const HIS_A8_UTF8_LEN: usize = 40;
 const HIS_32_UTF8_LEN: usize = 44;
 const HIS_39_UTF8_LEN: usize = 53;
 const HIS_40_UTF8_LEN: usize = 56;
 const HIS_64_UTF8_LEN: usize = 88;
 
+const HIS_A7_UTF16_LEN: usize = HIS_A7_UTF8_LEN * 2;
+const HIS_A8_UTF16_LEN: usize = HIS_A8_UTF8_LEN * 2;
 const HIS_32_UTF16_LEN: usize = HIS_32_UTF8_LEN * 2;
 const HIS_39_UTF16_LEN: usize = HIS_39_UTF8_LEN * 2;
 const HIS_40_UTF16_LEN: usize = HIS_40_UTF8_LEN * 2;
@@ -22,6 +26,10 @@ trait Base64 {
     fn is_base64(&self) -> bool;
 }
 
+trait UrlUnreserved {
+    fn is_url_unreserved(&self) -> bool;
+}
+
 impl Base64 for u8 {
     fn is_base64(&self) -> bool {
         self.is_ascii_alphanumeric() ||
@@ -29,6 +37,14 @@ impl Base64 for u8 {
         *self == b'/' ||
         *self == b'-' ||
         *self == b'_'
+    }
+}
+
+impl UrlUnreserved for u8 {
+    fn is_url_unreserved(&self) -> bool {
+        self.is_base64() ||
+        *self == b'~' ||
+        *self == b'.'
     }
 }
 
@@ -48,6 +64,10 @@ pub enum ScanMatchType {
     His39Utf16 = 8,
     His40Utf8 = 9,
     His40Utf16 = 10,
+    HisA7Utf8 = 11,
+    HisA7Utf16 = 12,
+    HisA8Utf8 = 13,
+    HisA8Utf16 = 14,
 }
 
 pub struct ScanMatch {
@@ -122,10 +142,60 @@ impl PossibleScanMatch {
             ScanMatchType::His39Utf16 => { HIS_39_UTF16_LEN },
             ScanMatchType::His40Utf8 => { HIS_40_UTF8_LEN },
             ScanMatchType::His40Utf16 => { HIS_40_UTF16_LEN },
+            ScanMatchType::HisA7Utf8 => { HIS_A7_UTF8_LEN },
+            ScanMatchType::HisA7Utf16 => { HIS_A7_UTF16_LEN },
+            ScanMatchType::HisA8Utf8 => { HIS_A8_UTF8_LEN },
+            ScanMatchType::HisA8Utf16 => { HIS_A8_UTF16_LEN },
         }
     }
 
     pub fn match_type(&self) -> &ScanMatchType { &self.mtype }
+
+    fn his_a7_matched_bytes(data: &[u8]) -> usize {
+        /*
+         * 3 Base64 + 3 signature + 31 Base64 + optional 1 [=]
+         */
+        if data.len() < HIS_A7_UTF8_LEN {
+            return 0;
+        }
+
+        for b in &data[0..3] {
+            if !b.is_url_unreserved() {
+                return 0;
+            }
+        }
+
+        for b in &data[6..37] {
+            if !b.is_url_unreserved() {
+                return 0;
+            }
+        }
+
+        HIS_A7_UTF8_LEN
+    }
+
+    fn his_a8_matched_bytes(data: &[u8]) -> usize {
+        /*
+         * 3 Base64 + 3 signature + 34 Base64 + optional 1 [=]
+         */
+        if data.len() < HIS_A8_UTF8_LEN {
+            return 0;
+        }
+
+        for b in &data[0..3] {
+            if !b.is_url_unreserved() {
+                return 0;
+            }
+        }
+
+        for b in &data[6..40] {
+            if !b.is_url_unreserved() {
+                return 0;
+            }
+        }
+
+        HIS_A8_UTF8_LEN
+    }
 
     fn his_39_matched_bytes(data: &[u8]) -> usize {
         /*
@@ -528,6 +598,88 @@ impl PossibleScanMatch {
                         want_text))
             },
 
+            ScanMatchType::HisA7Utf8 => {
+                let len = Self::his_a7_matched_bytes(&data);
+
+                if len == 0 {
+                    return None;
+                }
+
+                Some(
+                    ScanMatch::new(
+                        ScanMatchType::HisA7Utf8,
+                        start,
+                        len as u64,
+                        &data[0..len],
+                        want_text))
+            },
+
+            ScanMatchType::HisA7Utf16 => {
+                let mut bytes: [u8; HIS_A7_UTF8_LEN] = [0; HIS_A7_UTF8_LEN];
+                let mut count = Self::convert_utf16(data, &mut bytes);
+
+                if data.len() & 1 == 1 {
+                    /* Add trailing unaligned byte edge case */
+                    bytes[count] = data[data.len()-1];
+                    count += 1;
+                }
+
+                let len = Self::his_a7_matched_bytes(&bytes);
+
+                if len == 0 {
+                    return None;
+                }
+
+                Some(
+                    ScanMatch::new(
+                        ScanMatchType::HisA7Utf16,
+                        start,
+                        (count * 2) as u64,
+                        &bytes[0..count],
+                        want_text))
+            },
+
+            ScanMatchType::HisA8Utf8 => {
+                let len = Self::his_a8_matched_bytes(&data);
+
+                if len == 0 {
+                    return None;
+                }
+
+                Some(
+                    ScanMatch::new(
+                        ScanMatchType::HisA8Utf8,
+                        start,
+                        len as u64,
+                        &data[0..len],
+                        want_text))
+            },
+
+            ScanMatchType::HisA8Utf16 => {
+                let mut bytes: [u8; HIS_A8_UTF8_LEN] = [0; HIS_A8_UTF8_LEN];
+                let mut count = Self::convert_utf16(data, &mut bytes);
+
+                if data.len() & 1 == 1 {
+                    /* Add trailing unaligned byte edge case */
+                    bytes[count] = data[data.len()-1];
+                    count += 1;
+                }
+
+                let len = Self::his_a8_matched_bytes(&bytes);
+
+                if len == 0 {
+                    return None;
+                }
+
+                Some(
+                    ScanMatch::new(
+                        ScanMatchType::HisA8Utf16,
+                        start,
+                        (count * 2) as u64,
+                        &bytes[0..count],
+                        want_text))
+            },
+
             /* Unknown */
             _ => { None }
         }
@@ -721,6 +873,64 @@ impl Scan {
         self.index = 0;
         self.last_a_index = 0;
         self.checks.clear();
+    }
+
+    #[cfg(target_endian = "little")] // If run on BE, need to update
+    #[inline(always)]
+    fn match_sig_legacy(&mut self) {
+        /* UTF8 */
+        match self.accum & 0xFFFFFF {
+            /* 7Q~ */
+            0x37517E => {
+                if self.index >= 6 {
+                    /* Signature Detection */
+                    self.checks.push(
+                        PossibleScanMatch::new(
+                            self.index - 6,
+                            ScanMatchType::HisA7Utf8));
+                }
+            },
+
+            /* 8Q~ */
+            0x38517E => {
+                if self.index >= 6 {
+                    /* Signature Detection */
+                    self.checks.push(
+                        PossibleScanMatch::new(
+                            self.index - 6,
+                            ScanMatchType::HisA8Utf8));
+                }
+            },
+
+            _ => {},
+        }
+
+        /* UTF16 */
+        match self.accum & 0xFFFFFFFFFFFF {
+            /* 7Q~ */
+            0x00370051007E => {
+                if self.index >= 11 {
+                    /* Signature Detection */
+                    self.checks.push(
+                        PossibleScanMatch::new(
+                            self.index - 11,
+                            ScanMatchType::HisA7Utf16));
+                }
+            },
+
+            /* 8Q~ */
+            0x00380051007E => {
+                if self.index >= 11 {
+                    /* Signature Detection */
+                    self.checks.push(
+                        PossibleScanMatch::new(
+                            self.index - 11,
+                            ScanMatchType::HisA8Utf16));
+                }
+            }
+
+            _ => {},
+        }
     }
 
     #[cfg(target_endian = "little")] // If run on BE, need to update
@@ -922,7 +1132,11 @@ impl Scan {
             self.accum = self.accum << 8 | b as u64;
             self.index += 1;
 
-            self.match_sig_v1();
+            if b == b'~' {
+                self.match_sig_legacy();
+            } else {
+                self.match_sig_v1();
+            }
         }
     }
 
@@ -959,7 +1173,11 @@ impl Scan {
             self.index += 1;
 
             if b != b'J' {
-                self.match_sig_v1();
+                if b == b'~' {
+                    self.match_sig_legacy();
+                } else {
+                    self.match_sig_v1();
+                }
             } else {
                 self.match_sig_v2();
             }
@@ -987,7 +1205,7 @@ impl Scan {
             for chunk in chunks {
                 /* Check if last bytes in accum have an A */
                 if !self.a_in_accum() {
-                    /* Vectorized (SIMD) check for J or A */
+                    /* Vectorized (SIMD) check for J or A or ~ */
                     let mut count = 0;
                     for i in 0..16 {
                         count |= (chunk[i] == b'J') as usize;
@@ -995,8 +1213,11 @@ impl Scan {
                     for i in 0..16 {
                         count |= (chunk[i] == b'A') as usize;
                     }
+                    for i in 0..16 {
+                        count |= (chunk[i] == b'~') as usize;
+                    }
 
-                    /* No J's or A's, set accumulator and continue */
+                    /* No J's or A's or ~'s, set accumulator and continue */
                     if count == 0 {
                         self.index += 16;
                         self.accum = u64::from_ne_bytes(chunk[8..16].try_into().unwrap());
@@ -1018,6 +1239,9 @@ impl Scan {
                     let mut count = 0;
                     for i in 0..16 {
                         count |= (chunk[i] == b'A') as usize;
+                    }
+                    for i in 0..16 {
+                        count |= (chunk[i] == b'~') as usize;
                     }
 
                     /* No A's, set accumulator and continue */
@@ -1147,6 +1371,14 @@ mod tests {
 
         /* Valid Cases */
         let mut cases = Vec::new();
+
+        /* AAD cases */
+        cases.push(Case::new(
+            "zzz7Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+            "zzz7Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"));
+        cases.push(Case::new(
+            "zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+            "zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"));
 
         /* 32-byte cases */
         cases.push(Case::new(
