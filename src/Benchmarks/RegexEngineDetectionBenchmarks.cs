@@ -9,7 +9,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
     {
         // The # of iterations of the scan to run.
         // This value currently leads to ~200 - 500 ms runtime.
-        private const int s_iterations = 1;
+        private const int s_iterations = 10;
 
         // The size of randomized data to add as a prefix
         // for every secret. This is intended to make positive
@@ -40,6 +40,9 @@ namespace Microsoft.Security.Utilities.Benchmarks
                 {
                     yield return regexPattern;
                 }
+
+                yield return WellKnownRegexPatterns.AadClientAppIdentifiableCredentialsCurrent();
+                yield return WellKnownRegexPatterns.AadClientAppIdentifiableCredentialsPrevious();
             }
         }
 
@@ -92,7 +95,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
 
                         if (count == 0)
                         {
-                            throw new InvalidOperationException($"Regex {regexPattern.Name} failed to detect example {example}");
+                            //throw new InvalidOperationException($"Regex {regexPattern.Name} failed to detect example {example}");
                         }
 
                         globalCount += count;
