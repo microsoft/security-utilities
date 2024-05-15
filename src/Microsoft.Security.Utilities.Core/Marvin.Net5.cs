@@ -2,9 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #if NET5_0_OR_GREATER
-
 using System;
-using System.Buffers.Text;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -18,8 +16,27 @@ namespace Microsoft.Security.Utilities
     /// </summary>
     public static class Marvin
     {
+             /// <summary>
+             /// Convenience method to compute a Marvin hash and collapse it into a 32-bit hash.
+             /// </summary>
+             /// <param name="data">The data to be hashed.</param>
+             /// <param name="seed">A seed provided to the checksum implementation that helps randomize results
+             /// <param name="offset">The offset from which to compute the checksum.</param>
+             /// <param name="length">The number of bytes to checksum.</param>
+             /// and ensures that checksums for shorter data buffers aren't constrained to less than 64 bits.</param>
+             /// <returns>The computed Marvin32 64-bit checksum of the input data collapsed into a 32-bit value.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int ComputeHash32(byte[] data, ulong seed, int offset, int length)
+        {
+            var span = new ReadOnlySpan<byte>(data, offset, length);
+            uint p0 = (uint)seed;
+            uint p1 = (uint)(seed >> 32);
+            ComputeHash(ref MemoryMarshal.GetReference(span), (uint)span.Length, ref p0, ref p1);
+            return (int)(p1 ^ p0);
+        }
+
         /// <summary>
-        /// Compute a Marvin hash and collapse it into a 32-bit hash.
+        /// Compute a Marvin hash.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long ComputeHash(ReadOnlySpan<byte> data, ulong seed)
@@ -29,7 +46,6 @@ namespace Microsoft.Security.Utilities
             ComputeHash(ref MemoryMarshal.GetReference(data), (uint)data.Length, ref p0, ref p1);
             return (((long)p1) << 32) | p0;
         }
-
 
         /// <summary>
         /// Compute a Marvin hash and collapse it into a 32-bit hash.

@@ -92,7 +92,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
 
                         if (count == 0)
                         {
-                            //throw new InvalidOperationException($"Regex {regexPattern.Name} failed to detect example {example}");
+                            throw new InvalidOperationException($"Regex {regexPattern.Name} failed to detect example {example}");
                         }
 
                         globalCount += count;

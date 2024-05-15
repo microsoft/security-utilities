@@ -5,13 +5,14 @@
 - DEP => Update dependency.
 - BRK => General breaking change.
 - BUG => General bug fix.
-- NEW -> New API or feature.
+- NEW => New API or feature.
 - PRF => Performance work.
 - FPS => False positive reduction in static analysis.
 - FNS => Flase negative reduction in static analysis.
 
 - # 1.4.20 - UNRELEASED
-Update `SEC101_158_AzureFunctionIdentifiableKey1` ,`SEC101_176_AzureContainerRegistryIdentifiableKey`, and `SEC101_190_AzureEventGridIdentifiableKey` to derive from `IdentifiableKey` base.
+- BRK: Add `ComputeHash32(byte[], ulong, int, int)` helper to bring .NET framework and .NET core APIs into alignment.
+- NEW: Update `SEC101_158_AzureFunctionIdentifiableKey1` ,`SEC101_176_AzureContainerRegistryIdentifiableKey`, and `SEC101_190_AzureEventGridIdentifiableKey` to derive from `IdentifiableKey` base.
 
 # 1.4.19 - 05/10/2024
 - BRK: Eliminate `Identifiable.TryValidateCommonAnnotatedKey` `checksum` and `customerManagedKey` parameters. Checksums now not configurable for HIS v2.
