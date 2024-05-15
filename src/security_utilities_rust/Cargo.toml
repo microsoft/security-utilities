@@ -6,7 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+base-62 = "0.1.1"
 base64 = "0.21.0"
+chrono = "0.4.38"
 lazy_static = "1.4.0"
 rand_chacha = "0.3.1"
 rand_core = "0.6.4"

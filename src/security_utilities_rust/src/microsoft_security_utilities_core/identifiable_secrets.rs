@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+use base_62;
 use base64::{engine::general_purpose, Engine as _};
+use chrono::Datelike;
 use core::panic;
 use lazy_static::lazy_static;
 use std::{mem};
@@ -92,6 +94,126 @@ pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &s
     let encoded = base64::encode(truncated_checksum_bytes);
 
     encoded == checksum_text
+}
+
+pub fn generate_common_annotated_test_key(
+    checksum_seed: u64,
+    base64_encoded_signature: &str,
+    customer_managed_key: bool,
+    platform_reserved: Option<&[u8]>,
+    provider_reserved: Option<&[u8]>,
+    test_char: Option<char>,
+) -> Result<String, String> {
+    const PLATFORM_RESERVED_LENGTH: usize = 9;
+    const PROVIDER_RESERVED_LENGTH: usize = 3;
+
+    let platform_reserved = match platform_reserved {
+        Some(reserved) if reserved.len() != PLATFORM_RESERVED_LENGTH => {
+            return Err(format!(
+                "When provided, there must be {} reserved bytes for platform metadata.",
+                PLATFORM_RESERVED_LENGTH
+            ));
+        }
+        Some(reserved) => reserved,
+        None => &[0; PLATFORM_RESERVED_LENGTH],
+    };
+
+    let provider_reserved = match provider_reserved {
+        Some(reserved) if reserved.len() != PROVIDER_RESERVED_LENGTH => {
+            return Err(format!(
+                "When provided, there must be {} reserved bytes for resource provider metadata.",
+                PROVIDER_RESERVED_LENGTH
+            ));
+        }
+        Some(reserved) => reserved,
+        None => &[0; PROVIDER_RESERVED_LENGTH],
+    };
+
+    let base64_encoded_signature = if customer_managed_key {
+        base64_encoded_signature.to_uppercase()
+    } else {
+        base64_encoded_signature.to_lowercase()
+    };
+
+    let mut key = String::new();
+
+    loop {
+        let key_length_in_bytes = 66;
+        let mut key_bytes = vec![0; key_length_in_bytes];
+
+        if let Some(test_char) = test_char {
+            key = format!("{:86}==", test_char.to_string().repeat(86));
+        } else {
+            let mut rng = rand::thread_rng();
+            rng.fill_bytes(&mut key_bytes);
+
+            let key_base62 = base_62::encode(&key_bytes);
+            key = format!("{}==", &key_base62[..86]);
+        }
+
+        key_bytes = general_purpose::STANDARD.decode(&key).unwrap();
+
+        let j_bits = b'J' - b'A';
+        let q_bits = b'Q' - b'A';
+
+        let reserved = (j_bits as i32) << 18 | (q_bits as i32) << 12 | (q_bits as i32) << 6 | j_bits as i32;
+        let reserved_bytes = reserved.to_be_bytes();
+
+        let key_bytes_length = key_bytes.len();
+
+        key_bytes[key_bytes_length - 25] = reserved_bytes[2];
+        key_bytes[key_bytes_length - 24] = reserved_bytes[1];
+        key_bytes[key_bytes_length - 23] = reserved_bytes[0];
+
+        let years_since_2024 = (chrono::Utc::now().year() - 2024) as u8;
+        let zero_indexed_month = (chrono::Utc::now().month() - 1) as u8;
+
+        let metadata: i32 = (61 << 18) | (61 << 12) | (years_since_2024 << 6) as i32 | zero_indexed_month as i32;
+        let metadata_bytes = metadata.to_be_bytes();
+
+        key_bytes[key_bytes_length - 22] = metadata_bytes[2];
+        key_bytes[key_bytes_length - 21] = metadata_bytes[1];
+        key_bytes[key_bytes_length - 20] = metadata_bytes[0];
+
+        key_bytes[key_bytes_length - 19] = platform_reserved[0];
+        key_bytes[key_bytes_length - 18] = platform_reserved[1];
+        key_bytes[key_bytes_length - 17] = platform_reserved[2];
+        key_bytes[key_bytes_length - 16] = platform_reserved[3];
+        key_bytes[key_bytes_length - 15] = platform_reserved[4];
+        key_bytes[key_bytes_length - 14] = platform_reserved[5];
+        key_bytes[key_bytes_length - 13] = platform_reserved[6];
+        key_bytes[key_bytes_length - 12] = platform_reserved[7];
+        key_bytes[key_bytes_length - 11] = platform_reserved[8];
+
+        key_bytes[key_bytes_length - 10] = provider_reserved[0];
+        key_bytes[key_bytes_length - 9] = provider_reserved[1];
+        key_bytes[key_bytes_length - 8] = provider_reserved[2];
+
+        let signature_offset = key_bytes_length - 7;
+        let sig_bytes = general_purpose::STANDARD.decode(&base64_encoded_signature).unwrap();
+        key_bytes[signature_offset..].copy_from_slice(&sig_bytes);
+
+        let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, (key_bytes_length - 4) as i32);
+
+        let checksum_bytes = checksum.to_be_bytes();
+
+        key_bytes[key_bytes_length - 4] = checksum_bytes[0];
+        key_bytes[key_bytes_length - 3] = checksum_bytes[1];
+        key_bytes[key_bytes_length - 2] = checksum_bytes[2];
+        key_bytes[key_bytes_length - 1] = checksum_bytes[3];
+
+        key = base64::encode(&key_bytes);
+
+        if !key.contains('+') && !key.contains('/') {
+            key = key[..key.len() - 4].to_string();
+            break;
+        } else if test_char.is_some() {
+            key = String::new();
+            break;
+        }
+    }
+
+    Ok(key)
 }
 
 /// Generate an identifiable secret with a URL-compatible format (replacing all '+'
