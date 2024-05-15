@@ -473,12 +473,11 @@ public static class IdentifiableSecrets
         int expectedChecksum = BitConverter.ToInt32(span.Slice(bytes.Length - checksumSizeInBytes, checksumSizeInBytes).ToArray(), 0);
         int actualChecksum = Marvin.ComputeHash32(span.Slice(0, bytes.Length - checksumSizeInBytes), checksumSeed);
 #else
-        bytes = ConvertFromBase64String(key);
         int expectedChecksum = BitConverter.ToInt32(bytes, bytes.Length - checksumSizeInBytes);
         int actualChecksum = Marvin.ComputeHash32(bytes, checksumSeed, 0, bytes.Length - checksumSizeInBytes);
 #endif
 
-        return actualChecksum != expectedChecksum;
+        return actualChecksum == expectedChecksum;
     }
 
     /// <summary>
