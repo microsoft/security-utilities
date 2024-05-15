@@ -459,6 +459,25 @@ public static class IdentifiableSecrets
         }
     }
 
+    private const int checksumSizeInBytes = sizeof(uint);
+
+    public static bool ValidateChecksum(string key, ulong checksumSeed, out byte[] bytes)
+    {
+        bytes = ConvertFromBase64String(key);
+
+#if NET6_0_OR_GREATER
+        var span = new ReadOnlySpan<byte>(bytes);
+        int expectedChecksum = BitConverter.ToInt32(span.Slice(bytes.Length - checksumSizeInBytes, checksumSizeInBytes).ToArray(), 0);
+        int actualChecksum = Marvin.ComputeHash32(span.Slice(0, bytes.Length - checksumSizeInBytes), checksumSeed);
+#else
+        bytes = ConvertFromBase64String(key);
+        int expectedChecksum = BitConverter.ToInt32(bytes, bytes.Length - checksumSizeInBytes);
+        int actualChecksum = Marvin.ComputeHash32(bytes, checksumSeed, 0, bytes.Length - checksumSizeInBytes);
+#endif
+
+        return actualChecksum != expectedChecksum;
+    }
+
     /// <summary>
     /// Validate if the identifiable secret contains a valid format.
     /// </summary>
@@ -493,19 +512,7 @@ public static class IdentifiableSecrets
     {
         ValidateBase64EncodedSignature(base64EncodedSignature, encodeForUrl);
 
-        const int checksumSizeInBytes = sizeof(uint);
-
-#if NET6_0_OR_GREATER
-            var bytes = new ReadOnlySpan<byte>(ConvertFromBase64String(key));
-            int expectedChecksum = BitConverter.ToInt32(bytes.Slice(bytes.Length - checksumSizeInBytes, checksumSizeInBytes).ToArray(), 0);
-            int actualChecksum = Marvin.ComputeHash32(bytes.Slice(0, bytes.Length - checksumSizeInBytes), checksumSeed);
-#else
-        byte[] bytes = ConvertFromBase64String(key);
-        int expectedChecksum = BitConverter.ToInt32(bytes, bytes.Length - checksumSizeInBytes);
-        int actualChecksum = Marvin.ComputeHash32(bytes, checksumSeed, 0, bytes.Length - checksumSizeInBytes);
-#endif
-
-        if (actualChecksum != expectedChecksum)
+        if (!ValidateChecksum(key, checksumSeed, out byte[] bytes))
         {
             return false;
         }
@@ -626,8 +633,7 @@ public static class IdentifiableSecrets
         //   [a-zA-Z0-9\-_]{24}XXXX[a-zA-Z0-9\-_]{5}[AQgw]
 
         pattern = $"{secretAlphabet}{{{prefixLength}}}{base64EncodedSignature}{checksumPrefix}{secretAlphabet}{{5}}{checksumSuffix}{equalsSigns}";
-        var regex = new Regex(pattern);
-        return regex.IsMatch(key);
+        return CachedDotNetRegex.Instance.Matches(key, pattern).Any();
     }
 
     private static int ComputeSpilloverBitsIntoFinalEncodedCharacter(int countOfBytes)

@@ -5,7 +5,7 @@ using System;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureCosmosDBLegacyCredentials : RegexPattern
+    public class AzureCosmosDBLegacyCredentials : RegexPattern
     {
         public AzureCosmosDBLegacyCredentials()
         {

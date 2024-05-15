@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureMessageLegacyCredentials : RegexPattern
+    public class AzureMessageLegacyCredentials : RegexPattern
     {
         public AzureMessageLegacyCredentials()
         {

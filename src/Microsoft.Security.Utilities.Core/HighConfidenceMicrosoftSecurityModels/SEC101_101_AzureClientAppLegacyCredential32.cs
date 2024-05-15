@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AadClientAppLegacyCredentials32 : RegexPattern
+    public class AadClientAppLegacyCredentials32 : RegexPattern
     {
         public const string AadClientAppLegacyCredentials = nameof(AadClientAppLegacyCredentials);
 

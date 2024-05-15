@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureApimIdentifiableSubscriptionKey : Azure64ByteIdentifiableKey
+    public class AzureApimIdentifiableSubscriptionKey : Azure64ByteIdentifiableKey
     {
         public AzureApimIdentifiableSubscriptionKey()
         {

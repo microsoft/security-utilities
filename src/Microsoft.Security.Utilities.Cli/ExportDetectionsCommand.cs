@@ -8,7 +8,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Microsoft.Security.Utilities.Cli
 {
-    internal class ExportDetectionsCommand
+    public class ExportDetectionsCommand
     {
         public ExportDetectionsCommand()
         {

@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureCosmosDbIdentifiableKey : Azure64ByteIdentifiableKey
+    public class AzureCosmosDBIdentifiableKey : Azure64ByteIdentifiableKey
     {
-        public AzureCosmosDbIdentifiableKey()
+        public AzureCosmosDBIdentifiableKey()
         {
             Id = "SEC101/163";
-            Name = nameof(AzureCosmosDbIdentifiableKey);
+            Name = nameof(AzureCosmosDBIdentifiableKey);
         }
 
         public override string Signature => IdentifiableMetadata.AzureCosmosDBSignature;

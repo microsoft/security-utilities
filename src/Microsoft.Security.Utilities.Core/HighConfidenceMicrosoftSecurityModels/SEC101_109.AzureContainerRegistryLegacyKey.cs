@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureContainerRegistryLegacyKey : RegexPattern
+    public class AzureContainerRegistryLegacyKey : RegexPattern
     {
         public AzureContainerRegistryLegacyKey()
         {

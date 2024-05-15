@@ -3,7 +3,7 @@
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureServiceBusIdentifiableKey : AzureMessagingIdentifiableKey
+    public class AzureServiceBusIdentifiableKey : AzureMessagingIdentifiableKey
     {
         public AzureServiceBusIdentifiableKey()
         {

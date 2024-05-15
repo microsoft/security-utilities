@@ -3,7 +3,7 @@
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureEventHubIdentifiableKey : AzureMessagingIdentifiableKey
+    public class AzureEventHubIdentifiableKey : AzureMessagingIdentifiableKey
     {
         public AzureEventHubIdentifiableKey()
         {

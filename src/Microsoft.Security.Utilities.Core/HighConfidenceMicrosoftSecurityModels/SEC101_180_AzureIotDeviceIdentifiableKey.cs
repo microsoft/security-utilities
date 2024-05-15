@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureIotDeviceIdentifiableKey : Azure32ByteIdentifiableKey
+    public class AzureIotDeviceIdentifiableKey : Azure32ByteIdentifiableKey
     {
         public AzureIotDeviceIdentifiableKey()
         {

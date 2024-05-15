@@ -68,7 +68,7 @@ public static class WellKnownRegexPatterns
         new AzureIotDeviceIdentifiableKey(),
         new AzureIotDeviceProvisioningIdentifiableKey(),
         new AzureStorageAccountIdentifiableKey(),
-        new AzureCosmosDbIdentifiableKey(),
+        new AzureCosmosDBIdentifiableKey(),
         new AzureBatchIdentifiableKey(),
         new AzureMLWebServiceClassicIdentifiableKey(),
         new AzureApimIdentifiableDirectManagementKey(),

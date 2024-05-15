@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureStorageAccountIdentifiableKey : Azure64ByteIdentifiableKey
+    public class AzureStorageAccountIdentifiableKey : Azure64ByteIdentifiableKey
     {
         public AzureStorageAccountIdentifiableKey()
         {

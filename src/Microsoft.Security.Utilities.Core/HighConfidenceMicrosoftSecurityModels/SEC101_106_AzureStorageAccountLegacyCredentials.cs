@@ -5,7 +5,7 @@ using System;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureStorageAccountLegacyCredentials : RegexPattern
+    public class AzureStorageAccountLegacyCredentials : RegexPattern
     {
         public AzureStorageAccountLegacyCredentials() 
         {

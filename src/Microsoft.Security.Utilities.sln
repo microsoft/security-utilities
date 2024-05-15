@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Security.Utilities.Cli", "Microsoft.Security.Utilities.Cli\Microsoft.Security.Utilities.Cli.csproj", "{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{0B1DDF4F-4D23-454C-A469-284D60EA265A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Security.Utilities.Benchmarks", "Benchmarks\Microsoft.Security.Utilities.Benchmarks.csproj", "{0B1DDF4F-4D23-454C-A469-284D60EA265A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
