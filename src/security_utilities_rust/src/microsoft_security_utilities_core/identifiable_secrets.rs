@@ -96,6 +96,19 @@ pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &s
     encoded == checksum_text
 }
 
+pub fn generate_common_annotated_key(base64_encoded_signature: &str,
+    customer_managed_key: bool,
+    platform_reserved: Option<&[u8]>,
+    provider_reserved: Option<&[u8]>,
+    test_char: Option<char>) -> Result<String, String> {
+generate_common_annotated_test_key(VERSION_TWO_CHECKSUM_SEED.clone(),
+      base64_encoded_signature,
+      customer_managed_key,
+      platform_reserved,
+      provider_reserved,
+      test_char.unwrap())
+}
+
 pub fn generate_common_annotated_test_key(
     checksum_seed: u64,
     base64_encoded_signature: &str,
