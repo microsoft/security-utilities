@@ -15,6 +15,7 @@
 - BRK: Return value of `ISecretMaskerDetectSecrets(string)` is `IEnumerable<Detection>` (not `ICollection`) for best yield iterator compatibility.
 - BUG: Honor `url-safe` option in key `GenerateCommand` to produce URL-safe base64-encoded patterns.
 - NEW: Update `SEC101_158_AzureFunctionIdentifiableKey1` ,`SEC101_176_AzureContainerRegistryIdentifiableKey`, and `SEC101_190_AzureEventGridIdentifiableKey` to derive from `IdentifiableKey` base.
+- NEW: Implement preliminary high-performance `IdentifiableScan` engine that consume Rust library for detections.
 
 # 1.4.19 - 05/10/2024
 - BRK: Eliminate `Identifiable.TryValidateCommonAnnotatedKey` `checksum` and `customerManagedKey` parameters. Checksums now not configurable for HIS v2.
