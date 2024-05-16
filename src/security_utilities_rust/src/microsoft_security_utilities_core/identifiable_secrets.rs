@@ -106,7 +106,7 @@ generate_common_annotated_test_key(VERSION_TWO_CHECKSUM_SEED.clone(),
       customer_managed_key,
       platform_reserved,
       provider_reserved,
-      test_char.unwrap())
+      test_char)
 }
 
 pub fn generate_common_annotated_test_key(

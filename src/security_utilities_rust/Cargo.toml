@@ -16,4 +16,4 @@ rand = "0.8.4"
 regex = "1.7.1"
 sha2 = "0.10.8"
 substring = "1.4.5"
-uuid = "1.8.0"
+uuid = { version = "1.8.0", features = ["v4"] }

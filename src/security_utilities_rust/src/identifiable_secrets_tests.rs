@@ -42,7 +42,9 @@ fn identifiable_secrets_platform_annotated_security_keys() {
         {
             for k in 0..iterations 
             {
-                let signature = format!("{:x}", Uuid::new_v4().to_simple())[0..4].to_string();
+                // let signature = format!("{:x}", Uuid::new_v4().simple())[0..4].to_string();
+
+                let signature= "A1af";
 
                 let mut platform_reserved = [0u8; 9];
                 let mut provider_reserved = [0u8; 3];
@@ -52,41 +54,44 @@ fn identifiable_secrets_platform_annotated_security_keys() {
                 let r_bits = 43;
                 let t_bits = 45;
 
-                let metadata: i32 = (c_bits << 18) | (c_bits << 12) | (c_bits << 6) | c_bits;
-                let metadata_bytes = metadata.to_be_bytes();
+                let mut metadata: i32 = (c_bits << 18) | (c_bits << 12) | (c_bits << 6) | c_bits;
+                let mut metadata_bytes = metadata.to_ne_bytes();
 
                 platform_reserved[0] = metadata_bytes[1];
                 platform_reserved[1] = metadata_bytes[2];
                 platform_reserved[2] = metadata_bytes[3];
 
                 metadata = (r_bits << 18) | (r_bits << 12) | (r_bits << 6) | r_bits;
-                let metadata_bytes = metadata.to_be_bytes();
+                metadata_bytes = metadata.to_ne_bytes();
 
                 platform_reserved[3] = metadata_bytes[1];
                 platform_reserved[4] = metadata_bytes[2];
                 platform_reserved[5] = metadata_bytes[3];
 
                 metadata = (t_bits << 18) | (t_bits << 12) | (t_bits << 6) | t_bits;
-                let metadata_bytes = metadata.to_be_bytes();
+                metadata_bytes = metadata.to_ne_bytes();
 
                 platform_reserved[6] = metadata_bytes[1];
                 platform_reserved[7] = metadata_bytes[2];
                 platform_reserved[8] = metadata_bytes[3];
 
                 metadata = (p_bits << 18) | (p_bits << 12) | (p_bits << 6) | p_bits;
-                let metadata_bytes = metadata.to_be_bytes();
+                metadata_bytes = metadata.to_ne_bytes();
 
                 provider_reserved[0] = metadata_bytes[1];
                 provider_reserved[1] = metadata_bytes[2];
                 provider_reserved[2] = metadata_bytes[3];
 
-                for &customer_managed in &[true, false] {
-                    let key = microsoft_security_utilities_core::identifiable_secrets::generate_common_annotated_key(&signature, customer_managed, &platform_reserved, &provider_reserved, null);
+                let platform_reserved_vec = platform_reserved.to_vec();
+                let provider_reserved_vec = provider_reserved.to_vec();
 
-                    let result = microsoft_security_utilities_core::identifiable_secrets::COMMON_ANNOTATED_KEY_REGEX.is_match(key.unwrap().as_str());
+                for &customer_managed in &[true, false] {
+                    let key = microsoft_security_utilities_core::identifiable_secrets::generate_common_annotated_key(&signature, customer_managed, Some(&platform_reserved_vec), Some(&provider_reserved_vec), None);
+
+                    let result = microsoft_security_utilities_core::identifiable_secrets::COMMON_ANNOTATED_KEY_REGEX.is_match(key.clone().unwrap().as_str());
                     assert!(result, "the key '{}' should match the common annotated key regex", key.unwrap());
 
-                    let result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(key.unwrap().as_str(), &signature);
+                    let result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(key.clone().unwrap().as_str(), &signature);
                     assert!(result, "the key '{}' should comprise an HIS v2-conformant pattern", key.unwrap());
 
                     keys_generated += 1;
