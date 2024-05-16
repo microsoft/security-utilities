@@ -6,16 +6,6 @@ namespace Microsoft.Security.Utilities.Cli
 {
     public class ScanCommand
     {
-        private static IEnumerable<RegexPattern> RegexPatterns()
-        {
-            foreach (RegexPattern regexPattern in WellKnownRegexPatterns.HighConfidenceSecurityModels)
-            {
-                if (regexPattern is IIdentifiableKey)
-                {
-                    yield return regexPattern;
-                }
-            }
-        }
         public ScanCommand()
         {
         }
@@ -24,7 +14,7 @@ namespace Microsoft.Security.Utilities.Cli
         {
             string input = options.Input;
 
-            var scan = new IdentifiableScan(RegexPatterns(), generateCorrelatingIds: true);
+            var scan = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceSecurityModels, generateCorrelatingIds: true);
 
             string directory = Path.GetDirectoryName(input);
             string fileSpecifier = Path.GetFileName(input);

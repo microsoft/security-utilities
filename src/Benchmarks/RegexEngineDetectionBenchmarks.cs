@@ -89,13 +89,13 @@ namespace Microsoft.Security.Utilities.Benchmarks
                     foreach (string example in regexPattern.GenerateTestExamples())
                     {
                         localCount++;
-                        
+
                         // Demonstrate classification/detection only.
                         int count = masker.DetectSecrets($"{prefix} {example}").Count();
 
                         if (count == 0)
                         {
-                            //throw new InvalidOperationException($"Regex {regexPattern.Name} failed to detect example {example}");
+                            throw new InvalidOperationException($"Regex {regexPattern.Name} failed to detect example {example}");
                         }
 
                         globalCount += count;

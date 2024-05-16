@@ -2,7 +2,8 @@
   "profiles": {
     "Microsoft.Security.Utilities.Cli": {
       "commandName": "Project",
-      "commandLineArgs": "generate-v2 --rp all"
+      "commandLineArgs": "scan --input d:\\repros\\spn_unicode.txt",
+      "nativeDebugging": true
     },
     "Repros": {
       "commandName": "Project",

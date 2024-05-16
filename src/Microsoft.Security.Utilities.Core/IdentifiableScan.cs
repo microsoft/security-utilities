@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -16,7 +17,7 @@ public class IdentifiableScan : ISecretMasker, IDisposable
 {
     private bool generateCorrelatingIds;
 
-    public enum MatchType: ushort
+    public enum MatchType : ushort
     {
         None = 0,
         U32Utf8 = 1,
@@ -25,7 +26,15 @@ public class IdentifiableScan : ISecretMasker, IDisposable
         U64Utf16 = 4,
         Utf8 = 5,
         Utf16 = 6,
-        Unknown = 7,
+        U39Utf8 = 7,
+        U39Utf16 = 8,
+        U40Utf8 = 9,
+        U40Utf16 = 10,
+        A7Utf8 = 11,
+        A7Utf16 = 12,
+        A8Utf8 = 13,
+        A8Utf16 = 14,
+        Unknown = 15,
     }
 
     [DllImport("microsoft_security_utilities_core")]
@@ -74,6 +83,15 @@ public class IdentifiableScan : ISecretMasker, IDisposable
 
         foreach (RegexPattern pattern in regexPatterns)
         {
+            foreach (string spnSignature in new[] { "7Q~", "8Q~" })
+            {
+                if (pattern.SniffLiterals?.FirstOrDefault() == spnSignature)
+                {
+                    this.signatureToLengthMap[spnSignature] = new List<RegexPattern> { pattern };
+                    continue;
+                }
+            }
+
             IIdentifiableKey identifiableKey = pattern as IIdentifiableKey;
             if (identifiableKey == null) { continue; }
 
@@ -193,7 +211,7 @@ public class IdentifiableScan : ISecretMasker, IDisposable
 
     public IEnumerable<Detection> DetectSecrets(string input)
     {
-        using var stream = new MemoryStream(Encoding.Unicode.GetBytes(input));
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(input));
 
         foreach (var detection in DetectSecrets(stream))
         {
@@ -262,11 +280,15 @@ public class IdentifiableScan : ISecretMasker, IDisposable
                 if (type != IdentifiableScan.MatchType.None)
                 {
                     var secret = System.Text.Encoding.UTF8.GetString(text, 0, (int)textLength);
-                    
-                    int equalSignIndex = secret.IndexOf('=');
-                    int toTrim = equalSignIndex == -1 ? secret.Length : equalSignIndex;
-                    
-                    string signature = secret.Substring(toTrim - 10, 4);
+
+                    string signature = secret.Substring(3, 3);
+
+                    if (signature != "7Q~" && signature != "8Q~")
+                    {
+                        int equalSignIndex = secret.IndexOf('=');
+                        int toTrim = equalSignIndex == -1 ? secret.Length : equalSignIndex;
+                        signature = secret.Substring(toTrim - 10, 4);
+                    }
 
                     if (signatureToLengthMap.TryGetValue(signature, out IList<RegexPattern> patterns))
                     {
