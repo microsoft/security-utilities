@@ -2,10 +2,9 @@
 
 #nullable disable
 
-
 namespace Microsoft.Security.Utilities.Cli
 {
-    internal class ScanCommand
+    public class ScanCommand
     {
         public ScanCommand()
         {
@@ -13,75 +12,33 @@ namespace Microsoft.Security.Utilities.Cli
 
         internal int Run(ScanOptions options)
         {
-            string path = options.Path;
+            string input = options.Input;
 
-            var scan = new IdentifiableScan();
-            var buffer = new byte[85 * 1024];
-            var text = new byte[256];
+            var scan = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceSecurityModels, generateCorrelatingIds: true);
 
-            using (var file = File.OpenRead(path))
+            string directory = Path.GetDirectoryName(input);
+            string fileSpecifier = Path.GetFileName(input);
+
+            SearchOption searchOption = options.Recurse
+                ? SearchOption.AllDirectories
+                : SearchOption.TopDirectoryOnly;
+
+            foreach (string path in Directory.GetFiles(directory, fileSpecifier, searchOption))
             {
-                scan.Start();
-
-                for (;;)
+                using (var file = File.OpenRead(path))
                 {
-                    var read = file.Read(buffer, 0, buffer.Length);
+                    bool foundAtLeastOne = false;
 
-                    if (read == 0)
+                    foreach (var detection in scan.DetectSecrets(file))
                     {
-                        break;
+                        foundAtLeastOne = true;
+                        Console.WriteLine("Found {0} ('{1}') at position {2}", detection.Id, detection.RedactionToken, detection.Start + detection.Length);
                     }
 
-                    scan.Scan(buffer, read);
-                }
-
-                if (scan.PossibleMatches == 0)
-                {
-                    Console.WriteLine("None found.");
-                }
-
-                for (var i = 0; i < scan.PossibleMatches; ++i)
-                {
-                    UInt64 start, len;
-
-                    if (scan.GetPossibleMatchRange(
-                        i,
-                        out start,
-                        out len))
+                    if (!foundAtLeastOne)
                     {
-                        file.Seek((long)start, SeekOrigin.Begin);
-
-                        var remaining = (int)len;
-                        var copied = 0;
-
-                        while (remaining > 0)
-                        {
-                            var read = file.Read(buffer, (int)copied, (int)remaining);
-
-                            if (read == 0)
-                            {
-                                break;
-                            }
-
-                            copied += read;
-                            remaining -= read;
-                        }
-
-                        long textLength;
-
-                        var type = scan.CheckPossibleMatchRange(
-                            i,
-                            buffer,
-                            copied,
-                            text,
-                            out textLength);
-
-                        if (type != IdentifiableScan.MatchType.None)
-                        {
-                            var secret = System.Text.Encoding.UTF8.GetString(text, 0, (int)textLength);
-
-                            Console.WriteLine("Found {0} ('{1}') at position {2}", type, secret, start);
-                        }
+                        Console.WriteLine($"None found: {path}");
+                        continue;
                     }
                 }
             }

@@ -3,7 +3,7 @@
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureRelayIdentifiableKey : AzureMessagingIdentifiableKey
+    public class AzureRelayIdentifiableKey : AzureMessagingIdentifiableKey
     {
         public AzureRelayIdentifiableKey()
         {

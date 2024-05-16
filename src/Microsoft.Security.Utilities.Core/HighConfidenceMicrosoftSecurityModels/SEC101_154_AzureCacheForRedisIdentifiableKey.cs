@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureCacheForRedisIdentifiableKey : Azure32ByteIdentifiableKey
+    public class AzureCacheForRedisIdentifiableKey : Azure32ByteIdentifiableKey
     {
         public AzureCacheForRedisIdentifiableKey()
         {

@@ -5,7 +5,7 @@ using System;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AdoPat : RegexPattern
+    public class AdoPat : RegexPattern
     {
         public AdoPat() 
         {

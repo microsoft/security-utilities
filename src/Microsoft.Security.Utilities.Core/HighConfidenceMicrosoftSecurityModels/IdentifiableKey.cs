@@ -32,10 +32,9 @@ namespace Microsoft.Security.Utilities
         {
             foreach (ulong checksumSeed in ChecksumSeeds)
             {
-                if (IdentifiableSecrets.ValidateBase64Key(match,
-                                                          checksumSeed,
-                                                          Signature,
-                                                          EncodeForUrl))
+                if (IdentifiableSecrets.ValidateChecksum(match,
+                                                         checksumSeed,
+                                                         out byte[] bytes))
                 {
                     return new Tuple<string, string>(Id, Name);
                 }

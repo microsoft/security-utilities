@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureSearchIdentifiableAdminKey : AzureSearchIdentifiableQueryKey
+    public class AzureSearchIdentifiableAdminKey : AzureSearchIdentifiableQueryKey
     {
         public AzureSearchIdentifiableAdminKey()
         {

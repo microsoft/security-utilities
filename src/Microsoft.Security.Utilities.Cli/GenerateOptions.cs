@@ -23,7 +23,7 @@ namespace Microsoft.Security.Utilities.Cli
             "url-safe",
             Required = false,
             HelpText = "Indicates whether the generated base64-encoded key should be URL-safe (preferring '-' and '_' as special characters.")]
-        public ulong UrlSafe { get; set; }
+        public bool UrlSafe { get; set; }
 
         [Option(
             "length",

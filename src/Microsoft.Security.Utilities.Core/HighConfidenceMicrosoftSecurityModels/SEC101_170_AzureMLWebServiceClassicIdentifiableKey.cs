@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureMLWebServiceClassicIdentifiableKey : Azure64ByteIdentifiableKey
+    public class AzureMLWebServiceClassicIdentifiableKey : Azure64ByteIdentifiableKey
     {
         public AzureMLWebServiceClassicIdentifiableKey()
         {

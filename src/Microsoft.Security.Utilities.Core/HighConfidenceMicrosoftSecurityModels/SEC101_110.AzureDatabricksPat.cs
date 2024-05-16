@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureDatabricksPat : RegexPattern
+    public class AzureDatabricksPat : RegexPattern
     {
         public AzureDatabricksPat()
         {

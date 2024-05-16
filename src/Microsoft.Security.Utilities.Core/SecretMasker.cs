@@ -129,7 +129,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         var detections = DetectSecrets(input);
 
         // Short-circuit if nothing to replace.
-        if (detections.Count == 0)
+        if (!detections.Any())
         {
             return input;
         }
@@ -337,19 +337,17 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
     }
 
-    public ICollection<Detection> DetectSecrets(string input)
+    public IEnumerable<Detection> DetectSecrets(string input)
     {
-        var detections = new List<Detection>();
-
         if (string.IsNullOrEmpty(input))
         {
-            return detections;
+            yield break;
         }
 
         if (RegexPatterns.Count == 0 &&
             m_explicitlyAddedSecretLiterals.Count == 0)
         {
-            return detections;
+            yield break;
         }
 
         // Read section.
@@ -361,14 +359,18 @@ public class SecretMasker : ISecretMasker, IDisposable
             // Get indexes and lengths of all substrings that will be replaced.
             foreach (RegexPattern regexSecret in RegexPatterns)
             {
-                var found = regexSecret.GetDetections(input, m_generateCorrelatingIds, DefaultRegexRedactionToken, _regexEngine);
-                detections.AddRange(found);
+                foreach (var detection in regexSecret.GetDetections(input, m_generateCorrelatingIds, DefaultRegexRedactionToken, _regexEngine))
+                {
+                    yield return detection;
+                }
             }
 
             foreach (SecretLiteral secretLiteral in m_encodedSecretLiterals)
             {
-                var found = secretLiteral.GetDetections(input, DefaultLiteralRedactionToken);
-                detections.AddRange(found);
+                foreach (var detection in secretLiteral.GetDetections(input, DefaultLiteralRedactionToken))
+                {
+                    yield return detection;
+                }
             }
 
             ElapsedMaskingTime += stopwatch.ElapsedTicks;
@@ -380,8 +382,6 @@ public class SecretMasker : ISecretMasker, IDisposable
                 m_lock.ExitReadLock();
             }
         }
-
-        return detections;
     }
 
     public void Dispose()

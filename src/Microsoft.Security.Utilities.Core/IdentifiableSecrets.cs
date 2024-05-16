@@ -58,12 +58,7 @@ public static class IdentifiableSecrets
 
         byte[] keyBytes = Convert.FromBase64String(componentToChecksum);
 
-#if NET5_0_OR_GREATER
-        var checksumInput = new ReadOnlySpan<byte>(keyBytes).Slice(0, keyBytes.Length);
-        int checksum = Marvin.ComputeHash32(checksumInput, checksumSeed);
-#else
         int checksum = Marvin.ComputeHash32(keyBytes, checksumSeed, 0, keyBytes.Length);
-#endif
 
         byte[] checksumBytes = BitConverter.GetBytes(checksum);
         byte[] truncatedChecksumBytes = new byte[3];
@@ -221,12 +216,7 @@ public static class IdentifiableSecrets
             byte[] sigBytes = Convert.FromBase64String(base64EncodedSignature);
             sigBytes.CopyTo(keyBytes, signatureOffset);
 
-#if NET5_0_OR_GREATER
-            var checksumInput = new ReadOnlySpan<byte>(keyBytes).Slice(0, keyBytes.Length - 4);
-            int checksum = Marvin.ComputeHash32(checksumInput, checksumSeed);
-#else
             int checksum = Marvin.ComputeHash32(keyBytes, checksumSeed, 0, keyBytes.Length - 4);
-#endif
 
             byte[] checksumBytes = BitConverter.GetBytes(checksum);
 
@@ -462,6 +452,18 @@ public static class IdentifiableSecrets
         }
     }
 
+    private const int checksumSizeInBytes = sizeof(uint);
+
+    public static bool ValidateChecksum(string key, ulong checksumSeed, out byte[] bytes)
+    {
+        bytes = ConvertFromBase64String(key);
+
+        int expectedChecksum = BitConverter.ToInt32(bytes, bytes.Length - checksumSizeInBytes);
+        int actualChecksum = Marvin.ComputeHash32(bytes, checksumSeed, 0, bytes.Length - checksumSizeInBytes);
+
+        return actualChecksum == expectedChecksum;
+    }
+
     /// <summary>
     /// Validate if the identifiable secret contains a valid format.
     /// </summary>
@@ -496,19 +498,7 @@ public static class IdentifiableSecrets
     {
         ValidateBase64EncodedSignature(base64EncodedSignature, encodeForUrl);
 
-        const int checksumSizeInBytes = sizeof(uint);
-
-#if NET6_0_OR_GREATER
-            var bytes = new ReadOnlySpan<byte>(ConvertFromBase64String(key));
-            int expectedChecksum = BitConverter.ToInt32(bytes.Slice(bytes.Length - checksumSizeInBytes, checksumSizeInBytes).ToArray(), 0);
-            int actualChecksum = Marvin.ComputeHash32(bytes.Slice(0, bytes.Length - checksumSizeInBytes), checksumSeed);
-#else
-        byte[] bytes = ConvertFromBase64String(key);
-        int expectedChecksum = BitConverter.ToInt32(bytes, bytes.Length - checksumSizeInBytes);
-        int actualChecksum = Marvin.ComputeHash32(bytes, checksumSeed, 0, bytes.Length - checksumSizeInBytes);
-#endif
-
-        if (actualChecksum != expectedChecksum)
+        if (!ValidateChecksum(key, checksumSeed, out byte[] bytes))
         {
             return false;
         }
@@ -629,8 +619,7 @@ public static class IdentifiableSecrets
         //   [a-zA-Z0-9\-_]{24}XXXX[a-zA-Z0-9\-_]{5}[AQgw]
 
         pattern = $"{secretAlphabet}{{{prefixLength}}}{base64EncodedSignature}{checksumPrefix}{secretAlphabet}{{5}}{checksumSuffix}{equalsSigns}";
-        var regex = new Regex(pattern);
-        return regex.IsMatch(key);
+        return CachedDotNetRegex.Instance.Matches(key, pattern).Any();
     }
 
     private static int ComputeSpilloverBitsIntoFinalEncodedCharacter(int countOfBytes)
@@ -673,12 +662,7 @@ public static class IdentifiableSecrets
         // aren't relevant to that computation.
         const int sizeOfChecksumInBytes = sizeof(uint);
 
-#if NET6_0_OR_GREATER
-        var checksumInput = new ReadOnlySpan<byte>(keyValue).Slice(0, keyValue.Length - sizeOfChecksumInBytes);
-        int checksum = Marvin.ComputeHash32(checksumInput, checksumSeed);
-#else
         int checksum = Marvin.ComputeHash32(keyValue, checksumSeed, 0, keyValue.Length - sizeOfChecksumInBytes);
-#endif
 
         byte[] checksumBytes = BitConverter.GetBytes(checksum);
         checksumBytes.CopyTo(keyValue, checksumOffset);

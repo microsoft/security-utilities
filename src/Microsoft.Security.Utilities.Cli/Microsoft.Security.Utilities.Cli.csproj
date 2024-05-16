@@ -23,6 +23,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="../../refs/microsoft_security_utilities_core.dll">
+      <CopyToOutputDirectory>CopyIfNewer</CopyToOutputDirectory>
+    </None>
+    <None Include="../../refs/microsoft_security_utilities_core.pdb">
+      <CopyToOutputDirectory>CopyIfNewer</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

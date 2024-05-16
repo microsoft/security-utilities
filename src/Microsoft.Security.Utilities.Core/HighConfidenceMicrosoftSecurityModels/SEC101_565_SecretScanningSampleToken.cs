@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class SecretScanningSampleToken : RegexPattern
+    public class SecretScanningSampleToken : RegexPattern
     {
         public const string AadClientAppLegacyCredentials = nameof(AadClientAppLegacyCredentials);
 

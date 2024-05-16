@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class WellKnownLiteralEncoders
+    public class WellKnownLiteralEncoders
     {
         public static string UnescapeBackslashes(string value)
         {

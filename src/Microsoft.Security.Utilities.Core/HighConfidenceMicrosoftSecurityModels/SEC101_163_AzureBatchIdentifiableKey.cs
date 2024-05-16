@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureBatchIdentifiableKey : Azure64ByteIdentifiableKey
+    public class AzureBatchIdentifiableKey : Azure64ByteIdentifiableKey
     {
         public AzureBatchIdentifiableKey()
         {

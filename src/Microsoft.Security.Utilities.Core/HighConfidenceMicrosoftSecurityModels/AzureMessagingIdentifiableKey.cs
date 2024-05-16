@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal abstract class AzureMessagingIdentifiableKey : Azure32ByteIdentifiableKey
+    public abstract class AzureMessagingIdentifiableKey : Azure32ByteIdentifiableKey
     {
         public override IEnumerable<ulong> ChecksumSeeds => new[]
         {

@@ -2,10 +2,9 @@
 
 #nullable disable
 
-
 namespace Microsoft.Security.Utilities.Cli
 {
-    internal class RedactCommand
+    public class RedactCommand
     {
         public RedactCommand()
         {

@@ -268,9 +268,9 @@ namespace Microsoft.Security.Utilities
         [TestMethod]
         public void IdentifiableSecrets_GenerateBase64Key_ShouldThrowExceptionForInvalidSignatures()
         {
-            Console.WriteLine($"The random values in this test were producing using the seed value: {s_randomSeed}");
-
             ulong seed = (ulong)s_random.Next();
+
+            Console.WriteLine($"The random values in this test were producing using the seed value: {seed}");
             uint keyLengthInBytes = (uint)s_random.Next((int)IdentifiableSecrets.MinimumGeneratedKeySize, (int)IdentifiableSecrets.MaximumGeneratedKeySize);
 
             foreach (bool encodeForUrl in new[] { true, false })

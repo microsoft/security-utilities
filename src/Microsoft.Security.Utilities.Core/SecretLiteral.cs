@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities;
 
-internal class SecretLiteral
+public class SecretLiteral
 {
     public SecretLiteral(string value)
     {
