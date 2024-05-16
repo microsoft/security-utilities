@@ -8,7 +8,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)Build.props" />
+  <Import Project="$(MsBuildThisFileDirectory)..\Build.props" />
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />

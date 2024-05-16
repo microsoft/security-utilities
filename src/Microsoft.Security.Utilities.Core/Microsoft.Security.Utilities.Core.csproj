@@ -7,7 +7,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)Build.props" />
+  <Import Project="$(MsBuildThisFileDirectory)..\Build.props" />
 
   <PropertyGroup Label="Package">
     <Title>$(RootNamespace)</Title>
