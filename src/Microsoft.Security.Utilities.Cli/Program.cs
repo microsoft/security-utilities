@@ -8,6 +8,13 @@ namespace Microsoft.Security.Utilities.Cli
     {
         public static int Main(string[] args)
         {
+
+            string key = "BYe4kr49oDWdXGKupTMPsriHvAnPok6drMlJygXuiBwaoYd1EDNM6mULm6F5GDEO5sGBGc4korpNO1BvASuYW5==";
+            key = "86Sn4oDyr7quvTHa2PvLT5eF585be5sev7JL92oWmXunZZpPSKlmDUuOoOiCzIueZFG3y6jpzm7Wz6jlmGfRVp==";
+            string signatured = "z6jl";
+            bool isValid = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, signatured);
+            Console.WriteLine(isValid);
+
             try
             {
                 return Parser.Default.ParseArguments<
