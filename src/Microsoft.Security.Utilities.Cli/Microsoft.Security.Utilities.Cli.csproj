@@ -23,11 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="..\..\refs\microsoft_security_utilities_core.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="../../refs/microsoft_security_utilities_core.dll">
+      <CopyToOutputDirectory>CopyIfNewer</CopyToOutputDirectory>
     </None>
-    <None Update="..\..\refs\microsoft_security_utilities_core.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="../../refs/microsoft_security_utilities_core.pdb">
+      <CopyToOutputDirectory>CopyIfNewer</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

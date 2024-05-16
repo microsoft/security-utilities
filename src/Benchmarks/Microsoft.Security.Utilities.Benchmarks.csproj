@@ -16,5 +16,14 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Security.Utilities.Core\Microsoft.Security.Utilities.Core.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="../../refs/microsoft_security_utilities_core.dll">
+      <CopyToOutputDirectory>CopyIfNewer</CopyToOutputDirectory>
+    </None>
+    <None Include="../../refs/microsoft_security_utilities_core.pdb">
+      <CopyToOutputDirectory>CopyIfNewer</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>
