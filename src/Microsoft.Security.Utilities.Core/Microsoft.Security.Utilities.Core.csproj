@@ -7,7 +7,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)..\Build.props" />
+  <Import Project="$(SolutionDir)Build.props" />
 
   <PropertyGroup Label="Package">
     <Title>$(RootNamespace)</Title>
@@ -37,15 +37,6 @@
   <ItemGroup>
     <None Include="../../ReleaseHistory.md" Pack="true" PackagePath="ReleaseHistory.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="../../refs/microsoft_security_utilities_core.dll">
-      <CopyToOutputDirectory>CopyIfNewer</CopyToOutputDirectory>
-    </None>
-    <None Include="../../refs/microsoft_security_utilities_core.pdb">
-      <CopyToOutputDirectory>CopyIfNewer</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

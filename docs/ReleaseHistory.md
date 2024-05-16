@@ -10,7 +10,7 @@
 - FPS => False positive reduction in static analysis.
 - FNS => Flase negative reduction in static analysis.
 
-- # 1.4.20 - UNRELEASED
+# 1.4.20 - 05/16/2024
 - BRK: Add `ComputeHash32(byte[], ulong, int, int)` helper to bring .NET framework and .NET core APIs into alignment.
 - BRK: Return value of `ISecretMaskerDetectSecrets(string)` is `IEnumerable<Detection>` (not `ICollection`) for best yield iterator compatibility.
 - BUG: Honor `url-safe` option in key `GenerateCommand` to produce URL-safe base64-encoded patterns.

@@ -8,6 +8,8 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <Import Project="$(SolutionDir)Build.props" />
+
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
     <PackageReference Include="RE2.Managed" Version="4.5.7" />
@@ -17,13 +19,4 @@
     <ProjectReference Include="..\Microsoft.Security.Utilities.Core\Microsoft.Security.Utilities.Core.csproj" />
   </ItemGroup>
   
-  <ItemGroup>
-    <None Include="../../refs/microsoft_security_utilities_core.dll">
-      <CopyToOutputDirectory>CopyIfNewer</CopyToOutputDirectory>
-    </None>
-    <None Include="../../refs/microsoft_security_utilities_core.pdb">
-      <CopyToOutputDirectory>CopyIfNewer</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+  
   <PropertyGroup>
     <IsTestProject>true</IsTestProject>
     <TargetFrameworks>net462</TargetFrameworks>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)..\Build.props" />
+  <Import Project="$(SolutionDir)Build.props" />
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
@@ -25,4 +25,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Security.Utilities.Core\Microsoft.Security.Utilities.Core.csproj" />
   </ItemGroup>
+
 </Project>
