@@ -8,14 +8,26 @@ const HIS2_UTF16_LEN: usize = HIS2_UTF8_LEN * 2;
 const HIS2_UTF16_SHORT_LEN: usize = HIS2_UTF8_SHORT_LEN * 2;
 const HIS2_UTF16_SHORT_LEN_BE: usize = HIS2_UTF16_SHORT_LEN - 1;
 
+const HIS_A7_UTF8_LEN: usize = 37;
+const HIS_A8_UTF8_LEN: usize = 40;
 const HIS_32_UTF8_LEN: usize = 44;
+const HIS_39_UTF8_LEN: usize = 52;
+const HIS_40_UTF8_LEN: usize = 56;
 const HIS_64_UTF8_LEN: usize = 88;
 
+const HIS_A7_UTF16_LEN: usize = HIS_A7_UTF8_LEN * 2;
+const HIS_A8_UTF16_LEN: usize = HIS_A8_UTF8_LEN * 2;
 const HIS_32_UTF16_LEN: usize = HIS_32_UTF8_LEN * 2;
+const HIS_39_UTF16_LEN: usize = HIS_39_UTF8_LEN * 2;
+const HIS_40_UTF16_LEN: usize = HIS_40_UTF8_LEN * 2;
 const HIS_64_UTF16_LEN: usize = HIS_64_UTF8_LEN * 2;
 
 trait Base64 {
     fn is_base64(&self) -> bool;
+}
+
+trait UrlUnreserved {
+    fn is_url_unreserved(&self) -> bool;
 }
 
 impl Base64 for u8 {
@@ -25,6 +37,14 @@ impl Base64 for u8 {
         *self == b'/' ||
         *self == b'-' ||
         *self == b'_'
+    }
+}
+
+impl UrlUnreserved for u8 {
+    fn is_url_unreserved(&self) -> bool {
+        self.is_base64() ||
+        *self == b'~' ||
+        *self == b'.'
     }
 }
 
@@ -40,6 +60,14 @@ pub enum ScanMatchType {
     His64Utf16 = 4,
     His2Utf8 = 5,
     His2Utf16 = 6,
+    His39Utf8 = 7,
+    His39Utf16 = 8,
+    His40Utf8 = 9,
+    His40Utf16 = 10,
+    HisA7Utf8 = 11,
+    HisA7Utf16 = 12,
+    HisA8Utf8 = 13,
+    HisA8Utf16 = 14,
 }
 
 pub struct ScanMatch {
@@ -110,10 +138,133 @@ impl PossibleScanMatch {
             ScanMatchType::His32Utf16 => { HIS_32_UTF16_LEN },
             ScanMatchType::His64Utf8 => { HIS_64_UTF8_LEN },
             ScanMatchType::His64Utf16 => { HIS_64_UTF16_LEN },
+            ScanMatchType::His39Utf8 => { HIS_39_UTF8_LEN },
+            ScanMatchType::His39Utf16 => { HIS_39_UTF16_LEN },
+            ScanMatchType::His40Utf8 => { HIS_40_UTF8_LEN },
+            ScanMatchType::His40Utf16 => { HIS_40_UTF16_LEN },
+            ScanMatchType::HisA7Utf8 => { HIS_A7_UTF8_LEN },
+            ScanMatchType::HisA7Utf16 => { HIS_A7_UTF16_LEN },
+            ScanMatchType::HisA8Utf8 => { HIS_A8_UTF8_LEN },
+            ScanMatchType::HisA8Utf16 => { HIS_A8_UTF16_LEN },
         }
     }
 
     pub fn match_type(&self) -> &ScanMatchType { &self.mtype }
+
+    fn his_a7_matched_bytes(data: &[u8]) -> usize {
+        /*
+         * 3 url unreserved + 3 signature + 31 url unreserved
+         */
+        if data.len() < HIS_A7_UTF8_LEN {
+            return 0;
+        }
+
+        for b in &data[0..3] {
+            if !b.is_url_unreserved() {
+                return 0;
+            }
+        }
+
+        /* NOTE: We skip the signature since we already checked */
+
+        for b in &data[6..37] {
+            if !b.is_url_unreserved() {
+                return 0;
+            }
+        }
+
+        HIS_A7_UTF8_LEN
+    }
+
+    fn his_a8_matched_bytes(data: &[u8]) -> usize {
+        /*
+         * 3 url unreserved + 3 signature + 34 url unreserved
+         */
+        if data.len() < HIS_A8_UTF8_LEN {
+            return 0;
+        }
+
+        for b in &data[0..3] {
+            if !b.is_url_unreserved() {
+                return 0;
+            }
+        }
+
+        /* NOTE: We skip the signature since we already checked */
+
+        for b in &data[6..40] {
+            if !b.is_url_unreserved() {
+                return 0;
+            }
+        }
+
+        HIS_A8_UTF8_LEN
+    }
+
+    fn his_39_matched_bytes(data: &[u8]) -> usize {
+        /*
+         * 42 Base64 + 4 signature + 1 [A-D] + 5 Base64
+         */
+        if data.len() < HIS_39_UTF8_LEN {
+            return 0;
+        }
+
+        for b in &data[0..42] {
+            if !b.is_base64() {
+                return 0;
+            }
+        }
+
+        /* NOTE: We skip the signature since we already checked */
+
+        if data[46] < b'A' || data[46] > b'D' {
+            return 0;
+        }
+
+        for b in &data[47..52] {
+            if !b.is_base64() {
+                return 0;
+            }
+        }
+
+        HIS_39_UTF8_LEN
+    }
+
+    fn his_40_matched_bytes(data: &[u8]) -> usize {
+        /*
+         * 44 Base64 + 4 signature + 5 Base64 + [AQgw] + optional 2 [=]
+         */
+        if data.len() < 54 {
+            return 0;
+        }
+
+        for b in &data[0..44] {
+            if !b.is_base64() {
+                return 0;
+            }
+        }
+
+        /* NOTE: We skip the signature since we already checked */
+
+        for b in &data[48..53] {
+            if !b.is_base64() {
+                return 0;
+            }
+        }
+
+        match data[53] {
+            b'A' | b'Q' | b'g' | b'w' => { },
+            _ => { return 0; },
+        }
+
+        if data.len() >= HIS_40_UTF8_LEN {
+            if data[54] == b'=' && data[55] == b'=' {
+                return HIS_40_UTF8_LEN;
+            }
+        }
+
+        54
+    }
 
     fn his_32_matched_bytes(data: &[u8]) -> usize {
         /*
@@ -331,10 +482,10 @@ impl PossibleScanMatch {
 
                 Some(
                     ScanMatch::new(
-                        ScanMatchType::His32Utf8,
+                        ScanMatchType::His32Utf16,
                         start,
-                        (count * 2) as u64,
-                        &bytes[0..count],
+                        (len * 2) as u64,
+                        &bytes[0..len],
                         want_text))
             },
 
@@ -356,10 +507,174 @@ impl PossibleScanMatch {
 
                 Some(
                     ScanMatch::new(
-                        ScanMatchType::His64Utf8,
+                        ScanMatchType::His64Utf16,
                         start,
-                        (count * 2) as u64,
-                        &bytes[0..count],
+                        (len * 2) as u64,
+                        &bytes[0..len],
+                        want_text))
+            },
+
+            ScanMatchType::His39Utf8 => {
+                let len = Self::his_39_matched_bytes(&data);
+
+                if len == 0 {
+                    return None;
+                }
+
+                Some(
+                    ScanMatch::new(
+                        ScanMatchType::His39Utf8,
+                        start,
+                        len as u64,
+                        &data[0..len],
+                        want_text))
+            },
+
+            ScanMatchType::His39Utf16 => {
+                let mut bytes: [u8; HIS_39_UTF8_LEN] = [0; HIS_39_UTF8_LEN];
+                let mut count = Self::convert_utf16(data, &mut bytes);
+
+                if data.len() & 1 == 1 {
+                    /* Add trailing unaligned byte edge case */
+                    bytes[count] = data[data.len()-1];
+                    count += 1;
+                }
+
+                let len = Self::his_39_matched_bytes(&bytes);
+
+                if len == 0 {
+                    return None;
+                }
+
+                Some(
+                    ScanMatch::new(
+                        ScanMatchType::His39Utf16,
+                        start,
+                        (len * 2) as u64,
+                        &bytes[0..len],
+                        want_text))
+            },
+
+            ScanMatchType::His40Utf8 => {
+                let len = Self::his_40_matched_bytes(&data);
+
+                if len == 0 {
+                    return None;
+                }
+
+                Some(
+                    ScanMatch::new(
+                        ScanMatchType::His40Utf8,
+                        start,
+                        len as u64,
+                        &data[0..len],
+                        want_text))
+            },
+
+            ScanMatchType::His40Utf16 => {
+                let mut bytes: [u8; HIS_40_UTF8_LEN] = [0; HIS_40_UTF8_LEN];
+                let mut count = Self::convert_utf16(data, &mut bytes);
+
+                if data.len() & 1 == 1 {
+                    /* Add trailing unaligned byte edge case */
+                    bytes[count] = data[data.len()-1];
+                    count += 1;
+                }
+
+                let len = Self::his_40_matched_bytes(&bytes);
+
+                if len == 0 {
+                    return None;
+                }
+
+                Some(
+                    ScanMatch::new(
+                        ScanMatchType::His40Utf16,
+                        start,
+                        (len * 2) as u64,
+                        &bytes[0..len],
+                        want_text))
+            },
+
+            ScanMatchType::HisA7Utf8 => {
+                let len = Self::his_a7_matched_bytes(&data);
+
+                if len == 0 {
+                    return None;
+                }
+
+                Some(
+                    ScanMatch::new(
+                        ScanMatchType::HisA7Utf8,
+                        start,
+                        len as u64,
+                        &data[0..len],
+                        want_text))
+            },
+
+            ScanMatchType::HisA7Utf16 => {
+                let mut bytes: [u8; HIS_A7_UTF8_LEN] = [0; HIS_A7_UTF8_LEN];
+                let mut count = Self::convert_utf16(data, &mut bytes);
+
+                if data.len() & 1 == 1 {
+                    /* Add trailing unaligned byte edge case */
+                    bytes[count] = data[data.len()-1];
+                    count += 1;
+                }
+
+                let len = Self::his_a7_matched_bytes(&bytes);
+
+                if len == 0 {
+                    return None;
+                }
+
+                Some(
+                    ScanMatch::new(
+                        ScanMatchType::HisA7Utf16,
+                        start,
+                        (len * 2) as u64,
+                        &bytes[0..len],
+                        want_text))
+            },
+
+            ScanMatchType::HisA8Utf8 => {
+                let len = Self::his_a8_matched_bytes(&data);
+
+                if len == 0 {
+                    return None;
+                }
+
+                Some(
+                    ScanMatch::new(
+                        ScanMatchType::HisA8Utf8,
+                        start,
+                        len as u64,
+                        &data[0..len],
+                        want_text))
+            },
+
+            ScanMatchType::HisA8Utf16 => {
+                let mut bytes: [u8; HIS_A8_UTF8_LEN] = [0; HIS_A8_UTF8_LEN];
+                let mut count = Self::convert_utf16(data, &mut bytes);
+
+                if data.len() & 1 == 1 {
+                    /* Add trailing unaligned byte edge case */
+                    bytes[count] = data[data.len()-1];
+                    count += 1;
+                }
+
+                let len = Self::his_a8_matched_bytes(&bytes);
+
+                if len == 0 {
+                    return None;
+                }
+
+                Some(
+                    ScanMatch::new(
+                        ScanMatchType::HisA8Utf16,
+                        start,
+                        (len * 2) as u64,
+                        &bytes[0..len],
                         want_text))
             },
 
@@ -560,6 +875,64 @@ impl Scan {
 
     #[cfg(target_endian = "little")] // If run on BE, need to update
     #[inline(always)]
+    fn match_sig_legacy(&mut self) {
+        /* UTF8 */
+        match self.accum & 0xFFFFFF {
+            /* 7Q~ */
+            0x37517E => {
+                if self.index >= 6 {
+                    /* Signature Detection */
+                    self.checks.push(
+                        PossibleScanMatch::new(
+                            self.index - 6,
+                            ScanMatchType::HisA7Utf8));
+                }
+            },
+
+            /* 8Q~ */
+            0x38517E => {
+                if self.index >= 6 {
+                    /* Signature Detection */
+                    self.checks.push(
+                        PossibleScanMatch::new(
+                            self.index - 6,
+                            ScanMatchType::HisA8Utf8));
+                }
+            },
+
+            _ => {},
+        }
+
+        /* UTF16 */
+        match self.accum & 0xFFFFFFFFFFFF {
+            /* 7Q~ */
+            0x00370051007E => {
+                if self.index >= 11 {
+                    /* Signature Detection */
+                    self.checks.push(
+                        PossibleScanMatch::new(
+                            self.index - 11,
+                            ScanMatchType::HisA7Utf16));
+                }
+            },
+
+            /* 8Q~ */
+            0x00380051007E => {
+                if self.index >= 11 {
+                    /* Signature Detection */
+                    self.checks.push(
+                        PossibleScanMatch::new(
+                            self.index - 11,
+                            ScanMatchType::HisA8Utf16));
+                }
+            }
+
+            _ => {},
+        }
+    }
+
+    #[cfg(target_endian = "little")] // If run on BE, need to update
+    #[inline(always)]
     fn match_sig_v1(&mut self) {
         /*
          * We have many signatures, but they all have A at certain
@@ -579,13 +952,43 @@ impl Scan {
                 /* +AEh */
                 0x2B414568 |
                 /* +ARm */
-                0x2B41526D => {
+                0x2B41526D |
+                /* AzCa */
+                0x417A4361 |
+                /* AZEG */
+                0x415A4547 => {
                     if self.index >= 37 {
                         /* Signature Detection */
                         self.checks.push(
                             PossibleScanMatch::new(
                                 self.index - 37,
                                 ScanMatchType::His32Utf8));
+                    }
+                },
+
+                /* 39-byte signatures */
+                /* AzSe */
+                0x417A5365 |
+                /* +ACR */
+                0x2B414352 => {
+                    if self.index >= 46 {
+                        /* Signature Detection */
+                        self.checks.push(
+                            PossibleScanMatch::new(
+                                self.index - 46,
+                                ScanMatchType::His39Utf8));
+                    }
+                },
+
+                /* 40-byte signatures */
+                /* AzFu */
+                0x417A4675 => {
+                    if self.index >= 48 {
+                        /* Signature Detection */
+                        self.checks.push(
+                            PossibleScanMatch::new(
+                                self.index - 48,
+                                ScanMatchType::His40Utf8));
                     }
                 },
 
@@ -625,13 +1028,43 @@ impl Scan {
                 /* +AEh */
                 0x002B004100450068 |
                 /* +ARm */
-                0x002B00410052006D => {
+                0x002B00410052006D |
+                /* AzCa */
+                0x0041007A00430061 |
+                /* AZEG */
+                0x0041005A00450047 => {
                     if self.index >= 73 {
                         /* Signature Detection */
                         self.checks.push(
                             PossibleScanMatch::new(
                                 self.index - 73,
                                 ScanMatchType::His32Utf16));
+                    }
+                },
+
+                /* 39-byte signatures */
+                /* AzSe */
+                0x0041007A00530065 |
+                /* +ACR */
+                0x002B004100430052 => {
+                    if self.index >= 91 {
+                        /* Signature Detection */
+                        self.checks.push(
+                            PossibleScanMatch::new(
+                                self.index - 91,
+                                ScanMatchType::His39Utf16));
+                    }
+                },
+
+                /* 40-byte signatures */
+                /* AzFu */
+                0x0041007A00460075 => {
+                    if self.index >= 95 {
+                        /* Signature Detection */
+                        self.checks.push(
+                            PossibleScanMatch::new(
+                                self.index - 95,
+                                ScanMatchType::His40Utf16));
                     }
                 },
 
@@ -697,7 +1130,11 @@ impl Scan {
             self.accum = self.accum << 8 | b as u64;
             self.index += 1;
 
-            self.match_sig_v1();
+            if b == b'~' {
+                self.match_sig_legacy();
+            } else {
+                self.match_sig_v1();
+            }
         }
     }
 
@@ -734,7 +1171,11 @@ impl Scan {
             self.index += 1;
 
             if b != b'J' {
-                self.match_sig_v1();
+                if b == b'~' {
+                    self.match_sig_legacy();
+                } else {
+                    self.match_sig_v1();
+                }
             } else {
                 self.match_sig_v2();
             }
@@ -762,7 +1203,7 @@ impl Scan {
             for chunk in chunks {
                 /* Check if last bytes in accum have an A */
                 if !self.a_in_accum() {
-                    /* Vectorized (SIMD) check for J or A */
+                    /* Vectorized (SIMD) check for J or A or ~ */
                     let mut count = 0;
                     for i in 0..16 {
                         count |= (chunk[i] == b'J') as usize;
@@ -770,8 +1211,11 @@ impl Scan {
                     for i in 0..16 {
                         count |= (chunk[i] == b'A') as usize;
                     }
+                    for i in 0..16 {
+                        count |= (chunk[i] == b'~') as usize;
+                    }
 
-                    /* No J's or A's, set accumulator and continue */
+                    /* No J's or A's or ~'s, set accumulator and continue */
                     if count == 0 {
                         self.index += 16;
                         self.accum = u64::from_ne_bytes(chunk[8..16].try_into().unwrap());
@@ -793,6 +1237,9 @@ impl Scan {
                     let mut count = 0;
                     for i in 0..16 {
                         count |= (chunk[i] == b'A') as usize;
+                    }
+                    for i in 0..16 {
+                        count |= (chunk[i] == b'~') as usize;
                     }
 
                     /* No A's, set accumulator and continue */
@@ -861,6 +1308,22 @@ impl Scan {
 mod tests {
     use super::*;
 
+    struct Case {
+        test: &'static str,
+        expected: &'static str,
+    }
+
+    impl Case {
+        fn new(
+            test: &'static str,
+            expected: &'static str) -> Self {
+            Self {
+                test,
+                expected,
+            }
+        }
+    }
+
     #[test]
     fn his_v2_scan_files() {
         let mut scan = Scan::new(ScanOptions::default());
@@ -907,31 +1370,100 @@ mod tests {
         /* Valid Cases */
         let mut cases = Vec::new();
 
+        /* AAD cases */
+        cases.push(Case::new(
+            "zzz7Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+            "zzz7Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"));
+        cases.push(Case::new(
+            "zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+            "zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"));
+        cases.push(Case::new(
+            "zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzZZZ",
+            "zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"));
+
         /* 32-byte cases */
-        cases.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ARmD7h+qo=");
-        cases.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+AEhG2s/8w=");
-        cases.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ASbHpHeAI=");
-        cases.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAIoTOumzco=");
-        cases.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ARmD7h+qo");
-        cases.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+AEhG2s/8w");
-        cases.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ASbHpHeAI");
-        cases.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAIoTOumzco");
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ARmD7h+qo=",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ARmD7h+qo="));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+AEhG2s/8w=",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+AEhG2s/8w="));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ASbHpHeAI=",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ASbHpHeAI="));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAIoTOumzco=",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAIoTOumzco="));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ARmD7h+qo",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ARmD7h+qo"));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+AEhG2s/8w",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+AEhG2s/8w"));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ASbHpHeAI",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ASbHpHeAI"));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAIoTOumzco",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAIoTOumzco"));
+        cases.push(Case::new(
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbAZEGLiQbng=",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbAZEGLiQbng="));
+        cases.push(Case::new(
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbAZEGLiQbng=ZZZZ",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbAZEGLiQbng="));
+        cases.push(Case::new(
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbAZEGLiQbngZZZZ",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbAZEGLiQbng"));
+
+        /* 39-byte cases */
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAzSeCjhzCu",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAzSeCjhzCu"));
+        cases.push(Case::new(
+            "dddddddddddddddddddddddddddddddddddddddddd+ACRCUDxQE",
+            "dddddddddddddddddddddddddddddddddddddddddd+ACRCUDxQE"));
+        cases.push(Case::new(
+            "dddddddddddddddddddddddddddddddddddddddddd+ACRCUDxQEZZZZZ",
+            "dddddddddddddddddddddddddddddddddddddddddd+ACRCUDxQE"));
+
+        /* 40-byte cases */
+        cases.push(Case::new(
+            "ddddddddddddddddddddddddddddddddddddddddddddAzFu182vhA",
+            "ddddddddddddddddddddddddddddddddddddddddddddAzFu182vhA"));
+        cases.push(Case::new(
+            "ddddddddddddddddddddddddddddddddddddddddddddAzFu182vhA==",
+            "ddddddddddddddddddddddddddddddddddddddddddddAzFu182vhA=="));
+        cases.push(Case::new(
+            "ddddddddddddddddddddddddddddddddddddddddddddAzFu182vhAZZZZZ",
+            "ddddddddddddddddddddddddddddddddddddddddddddAzFu182vhA"));
 
         /* 64-byte cases */
-        cases.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ASt5mnCaw==");
-        cases.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaACDbOpqrYA==");
-        cases.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ABa13FZVQ==");
-        cases.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/AM71lnmRw==");
-        cases.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAPIMHbKhsQ==");
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ASt5mnCaw==",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ASt5mnCaw=="));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaACDbOpqrYA==",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaACDbOpqrYA=="));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ABa13FZVQ==",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+ABa13FZVQ=="));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/AM71lnmRw==",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/AM71lnmRw=="));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAPIMHbKhsQ==",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAPIMHbKhsQ=="));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAPIMHbKhsQ==ZZZZZ",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAPIMHbKhsQ=="));
+        cases.push(Case::new(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAPIMHbKhsQZZZZZ",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAPIMHbKhsQ"));
 
         for (i, case) in cases.iter().enumerate() {
-            let match_str = if case.len() > HIS_32_UTF8_LEN && case.len() < (HIS_64_UTF8_LEN - 2) {
-                &case[0..HIS_32_UTF8_LEN]
-            } else if case.len() > HIS_64_UTF8_LEN {
-                &case[0..HIS_64_UTF8_LEN]
-            }else {
-                &case[0..]
-            };
+            let match_str = case.expected;
+            let case = case.test;
 
             /* UTF8 */
             let data = case.as_bytes();
