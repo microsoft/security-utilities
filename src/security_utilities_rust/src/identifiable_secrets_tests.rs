@@ -42,9 +42,9 @@ fn identifiable_secrets_platform_annotated_security_keys() {
         {
             for k in 0..iterations 
             {
-                // let signature = format!("{:x}", Uuid::new_v4().simple())[0..4].to_string();
+                let mut signature = format!("{:?}", Uuid::new_v4().simple()).chars().skip(1).take(4).collect::<String>();
 
-                let signature= "A1af";
+                signature = format!("{}{}", alphabet.chars().nth(((keys_generated as i32) % (alphabet.len() as i32)) as usize).unwrap().to_string(), &signature[1..]);
 
                 let mut platform_reserved = [0u8; 9];
                 let mut provider_reserved = [0u8; 3];
@@ -86,13 +86,13 @@ fn identifiable_secrets_platform_annotated_security_keys() {
                 let provider_reserved_vec = provider_reserved.to_vec();
 
                 for &customer_managed in &[true, false] {
-                    let key = microsoft_security_utilities_core::identifiable_secrets::generate_common_annotated_key(&signature, customer_managed, Some(&platform_reserved_vec), Some(&provider_reserved_vec), None);
+                    let key = microsoft_security_utilities_core::identifiable_secrets::generate_common_annotated_key(&signature, customer_managed, Some(&platform_reserved_vec), Some(&provider_reserved_vec), None).unwrap();
 
-                    let result = microsoft_security_utilities_core::identifiable_secrets::COMMON_ANNOTATED_KEY_REGEX.is_match(key.clone().unwrap().as_str());
-                    assert!(result, "the key '{}' should match the common annotated key regex", key.unwrap());
+                    let mut result = microsoft_security_utilities_core::identifiable_secrets::COMMON_ANNOTATED_KEY_REGEX.is_match(key.as_str());
+                    assert!(result, "the key '{}' should match the common annotated key regex", key);
 
-                    let result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(key.clone().unwrap().as_str(), &signature);
-                    assert!(result, "the key '{}' should comprise an HIS v2-conformant pattern", key.unwrap());
+                    result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(key.as_str(), &signature);
+                    assert!(result, "the key '{}' should comprise an HIS v2-conformant pattern", key);
 
                     keys_generated += 1;
                 }

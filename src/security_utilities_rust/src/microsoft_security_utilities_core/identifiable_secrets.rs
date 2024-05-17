@@ -17,7 +17,7 @@ lazy_static! {
     pub static ref VERSION_TWO_CHECKSUM_SEED: u64 = compute_his_v1_checksum_seed("Default0");
 }
 
-pub static COMMON_ANNOTATED_KEY_REGEX_PATTERN: &str = "?-i:[A-Za-z0-9]{52}JQQJ99[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
+pub static COMMON_ANNOTATED_KEY_REGEX_PATTERN: &str = r"(?-i)[A-Za-z0-9]{52}JQQJ99[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
 
 lazy_static! {
     pub static ref COMMON_ANNOTATED_KEY_REGEX: Regex = Regex::new(COMMON_ANNOTATED_KEY_REGEX_PATTERN).unwrap();
@@ -81,19 +81,19 @@ pub fn compute_his_v1_checksum_seed(versioned_key_kind: &str) -> u64 {
 pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &str) -> bool {
     let checksum_seed: u64 = VERSION_TWO_CHECKSUM_SEED.clone();
 
-    let component_to_checksum = &key[..key.len() - 4];
-    let checksum_text = &key[key.len() - 4..];
+    let key_bytes = general_purpose::STANDARD.decode(&key).unwrap();
+    let key_bytes_length = key_bytes.len();
 
-    let key_bytes = base64::decode(component_to_checksum).unwrap();
+    let bytes_for_checksum = &key_bytes[..key_bytes_length - 6];
+    let actual_checksum_bytes = &key_bytes[key_bytes_length - 6..key_bytes_length - 3];
 
-    let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, (key_bytes.len() as i32));
+    let computed_marvin = marvin::compute_hash32(bytes_for_checksum, checksum_seed, 0, bytes_for_checksum.len() as i32);
+    let computed_marvin_bytes = computed_marvin.to_ne_bytes();
 
-    let checksum_bytes = checksum.to_be_bytes();
-    let truncated_checksum_bytes = &checksum_bytes[..3];
-
-    let encoded = base64::encode(truncated_checksum_bytes);
-
-    encoded == checksum_text
+    // The HIS v2 standard requires a match for the first 3-bytes (24 bits) of the Marvin checksum.
+    actual_checksum_bytes[0] == computed_marvin_bytes[0]
+    && actual_checksum_bytes[1] == computed_marvin_bytes[1]
+    && actual_checksum_bytes[2] == computed_marvin_bytes[2]
 }
 
 pub fn generate_common_annotated_key(base64_encoded_signature: &str,
@@ -159,66 +159,67 @@ pub fn generate_common_annotated_test_key(
         } else {
             let mut rng = rand::thread_rng();
             rng.fill_bytes(&mut key_bytes);
-
-            let key_base62 = base_62::encode(&key_bytes);
-            key = format!("{}==", &key_base62[..86]);
         }
 
-        key_bytes = general_purpose::STANDARD.decode(&key).unwrap();
+        let key_string = general_purpose::STANDARD.encode(&key_bytes);
+        key_bytes = general_purpose::STANDARD.decode(&key_string).unwrap();
 
         let j_bits = b'J' - b'A';
         let q_bits = b'Q' - b'A';
 
         let reserved = (j_bits as i32) << 18 | (q_bits as i32) << 12 | (q_bits as i32) << 6 | j_bits as i32;
-        let reserved_bytes = reserved.to_be_bytes();
+        let reserved_bytes = reserved.to_ne_bytes();
 
         let key_bytes_length = key_bytes.len();
 
-        key_bytes[key_bytes_length - 25] = reserved_bytes[2];
-        key_bytes[key_bytes_length - 24] = reserved_bytes[1];
-        key_bytes[key_bytes_length - 23] = reserved_bytes[0];
+        key_bytes[key_bytes_length - 27] = reserved_bytes[2];
+        key_bytes[key_bytes_length - 26] = reserved_bytes[1];
+        key_bytes[key_bytes_length - 25] = reserved_bytes[0];
 
         let years_since_2024 = (chrono::Utc::now().year() - 2024) as u8;
         let zero_indexed_month = (chrono::Utc::now().month() - 1) as u8;
 
         let metadata: i32 = (61 << 18) | (61 << 12) | (years_since_2024 << 6) as i32 | zero_indexed_month as i32;
-        let metadata_bytes = metadata.to_be_bytes();
+        let metadata_bytes = metadata.to_ne_bytes();
 
-        key_bytes[key_bytes_length - 22] = metadata_bytes[2];
-        key_bytes[key_bytes_length - 21] = metadata_bytes[1];
-        key_bytes[key_bytes_length - 20] = metadata_bytes[0];
+        key_bytes[key_bytes_length - 24] = metadata_bytes[2];
+        key_bytes[key_bytes_length - 23] = metadata_bytes[1];
+        key_bytes[key_bytes_length - 22] = metadata_bytes[0];
 
-        key_bytes[key_bytes_length - 19] = platform_reserved[0];
-        key_bytes[key_bytes_length - 18] = platform_reserved[1];
-        key_bytes[key_bytes_length - 17] = platform_reserved[2];
-        key_bytes[key_bytes_length - 16] = platform_reserved[3];
-        key_bytes[key_bytes_length - 15] = platform_reserved[4];
-        key_bytes[key_bytes_length - 14] = platform_reserved[5];
-        key_bytes[key_bytes_length - 13] = platform_reserved[6];
-        key_bytes[key_bytes_length - 12] = platform_reserved[7];
-        key_bytes[key_bytes_length - 11] = platform_reserved[8];
+        key_bytes[key_bytes_length - 21] = platform_reserved[0];
+        key_bytes[key_bytes_length - 20] = platform_reserved[1];
+        key_bytes[key_bytes_length - 19] = platform_reserved[2];
+        key_bytes[key_bytes_length - 18] = platform_reserved[3];
+        key_bytes[key_bytes_length - 17] = platform_reserved[4];
+        key_bytes[key_bytes_length - 16] = platform_reserved[5];
+        key_bytes[key_bytes_length - 15] = platform_reserved[6];
+        key_bytes[key_bytes_length - 14] = platform_reserved[7];
+        key_bytes[key_bytes_length - 13] = platform_reserved[8];
 
-        key_bytes[key_bytes_length - 10] = provider_reserved[0];
-        key_bytes[key_bytes_length - 9] = provider_reserved[1];
-        key_bytes[key_bytes_length - 8] = provider_reserved[2];
+        key_bytes[key_bytes_length - 12] = provider_reserved[0];
+        key_bytes[key_bytes_length - 11] = provider_reserved[1];
+        key_bytes[key_bytes_length - 10] = provider_reserved[2];
 
-        let signature_offset = key_bytes_length - 7;
+        let signature_offset = key_bytes_length - 9;
         let sig_bytes = general_purpose::STANDARD.decode(&base64_encoded_signature).unwrap();
-        key_bytes[signature_offset..].copy_from_slice(&sig_bytes);
 
-        let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, (key_bytes_length - 4) as i32);
+        for i in 0..sig_bytes.len() {
+            key_bytes[signature_offset + i] = sig_bytes[i];
+        }
 
-        let checksum_bytes = checksum.to_be_bytes();
+        let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, (key_bytes_length - 6) as i32);
 
-        key_bytes[key_bytes_length - 4] = checksum_bytes[0];
-        key_bytes[key_bytes_length - 3] = checksum_bytes[1];
-        key_bytes[key_bytes_length - 2] = checksum_bytes[2];
-        key_bytes[key_bytes_length - 1] = checksum_bytes[3];
+        let checksum_bytes = checksum.to_ne_bytes();
 
-        key = base64::encode(&key_bytes);
+        key_bytes[key_bytes_length - 6] = checksum_bytes[0];
+        key_bytes[key_bytes_length - 5] = checksum_bytes[1];
+        key_bytes[key_bytes_length - 4] = checksum_bytes[2];
+        key_bytes[key_bytes_length - 3] = checksum_bytes[3];
 
+        key = general_purpose::STANDARD.encode(&key_bytes);
+
+        // The HIS v2 standard requires that there be no special characters in the generated key.
         if !key.contains('+') && !key.contains('/') {
-            key = key[..key.len() - 4].to_string();
             break;
         } else if test_char.is_some() {
             key = String::new();
