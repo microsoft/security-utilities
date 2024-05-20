@@ -29,6 +29,8 @@ static BITS_IN_BYTES: i32 = 8;
 static BITS_IN_BASE64_CHARACTER: i32 = 6;
 static SIZE_OF_CHECKSUM_IN_BYTES: i32 = mem::size_of::<u32>() as i32;
 
+static COMMON_ANNOTATED_KEY_SIZE_IN_BYTES: usize = 63;
+
 pub fn is_base62_encoding_char(ch: char) -> bool
 {
     return (ch >= 'a' && ch <= 'z') ||
@@ -82,10 +84,13 @@ pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &s
     let checksum_seed: u64 = VERSION_TWO_CHECKSUM_SEED.clone();
 
     let key_bytes = general_purpose::STANDARD.decode(&key).unwrap();
+
+    assert_eq!(key_bytes.len(), COMMON_ANNOTATED_KEY_SIZE_IN_BYTES);
+
     let key_bytes_length = key_bytes.len();
 
-    let bytes_for_checksum = &key_bytes[..key_bytes_length - 6];
-    let actual_checksum_bytes = &key_bytes[key_bytes_length - 6..key_bytes_length - 3];
+    let bytes_for_checksum = &key_bytes[..key_bytes_length - 3];
+    let actual_checksum_bytes = &key_bytes[key_bytes_length - 3..key_bytes_length];
 
     let computed_marvin = marvin::compute_hash32(bytes_for_checksum, checksum_seed, 0, bytes_for_checksum.len() as i32);
     let computed_marvin_bytes = computed_marvin.to_ne_bytes();
@@ -216,7 +221,7 @@ pub fn generate_common_annotated_test_key(
         key_bytes[key_bytes_length - 4] = checksum_bytes[2];
         key_bytes[key_bytes_length - 3] = checksum_bytes[3];
 
-        key = general_purpose::STANDARD.encode(&key_bytes);
+        key = general_purpose::STANDARD.encode(&key_bytes[..COMMON_ANNOTATED_KEY_SIZE_IN_BYTES]);
 
         // The HIS v2 standard requires that there be no special characters in the generated key.
         if !key.contains('+') && !key.contains('/') {
