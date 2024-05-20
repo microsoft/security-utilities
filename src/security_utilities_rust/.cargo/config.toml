@@ -1,0 +1,2 @@
+[registries]
+Security-Detections-Official = { index = "sparse+https://pkgs.dev.azure.com/mseng/_packaging/Security-Detections-Official/Cargo/index/" }
