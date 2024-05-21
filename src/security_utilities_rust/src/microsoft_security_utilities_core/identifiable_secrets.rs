@@ -1,8 +1,11 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+use base_62;
 use base64::{engine::general_purpose, Engine as _};
+use chrono::Datelike;
 use core::panic;
+use lazy_static::lazy_static;
 use std::{mem};
 use super::*;
 use rand::prelude::*;
@@ -10,11 +13,23 @@ use rand_chacha::ChaCha20Rng;
 use regex::Regex;
 use substring::Substring;
 
+lazy_static! {
+    pub static ref VERSION_TWO_CHECKSUM_SEED: u64 = compute_his_v1_checksum_seed("Default0");
+}
+
+pub static COMMON_ANNOTATED_KEY_REGEX_PATTERN: &str = r"(?-i)[A-Za-z0-9]{52}JQQJ99[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
+
+lazy_static! {
+    pub static ref COMMON_ANNOTATED_KEY_REGEX: Regex = Regex::new(COMMON_ANNOTATED_KEY_REGEX_PATTERN).unwrap();
+    }
+
 pub static MAXIMUM_GENERATED_KEY_SIZE: u32 = 4096;
 pub static MINIMUM_GENERATED_KEY_SIZE: u32 = 24;
 static BITS_IN_BYTES: i32 = 8;
 static BITS_IN_BASE64_CHARACTER: i32 = 6;
 static SIZE_OF_CHECKSUM_IN_BYTES: i32 = mem::size_of::<u32>() as i32;
+
+static COMMON_ANNOTATED_KEY_SIZE_IN_BYTES: usize = 63;
 
 pub fn is_base62_encoding_char(ch: char) -> bool
 {
@@ -35,6 +50,189 @@ pub fn is_base64_url_encoding_char(ch: char) -> bool
     return is_base62_encoding_char(ch) ||
                    ch == '-' ||
                    ch == '_';
+}
+
+/// Generate a u64 an HIS v1 compliant checksum seed from a string literal
+/// that is 8 characters long and ends with at least one digit, e.g., 'ReadKey0', 'RWSeed00',
+/// etc. The checksum seed is used to initialize the Marvin32 algorithm to watermark a
+/// specific class of generated security keys.
+///
+/// # Arguments
+///
+/// * `versioned_key_kind` - A readable name that identifies a specific set of generated keys with at least one trailing digit in the name.
+///
+/// # Returns
+///
+/// The computed checksum seed as a u64.
+///
+/// # Errors
+///
+/// This function will return an error if the `versioned_key_kind` does not meet the required criteria.
+pub fn compute_his_v1_checksum_seed(versioned_key_kind: &str) -> u64 {
+
+    if versioned_key_kind.len() != 8 || !versioned_key_kind.chars().nth(7).unwrap().is_digit(10) {
+        panic!("The versioned literal must be 8 characters long and end with a digit.");
+    }
+
+    let bytes = versioned_key_kind.as_bytes().iter().rev().cloned().collect::<Vec<u8>>();
+    let result = u64::from_le_bytes(bytes.try_into().unwrap());
+
+    result
+}
+
+pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &str) -> bool {
+    let checksum_seed: u64 = VERSION_TWO_CHECKSUM_SEED.clone();
+
+    let key_bytes = general_purpose::STANDARD.decode(&key).unwrap();
+
+    assert_eq!(key_bytes.len(), COMMON_ANNOTATED_KEY_SIZE_IN_BYTES);
+
+    let key_bytes_length = key_bytes.len();
+
+    let bytes_for_checksum = &key_bytes[..key_bytes_length - 3];
+    let actual_checksum_bytes = &key_bytes[key_bytes_length - 3..key_bytes_length];
+
+    let computed_marvin = marvin::compute_hash32(bytes_for_checksum, checksum_seed, 0, bytes_for_checksum.len() as i32);
+    let computed_marvin_bytes = computed_marvin.to_ne_bytes();
+
+    // The HIS v2 standard requires a match for the first 3-bytes (24 bits) of the Marvin checksum.
+    actual_checksum_bytes[0] == computed_marvin_bytes[0]
+    && actual_checksum_bytes[1] == computed_marvin_bytes[1]
+    && actual_checksum_bytes[2] == computed_marvin_bytes[2]
+}
+
+pub fn generate_common_annotated_key(base64_encoded_signature: &str,
+    customer_managed_key: bool,
+    platform_reserved: Option<&[u8]>,
+    provider_reserved: Option<&[u8]>,
+    test_char: Option<char>) -> Result<String, String> {
+generate_common_annotated_test_key(VERSION_TWO_CHECKSUM_SEED.clone(),
+      base64_encoded_signature,
+      customer_managed_key,
+      platform_reserved,
+      provider_reserved,
+      test_char)
+}
+
+pub fn generate_common_annotated_test_key(
+    checksum_seed: u64,
+    base64_encoded_signature: &str,
+    customer_managed_key: bool,
+    platform_reserved: Option<&[u8]>,
+    provider_reserved: Option<&[u8]>,
+    test_char: Option<char>,
+) -> Result<String, String> {
+    const PLATFORM_RESERVED_LENGTH: usize = 9;
+    const PROVIDER_RESERVED_LENGTH: usize = 3;
+
+    let platform_reserved = match platform_reserved {
+        Some(reserved) if reserved.len() != PLATFORM_RESERVED_LENGTH => {
+            return Err(format!(
+                "When provided, there must be {} reserved bytes for platform metadata.",
+                PLATFORM_RESERVED_LENGTH
+            ));
+        }
+        Some(reserved) => reserved,
+        None => &[0; PLATFORM_RESERVED_LENGTH],
+    };
+
+    let provider_reserved = match provider_reserved {
+        Some(reserved) if reserved.len() != PROVIDER_RESERVED_LENGTH => {
+            return Err(format!(
+                "When provided, there must be {} reserved bytes for resource provider metadata.",
+                PROVIDER_RESERVED_LENGTH
+            ));
+        }
+        Some(reserved) => reserved,
+        None => &[0; PROVIDER_RESERVED_LENGTH],
+    };
+
+    let base64_encoded_signature = if customer_managed_key {
+        base64_encoded_signature.to_uppercase()
+    } else {
+        base64_encoded_signature.to_lowercase()
+    };
+
+    let mut key = String::new();
+
+    loop {
+        let key_length_in_bytes = 66;
+        let mut key_bytes = vec![0; key_length_in_bytes];
+
+        if let Some(test_char) = test_char {
+            key = format!("{:86}==", test_char.to_string().repeat(86));
+        } else {
+            let mut rng = rand::thread_rng();
+            rng.fill_bytes(&mut key_bytes);
+        }
+
+        let key_string = general_purpose::STANDARD.encode(&key_bytes);
+        key_bytes = general_purpose::STANDARD.decode(&key_string).unwrap();
+
+        let j_bits = b'J' - b'A';
+        let q_bits = b'Q' - b'A';
+
+        let reserved = (j_bits as i32) << 18 | (q_bits as i32) << 12 | (q_bits as i32) << 6 | j_bits as i32;
+        let reserved_bytes = reserved.to_ne_bytes();
+
+        let key_bytes_length = key_bytes.len();
+
+        key_bytes[key_bytes_length - 27] = reserved_bytes[2];
+        key_bytes[key_bytes_length - 26] = reserved_bytes[1];
+        key_bytes[key_bytes_length - 25] = reserved_bytes[0];
+
+        let years_since_2024 = (chrono::Utc::now().year() - 2024) as u8;
+        let zero_indexed_month = (chrono::Utc::now().month() - 1) as u8;
+
+        let metadata: i32 = (61 << 18) | (61 << 12) | (years_since_2024 << 6) as i32 | zero_indexed_month as i32;
+        let metadata_bytes = metadata.to_ne_bytes();
+
+        key_bytes[key_bytes_length - 24] = metadata_bytes[2];
+        key_bytes[key_bytes_length - 23] = metadata_bytes[1];
+        key_bytes[key_bytes_length - 22] = metadata_bytes[0];
+
+        key_bytes[key_bytes_length - 21] = platform_reserved[0];
+        key_bytes[key_bytes_length - 20] = platform_reserved[1];
+        key_bytes[key_bytes_length - 19] = platform_reserved[2];
+        key_bytes[key_bytes_length - 18] = platform_reserved[3];
+        key_bytes[key_bytes_length - 17] = platform_reserved[4];
+        key_bytes[key_bytes_length - 16] = platform_reserved[5];
+        key_bytes[key_bytes_length - 15] = platform_reserved[6];
+        key_bytes[key_bytes_length - 14] = platform_reserved[7];
+        key_bytes[key_bytes_length - 13] = platform_reserved[8];
+
+        key_bytes[key_bytes_length - 12] = provider_reserved[0];
+        key_bytes[key_bytes_length - 11] = provider_reserved[1];
+        key_bytes[key_bytes_length - 10] = provider_reserved[2];
+
+        let signature_offset = key_bytes_length - 9;
+        let sig_bytes = general_purpose::STANDARD.decode(&base64_encoded_signature).unwrap();
+
+        for i in 0..sig_bytes.len() {
+            key_bytes[signature_offset + i] = sig_bytes[i];
+        }
+
+        let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, (key_bytes_length - 6) as i32);
+
+        let checksum_bytes = checksum.to_ne_bytes();
+
+        key_bytes[key_bytes_length - 6] = checksum_bytes[0];
+        key_bytes[key_bytes_length - 5] = checksum_bytes[1];
+        key_bytes[key_bytes_length - 4] = checksum_bytes[2];
+        key_bytes[key_bytes_length - 3] = checksum_bytes[3];
+
+        key = general_purpose::STANDARD.encode(&key_bytes[..COMMON_ANNOTATED_KEY_SIZE_IN_BYTES]);
+
+        // The HIS v2 standard requires that there be no special characters in the generated key.
+        if !key.contains('+') && !key.contains('/') {
+            break;
+        } else if test_char.is_some() {
+            key = String::new();
+            break;
+        }
+    }
+
+    Ok(key)
 }
 
 /// Generate an identifiable secret with a URL-compatible format (replacing all '+'
