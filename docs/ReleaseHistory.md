@@ -11,7 +11,7 @@
 - FNS => Flase negative reduction in static analysis.
 
 # 1.4.21 - 05/21/2024
-
+- NEW: Add `CommonAnnotatedSecret` key class for next-generation identifiable secrets.
 
 # 1.4.20 - 05/16/2024
 - BRK: Add `ComputeHash32(byte[], ulong, int, int)` helper to bring .NET framework and .NET core APIs into alignment.

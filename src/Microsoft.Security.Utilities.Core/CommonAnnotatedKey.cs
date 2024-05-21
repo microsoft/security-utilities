@@ -8,9 +8,9 @@ using System;
 
 namespace Microsoft.Security.Utilities
 {
-    public class CommonAnnotatedSecret
+    public class CommonAnnotatedKey
     {
-        public static bool TryCreate(string key, out CommonAnnotatedSecret secret)
+        public static bool TryCreate(string key, out CommonAnnotatedKey secret)
         {
             secret = null;
             ulong checksumSeed = IdentifiableSecrets.VersionTwoChecksumSeed;
@@ -48,22 +48,13 @@ namespace Microsoft.Security.Utilities
                 key = Convert.ToBase64String(keyBytes);
             }
 
-            try
-            {
-                bool isValid = IdentifiableSecrets.ValidateBase64Key(key, checksumSeed, base64EncodedSignature);
-
-                if (!isValid)
-                {
-                    return false;
-                }
-            }
-            catch (FormatException)
+            if (!IdentifiableSecrets.TryValidateBase64Key(key, checksumSeed, base64EncodedSignature))
             {
                 return false;
             }
 
             byte[] bytes = Convert.FromBase64String(key);
-            secret = new CommonAnnotatedSecret(bytes);
+            secret = new CommonAnnotatedKey(bytes);
 
             return true;
         }
@@ -71,7 +62,7 @@ namespace Microsoft.Security.Utilities
         private byte[] bytes;
         private string base64Key;
 
-        private CommonAnnotatedSecret(byte[] bytes)
+        private CommonAnnotatedKey(byte[] bytes)
         {
             this.bytes = bytes;
             this.base64Key = Convert.ToBase64String(this.bytes);

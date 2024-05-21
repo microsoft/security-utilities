@@ -88,7 +88,7 @@ namespace Microsoft.Security.Utilities
 
                     string derivedKey = IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(key, hashingSecret);
 
-                    bool result = CommonAnnotatedSecret.TryCreate(derivedKey, out CommonAnnotatedSecret caKey);
+                    bool result = CommonAnnotatedKey.TryCreate(derivedKey, out CommonAnnotatedKey caKey);
                     result.Should().BeTrue(because: $"the derived key '{derivedKey}' should be a valid common annotated security key");
 
                     caKey.IsDerivedKey.Should().BeTrue(because: $"the derived key '{derivedKey}' 'IsDerived' property should be correct");
