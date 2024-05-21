@@ -15,7 +15,7 @@ namespace Microsoft.Security.Utilities
             secret = null;
             ulong checksumSeed = IdentifiableSecrets.VersionTwoChecksumSeed;
             string base64EncodedSignature = key.Substring(76, 4);
-            bool isDerived = key[57] == 'D';
+            bool isDerived = key[DerivedKeyCharacterOffset] == 'D';
 
             if (key.Length != 88 && key.Length != 84)
             {
@@ -68,7 +68,9 @@ namespace Microsoft.Security.Utilities
             this.base64Key = Convert.ToBase64String(this.bytes);
         }
 
-        public bool IsDerivedKey => this.base64Key[57] == 'D';
+        public const int DerivedKeyCharacterOffset = 57;
+
+        public bool IsDerivedKey => this.base64Key[DerivedKeyCharacterOffset] == 'D';
 
         public bool IsLongFormKey => bytes.Length == 64;
 
@@ -79,13 +81,13 @@ namespace Microsoft.Security.Utilities
 
         public string DateText => this.base64Key.Substring(58, 2);
 
-        public DateTime CreationDate => ComputeDateTime(DateText);
-
         public string PlatformReserved => this.base64Key.Substring(60, 12);
 
         public string ProviderReserved => this.base64Key.Substring(72, 4);
 
         public string ProviderFixedSignature => this.base64Key.Substring(76, 4);
+
+        public DateTime CreationDate => ComputeDateTime(DateText);
 
         private static DateTime ComputeDateTime(string dateText)
         {

@@ -40,16 +40,16 @@ namespace Microsoft.Security.Utilities
                                                                             IdentifiableMetadata.AzureIotSignature);
 
             string shortDerivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(shortKey,
-                                                                                    "SecretPlacehoder",
-                                                                                    IdentifiableMetadata.AzureIotDeviceChecksumSeed);
+                                                                                       "SecretPlacehoder",
+                                                                                       IdentifiableMetadata.AzureIotDeviceChecksumSeed);
 
             string longKey = IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureIotDeviceChecksumSeed,
                                                                            64,
                                                                            IdentifiableMetadata.AzureIotSignature);
 
             string longDerivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(longKey,
-                                                                                   "SecretPlacehoder",
-                                                                                   IdentifiableMetadata.AzureIotDeviceChecksumSeed);
+                                                                                      "SecretPlacehoder",
+                                                                                      IdentifiableMetadata.AzureIotDeviceChecksumSeed);
 
             foreach (string key in new[] {shortKey, shortDerivedKey, longKey, longDerivedKey}) 
             { 
