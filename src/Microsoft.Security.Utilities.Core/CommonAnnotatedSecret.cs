@@ -8,9 +8,9 @@ using System;
 
 namespace Microsoft.Security.Utilities
 {
-    public class CommonAnnotatedKey
+    public class CommonAnnotatedSecret
     {
-        public static bool TryCreate(string key, out CommonAnnotatedKey secret)
+        public static bool TryCreate(string key, out CommonAnnotatedSecret secret)
         {
             secret = null;
             ulong checksumSeed = IdentifiableSecrets.VersionTwoChecksumSeed;
@@ -63,7 +63,7 @@ namespace Microsoft.Security.Utilities
             }
 
             byte[] bytes = Convert.FromBase64String(key);
-            secret = new CommonAnnotatedKey(bytes);
+            secret = new CommonAnnotatedSecret(bytes);
 
             return true;
         }
@@ -71,7 +71,7 @@ namespace Microsoft.Security.Utilities
         private byte[] bytes;
         private string base64Key;
 
-        private CommonAnnotatedKey(byte[] bytes)
+        private CommonAnnotatedSecret(byte[] bytes)
         {
             this.bytes = bytes;
             this.base64Key = Convert.ToBase64String(this.bytes);
@@ -88,10 +88,25 @@ namespace Microsoft.Security.Utilities
 
         public string DateText => this.base64Key.Substring(58, 2);
 
+        public DateTime CreationDate => ComputeDateTime(DateText);
+
         public string PlatformReserved => this.base64Key.Substring(60, 12);
 
         public string ProviderReserved => this.base64Key.Substring(72, 4);
 
         public string ProviderFixedSignature => this.base64Key.Substring(76, 4);
+
+        private static DateTime ComputeDateTime(string dateText)
+        {
+            if (dateText.Length != 2)
+            {
+                throw new ArgumentException("Invalid date text", nameof(dateText));
+            }
+
+            int year = 2024 + dateText[0] - 'A';
+            int month = dateText[1] - 'A' + 1;
+
+            return new DateTime(year, month, 1);
+        }
     }
 }

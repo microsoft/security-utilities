@@ -112,7 +112,7 @@ public static class IdentifiableSecrets
     public static string ComputeDerivedCommonAnnotatedKey(string key,
                                                           string hashSecret)
     {
-        if (!CommonAnnotatedKey.TryCreate(key, out CommonAnnotatedKey cask))
+        if (!CommonAnnotatedSecret.TryCreate(key, out CommonAnnotatedSecret cask))
         { 
             throw new ArgumentException("The provided key is not a valid common annotated security key.");
         }

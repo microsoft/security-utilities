@@ -88,7 +88,7 @@ namespace Microsoft.Security.Utilities
 
                     string derivedKey = IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(key, hashingSecret);
 
-                    bool result = CommonAnnotatedKey.TryCreate(derivedKey, out CommonAnnotatedKey caKey);
+                    bool result = CommonAnnotatedSecret.TryCreate(derivedKey, out CommonAnnotatedSecret caKey);
                     result.Should().BeTrue(because: $"the derived key '{derivedKey}' should be a valid common annotated security key");
 
                     caKey.IsDerivedKey.Should().BeTrue(because: $"the derived key '{derivedKey}' 'IsDerived' property should be correct");
@@ -98,6 +98,10 @@ namespace Microsoft.Security.Utilities
 
                     result = IdentifiableSecrets.CommonAnnotatedKeyRegex.IsMatch(derivedKey);
                     result.Should().BeTrue(because: $"the derived key '{derivedKey}' should match the canonical format regex");
+
+                    DateTime utcNow = DateTime.UtcNow;
+                    caKey.CreationDate.Year.Should().Be(utcNow.Year, because: "the derived key creation year should be correct");
+                    caKey.CreationDate.Month.Should().Be(utcNow.Month, because: "the derived key creation month should be correct");
                 }
             }
         }
