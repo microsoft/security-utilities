@@ -10,6 +10,12 @@
 - FPS => False positive reduction in static analysis.
 - FNS => Flase negative reduction in static analysis.
 
+# 1.4.21 - 05/21/2024
+- BRK: Rename `IdentifiableSecrets.ComputeDerivedSymmetricKey` to `ComputeDerivedIdentifiableKey`.
+- BRK: Update `IdentifiableSecrets.ComputeDerivedIdentifiableKey` to accept an alternate checksum seed for constructing the derived key.
+- NEW: Add `CommonAnnotatedSecret` key class for next-generation identifiable secrets.
+- NEW: Add `Identifiable.ComputeDerivedCommonAnnotatedKey` to generate keys derived from common annotated secrets.
+
 # 1.4.20 - 05/16/2024
 - BRK: Add `ComputeHash32(byte[], ulong, int, int)` helper to bring .NET framework and .NET core APIs into alignment.
 - BRK: Return value of `ISecretMaskerDetectSecrets(string)` is `IEnumerable<Detection>` (not `ICollection`) for best yield iterator compatibility.

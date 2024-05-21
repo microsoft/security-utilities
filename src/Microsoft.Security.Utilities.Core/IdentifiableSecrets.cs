@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -19,13 +20,17 @@ public static class IdentifiableSecrets
 {
     public static readonly ulong VersionTwoChecksumSeed = ComputeHisV1ChecksumSeed("Default0");
 
-    public const string CommonAnnotatedKeyRegexPattern = "[A-Za-z0-9]{52}JQQJ99[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
+    public const string CommonAnnotatedKeyRegexPattern = "[A-Za-z0-9]{52}JQQJ9(9|D)[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
 
     public static readonly Regex CommonAnnotatedKeyRegex = new(CommonAnnotatedKeyRegexPattern, RegexDefaults.DefaultOptionsCaseSensitive);
 
     public static uint MaximumGeneratedKeySize => 4096;
 
     public static uint MinimumGeneratedKeySize => 24;
+
+    public static string CommonAnnotatedKeySignature => "JQQJ99";
+
+    public static string CommonAnnotatedDerivedKeySignature => "JQQJ9D";
 
     public static bool IsBase62EncodingChar(this char ch)
     {
@@ -102,6 +107,32 @@ public static class IdentifiableSecrets
         ulong result = BitConverter.ToUInt64(Encoding.ASCII.GetBytes(versionedKeyKind).Reverse().ToArray(), 0);
 
         return result;
+    }
+
+    public static string ComputeDerivedCommonAnnotatedKey(string key,
+                                                          string hashSecret)
+    {
+        if (!CommonAnnotatedKey.TryCreate(key, out CommonAnnotatedKey cask))
+        { 
+            throw new ArgumentException("The provided key is not a valid common annotated security key.");
+        }
+
+        using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(hashSecret));
+        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(key));
+
+        byte[] derivedKeyBytes = new byte[40];
+        Array.Copy(hashBytes, derivedKeyBytes, derivedKeyBytes.Length);
+
+        string encodedRandom = derivedKeyBytes.ToBase62().Substring(0, 52);
+
+        string standardSignature = "JQQJ9D";
+
+        string derivedKey = $"{encodedRandom}{standardSignature}{cask.DateText}{cask.PlatformReserved}{cask.ProviderReserved}{cask.ProviderFixedSignature}";
+        derivedKeyBytes = Convert.FromBase64String(derivedKey);
+
+        int checksum = Marvin.ComputeHash32(derivedKeyBytes, VersionTwoChecksumSeed, 0, derivedKeyBytes.Length);
+
+        return $"{derivedKey}{checksum.ToBase62().Substring(0,4)}";
     }
 
 
@@ -246,24 +277,30 @@ public static class IdentifiableSecrets
         return key;
     }
 
-    public static string ComputeDerivedSymmetricKey(string key, ulong checksumSeed, string textToSign, bool encodeForUrl = false)
+    public static string ComputeDerivedIdentifiableKey(string securityKey,
+                                                       string hashKey,
+                                                       ulong primaryChecksumSeed,
+                                                       ulong? derivedChecksumSeed = null,
+                                                       bool encodeForUrl = false)
     {
-        string signature = key.Trim('=');
+        string signature = securityKey.Trim('=');
         signature = signature.Substring(signature.Length - 10, 4);
 
-        if (!TryValidateBase64Key(key, checksumSeed, signature, encodeForUrl))
+        derivedChecksumSeed ??= primaryChecksumSeed;
+
+        if (!TryValidateBase64Key(securityKey, primaryChecksumSeed, signature, encodeForUrl))
         {
             throw new ArgumentException("The provided key is not a valid identifiable secret.");
         }
 
-        key = encodeForUrl
-            ? key.Replace('-', '+').Replace('_', '/')
-            : key;
+        securityKey = encodeForUrl
+            ? securityKey.Replace('-', '+').Replace('_', '/')
+            : securityKey;
 
-        byte[] keyBytes = Convert.FromBase64String(key);
+        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(hashKey));
 
-        using var hmac = new HMACSHA256(keyBytes);
-        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(textToSign));
+        byte[] keyBytes = Convert.FromBase64String(securityKey);
+        byte[] hashBytes = hmac.ComputeHash(keyBytes);
 
         byte[] derivedKeyBytes = new byte[42];
         Array.Copy(hashBytes, derivedKeyBytes, hashBytes.Length);
@@ -273,13 +310,13 @@ public static class IdentifiableSecrets
         derivedKeyBytes[33] = 0b10101110;
         derivedKeyBytes[34] = 0b00101111;
 
-        string derivedKey = GenerateBase64KeyHelper(checksumSeed,
-                                                    (uint)derivedKeyBytes.Length,
-                                                    signature,
-                                                    encodeForUrl: false,
-                                                     derivedKeyBytes);
+        string derivedSecurityKey = GenerateBase64KeyHelper(derivedChecksumSeed.Value,
+                                                            (uint)derivedKeyBytes.Length,
+                                                            signature,
+                                                            encodeForUrl: false,
+                                                        derivedKeyBytes);
 
-        return derivedKey;
+        return derivedSecurityKey;
     }
 
     /// <summary>
