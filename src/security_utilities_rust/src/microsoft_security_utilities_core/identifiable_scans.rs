@@ -1,6 +1,20 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+use std::collections::HashMap;
+
+/* Indicates the char is part of a small mask */
+const MASK_SMALL: u8 = 1 << 0;
+
+/* Indicates the char is part of a large mask */
+const MASK_LARGE: u8 = 1 << 1;
+
+/* Indicates the char is a special sig character */
+const MASK_SIG: u8 = 1 << 2;
+
+/* Mask only for size, masks out the MASK_SIG */
+const MASK_BOTH: u8 = MASK_SMALL | MASK_LARGE;
+
 const HIS2_UTF8_LEN: usize = 88;
 const HIS2_UTF8_SHORT_LEN: usize = 84;
 
@@ -815,12 +829,295 @@ impl PossibleScanMatch {
     }
 }
 
+pub struct ScanDefinition {
+    mtype_utf8: ScanMatchType,
+    mtype_utf16: ScanMatchType,
+    sig_char: u8,
+    check_char: u8,
+    before_utf8: u64,
+    after_utf8: u64,
+    before_utf16: u64,
+    after_utf16: u64,
+    mask_size: u8,
+    packed_utf8: u64,
+    packed_utf16: u64,
+    validator: Box<dyn Fn(&[u8]) -> usize>,
+}
+
+impl ScanDefinition {
+    pub fn new(
+        mtype_utf8: ScanMatchType,
+        mtype_utf16: ScanMatchType,
+        sig: &[u8],
+        sig_char: u8,
+        before: u64,
+        after: u64,
+        validator: impl Fn(&[u8]) -> usize + 'static) -> Self {
+        match sig.len() {
+            3 | 4 => { },
+            _ => { panic!("Signature has to be 3 or 4 bytes"); }
+        }
+
+        let mut found = false;
+        for b in sig {
+            if *b == sig_char { found = true; }
+        }
+
+        if !found {
+            panic!("Signature must have char in it");
+        }
+
+        let mask_size = match sig.len() {
+            3 => { MASK_SMALL },
+            4 => { MASK_LARGE },
+            _ => { 0 },
+        };
+
+        Self {
+            mtype_utf8,
+            mtype_utf16,
+            sig_char,
+            check_char: sig[sig.len()-1],
+            before_utf8: before,
+            after_utf8: after,
+            before_utf16: (before * 2) - 1,
+            after_utf16: after * 2,
+            mask_size,
+            packed_utf8: Self::pack_utf8(sig),
+            packed_utf16: Self::pack_utf16(sig),
+            validator: Box::new(validator),
+        }
+    }
+
+    fn pack_utf8(sig: &[u8]) -> u64 {
+        let mut packed = 0u64;
+
+        for b in sig {
+            packed <<= 8;
+            packed |= *b as u64;
+        }
+
+        packed
+    }
+
+    fn pack_utf16(sig: &[u8]) -> u64 {
+        let mut packed = 0u64;
+
+        for b in sig {
+            packed <<= 16;
+            packed |= *b as u64;
+        }
+
+        packed
+    }
+}
+
 pub struct ScanOptions {
     v1: bool,
     v2: bool,
+    defs: Vec<ScanDefinition>,
+}
+
+fn nop_bytes(_: &[u8]) -> usize {
+    0
 }
 
 impl ScanOptions {
+    pub fn with_gen(self) -> Self {
+        let mut clone = self;
+
+        clone.v1 = false;
+        clone.v2 = false;
+
+        /* HIS v2 */
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His2Utf8,
+                ScanMatchType::His2Utf16,
+                b"JQQJ",
+                b'Q',
+                56,
+                88,
+                nop_bytes));
+
+        /* AAD */
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::HisA7Utf8,
+                ScanMatchType::HisA7Utf16,
+                b"7Q~",
+                b'Q',
+                6,
+                37,
+                nop_bytes));
+
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::HisA8Utf8,
+                ScanMatchType::HisA8Utf16,
+                b"8Q~",
+                b'Q',
+                6,
+                40,
+                nop_bytes));
+
+        /* HIS v1 32-byte */
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His32Utf8,
+                ScanMatchType::His32Utf16,
+                b"+ARm",
+                b'A',
+                37,
+                44,
+                nop_bytes));
+
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His32Utf8,
+                ScanMatchType::His32Utf16,
+                b"+AEh",
+                b'A',
+                37,
+                44,
+                nop_bytes));
+
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His32Utf8,
+                ScanMatchType::His32Utf16,
+                b"+ASb",
+                b'A',
+                37,
+                44,
+                nop_bytes));
+
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His32Utf8,
+                ScanMatchType::His32Utf16,
+                b"AIoT",
+                b'A',
+                37,
+                44,
+                nop_bytes));
+
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His32Utf8,
+                ScanMatchType::His32Utf16,
+                b"AzCa",
+                b'A',
+                37,
+                44,
+                nop_bytes));
+
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His32Utf8,
+                ScanMatchType::His32Utf16,
+                b"AZEG",
+                b'A',
+                37,
+                44,
+                nop_bytes));
+
+        /* HIS v1 39-byte */
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His39Utf8,
+                ScanMatchType::His39Utf16,
+                b"AzSe",
+                b'A',
+                46,
+                52,
+                nop_bytes));
+
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His39Utf8,
+                ScanMatchType::His39Utf16,
+                b"+ACR",
+                b'A',
+                46,
+                52,
+                nop_bytes));
+
+        /* HIS v1 40-byte */
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His40Utf8,
+                ScanMatchType::His40Utf16,
+                b"AzFu",
+                b'A',
+                48,
+                56,
+                nop_bytes));
+
+        /* HIS v1 64-byte */
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His64Utf8,
+                ScanMatchType::His64Utf16,
+                b"+ASt",
+                b'A',
+                80,
+                88,
+                nop_bytes));
+
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His64Utf8,
+                ScanMatchType::His64Utf16,
+                b"ACDb",
+                b'A',
+                80,
+                88,
+                nop_bytes));
+
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His64Utf8,
+                ScanMatchType::His64Utf16,
+                b"+ABa",
+                b'A',
+                80,
+                88,
+                nop_bytes));
+
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His64Utf8,
+                ScanMatchType::His64Utf16,
+                b"+AMC",
+                b'A',
+                80,
+                88,
+                nop_bytes));
+
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His64Utf8,
+                ScanMatchType::His64Utf16,
+                b"/AM7",
+                b'A',
+                80,
+                88,
+                nop_bytes));
+
+        clone.defs.push(
+            ScanDefinition::new(
+                ScanMatchType::His64Utf8,
+                ScanMatchType::His64Utf16,
+                b"APIM",
+                b'A',
+                80,
+                88,
+                nop_bytes));
+
+        clone
+    }
+
     pub fn without_v1(self) -> Self {
         let mut clone = self;
         clone.v1 = false;
@@ -839,6 +1136,7 @@ impl Default for ScanOptions {
         Self {
             v1: true,
             v2: true,
+            defs: Vec::new(),
         }
     }
 }
@@ -849,16 +1147,60 @@ pub struct Scan {
     index: u64,
     last_a_index: u64,
     checks: Vec<PossibleScanMatch>,
+    sig_char_chunks: Vec<[u8; 16]>,
+    char_map: [u8; 256],
+    must_scan: bool,
 }
 
 impl Scan {
     pub fn new(options: ScanOptions) -> Self {
-        Self {
+        let mut scan = Self {
             options,
             accum: 0,
             index: 0,
             last_a_index: 0,
             checks: Vec::new(),
+            sig_char_chunks: Vec::new(),
+            char_map: [0; 256],
+            must_scan: false,
+        };
+
+        scan.init();
+
+        scan
+    }
+
+    fn init(&mut self) {
+        let mut unique_chars = [0; 256];
+
+        /* Build lookup tables */
+        for def in &self.options.defs {
+            /* Store unique characters to vectorize scan for */
+            if unique_chars[def.sig_char as usize] == 0 {
+                /*
+                 * Create 16-byte chunk filled with the sig char
+                 * which can be SIMD/vectorized compared with read
+                 * data.
+                 */
+                let chunk: [u8; 16] = [def.sig_char; 16];
+                self.sig_char_chunks.push(chunk);
+
+                /* Mark we've seen it already */
+                unique_chars[def.sig_char as usize] = 1;
+            }
+
+            /*
+             * Store final characters of sig in lookup map. This tells
+             * us when to check the accumulator for signatures.
+             */
+            self.char_map[def.check_char as usize] |= def.mask_size;
+
+            /*
+             * Store sig character in lookup map. This tells us if a
+             * byte is a part of a sig check and how far it is away.
+             * This is used to see if the accumulator has any sig chars.
+             */
+            self.char_map[def.sig_char as usize] |= MASK_SIG;
         }
     }
 
@@ -869,6 +1211,7 @@ impl Scan {
     pub fn reset(&mut self) {
         self.accum = 0;
         self.index = 0;
+        self.must_scan = false;
         self.last_a_index = 0;
         self.checks.clear();
     }
@@ -1192,13 +1535,145 @@ impl Scan {
         self.a_distance() < 8
     }
 
+    #[inline(always)]
+    fn has_sig_chars(
+        &self,
+        chunk: &[u8]) -> bool {
+        let mut count = 0;
+
+        for c in &self.sig_char_chunks {
+            for i in 0..16 {
+                count |= (chunk[i] == c[i]) as usize;
+            }
+        }
+
+        count != 0
+    }
+
+    /* Faster without any inline, oddly enough */
+    #[cold]
+    fn byte_scan_gen(
+        &mut self,
+        data: &[u8]) {
+        let mut sig_index = 0u64;
+        let defs = &self.options.defs;
+
+        for b in data {
+            let b = *b;
+
+            self.accum = self.accum << 8 | b as u64;
+            self.index += 1;
+
+            /* Determine what to do with the char */
+            let check = self.char_map[b as usize];
+
+            /* Skip if nothing */
+            if check != 0 {
+                /* Char is a signature part */
+                if check & MASK_SIG != 0 {
+                    /* Track where it was found */
+                    sig_index = self.index;
+                }
+
+                /* Check if small, large, or both */
+                match check & MASK_BOTH {
+                    MASK_SMALL => {
+                        let packed_utf8 = self.accum & 0xFFFFFF;
+                        let packed_utf16 = self.accum & 0xFFFFFFFFFFFF;
+
+                        for def in defs {
+                            if def.packed_utf8 == packed_utf8 {
+                                self.checks.push(
+                                    PossibleScanMatch::new(
+                                        self.index - def.before_utf8,
+                                        def.mtype_utf8));
+                            } else if def.packed_utf16 == packed_utf16 {
+                                self.checks.push(
+                                    PossibleScanMatch::new(
+                                        self.index - def.before_utf16,
+                                        def.mtype_utf16));
+                            }
+                        }
+                    },
+
+                    MASK_LARGE => {
+                        let packed_utf8 = self.accum & 0xFFFFFFFF;
+                        let packed_utf16 = self.accum;
+
+                        for def in defs {
+                            if def.packed_utf8 == packed_utf8 {
+                                self.checks.push(
+                                    PossibleScanMatch::new(
+                                        self.index - def.before_utf8,
+                                        def.mtype_utf8));
+                            } else if def.packed_utf16 == packed_utf16 {
+                                self.checks.push(
+                                    PossibleScanMatch::new(
+                                        self.index - def.before_utf16,
+                                        def.mtype_utf16));
+                            }
+                        }
+                    },
+
+                    MASK_BOTH => {
+                        let packed_utf8 = self.accum & 0xFFFFFFFF;
+                        let packed_utf8_small = self.accum & 0xFFFFFF;
+
+                        let packed_utf16 = self.accum;
+                        let packed_utf16_small = self.accum & 0xFFFFFFFFFFFF;
+
+                        for def in defs {
+                            if def.packed_utf8 == packed_utf8 ||
+                               def.packed_utf8 == packed_utf8_small {
+                                self.checks.push(
+                                    PossibleScanMatch::new(
+                                        self.index - def.before_utf8,
+                                        def.mtype_utf8));
+                            } else if def.packed_utf16 == packed_utf16 ||
+                                      def.packed_utf16 == packed_utf16_small {
+                                self.checks.push(
+                                    PossibleScanMatch::new(
+                                        self.index - def.before_utf16,
+                                        def.mtype_utf16));
+                            }
+                        }
+                    },
+
+                    _ => { },
+                }
+            }
+        }
+
+        /* 
+         * If our signature char is within 7 bytes, we need to scan next time
+         * without the SIMD/vectorized scan. The reason for this is if parts
+         * of the 4 (or 3) byte signature are in the accumulator. If the first
+         * part of the signature is in the accumulator and the last byte or two
+         * are in the new data, it would miss if we omitted this.
+         */
+        self.must_scan = (self.index - sig_index) < 8;
+    }
+
     pub fn parse_bytes(
         &mut self,
         data: &[u8]) {
         let chunks = data.chunks_exact(16);
         let rem = chunks.remainder();
 
-        if self.options.v1 && self.options.v2 {
+        if !self.options.defs.is_empty() {
+            /* Generalized lookups */
+            for chunk in chunks {
+                /* Check if anything of interest */
+                if !self.must_scan && !self.has_sig_chars(chunk) {
+                    self.index += 16;
+                    self.accum = u64::from_be_bytes(chunk[8..16].try_into().unwrap());
+                    continue;
+                }
+
+                self.byte_scan_gen(chunk);
+            }
+            self.byte_scan_gen(rem);
+        } else if self.options.v1 && self.options.v2 {
             /* Both V1 and V2 */
             for chunk in chunks {
                 /* Check if last bytes in accum have an A */
@@ -1218,7 +1693,7 @@ impl Scan {
                     /* No J's or A's or ~'s, set accumulator and continue */
                     if count == 0 {
                         self.index += 16;
-                        self.accum = u64::from_ne_bytes(chunk[8..16].try_into().unwrap());
+                        self.accum = u64::from_be_bytes(chunk[8..16].try_into().unwrap());
                         continue;
                     }
                 }
@@ -1245,7 +1720,7 @@ impl Scan {
                     /* No A's, set accumulator and continue */
                     if count == 0 {
                         self.index += 16;
-                        self.accum = u64::from_ne_bytes(chunk[8..16].try_into().unwrap());
+                        self.accum = u64::from_be_bytes(chunk[8..16].try_into().unwrap());
                         continue;
                     }
                 }
@@ -1268,7 +1743,7 @@ impl Scan {
                 /* No J's, set accumulator and continue */
                 if count == 0 {
                     self.index += 16;
-                    self.accum = u64::from_ne_bytes(chunk[8..16].try_into().unwrap());
+                    self.accum = u64::from_be_bytes(chunk[8..16].try_into().unwrap());
                     continue;
                 }
 
@@ -1326,7 +1801,10 @@ mod tests {
 
     #[test]
     fn his_v2_scan_files() {
-        let mut scan = Scan::new(ScanOptions::default());
+        let options = ScanOptions::default()
+            .with_gen();
+
+        let mut scan = Scan::new(options);
         let mut buf: [u8; 4096] = [0; 4096];
 
         /* 50 long, 50 short, UTF8 */
@@ -1355,7 +1833,9 @@ mod tests {
 
     #[test]
     fn his_v1_scan_bytes() {
-        let mut scan = Scan::new(ScanOptions::default());
+        let mut options = ScanOptions::default()
+            .with_gen();
+        let mut scan = Scan::new(options);
         let empty: [u8; 0] = [0; 0];
 
         /* Less than 16 bytes */
@@ -1538,7 +2018,10 @@ mod tests {
 
     #[test]
     fn his_v2_scan_bytes() {
-        let mut scan = Scan::new(ScanOptions::default());
+        let options = ScanOptions::default()
+            .with_gen();
+
+        let mut scan = Scan::new(options);
         let empty: [u8; 0] = [0; 0];
 
         /* Less than 16 bytes */
@@ -1636,5 +2119,21 @@ mod tests {
             let scan_match = scan_match.unwrap();
             assert_eq!(match_str, scan_match.text(), "UTF8 per-byte Case {}: Text Match", i);
         }
+    }
+
+    fn test_bytes(data: &[u8]) -> usize {
+        data.len()
+    }
+
+    #[test]
+    fn his_scan_definition() {
+        let def = ScanDefinition::new(ScanMatchType::His2Utf8, ScanMatchType::His2Utf16, b"JQQJ", b'J', 56, 88, test_bytes);
+        assert_eq!(0x4A51514A, def.packed_utf8);
+        assert_eq!(0x004A00510051004A, def.packed_utf16);
+        assert_eq!(MASK_LARGE, def.mask_size);
+        assert_eq!(56, def.before_utf8);
+        assert_eq!(88, def.after_utf8);
+        assert_eq!((56*2) - 1, def.before_utf16);
+        assert_eq!(88*2, def.after_utf16);
     }
 }
