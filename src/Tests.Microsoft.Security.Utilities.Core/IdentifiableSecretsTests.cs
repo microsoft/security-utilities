@@ -29,6 +29,79 @@ namespace Microsoft.Security.Utilities
 
         private static string s_base62Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
+
+        [TestMethod]
+        public void IdentifiableSecrets_VariableLengthIdentifiableAndDerivedKeysValidate()
+        {
+            using var assertionScope = new AssertionScope();
+
+            string shortKey = IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureIotDeviceChecksumSeed,
+                                                                            32, 
+                                                                            IdentifiableMetadata.AzureIotSignature);
+
+            string shortDerivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(shortKey,
+                                                                                    "SecretPlacehoder",
+                                                                                    IdentifiableMetadata.AzureIotDeviceChecksumSeed);
+
+            string longKey = IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureIotDeviceChecksumSeed,
+                                                                           64,
+                                                                           IdentifiableMetadata.AzureIotSignature);
+
+            string longDerivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(longKey,
+                                                                                   "SecretPlacehoder",
+                                                                                   IdentifiableMetadata.AzureIotDeviceChecksumSeed);
+
+            foreach (string key in new[] {shortKey, shortDerivedKey, longKey, longDerivedKey}) 
+            { 
+                bool result = IdentifiableSecrets.TryValidateBase64Key(key,
+                                                                       IdentifiableMetadata.AzureIotDeviceChecksumSeed,
+                                                                       IdentifiableMetadata.AzureIotSignature);
+
+                result.Should().BeTrue(because: $"the key '{key}' should be a valid apparent Azure IoT device key");
+            }
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_GeneratedDerivedAnnotatedKeys()
+        {
+            using var assertionScope = new AssertionScope();
+
+            for (int i = 0; i < 16; i++)
+            {
+                char ch = (char)('A' + i);
+                string signature = new string(ch, 4);
+
+                foreach (bool customerManaged in new[] { true, false })
+                {
+                    string platformEncoded = new string((char)('A' + i + 1), 12);
+                    string providerEncoded = new string((char)('A' + i + 2), 4);
+                    
+                    byte[] platformReserved = Convert.FromBase64String(platformEncoded);
+                    byte[] providerReserved = Convert.FromBase64String(providerEncoded);
+
+                    string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature,
+                                                                                customerManaged,
+                                                                                platformReserved,
+                                                                                providerReserved);
+
+                    string hashingSecret = new string((char)('A' + i + 2), 32);
+
+                    string derivedKey = IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(key, hashingSecret);
+
+                    bool result = CommonAnnotatedKey.TryCreate(derivedKey, out CommonAnnotatedKey caKey);
+                    result.Should().BeTrue(because: $"the derived key '{derivedKey}' should be a valid common annotated security key");
+
+                    caKey.IsDerivedKey.Should().BeTrue(because: $"the derived key '{derivedKey}' 'IsDerived' property should be correct");
+                    caKey.PlatformReserved.Should().Be(platformEncoded, because: "encoded platform reserved data should match");
+                    caKey.ProviderReserved.Should().Be(providerEncoded, because: "encoded provider reserved data should match");
+                    caKey.StandardFixedSignature.Should().Be(IdentifiableSecrets.CommonAnnotatedDerivedKeySignature);
+
+                    result = IdentifiableSecrets.CommonAnnotatedKeyRegex.IsMatch(derivedKey);
+                    result.Should().BeTrue(because: $"the derived key '{derivedKey}' should match the canonical format regex");
+                }
+            }
+        }
+
         [TestMethod]
         public void IdentifiableSecrets_ComputeChecksumSeed_EnforcesLengthRequirement()
         {
@@ -106,14 +179,16 @@ namespace Microsoft.Security.Utilities
                             matched = true;
                             string textToSign = $"{Guid.NewGuid()}";
 
-                            // We found the seed for this test example.
-                            string derivedKey = IdentifiableSecrets.ComputeDerivedSymmetricKey(testExample, checksumSeed, textToSign, identifiablePattern.EncodeForUrl);
-                            bool isValid = IdentifiableSecrets.TryValidateBase64Key(derivedKey, checksumSeed, identifiablePattern.Signature);
-                            isValid.Should().BeTrue(because: $"the '{pattern.Name} derived key '{derivedKey}' should validate");
+                            foreach (ulong derivedChecksumSeed in new[] { checksumSeed, ~checksumSeed })
+                            {
+                                string derivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(testExample, textToSign, checksumSeed, derivedChecksumSeed, identifiablePattern.EncodeForUrl);
+                                bool isValid = IdentifiableSecrets.TryValidateBase64Key(derivedKey, derivedChecksumSeed, identifiablePattern.Signature);
+                                isValid.Should().BeTrue(because: $"the '{pattern.Name} derived key '{derivedKey}' should validate");
 
-                            derivedKey.Length.Should().Be(56, because: $"the '{pattern.Name} derived key should be 56 characters long");
-                            derivedKey.Substring(42, 4).Should().Be("deri", because: $"the '{pattern.Name} derived key should contain the 'deri' signature");
-                            derivedKey.Substring(46, 4).Should().Be(identifiablePattern.Signature, because: $"the '{pattern.Name} derived key should contain the '{identifiablePattern.Signature}' signature");
+                                derivedKey.Length.Should().Be(56, because: $"the '{pattern.Name} derived key should be 56 characters long");
+                                derivedKey.Substring(42, 4).Should().Be("deri", because: $"the '{pattern.Name} derived key should contain the 'deri' signature");
+                                derivedKey.Substring(46, 4).Should().Be(identifiablePattern.Signature, because: $"the '{pattern.Name} derived key should contain the '{identifiablePattern.Signature}' signature");
+                            }
                         }
                     }
                     matched.Should().BeTrue(because: $"each {pattern.Name} test pattern should match a documented checksum seed");

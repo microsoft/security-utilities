@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Security.Utilities.Cli", "Microsoft.Security.Utilities.Cli\Microsoft.Security.Utilities.Cli.csproj", "{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Security.Utilities.Benchmarks", "Benchmarks\Microsoft.Security.Utilities.Benchmarks.csproj", "{0B1DDF4F-4D23-454C-A469-284D60EA265A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Security.Utilities.Benchmarks", "Microsoft.Security.Utilities.Benchmarks\Microsoft.Security.Utilities.Benchmarks.csproj", "{58337536-C935-47D8-A3B3-5336D7143FD9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,10 @@ Global
 		{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0B1DDF4F-4D23-454C-A469-284D60EA265A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B1DDF4F-4D23-454C-A469-284D60EA265A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B1DDF4F-4D23-454C-A469-284D60EA265A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B1DDF4F-4D23-454C-A469-284D60EA265A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58337536-C935-47D8-A3B3-5336D7143FD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58337536-C935-47D8-A3B3-5336D7143FD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58337536-C935-47D8-A3B3-5336D7143FD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58337536-C935-47D8-A3B3-5336D7143FD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
