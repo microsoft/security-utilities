@@ -10,6 +10,9 @@
 - FPS => False positive reduction in static analysis.
 - FNS => Flase negative reduction in static analysis.
 
+# 1.4.22 - 05/21/2024
+- BUG: Fix `IdentifiableSecrets.ComputeDerivedSymmetricKey` and `IdentifiableSecrets.ComputeDerivedIdentifiableKey` to properly initialize the `HMACSHA256` algorithm with the cask/identifiable secret.
+
 # 1.4.21 - 05/21/2024
 - BRK: Rename `IdentifiableSecrets.ComputeDerivedSymmetricKey` to `ComputeDerivedIdentifiableKey`.
 - BRK: Update `IdentifiableSecrets.ComputeDerivedIdentifiableKey` to accept an alternate checksum seed for constructing the derived key.

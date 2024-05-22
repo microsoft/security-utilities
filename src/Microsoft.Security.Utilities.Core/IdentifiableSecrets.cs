@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -105,20 +106,19 @@ public static class IdentifiableSecrets
         // version of the seed will be very close in number to previous versions. All of this work
         // attempting to ensure the versionability of seeds is future-proofing of uncertain value.
         ulong result = BitConverter.ToUInt64(Encoding.ASCII.GetBytes(versionedKeyKind).Reverse().ToArray(), 0);
-
         return result;
     }
 
-    public static string ComputeDerivedCommonAnnotatedKey(string key,
-                                                          string hashSecret)
+    public static string ComputeDerivedCommonAnnotatedKey(string textToHash,
+                                                          string commonAnnotatedSecret)
     {
-        if (!CommonAnnotatedKey.TryCreate(key, out CommonAnnotatedKey cask))
+        if (!CommonAnnotatedKey.TryCreate(commonAnnotatedSecret, out CommonAnnotatedKey cask))
         { 
             throw new ArgumentException("The provided key is not a valid common annotated security key.");
         }
 
-        using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(hashSecret));
-        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(key));
+        using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(commonAnnotatedSecret));
+        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(textToHash));
 
         byte[] derivedKeyBytes = new byte[40];
         Array.Copy(hashBytes, derivedKeyBytes, derivedKeyBytes.Length);
@@ -277,34 +277,36 @@ public static class IdentifiableSecrets
         return key;
     }
 
-    public static string ComputeDerivedIdentifiableKey(string securityKey,
-                                                       string hashKey,
+    public static string ComputeDerivedIdentifiableKey(string textToHash,
+                                                       string identifiableHashSecret,
                                                        ulong primaryChecksumSeed,
                                                        ulong? derivedChecksumSeed = null,
                                                        bool encodeForUrl = false)
     {
-        string signature = securityKey.Trim('=');
+        string signature = identifiableHashSecret.Trim('=');
         signature = signature.Substring(signature.Length - 10, 4);
 
         derivedChecksumSeed ??= primaryChecksumSeed;
 
-        if (!TryValidateBase64Key(securityKey, primaryChecksumSeed, signature, encodeForUrl))
+        if (!TryValidateBase64Key(identifiableHashSecret, primaryChecksumSeed, signature, encodeForUrl))
         {
             throw new ArgumentException("The provided key is not a valid identifiable secret.");
         }
 
-        securityKey = encodeForUrl
-            ? securityKey.Replace('-', '+').Replace('_', '/')
-            : securityKey;
+        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(identifiableHashSecret));
 
-        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(hashKey));
-
-        byte[] keyBytes = Convert.FromBase64String(securityKey);
-        byte[] hashBytes = hmac.ComputeHash(keyBytes);
+        byte[] textToHashBytes = Encoding.UTF8.GetBytes(textToHash);
+        byte[] hashBytes = hmac.ComputeHash(textToHashBytes);
 
         byte[] derivedKeyBytes = new byte[42];
         Array.Copy(hashBytes, derivedKeyBytes, hashBytes.Length);
 
+        // This magic introduces a signature of 'deri' that precedes
+        // the standard provider fixed signature. This is evidence of
+        // a derived key (which is distinct from examining the fixed
+        // length of the key). This operation allow us to clearly
+        // distinguish a derived key from a standard key that otherwise
+        // meets the same length constraints this API happens to produce.
         derivedKeyBytes[31] = (byte)((derivedKeyBytes[31] & 0xC0) | 0b0111);
         derivedKeyBytes[32] = 0b01011110;
         derivedKeyBytes[33] = 0b10101110;
@@ -314,7 +316,7 @@ public static class IdentifiableSecrets
                                                             (uint)derivedKeyBytes.Length,
                                                             signature,
                                                             encodeForUrl: false,
-                                                        derivedKeyBytes);
+                                                            derivedKeyBytes);
 
         return derivedSecurityKey;
     }

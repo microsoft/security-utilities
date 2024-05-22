@@ -39,16 +39,16 @@ namespace Microsoft.Security.Utilities
                                                                             32, 
                                                                             IdentifiableMetadata.AzureIotSignature);
 
-            string shortDerivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(shortKey,
-                                                                                       "SecretPlacehoder",
+            string shortDerivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey("SecretPlacehoder",
+                                                                                       shortKey,
                                                                                        IdentifiableMetadata.AzureIotDeviceChecksumSeed);
 
             string longKey = IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureIotDeviceChecksumSeed,
                                                                            64,
                                                                            IdentifiableMetadata.AzureIotSignature);
 
-            string longDerivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(longKey,
-                                                                                      "SecretPlacehoder",
+            string longDerivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey("SecretPlacehoder",
+                                                                                      longKey,
                                                                                       IdentifiableMetadata.AzureIotDeviceChecksumSeed);
 
             foreach (string key in new[] {shortKey, shortDerivedKey, longKey, longDerivedKey}) 
@@ -84,9 +84,9 @@ namespace Microsoft.Security.Utilities
                                                                                 platformReserved,
                                                                                 providerReserved);
 
-                    string hashingSecret = new string((char)('A' + i + 2), 32);
+                    string textToHash = new string((char)('A' + i + 2), 32);
 
-                    string derivedKey = IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(key, hashingSecret);
+                    string derivedKey = IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(textToHash, key);
 
                     bool result = CommonAnnotatedKey.TryCreate(derivedKey, out CommonAnnotatedKey caKey);
                     result.Should().BeTrue(because: $"the derived key '{derivedKey}' should be a valid common annotated security key");
@@ -169,7 +169,7 @@ namespace Microsoft.Security.Utilities
                     continue; 
                 }
 
-                foreach (string testExample in pattern.GenerateTestExamples())
+                foreach (string securityKey in pattern.GenerateTestExamples())
                 {
                     IIdentifiableKey identifiablePattern = pattern as IIdentifiableKey;
                     if (identifiablePattern == null) { continue; }
@@ -178,14 +178,14 @@ namespace Microsoft.Security.Utilities
 
                     foreach (ulong checksumSeed in identifiablePattern.ChecksumSeeds)
                     {
-                        if (IdentifiableSecrets.TryValidateBase64Key(testExample, checksumSeed, identifiablePattern.Signature, identifiablePattern.EncodeForUrl))                        
+                        if (IdentifiableSecrets.TryValidateBase64Key(securityKey, checksumSeed, identifiablePattern.Signature, identifiablePattern.EncodeForUrl))                        
                         {
                             matched = true;
                             string textToSign = $"{Guid.NewGuid()}";
 
                             foreach (ulong derivedChecksumSeed in new[] { checksumSeed, ~checksumSeed })
                             {
-                                string derivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(testExample, textToSign, checksumSeed, derivedChecksumSeed, identifiablePattern.EncodeForUrl);
+                                string derivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(textToSign, securityKey, checksumSeed, derivedChecksumSeed, identifiablePattern.EncodeForUrl);
                                 bool isValid = IdentifiableSecrets.TryValidateBase64Key(derivedKey, derivedChecksumSeed, identifiablePattern.Signature);
                                 isValid.Should().BeTrue(because: $"the '{pattern.Name} derived key '{derivedKey}' should validate");
 
