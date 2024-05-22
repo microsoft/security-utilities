@@ -10,7 +10,7 @@
 - FPS => False positive reduction in static analysis.
 - FNS => Flase negative reduction in static analysis.
 
-# 1.4.23 - 05/21/2024
+# UNRELEASED
 - BUG: Update `CommonAnnotatedKey` private fields `bytes` and `base64Key` to properties with private setter, so their values can be accessed by derived classes.
 
 # 1.4.22 - 05/21/2024

@@ -59,9 +59,29 @@ namespace Microsoft.Security.Utilities
             return true;
         }
 
-        public byte[] KeyBytes { get; protected set; }
+        private byte[] keyBytes;
 
-        public string EncodedKey { get; protected set; }
+        public byte[] KeyBytes
+        {
+            get => this.keyBytes;
+            protected set
+            {
+                this.keyBytes = value;
+                this.encodedKey = Convert.ToBase64String(this.KeyBytes);
+            }
+        }
+
+        private string encodedKey;
+
+        public string EncodedKey
+        {
+            get => this.encodedKey;
+            protected set
+            {
+                this.encodedKey = value;
+                this.keyBytes = Convert.FromBase64String(this.EncodedKey);
+            }
+        }
 
         protected CommonAnnotatedKey() { }
 
