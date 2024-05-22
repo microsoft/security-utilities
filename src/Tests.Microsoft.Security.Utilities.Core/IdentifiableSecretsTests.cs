@@ -35,11 +35,13 @@ namespace Microsoft.Security.Utilities
         {
             using var assertionScope = new AssertionScope();
 
+            string textToHash = "NonsensitiveData";
+
             string shortKey = IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureIotDeviceChecksumSeed,
                                                                             32, 
                                                                             IdentifiableMetadata.AzureIotSignature);
 
-            string shortDerivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey("SecretPlacehoder",
+            string shortDerivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(textToHash,
                                                                                        shortKey,
                                                                                        IdentifiableMetadata.AzureIotDeviceChecksumSeed);
 
@@ -47,7 +49,7 @@ namespace Microsoft.Security.Utilities
                                                                            64,
                                                                            IdentifiableMetadata.AzureIotSignature);
 
-            string longDerivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey("SecretPlacehoder",
+            string longDerivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(textToHash,
                                                                                       longKey,
                                                                                       IdentifiableMetadata.AzureIotDeviceChecksumSeed);
 
