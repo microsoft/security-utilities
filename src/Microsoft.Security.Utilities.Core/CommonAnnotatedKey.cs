@@ -44,7 +44,7 @@ namespace Microsoft.Security.Utilities
                 keyBytes[keyBytes.Length - 3] = checksumBytes[1];
                 keyBytes[keyBytes.Length - 2] = checksumBytes[2];
                 keyBytes[keyBytes.Length - 1] = checksumBytes[3];
-                
+
                 key = Convert.ToBase64String(keyBytes);
             }
 
@@ -59,35 +59,36 @@ namespace Microsoft.Security.Utilities
             return true;
         }
 
-        protected byte[] bytes;
-        protected string base64Key;
+        public byte[] KeyBytes { get; protected set; }
+
+        public string EncodedKey { get; protected set; }
 
         protected CommonAnnotatedKey() { }
 
         private CommonAnnotatedKey(byte[] bytes)
         {
-            this.bytes = bytes;
-            this.base64Key = Convert.ToBase64String(this.bytes);
+            this.KeyBytes = bytes;
+            this.EncodedKey = Convert.ToBase64String(this.KeyBytes);
         }
 
         public const int DerivedKeyCharacterOffset = 57;
 
-        public bool IsDerivedKey => this.base64Key[DerivedKeyCharacterOffset] == 'D';
+        public bool IsDerivedKey => this.EncodedKey[DerivedKeyCharacterOffset] == 'D';
 
-        public bool IsLongFormKey => bytes.Length == 64;
+        public bool IsLongFormKey => this.KeyBytes.Length == 64;
 
         // 123456789012345678901234567890123456789012345678901234567890123456789012345678901234[5678]
         // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaJQQJ99ADccrrrrrtttttppppASIGixi1[xx==]
 
-        public string StandardFixedSignature => this.base64Key.Substring(52, 6);
+        public string StandardFixedSignature => this.EncodedKey.Substring(52, 6);
 
-        public string DateText => this.base64Key.Substring(58, 2);
+        public string DateText => this.EncodedKey.Substring(58, 2);
 
-        public string PlatformReserved => this.base64Key.Substring(60, 12);
+        public string PlatformReserved => this.EncodedKey.Substring(60, 12);
 
-        public string ProviderReserved => this.base64Key.Substring(72, 4);
+        public string ProviderReserved => this.EncodedKey.Substring(72, 4);
 
-        public string ProviderFixedSignature => this.base64Key.Substring(76, 4);
+        public string ProviderFixedSignature => this.EncodedKey.Substring(76, 4);
 
         public DateTime CreationDate => ComputeDateTime(DateText);
 
