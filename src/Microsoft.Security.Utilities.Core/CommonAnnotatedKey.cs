@@ -44,7 +44,6 @@ namespace Microsoft.Security.Utilities
                 keyBytes[keyBytes.Length - 3] = checksumBytes[1];
                 keyBytes[keyBytes.Length - 2] = checksumBytes[2];
                 keyBytes[keyBytes.Length - 1] = checksumBytes[3];
-
                 key = Convert.ToBase64String(keyBytes);
             }
 
@@ -67,7 +66,7 @@ namespace Microsoft.Security.Utilities
             protected set
             {
                 this.keyBytes = value;
-                this.encodedKey = Convert.ToBase64String(this.KeyBytes);
+                this.encodedKey = Convert.ToBase64String(this.keyBytes);
             }
         }
 
@@ -79,7 +78,7 @@ namespace Microsoft.Security.Utilities
             protected set
             {
                 this.encodedKey = value;
-                this.keyBytes = Convert.FromBase64String(this.EncodedKey);
+                this.keyBytes = Convert.FromBase64String(this.encodedKey);
             }
         }
 
@@ -87,8 +86,8 @@ namespace Microsoft.Security.Utilities
 
         private CommonAnnotatedKey(byte[] bytes)
         {
-            this.KeyBytes = bytes;
-            this.EncodedKey = Convert.ToBase64String(this.KeyBytes);
+            this.keyBytes = bytes;
+            this.encodedKey = Convert.ToBase64String(this.keyBytes);
         }
 
         public const int DerivedKeyCharacterOffset = 57;
