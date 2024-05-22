@@ -59,8 +59,10 @@ namespace Microsoft.Security.Utilities
             return true;
         }
 
-        private byte[] bytes;
-        private string base64Key;
+        protected byte[] bytes;
+        protected string base64Key;
+
+        protected CommonAnnotatedKey() { }
 
         private CommonAnnotatedKey(byte[] bytes)
         {

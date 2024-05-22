@@ -11,6 +11,9 @@
 - FNS => Flase negative reduction in static analysis.
 
 # 1.4.22 - 05/21/2024
+- BUG: Update `CommonAnnotatedKey` private fields `bytes` and `base64Key` to protected fields so they can be accessed by derived classes.
+
+# 1.4.22 - 05/21/2024
 - BUG: Fix `IdentifiableSecrets.ComputeDerivedSymmetricKey` and `IdentifiableSecrets.ComputeDerivedIdentifiableKey` to properly initialize the `HMACSHA256` algorithm with the cask/identifiable secret.
 
 # 1.4.21 - 05/21/2024
