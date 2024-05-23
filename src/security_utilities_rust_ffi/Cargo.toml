@@ -9,3 +9,7 @@ crate-type = ["dylib"]
 
 [dependencies]
 microsoft_security_utilities_core = { path = "../security_utilities_rust" }
+
+[profile.release-with-debug]
+inherits = "release"
+debug = true
