@@ -32,8 +32,8 @@ namespace Microsoft.Security.Utilities.Benchmarks
 
         public static IEnumerable<RegexPattern> RegexPatterns()
         {
-            yield return WellKnownRegexPatterns.AadClientAppIdentifiableCredentialsCurrent();
-            yield return WellKnownRegexPatterns.AadClientAppIdentifiableCredentialsPrevious();
+            yield return new AadClientAppIdentifiableCredentialsCurrent();
+            yield return new AadClientAppIdentifiableCredentialsPrevious();
             yield return new AzureFunctionIdentifiableKey();
             yield return new AzureSearchIdentifiableQueryKey();
             yield return new AzureSearchIdentifiableAdminKey();

@@ -16,7 +16,6 @@ namespace Microsoft.Security.Utilities
         /// The generated key is a 32-character string that contains alphanumeric characters
         /// as well as symbols from the set: .=\-:[_@\*]+?
         /// </summary>
-
         public AadClientAppLegacyCredentials32()
         {
             Id = "SEC101/101";

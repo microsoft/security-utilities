@@ -10,7 +10,7 @@ namespace Microsoft.Security.Utilities
         public AzureFunctionIdentifiableKey()
         {
             Id = "SEC101/158";
-            Name = nameof(AzureContainerRegistryIdentifiableKey);
+            Name = nameof(AzureFunctionIdentifiableKey);
         }
 
         public override bool EncodeForUrl => true;

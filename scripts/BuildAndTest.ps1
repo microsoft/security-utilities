@@ -78,6 +78,12 @@ if (-not $NoTest) {
     }
 }
 
+Write-Information "Exporting rules data.."
+Invoke-Expression ("$RepoRoot\bld\bin\AnyCPU_Release\Microsoft.Security.Utilities.Cli\net6.0\Microsoft.Security.Utilities.Cli.exe export --output $RepoRoot\GeneratedRegexPatterns\")
+if ($LASTEXITCODE -ne 0) {
+    Exit-WithFailureMessage $ScriptName "Rules export failed."
+}
+
 Write-Information "Creating packages.."
 cmd.exe /c 'BuildPackages.cmd'
 if ($LASTEXITCODE -ne 0) {
