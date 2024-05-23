@@ -10,7 +10,7 @@
   },
   {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{3}7Q~[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{31})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=]|$)",
-    "Id": "SEC101/050",
+    "Id": "SEC101/101",
     "Name": "AadClientAppIdentifiableCredentials",
     "SniffLiterals": [
       "7Q~"

@@ -9,9 +9,9 @@ namespace Microsoft.Security.Utilities
     {
         public AadClientAppIdentifiableCredentialsPrevious()
         {
-            Id = "SEC101/050";
+            Id = "SEC101/101";
             Name = "AadClientAppIdentifiableCredentials";
-            DetectionMetadata = DetectionMetadata.Identifiable;
+            DetectionMetadata = DetectionMetadata.HighEntropy;
             Pattern = $"{WellKnownRegexPatterns.PrefixUrlUnreserved}(?<refine>[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{3}}7Q~[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{31}}){WellKnownRegexPatterns.SuffixUrlUnreserved}";
             SniffLiterals = new HashSet<string>(new[] { "7Q~" });
         }
