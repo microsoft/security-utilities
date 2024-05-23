@@ -1,7 +1,7 @@
 [
   {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{3}8Q~[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{34})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=]|$)",
-    "Id": "SEC101/156",
+    "Id": "SEC101/050",
     "Name": "AadClientAppIdentifiableCredentials",
     "SniffLiterals": [
       "8Q~"
@@ -10,12 +10,12 @@
   },
   {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{3}7Q~[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{31})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=]|$)",
-    "Id": "SEC101/156",
+    "Id": "SEC101/050",
     "Name": "AadClientAppIdentifiableCredentials",
     "SniffLiterals": [
       "7Q~"
     ],
-    "DetectionMetadata": "HighEntropy"
+    "DetectionMetadata": "Identifiable"
   },
   {
     "EncodeForUrl": true,
@@ -344,9 +344,11 @@
   },
   {
     "Pattern": "(^|[^0-9a-z])(?<refine>oy2[a-p][0-9a-z]{15}[aq][0-9a-z]{11}[eu][bdfhjlnprtvxz357][a-p][0-9a-z]{11}[aeimquy4])([^aeimquy4]|$)",
-    "Id": "SEC101/031",
+    "Id": "SEC101/030",
     "Name": "NuGetApiKey",
-    "SniffLiterals": null,
+    "SniffLiterals": [
+      "oy2"
+    ],
     "DetectionMetadata": "HighEntropy, FixedSignature"
   },
   {
@@ -395,7 +397,9 @@
     "Pattern": "(?:^|[^0-9a-f\\-])(?P<refine>dapi[0-9a-f\\-]{32,34})(?:[^0-9a-f\\-]|$)",
     "Id": "SEC101/110",
     "Name": "AzureDatabricksPat",
-    "SniffLiterals": null,
+    "SniffLiterals": [
+      "dapi"
+    ],
     "DetectionMetadata": "HighEntropy"
   },
   {

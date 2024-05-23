@@ -54,10 +54,10 @@ public static class WellKnownRegexPatterns
         new Unclassified16ByteHexadecimalString(),
     };
 
-    public static IEnumerable<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } = new[]
+    public static IEnumerable<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } = new RegexPattern[]
     {
-        AadClientAppIdentifiableCredentialsCurrent(),
-        AadClientAppIdentifiableCredentialsPrevious(),
+        new AadClientAppIdentifiableCredentialsCurrent(),
+        new AadClientAppIdentifiableCredentialsPrevious(),
         new AzureFunctionIdentifiableKey(),
         new AzureSearchIdentifiableQueryKey(),
         new AzureSearchIdentifiableAdminKey(),
@@ -78,7 +78,7 @@ public static class WellKnownRegexPatterns
         new AzureCacheForRedisIdentifiableKey(),
         new AzureContainerRegistryIdentifiableKey(),
         new SecretScanningSampleToken(),
-        NuGetApiKey(),
+        new NuGetApiKey(),
         new AadClientAppLegacyCredentials32(),      // SEC101/101
         new AadClientAppLegacyCredentials34(),      // SEC101/101
         new AdoPat(),                               // SEC101/102
@@ -91,51 +91,8 @@ public static class WellKnownRegexPatterns
 
     public static IEnumerable<RegexPattern> HighConfidenceThirdPartySecurityModels { get; } = new List<RegexPattern>
     {
-        NpmAuthorKey(),
+        new NpmAuthorKey(),
     };
-
-    // AAD client app, most recent two versions.
-    public static RegexPattern AadClientAppIdentifiableCredentialsCurrent()
-    {
-        return new("SEC101/156",
-                   "AadClientAppIdentifiableCredentials",
-                   DetectionMetadata.Identifiable,
-                   $"{PrefixUrlUnreserved}(?<refine>[{RegexEncodedUrlUnreserved}]{{3}}8Q~[{RegexEncodedUrlUnreserved}]{{34}}){SuffixUrlUnreserved}",
-                   TimeSpan.FromDays(365 * 2),
-                   new HashSet<string>(new[] { "8Q~" }),
-                   sampleGenerator: () => new[] { $"zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzblP" });
-    }
-
-    public static RegexPattern AadClientAppIdentifiableCredentialsPrevious()
-    {
-        return new("SEC101/156",
-            "AadClientAppIdentifiableCredentials",
-            DetectionMetadata.HighEntropy,
-            $"{PrefixUrlUnreserved}(?<refine>[{RegexEncodedUrlUnreserved}]{{3}}7Q~[{RegexEncodedUrlUnreserved}]{{31}}){SuffixUrlUnreserved}",
-            TimeSpan.FromDays(365 * 2),
-            new HashSet<string>(new[] { "7Q~" }),
-            sampleGenerator: () => new[] { $"zzz7Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz" });
-    }
-
-    public static RegexPattern NuGetApiKey()
-    {
-        return new("SEC101/031",
-                   nameof(NuGetApiKey),
-                   DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy,
-                   "(^|[^0-9a-z])(?<refine>oy2[a-p][0-9a-z]{15}[aq][0-9a-z]{11}[eu][bdfhjlnprtvxz357][a-p][0-9a-z]{11}[aeimquy4])([^aeimquy4]|$)",
-                   TimeSpan.FromDays(365 * 2),
-                   sampleGenerator: () => new[] { $"oy2a{RandomLowercase(15)}a{RandomLowercase(11)}e7a{RandomLowercase(11)}a" });
-    }
-
-    public static RegexPattern NpmAuthorKey()
-    {
-        return new("SEC101/050",
-                   nameof(NpmAuthorKey),
-                   DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy,
-                   @$"{PrefixBase62}(?<refine>npm_[{Base62}]{{36}}){SuffixBase62}",
-                   TimeSpan.FromDays(365 * 2),
-                   sampleGenerator: () => new[] { $"npm_{RandomBase62(36)}" });
-    }
 
 
     public static string RandomUrlUnreserved(int count, bool sparse = false)
