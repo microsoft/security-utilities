@@ -12,6 +12,11 @@
 
 # UNRELEASED
 - BUG: Correct `AzureCosmosDBIdentifiableKey` rule id to `SEC101/160` (previously incorrectly listed as `SEC101/163`).
+- BUG: Correct length of `SEC101/166.AzureSearchIdentifiableQueryKey` and `SEC101/167.AzureSearchIdentifiableAdminKey` rules to 39 bytes and properly mark it as `DetectionMetadata.Identifiable`.
+- BUG: Remove `/AM7` signature + check from rust code.
+- NEW: Add `SEC101/190.AzureEventGridIdentifiableKey` check.
+- BUG: Correct `SEC101/170.AzureMLWebServiceClassicIdentifiableKey` signature to `+AMC`.
+- FPS: Correct `SEC101/166.AzureSearchIdentifiableQueryKey` and `SEC101/167.AzureSearchIdentifiableAdminKey` regex to disallow special characters in checksum region.
 
 # 1.4.22 - 05/21/2024
 - BUG: Fix `IdentifiableSecrets.ComputeDerivedSymmetricKey` and `IdentifiableSecrets.ComputeDerivedIdentifiableKey` to properly initialize the `HMACSHA256` algorithm with the cask/identifiable secret.
