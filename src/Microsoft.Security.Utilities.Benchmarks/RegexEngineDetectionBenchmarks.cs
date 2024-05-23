@@ -53,6 +53,10 @@ namespace Microsoft.Security.Utilities.Benchmarks
             yield return new AzureApimIdentifiableRepositoryKey();
             yield return new AzureCacheForRedisIdentifiableKey();
             yield return new AzureContainerRegistryIdentifiableKey();
+// There are all candidate rules that could be considered for the lower-level library.
+// Some are obviously feasible to add, others could entail novel detection techniques
+// that may or may not be implemented. Most of the less feasible detections are for
+// locating obsoleted key formats.
 //            yield return new SecretScanningSampleToken();
 //            yield return WellKnownRegexPatterns.NuGetApiKey();
 //            yield return new AadClientAppLegacyCredentials32();      // SEC101/101
