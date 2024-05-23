@@ -9,7 +9,7 @@ namespace Microsoft.Security.Utilities
     {
         public AzureCosmosDBIdentifiableKey()
         {
-            Id = "SEC101/163";
+            Id = "SEC101/160";
             Name = nameof(AzureCosmosDBIdentifiableKey);
         }
 

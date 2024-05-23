@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureContainerRegistryIdentifiableKey : IdentifiableKey
+    public class AzureContainerRegistryIdentifiableKey : IdentifiableKey
     {
         public AzureContainerRegistryIdentifiableKey()
         {

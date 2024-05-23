@@ -103,7 +103,7 @@ public static class WellKnownRegexPatterns
                    $"{PrefixUrlUnreserved}(?<refine>[{RegexEncodedUrlUnreserved}]{{3}}8Q~[{RegexEncodedUrlUnreserved}]{{34}}){SuffixUrlUnreserved}",
                    TimeSpan.FromDays(365 * 2),
                    new HashSet<string>(new[] { "8Q~" }),
-                   sampleGenerator: () => new[] { $"zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz" });
+                   sampleGenerator: () => new[] { $"zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzblP" });
     }
 
     public static RegexPattern AadClientAppIdentifiableCredentialsPrevious()
