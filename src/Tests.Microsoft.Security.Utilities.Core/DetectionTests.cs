@@ -26,11 +26,6 @@ namespace Tests.Microsoft.Security.Utilities
             int length = Math.Min(1, (int)DateTime.UtcNow.Ticks % 99);
             TimeSpan rotationPeriod = TimeSpan.FromSeconds(Math.Min(1, DateTime.UtcNow.Second));
 
-            while (rotationPeriod == default)
-            {
-                rotationPeriod = TimeSpan.FromSeconds(DateTime.UtcNow.Second);
-            }
-
             var detection = new Detection(id,
                                           name,
                                           start,
@@ -136,17 +131,7 @@ namespace Tests.Microsoft.Security.Utilities
             var metadata = (DetectionMetadata)0B_11111;
             int start = Math.Min(1, (int)DateTime.UtcNow.Ticks % 99);
             int length = Math.Min(1, (int)DateTime.UtcNow.Ticks % 99);
-            TimeSpan rotationPeriod = TimeSpan.FromSeconds(DateTime.UtcNow.Second);
-
-            while (rotationPeriod == default)
-            {
-                rotationPeriod = TimeSpan.FromSeconds(DateTime.UtcNow.Second);
-            }
-
-            while (rotationPeriod == default)
-            {
-                rotationPeriod = TimeSpan.FromSeconds(DateTime.UtcNow.Second);
-            }
+            TimeSpan rotationPeriod = TimeSpan.FromSeconds(Math.Min(1, DateTime.UtcNow.Second));
 
             var detection = new Detection
             {

@@ -9,7 +9,7 @@ namespace Microsoft.Security.Utilities
     {
         public AadClientAppIdentifiableCredentialsPrevious()
         {
-            Id = "SEC101/101";
+            Id = "SEC101/156";
             Name = "AadClientAppIdentifiableCredentials";
             DetectionMetadata = DetectionMetadata.HighEntropy;
             Pattern = $"{WellKnownRegexPatterns.PrefixUrlUnreserved}(?<refine>[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{3}}7Q~[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{31}}){WellKnownRegexPatterns.SuffixUrlUnreserved}";

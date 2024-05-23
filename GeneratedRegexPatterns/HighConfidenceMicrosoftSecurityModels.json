@@ -1,7 +1,7 @@
 [
   {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{3}8Q~[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{34})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=]|$)",
-    "Id": "SEC101/050",
+    "Id": "SEC101/156",
     "Name": "AadClientAppIdentifiableCredentials",
     "SniffLiterals": [
       "8Q~"
@@ -10,12 +10,12 @@
   },
   {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{3}7Q~[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{31})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=]|$)",
-    "Id": "SEC101/101",
+    "Id": "SEC101/156",
     "Name": "AadClientAppIdentifiableCredentials",
     "SniffLiterals": [
       "7Q~"
     ],
-    "DetectionMetadata": "Identifiable"
+    "DetectionMetadata": "HighEntropy"
   },
   {
     "EncodeForUrl": true,
@@ -32,7 +32,7 @@
       "AzFu"
     ],
     "Id": "SEC101/158",
-    "Name": "AzureContainerRegistryIdentifiableKey",
+    "Name": "AzureFunctionIdentifiableKey",
     "DetectionMetadata": "Identifiable"
   },
   {
@@ -41,7 +41,7 @@
     "ChecksumSeeds": [
       5869709231681187888
     ],
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
     "KeyLength": 39,
     "RegexNormalizedSignature": "AzSe",
     "SniffLiterals": [
@@ -57,7 +57,7 @@
     ],
     "EncodeForUrl": true,
     "Signature": "AzSe",
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=]|$)",
     "KeyLength": 39,
     "RegexNormalizedSignature": "AzSe",
     "SniffLiterals": [
