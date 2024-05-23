@@ -8,14 +8,14 @@ namespace Microsoft.Security.Utilities.Benchmarks
     public class RegexEngineDetectionBenchmarks
     {
         // The # of iterations of the scan to run.
-        private const int s_iterations = 10;
+        protected const int s_iterations = 100;
 
         // The size of randomized data to add as a prefix
         // for every secret. This is intended to make positive
         // hit less concentrated in the profiling.
-        private const int secretPrefixSize = 1000 * 1024;
+        private const int secretPrefixSize = 100 * 1024;
 
-        private static readonly string prefix = GenerateRandomData(secretPrefixSize);
+        public static readonly string ScanContentPrefix = GenerateRandomData(secretPrefixSize);
 
         private static string GenerateRandomData(int size)
         {
@@ -30,19 +30,39 @@ namespace Microsoft.Security.Utilities.Benchmarks
         // production overhead to all the scanners.
         private const bool s_generateCorrelatingIds = false;
 
-        private static IEnumerable<RegexPattern> RegexPatterns()
+        public static IEnumerable<RegexPattern> RegexPatterns()
         {
-            foreach (RegexPattern regexPattern in WellKnownRegexPatterns.HighConfidenceSecurityModels)
-            {
-                if  (regexPattern is Azure32ByteIdentifiableKey ||
-                     regexPattern is Azure64ByteIdentifiableKey)
-                {
-                    yield return regexPattern;
-                }
-
-                yield return WellKnownRegexPatterns.AadClientAppIdentifiableCredentialsCurrent();
-                yield return WellKnownRegexPatterns.AadClientAppIdentifiableCredentialsPrevious();
-            }
+            yield return WellKnownRegexPatterns.AadClientAppIdentifiableCredentialsCurrent();
+            yield return WellKnownRegexPatterns.AadClientAppIdentifiableCredentialsPrevious();
+            yield return new AzureFunctionIdentifiableKey();
+            yield return new AzureSearchIdentifiableQueryKey();
+            yield return new AzureSearchIdentifiableAdminKey();
+            yield return new AzureRelayIdentifiableKey();
+            yield return new AzureEventHubIdentifiableKey();
+            yield return new AzureServiceBusIdentifiableKey();
+            yield return new AzureIotHubIdentifiableKey();
+            yield return new AzureIotDeviceIdentifiableKey();
+            yield return new AzureIotDeviceProvisioningIdentifiableKey();
+            yield return new AzureStorageAccountIdentifiableKey();
+            yield return new AzureCosmosDBIdentifiableKey();
+            yield return new AzureBatchIdentifiableKey();
+            yield return new AzureMLWebServiceClassicIdentifiableKey();
+            yield return new AzureApimIdentifiableDirectManagementKey();
+            yield return new AzureApimIdentifiableSubscriptionKey();
+            yield return new AzureApimIdentifiableGatewayKey();
+            yield return new AzureApimIdentifiableRepositoryKey();
+            yield return new AzureCacheForRedisIdentifiableKey();
+            yield return new AzureContainerRegistryIdentifiableKey();
+//            yield return new SecretScanningSampleToken();
+//            yield return WellKnownRegexPatterns.NuGetApiKey();
+//            yield return new AadClientAppLegacyCredentials32();      // SEC101/101
+//            yield return new AadClientAppLegacyCredentials34();      // SEC101/101
+//            yield return new AdoPat();                               // SEC101/102
+//            yield return new AzureCosmosDBLegacyCredentials();       // SEC101/104
+//            yield return new AzureStorageAccountLegacyCredentials(); // SEC101/106
+//            yield return new AzureMessageLegacyCredentials();
+//            yield return new AzureDatabricksPat();
+//            yield return new AzureEventGridIdentifiableKey();
         }
 
         [Benchmark]
@@ -90,7 +110,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
                         localCount++;
 
                         // Demonstrate classification/detection only.
-                        int count = masker.DetectSecrets($"{prefix} {example}").Count();
+                        int count = masker.DetectSecrets($"{ScanContentPrefix} {example}").Count();
 
                         if (count == 0)
                         {

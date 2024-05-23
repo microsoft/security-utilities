@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal class AzureFunctionIdentifiableKey : IdentifiableKey
+    public class AzureFunctionIdentifiableKey : IdentifiableKey
     {
         public AzureFunctionIdentifiableKey()
         {
