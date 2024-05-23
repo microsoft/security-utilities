@@ -1099,16 +1099,6 @@ impl ScanOptions {
             ScanDefinition::new(
                 ScanMatchType::His64Utf8,
                 ScanMatchType::His64Utf16,
-                b"/AM7",
-                b'A',
-                80,
-                88,
-                nop_bytes));
-
-        clone.defs.push(
-            ScanDefinition::new(
-                ScanMatchType::His64Utf8,
-                ScanMatchType::His64Utf16,
                 b"APIM",
                 b'A',
                 80,
