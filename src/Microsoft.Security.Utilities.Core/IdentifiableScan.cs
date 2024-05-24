@@ -19,7 +19,9 @@ public class IdentifiableScan : ISecretMasker, IDisposable
     private bool generateCorrelatingIds;
 
     [DllImport("microsoft_security_utilities_core")]
-    static extern IntPtr identifiable_scan_create();
+    static extern IntPtr identifiable_scan_create(
+         byte[] filter,
+         long filterLength);
 
     [DllImport("microsoft_security_utilities_core")]
     static extern void identifiable_scan_destroy(IntPtr scan);
@@ -56,6 +58,9 @@ public class IdentifiableScan : ISecretMasker, IDisposable
 
     private IntPtr scan;
     private Dictionary<string, IList<RegexPattern>> idToLengthMap;
+
+    [ThreadStatic]
+    static StringBuilder stringBuilder;
     
     public IdentifiableScan(IEnumerable<RegexPattern> regexPatterns, bool generateCorrelatingIds)
     {   
@@ -123,7 +128,18 @@ public class IdentifiableScan : ISecretMasker, IDisposable
     {
         if (this.scan == IntPtr.Zero)
         {
-            this.scan = identifiable_scan_create();
+            stringBuilder ??= new StringBuilder();
+            stringBuilder.Clear();
+
+            foreach (var id in this.idToLengthMap.Keys)
+            {
+                stringBuilder.Append(id);
+                stringBuilder.Append(';');
+            }
+
+            var filter = Encoding.UTF8.GetBytes(stringBuilder.ToString());
+
+            this.scan = identifiable_scan_create(filter, filter.Length);
 
             if (this.scan == IntPtr.Zero)
             {

@@ -2,8 +2,26 @@ use std::ffi::c_void;
 use microsoft_security_utilities_core::{IdentifiableScan, IdentifiableScanOptions};
 
 #[no_mangle]
-extern "C" fn identifiable_scan_create() -> *mut c_void {
-    let options = IdentifiableScanOptions::default();
+extern "C" fn identifiable_scan_create(
+    filter: *const u8,
+    filter_len: usize) -> *mut c_void {
+    let mut options = IdentifiableScanOptions::default();
+
+    if !filter.is_null() && filter_len > 0 {
+        let filter = unsafe { std::slice::from_raw_parts(filter, filter_len) };
+        if let Ok(filter) = std::str::from_utf8(filter) {
+            let mut names = Vec::new();
+
+            for name in filter.split(';') {
+                if !name.is_empty() {
+                    names.push(name);
+                }
+            }
+
+            options = options.with_only(names);
+        }
+    }
+
     let scan = Box::new(IdentifiableScan::new(options));
 
     Box::into_raw(scan) as *mut c_void
