@@ -1,18 +1,20 @@
 @echo off
 time /T
 
-pushd .\src\security_utilities_rust_ffi\
+pushd .\src\security_utilities_rust\
+call cargo clean --release
 call cargo test --release
 if "%ERRORLEVEL%" NEQ "0" (
-  echo "security_utilities_rust_ffi testing failed..."
+  echo "security_utilities_rust testing failed..."
   exit /b %ERRORLEVEL%
 )
 popd
 
-pushd .\src\security_utilities_rust\
+pushd .\src\security_utilities_rust_ffi\
+call cargo clean --release
 call cargo test --release
 if "%ERRORLEVEL%" NEQ "0" (
-  echo "security_utilities_rust testing failed..."
+  echo "security_utilities_rust_ffi testing failed..."
   exit /b %ERRORLEVEL%
 )
 popd
