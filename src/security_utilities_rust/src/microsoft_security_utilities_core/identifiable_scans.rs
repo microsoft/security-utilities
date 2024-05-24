@@ -233,6 +233,7 @@ impl PossibleScanMatch {
     }
 }
 
+#[derive(Clone)]
 pub struct ScanDefinition {
     name: &'static str,
     sig_char: u8,
@@ -834,6 +835,8 @@ pub struct Scan {
     accum: u64,
     index: u64,
     checks: Vec<PossibleScanMatch>,
+    utf8_lanes: [Vec<ScanDefinition>; 32],
+    utf16_lanes: [Vec<ScanDefinition>; 32],
     sig_char_chunks: Vec<[u8; 16]>,
     char_map: [u8; 256],
     must_scan: bool,
@@ -846,6 +849,8 @@ impl Scan {
             accum: 0,
             index: 0,
             checks: Vec::new(),
+            utf8_lanes: Default::default(),
+            utf16_lanes: Default::default(),
             sig_char_chunks: Vec::new(),
             char_map: [0; 256],
             must_scan: false,
@@ -887,6 +892,12 @@ impl Scan {
              * This is used to see if the accumulator has any sig chars.
              */
             self.char_map[def.sig_char as usize] |= MASK_SIG;
+
+            let utf8_lane = def.packed_utf8 & 31;
+            let utf16_lane = def.packed_utf16 & 31;
+
+            self.utf8_lanes[utf8_lane as usize].push(def.clone());
+            self.utf16_lanes[utf16_lane as usize].push(def.clone());
         }
     }
 
@@ -916,13 +927,48 @@ impl Scan {
         count != 0
     }
 
+    #[inline(always)]
+    fn check_utf8(
+        &mut self,
+        packed_utf8: u64) {
+        let lane = (packed_utf8 & 31) as usize;
+
+        for def in &self.utf8_lanes[lane] {
+            if def.packed_utf8 == packed_utf8 {
+                def.push_possible_match(
+                    self.index,
+                    true,
+                    &mut self.checks);
+
+                break;
+            }
+        }
+    }
+
+    #[inline(always)]
+    fn check_utf16(
+        &mut self,
+        packed_utf16: u64) {
+        let lane = (packed_utf16 & 31) as usize;
+
+        for def in &self.utf16_lanes[lane] {
+            if def.packed_utf16 == packed_utf16 {
+                def.push_possible_match(
+                    self.index,
+                    false,
+                    &mut self.checks);
+
+                break;
+            }
+        }
+    }
+
     /* Faster without any inline, oddly enough */
     #[cold]
     fn byte_scan(
         &mut self,
         data: &[u8]) {
         let mut sig_index = 0u64;
-        let defs = &self.options.defs;
 
         for b in data {
             let b = *b;
@@ -947,38 +993,16 @@ impl Scan {
                         let packed_utf8 = self.accum & 0xFFFFFF;
                         let packed_utf16 = self.accum & 0xFFFFFFFFFFFF;
 
-                        for def in defs {
-                            if def.packed_utf8 == packed_utf8 {
-                                def.push_possible_match(
-                                    self.index,
-                                    true,
-                                    &mut self.checks);
-                            } else if def.packed_utf16 == packed_utf16 {
-                                def.push_possible_match(
-                                    self.index,
-                                    false,
-                                    &mut self.checks);
-                            }
-                        }
+                        self.check_utf8(packed_utf8);
+                        self.check_utf16(packed_utf16);
                     },
 
                     MASK_LARGE => {
                         let packed_utf8 = self.accum & 0xFFFFFFFF;
                         let packed_utf16 = self.accum;
 
-                        for def in defs {
-                            if def.packed_utf8 == packed_utf8 {
-                                def.push_possible_match(
-                                    self.index,
-                                    true,
-                                    &mut self.checks);
-                            } else if def.packed_utf16 == packed_utf16 {
-                                def.push_possible_match(
-                                    self.index,
-                                    false,
-                                    &mut self.checks);
-                            }
-                        }
+                        self.check_utf8(packed_utf8);
+                        self.check_utf16(packed_utf16);
                     },
 
                     MASK_BOTH => {
@@ -988,21 +1012,11 @@ impl Scan {
                         let packed_utf16 = self.accum;
                         let packed_utf16_small = self.accum & 0xFFFFFFFFFFFF;
 
-                        for def in defs {
-                            if def.packed_utf8 == packed_utf8 ||
-                               def.packed_utf8 == packed_utf8_small {
-                                def.push_possible_match(
-                                    self.index,
-                                    true,
-                                    &mut self.checks);
-                            } else if def.packed_utf16 == packed_utf16 ||
-                                      def.packed_utf16 == packed_utf16_small {
-                                def.push_possible_match(
-                                    self.index,
-                                    false,
-                                    &mut self.checks);
-                            }
-                        }
+                        self.check_utf8(packed_utf8);
+                        self.check_utf8(packed_utf8_small);
+
+                        self.check_utf16(packed_utf16);
+                        self.check_utf16(packed_utf16_small);
                     },
 
                     _ => { },
