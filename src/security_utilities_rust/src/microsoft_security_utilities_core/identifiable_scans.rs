@@ -56,6 +56,7 @@ impl UrlUnreserved for u8 {
 
 pub struct ScanMatch {
     name: &'static str,
+    def_index: u32,
     start: u64,
     len: u64,
     text: Option<String>,
@@ -64,12 +65,14 @@ pub struct ScanMatch {
 impl ScanMatch {
     fn new(
         name: &'static str,
+        def_index: u32,
         start: u64,
         len: u64,
         data: &[u8],
         want_text: bool) -> Self {
         Self {
             name,
+            def_index,
             start,
             len,
             text: match want_text {
@@ -89,6 +92,8 @@ impl ScanMatch {
 
     pub fn name(&self) -> &'static str { self.name }
 
+    pub fn def_index(&self) -> u32 { self.def_index }
+
     pub fn text(&self) -> &str {
         match &self.text {
             Some(text) => { &text },
@@ -99,6 +104,7 @@ impl ScanMatch {
 
 pub struct PossibleScanMatch {
     name: &'static str,
+    def_index: u32,
     start: u64,
     len: usize,
     utf8: bool,
@@ -108,12 +114,14 @@ pub struct PossibleScanMatch {
 impl PossibleScanMatch {
     fn new(
         name: &'static str,
+        def_index: u32,
         start: u64,
         len: usize,
         utf8: bool,
         validator: Rc<dyn Fn(&[u8]) -> usize>) -> Self {
         Self {
             name,
+            def_index,
             start,
             len,
             utf8,
@@ -198,6 +206,7 @@ impl PossibleScanMatch {
                 Some(
                     ScanMatch::new(
                         self.name,
+                        self.def_index,
                         self.start,
                         len as u64,
                         &data[..len],
@@ -224,6 +233,7 @@ impl PossibleScanMatch {
                 Some(
                     ScanMatch::new(
                         self.name,
+                        self.def_index,
                         self.start,
                         (len * 2) as u64,
                         &bytes[..len],
@@ -236,6 +246,7 @@ impl PossibleScanMatch {
 #[derive(Clone)]
 pub struct ScanDefinition {
     name: &'static str,
+    index: u32,
     sig_char: u8,
     check_char: u8,
     before_utf8: u64,
@@ -280,6 +291,7 @@ impl ScanDefinition {
 
         Self {
             name,
+            index: 0,
             sig_char,
             check_char: sig[sig.len()-1],
             before_utf8: before,
@@ -292,6 +304,8 @@ impl ScanDefinition {
             validator: Rc::new(validator),
         }
     }
+
+    pub fn name(&self) -> &'static str { self.name }
 
     fn pack_utf8(sig: &[u8]) -> u64 {
         let mut packed = 0u64;
@@ -326,6 +340,7 @@ impl ScanDefinition {
                     checks.push(
                         PossibleScanMatch::new(
                             self.name,
+                            self.index,
                             index - self.before_utf8,
                             self.len_utf8 as usize,
                             utf8,
@@ -338,6 +353,7 @@ impl ScanDefinition {
                     checks.push(
                         PossibleScanMatch::new(
                             self.name,
+                            self.index,
                             index - self.before_utf16,
                             self.len_utf16 as usize,
                             utf8,
@@ -861,11 +877,21 @@ impl Scan {
         scan
     }
 
+    pub fn scan_defs(&self) -> &Vec<ScanDefinition>
+    {
+        &self.options.defs
+    }
+
     fn init(&mut self) {
         let mut unique_chars = [0; 256];
+        let mut def_index = 0u32;
 
         /* Build lookup tables */
-        for def in &self.options.defs {
+        for def in &mut self.options.defs {
+            /* Update definition index */
+            def.index = def_index;
+            def_index += 1;
+
             /* Store unique characters to vectorize scan for */
             if unique_chars[def.sig_char as usize] == 0 {
                 /*
