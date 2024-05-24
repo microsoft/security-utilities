@@ -19,6 +19,16 @@ if "%ERRORLEVEL%" NEQ "0" (
 )
 popd
 
+
+pushd .\src\security_utilities_rust_ffi\
+call cargo clean --release
+call cargo build --release
+if "%ERRORLEVEL%" NEQ "0" (
+  echo "security_utilities_rust_ffi build failed..."
+  exit /b %ERRORLEVEL%
+)
+popd
+
 xcopy /Y .\src\security_utilities_rust_ffi\target\release\microsoft_security_utilities_core.dll .\refs
 xcopy /Y .\src\security_utilities_rust_ffi\target\release\microsoft_security_utilities_core.pdb .\refs
 
