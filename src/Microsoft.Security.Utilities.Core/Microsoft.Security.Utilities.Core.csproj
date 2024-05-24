@@ -27,6 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Buffers">
+      <Version>4.5.1</Version>
+      <Version>4.5.1</Version>
+      <Version>4.5.1</Version>
+    </PackageReference>
     <PackageReference Include="Nerdbank.GitVersioning" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>

@@ -49,10 +49,10 @@ extern "C" fn identifiable_scan_parse(
 
 #[no_mangle]
 extern "C" fn identifiable_scan_match_count(
-    scan: *mut c_void) -> usize {
+    scan: *mut c_void) -> u32 {
     let scan = unsafe { Box::from_raw(scan as *mut IdentifiableScan) };
 
-    let count = scan.possible_matches().len();
+    let count = scan.possible_matches().len() as u32;
 
     /* Don't drop */
     let _ = Box::into_raw(scan);
@@ -93,22 +93,52 @@ extern "C" fn identifiable_scan_match_get(
     true
 }
 
+fn ffi_string_copy(
+    output: *mut u8,
+    output_len: *mut usize,
+    text: &str) {
+    if output.is_null() || output_len.is_null() {
+        return;
+    }
+
+    unsafe {
+        if *output_len == 0 {
+            return;
+        }
+    }
+
+    let output = unsafe { std::slice::from_raw_parts_mut(output, *output_len) };
+    let text = text.as_bytes();
+    let mut length = text.len();
+
+    if length >= output.len() {
+        length = output.len() - 1;
+    }
+
+    output[0..length].copy_from_slice(&text[0..length]);
+    output[length] = 0;
+
+    unsafe {
+        *output_len = length;
+    }
+}
+
 #[no_mangle]
 extern "C" fn identifiable_scan_match_check(
     scan: *mut c_void,
     index: u32,
     input: *const u8,
     input_len: usize,
-    match_type: *mut u16,
+    name: *mut u8,
+    name_len: *mut usize,
     output: *mut u8,
-    output_len: usize,
-    copied_len: *mut usize) -> bool {
+    output_len: *mut usize) -> bool {
     let scan = unsafe { Box::from_raw(scan as *mut IdentifiableScan) };
     let matches = scan.possible_matches();
     let index = index as usize;
 
     /* Sanity checks */
-    if index >= matches.len() || input.is_null() || match_type.is_null() {
+    if index >= matches.len() || input.is_null() {
         /* Don't drop */
         let _ = Box::into_raw(scan);
 
@@ -118,35 +148,23 @@ extern "C" fn identifiable_scan_match_check(
     let found = &matches[index];
 
     let input = unsafe { std::slice::from_raw_parts(input, input_len as usize) };
-    let want_text = !output.is_null() && !copied_len.is_null();
-
-    if want_text {
-        unsafe { *copied_len = 0; }
-    }
+    let want_text = !output.is_null() && !output_len.is_null();
 
     /* Check if we have a match */
     let result = if let Some(found) = found.matches_bytes(input, want_text) {
         /* Copy the UTF8 text out, if wanted */
-        if want_text && output_len > 1 {
-            let output = unsafe { std::slice::from_raw_parts_mut(output, output_len) };
-            let text = found.text().as_bytes();
-            let mut length = text.len();
-
-            if length >= output.len() {
-                length = output.len() - 1;
-            }
-
-            output[0..length].copy_from_slice(&text[0..length]);
-            output[length] = 0;
-
-            unsafe {
-                *copied_len = length;
+        if want_text {
+            ffi_string_copy(output, output_len, found.text());
+        } else {
+            if !output_len.is_null() {
+                unsafe {
+                    *output_len = 0;
+                }
             }
         }
 
-        unsafe {
-            *match_type = *found.match_type() as u16;
-        }
+        /* Copy the name out */
+        ffi_string_copy(name, name_len, found.name());
 
         /* Notify match */
         true

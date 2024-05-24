@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,26 +17,6 @@ namespace Microsoft.Security.Utilities;
 public class IdentifiableScan : ISecretMasker, IDisposable
 {
     private bool generateCorrelatingIds;
-
-    public enum MatchType : ushort
-    {
-        None = 0,
-        U32Utf8 = 1,
-        U32Utf16 = 2,
-        U64Utf8 = 3,
-        U64Utf16 = 4,
-        Utf8 = 5,
-        Utf16 = 6,
-        U39Utf8 = 7,
-        U39Utf16 = 8,
-        U40Utf8 = 9,
-        U40Utf16 = 10,
-        A7Utf8 = 11,
-        A7Utf16 = 12,
-        A8Utf8 = 13,
-        A8Utf16 = 14,
-        Unknown = 15,
-    }
 
     [DllImport("microsoft_security_utilities_core")]
     static extern IntPtr identifiable_scan_create();
@@ -53,33 +34,43 @@ public class IdentifiableScan : ISecretMasker, IDisposable
         long len);
 
     [DllImport("microsoft_security_utilities_core")]
-    static extern long identifiable_scan_match_count(IntPtr scan);
+    static extern UInt32 identifiable_scan_match_count(IntPtr scan);
 
     [DllImport("microsoft_security_utilities_core")]
     static extern bool identifiable_scan_match_get(
         IntPtr scan,
-        long index,
+        UInt32 index,
         out UInt64 start,
         out UInt64 len);
 
     [DllImport("microsoft_security_utilities_core")]
     static extern bool identifiable_scan_match_check(
         IntPtr scan,
-        long index,
+        UInt32 index,
         byte[] input,
         long inputLength,
-        out ushort matchType,
+        byte[] name,
+        ref long nameLength,
         byte[] output,
-        long outputLength,
-        out long copiedLength);
+        ref long outputLength);
 
     private IntPtr scan;
-    private Dictionary<string, IList<RegexPattern>> signatureToLengthMap;
+    private Dictionary<string, IList<RegexPattern>> idToLengthMap;
     
     public IdentifiableScan(IEnumerable<RegexPattern> regexPatterns, bool generateCorrelatingIds)
     {   
         this.generateCorrelatingIds = generateCorrelatingIds;
-        this.signatureToLengthMap = new Dictionary<string, IList<RegexPattern>>();
+        this.idToLengthMap = new Dictionary<string, IList<RegexPattern>>();
+
+        // TODO: This is missing in regexPatterns.
+        this.idToLengthMap["SEC101/200"] = new List<RegexPattern>
+        {
+            new RegexPattern(
+                "SEC101/200",
+                "AzureCommonAnnotatedSecurityKey",
+                DetectionMetadata.None,
+                "JQQJ")
+        };
 
         foreach (RegexPattern pattern in regexPatterns)
         {
@@ -87,7 +78,7 @@ public class IdentifiableScan : ISecretMasker, IDisposable
             {
                 if (pattern.SniffLiterals?.FirstOrDefault() == spnSignature)
                 {
-                    this.signatureToLengthMap[spnSignature] = new List<RegexPattern> { pattern };
+                    this.idToLengthMap["SEC101/156"] = new List<RegexPattern> { pattern };
                     continue;
                 }
             }
@@ -95,17 +86,18 @@ public class IdentifiableScan : ISecretMasker, IDisposable
             IIdentifiableKey identifiableKey = pattern as IIdentifiableKey;
             if (identifiableKey == null) { continue; }
 
-            if (!this.signatureToLengthMap.TryGetValue(identifiableKey.Signature, out IList<RegexPattern> patterns))
+            if (!this.idToLengthMap.TryGetValue(identifiableKey.Id, out IList<RegexPattern> patterns))
             {
                 patterns = new List<RegexPattern>();
-                this.signatureToLengthMap[identifiableKey.Signature] = patterns;
+                this.idToLengthMap[identifiableKey.Id] = patterns;
             }
 
             patterns.Add(pattern);
-        }   
+        }
     }
 
-    public long PossibleMatches {
+    public UInt32 PossibleMatches
+    {
         get
         {
             if (this.scan != IntPtr.Zero)
@@ -153,7 +145,7 @@ public class IdentifiableScan : ISecretMasker, IDisposable
         return identifiable_scan_parse(this.scan, bytes, len);
     }
 
-    public bool GetPossibleMatchRange(long index, out UInt64 start, out UInt64 len)
+    public bool GetPossibleMatchRange(UInt32 index, out UInt64 start, out UInt64 len)
     {
         start = 0;
         len = 0;
@@ -167,14 +159,15 @@ public class IdentifiableScan : ISecretMasker, IDisposable
         return identifiable_scan_match_get(this.scan, index, out start, out len);
     }
 
-    public MatchType CheckPossibleMatchRange(
-        long index,
+    public string CheckPossibleMatchRange(
+        UInt32 index,
         byte[] input,
         long inputLength,
         byte[] output,
         out long copiedLength)
     {
         long outputLen = 0;
+        copiedLength = 0;
 
         if (this.scan == IntPtr.Zero)
         {
@@ -187,26 +180,27 @@ public class IdentifiableScan : ISecretMasker, IDisposable
             outputLen = output.Length;
         }
 
-        MatchType type = MatchType.None;
-        ushort matchType = 0;
+        string name = String.Empty;
+        byte[] nameBytes = ArrayPool<byte>.Shared.Rent(256);
+        long nameLen = nameBytes.Length;
 
         if (identifiable_scan_match_check(
             this.scan,
             index,
             input,
             inputLength,
-            out matchType,
+            nameBytes,
+            ref nameLen,
             output,
-            outputLen,
-            out copiedLength))
+            ref outputLen))
         {
-            if (matchType < (ushort)MatchType.Unknown)
-            {
-                type = (MatchType)matchType;
-            }
+            name = System.Text.Encoding.UTF8.GetString(nameBytes, 0, (int)nameLen);
+            copiedLength = outputLen;
         }
 
-        return type;
+        ArrayPool<byte>.Shared.Return(nameBytes);
+
+        return name;
     }
 
     public IEnumerable<Detection> DetectSecrets(string input)
@@ -243,7 +237,7 @@ public class IdentifiableScan : ISecretMasker, IDisposable
             yield break;
         }
 
-        for (var i = 0; i < PossibleMatches; ++i)
+        for (UInt32 i = 0; i < PossibleMatches; ++i)
         {
             UInt64 start, len;
 
@@ -271,40 +265,31 @@ public class IdentifiableScan : ISecretMasker, IDisposable
 
                 long textLength;
 
-                var type = CheckPossibleMatchRange(i,
+                var name = CheckPossibleMatchRange(i,
                                                    buffer,
                                                    copied,
                                                    text,
                                                    out textLength);
 
-                if (type != IdentifiableScan.MatchType.None)
+                if (name.Length != 0)
                 {
-                    var secret = System.Text.Encoding.UTF8.GetString(text, 0, (int)textLength);
-
-                    string signature = secret.Substring(3, 3);
-
-                    if (signature != "7Q~" && signature != "8Q~")
+                    if (idToLengthMap.TryGetValue(name, out IList<RegexPattern> patterns))
                     {
-                        int equalSignIndex = secret.IndexOf('=');
-                        int toTrim = equalSignIndex == -1 ? secret.Length : equalSignIndex;
-                        signature = secret.Substring(toTrim - 10, 4);
-                    }
+                        string found = System.Text.Encoding.UTF8.GetString(text, 0, (int)textLength);
 
-                    if (signatureToLengthMap.TryGetValue(signature, out IList<RegexPattern> patterns))
-                    {
                         foreach (RegexPattern pattern in patterns)
                         {
-                            var tuple = pattern.GetMatchIdAndName(secret);
-                            if (tuple == default) { continue; }
+                            string redactionToken = null;
 
-                            string redactionToken = this.generateCorrelatingIds
-                                ? RegexPattern.GenerateCrossCompanyCorrelatingId(secret)
-                                : null;
+                            if (generateCorrelatingIds)
+                            {
+                               redactionToken = RegexPattern.GenerateCrossCompanyCorrelatingId(found);
+                            }
 
                             yield return new Detection
                             {
-                                Id = tuple.Item1,
-                                Name = tuple.Item2,
+                                Id = pattern.Id,
+                                Name = pattern.Name,
                                 Start = (int)start,
                                 Length = (int)textLength,
                                 RedactionToken = redactionToken,
