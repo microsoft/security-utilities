@@ -314,27 +314,34 @@ impl ScanDefinition {
         packed
     }
 
-    fn possible_match(
+    fn push_possible_match(
         &self,
         index: u64,
-        utf8: bool) -> PossibleScanMatch {
+        utf8: bool,
+        checks: &mut Vec<PossibleScanMatch>) {
         match utf8 {
             true => {
-                PossibleScanMatch::new(
-                    self.name,
-                    index - self.before_utf8,
-                    self.len_utf8 as usize,
-                    utf8,
-                    self.validator.clone())
+                if index >= self.before_utf8 {
+                    checks.push(
+                        PossibleScanMatch::new(
+                            self.name,
+                            index - self.before_utf8,
+                            self.len_utf8 as usize,
+                            utf8,
+                            self.validator.clone()));
+                }
             },
 
             false => {
-                PossibleScanMatch::new(
-                    self.name,
-                    index - self.before_utf16,
-                    self.len_utf16 as usize,
-                    utf8,
-                    self.validator.clone())
+                if index >= self.before_utf16 {
+                    checks.push(
+                        PossibleScanMatch::new(
+                            self.name,
+                            index - self.before_utf16,
+                            self.len_utf16 as usize,
+                            utf8,
+                            self.validator.clone()));
+                }
             },
         }
     }
@@ -942,11 +949,15 @@ impl Scan {
 
                         for def in defs {
                             if def.packed_utf8 == packed_utf8 {
-                                self.checks.push(
-                                    def.possible_match(self.index, true));
+                                def.push_possible_match(
+                                    self.index,
+                                    true,
+                                    &mut self.checks);
                             } else if def.packed_utf16 == packed_utf16 {
-                                self.checks.push(
-                                    def.possible_match(self.index, false));
+                                def.push_possible_match(
+                                    self.index,
+                                    false,
+                                    &mut self.checks);
                             }
                         }
                     },
@@ -957,11 +968,15 @@ impl Scan {
 
                         for def in defs {
                             if def.packed_utf8 == packed_utf8 {
-                                self.checks.push(
-                                    def.possible_match(self.index, true));
+                                def.push_possible_match(
+                                    self.index,
+                                    true,
+                                    &mut self.checks);
                             } else if def.packed_utf16 == packed_utf16 {
-                                self.checks.push(
-                                    def.possible_match(self.index, false));
+                                def.push_possible_match(
+                                    self.index,
+                                    false,
+                                    &mut self.checks);
                             }
                         }
                     },
@@ -976,12 +991,16 @@ impl Scan {
                         for def in defs {
                             if def.packed_utf8 == packed_utf8 ||
                                def.packed_utf8 == packed_utf8_small {
-                                self.checks.push(
-                                    def.possible_match(self.index, true));
+                                def.push_possible_match(
+                                    self.index,
+                                    true,
+                                    &mut self.checks);
                             } else if def.packed_utf16 == packed_utf16 ||
                                       def.packed_utf16 == packed_utf16_small {
-                                self.checks.push(
-                                    def.possible_match(self.index, false));
+                                def.push_possible_match(
+                                    self.index,
+                                    false,
+                                    &mut self.checks);
                             }
                         }
                     },
