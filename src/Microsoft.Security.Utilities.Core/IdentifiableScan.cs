@@ -39,6 +39,16 @@ public class IdentifiableScan : ISecretMasker, IDisposable
     static extern UInt32 identifiable_scan_match_count(IntPtr scan);
 
     [DllImport("microsoft_security_utilities_core")]
+    static extern UInt32 identifiable_scan_def_count(IntPtr scan);
+
+    [DllImport("microsoft_security_utilities_core")]
+    static extern void identifiable_scan_def_name(
+        IntPtr scan,
+        UInt32 index,
+        byte[] name,
+        ref long nameLength);
+
+    [DllImport("microsoft_security_utilities_core")]
     static extern bool identifiable_scan_match_get(
         IntPtr scan,
         UInt32 index,
@@ -51,13 +61,13 @@ public class IdentifiableScan : ISecretMasker, IDisposable
         UInt32 index,
         byte[] input,
         long inputLength,
-        byte[] name,
-        ref long nameLength,
+        out UInt32 defIndex,
         byte[] output,
         ref long outputLength);
 
     private IntPtr scan;
     private Dictionary<string, IList<RegexPattern>> idToLengthMap;
+    private List<string> indexToIdMap;
 
     [ThreadStatic]
     static StringBuilder stringBuilder;
@@ -66,6 +76,7 @@ public class IdentifiableScan : ISecretMasker, IDisposable
     {   
         this.generateCorrelatingIds = generateCorrelatingIds;
         this.idToLengthMap = new Dictionary<string, IList<RegexPattern>>();
+        this.indexToIdMap = new List<string>();
 
         // TODO: This is missing in regexPatterns.
         this.idToLengthMap["SEC101/200"] = new List<RegexPattern>
@@ -145,6 +156,27 @@ public class IdentifiableScan : ISecretMasker, IDisposable
             {
                 throw new OutOfMemoryException();
             }
+
+            UInt32 defCount = identifiable_scan_def_count(this.scan);
+            byte[] nameBytes = ArrayPool<byte>.Shared.Rent(256);
+
+            this.indexToIdMap.Clear();
+
+            for (UInt32 i = 0; i < defCount; ++i)
+            {
+                long length = nameBytes.Length;
+
+                identifiable_scan_def_name(this.scan,
+                                           i,
+                                           nameBytes,
+                                           ref length);
+
+                var name = Encoding.UTF8.GetString(nameBytes, 0, (int)length);
+
+                this.indexToIdMap.Add(name);
+            }
+
+            ArrayPool<byte>.Shared.Return(nameBytes);
         }
 
         identifiable_scan_start(this.scan);
@@ -196,25 +228,25 @@ public class IdentifiableScan : ISecretMasker, IDisposable
             outputLen = output.Length;
         }
 
-        string name = String.Empty;
-        byte[] nameBytes = ArrayPool<byte>.Shared.Rent(256);
-        long nameLen = nameBytes.Length;
+        UInt32 defIndex;
+        string name = string.Empty;
 
         if (identifiable_scan_match_check(
             this.scan,
             index,
             input,
             inputLength,
-            nameBytes,
-            ref nameLen,
+            out defIndex,
             output,
             ref outputLen))
         {
-            name = System.Text.Encoding.UTF8.GetString(nameBytes, 0, (int)nameLen);
+            if (defIndex < this.indexToIdMap.Count)
+            {
+                name = this.indexToIdMap[(int)defIndex];
+            }
+
             copiedLength = outputLen;
         }
-
-        ArrayPool<byte>.Shared.Return(nameBytes);
 
         return name;
     }

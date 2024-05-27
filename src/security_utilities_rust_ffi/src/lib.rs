@@ -66,6 +66,40 @@ extern "C" fn identifiable_scan_parse(
 }
 
 #[no_mangle]
+extern "C" fn identifiable_scan_def_count(
+    scan: *mut c_void) -> u32 {
+    let scan = unsafe { Box::from_raw(scan as *mut IdentifiableScan) };
+
+    let count = scan.scan_defs().len() as u32;
+
+    /* Don't drop */
+    let _ = Box::into_raw(scan);
+
+    count
+}
+
+#[no_mangle]
+extern "C" fn identifiable_scan_def_name(
+    scan: *mut c_void,
+    index: u32,
+    name: *mut u8,
+    len: *mut usize) {
+    let scan = unsafe { Box::from_raw(scan as *mut IdentifiableScan) };
+
+    let count = scan.scan_defs().len() as u32;
+
+    if !name.is_null() && !len.is_null() && index < count {
+        ffi_string_copy(
+            name,
+            len,
+            scan.scan_defs()[index as usize].name());
+    }
+
+    /* Don't drop */
+    let _ = Box::into_raw(scan);
+}
+
+#[no_mangle]
 extern "C" fn identifiable_scan_match_count(
     scan: *mut c_void) -> u32 {
     let scan = unsafe { Box::from_raw(scan as *mut IdentifiableScan) };
@@ -147,8 +181,7 @@ extern "C" fn identifiable_scan_match_check(
     index: u32,
     input: *const u8,
     input_len: usize,
-    name: *mut u8,
-    name_len: *mut usize,
+    def_index: *mut u32,
     output: *mut u8,
     output_len: *mut usize) -> bool {
     let scan = unsafe { Box::from_raw(scan as *mut IdentifiableScan) };
@@ -181,8 +214,11 @@ extern "C" fn identifiable_scan_match_check(
             }
         }
 
-        /* Copy the name out */
-        ffi_string_copy(name, name_len, found.name());
+        if !def_index.is_null() {
+            unsafe {
+                *def_index = found.def_index();
+            }
+        }
 
         /* Notify match */
         true
