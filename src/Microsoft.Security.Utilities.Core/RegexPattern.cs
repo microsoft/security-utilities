@@ -19,7 +19,7 @@ public class RegexPattern
                         DetectionMetadata patternMetadata,
                         string pattern,
                         TimeSpan rotationPeriod = default,
-                        ISet<string>? sniffLiterals = null,
+                        ISet<string>? signatures = null,
 #if NET7_0_OR_GREATER
                         RegexOptions regexOptions = RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.NonBacktracking,
 #else
@@ -32,7 +32,7 @@ public class RegexPattern
         Id = id;
         Name = name;
         m_regexOptions = regexOptions;
-        SniffLiterals = sniffLiterals;
+        Signatures = signatures;
         RotationPeriod = rotationPeriod;
         m_sampleGenerator = sampleGenerator;
         DetectionMetadata = patternMetadata;
@@ -79,21 +79,21 @@ public class RegexPattern
             return false;
         }
 
-        if (object.Equals(SniffLiterals, item.SniffLiterals))
+        if (object.Equals(Signatures, item.Signatures))
         {
             return true;
         }
 
-        if (SniffLiterals == null ||
-            item.SniffLiterals == null ||
-            SniffLiterals.Count != item.SniffLiterals.Count)
+        if (Signatures == null ||
+            item.Signatures == null ||
+            Signatures.Count != item.Signatures.Count)
         {
             return false;
         }
 
-        foreach (string sniffLiteral in SniffLiterals)
+        foreach (string sniffLiteral in Signatures)
         {
-            if (!item.SniffLiterals.Contains(sniffLiteral))
+            if (!item.Signatures.Contains(sniffLiteral))
             {
                 return false;
             }
@@ -142,10 +142,10 @@ public class RegexPattern
 #endif
 
             // Use xor for set values to be order-independent.
-            if (SniffLiterals != null)
+            if (Signatures != null)
             {
                 int xor_0 = 0;
-                foreach (var sniffLiteral in SniffLiterals)
+                foreach (var sniffLiteral in Signatures)
                 {
 #if NET5_0_OR_GREATER
                     xor_0 ^= sniffLiteral.GetHashCode(StringComparison.Ordinal);
@@ -173,11 +173,11 @@ public class RegexPattern
             yield break;
         }
 
-        bool runRegexes = SniffLiterals == null;
+        bool runRegexes = Signatures == null;
 
-        if (SniffLiterals != null)
+        if (Signatures != null)
         {
-            foreach (string sniffLiteral in SniffLiterals)
+            foreach (string sniffLiteral in Signatures)
             {
                 if (input.IndexOf(sniffLiteral, StringComparison.Ordinal) != -1)
                 {
@@ -309,7 +309,7 @@ public class RegexPattern
     /// performance as these calls are typically much faster than
     /// equivalent regular expressions.
     /// </remarks>
-    public virtual ISet<string>? SniffLiterals { get; protected set; }
+    public virtual ISet<string>? Signatures { get; protected set; }
 
     private readonly Func<string[]>? m_sampleGenerator;
 

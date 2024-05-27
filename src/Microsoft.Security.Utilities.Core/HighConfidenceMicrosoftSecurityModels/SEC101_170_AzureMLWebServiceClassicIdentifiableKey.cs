@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AzureMLWebServiceClassicIdentifiableKey);
         }
 
-        public override string Signature => IdentifiableMetadata.AzureMLClassicSignature;
+        public override ISet<string> Signatures => IdentifiableMetadata.AzureMLClassicSignature.ToSet();
 
         public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureMLClassicChecksumSeed };
     }

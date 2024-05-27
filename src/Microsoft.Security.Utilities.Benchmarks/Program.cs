@@ -7,4 +7,4 @@ using Microsoft.Security.Utilities.Benchmarks;
 //new RegexEngineDetectionBenchmarks().UseCachedDotNet();
 //new RegexEngineDetectionBenchmarks().UseRE2();
 
-var summary = BenchmarkRunner.Run<RegexEngineDetectionBenchmarks>();
+var summary = BenchmarkRunner.Run<HighConfidencePatternsBenchmarks>();

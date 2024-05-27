@@ -56,8 +56,7 @@ public static class WellKnownRegexPatterns
 
     public static IEnumerable<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } = new RegexPattern[]
     {
-        new AadClientAppIdentifiableCredentialsCurrent(),
-        new AadClientAppIdentifiableCredentialsPrevious(),
+        new AadClientAppIdentifiableCredentials(),
         new AzureFunctionIdentifiableKey(),
         new AzureSearchIdentifiableQueryKey(),
         new AzureSearchIdentifiableAdminKey(),

@@ -22,6 +22,8 @@ namespace Microsoft.Security.Utilities;
 [ExcludeFromCodeCoverage]
 internal static class IdentifiableMetadata
 {
+    public const string AzureEventGridSignature = "AZEG";
+
     public const string AzureServiceBusSignature = "+ASb";
     public const string AzureEventHubSignature = "+AEh";
     public const string AzureRelaySignature = "+ARm";

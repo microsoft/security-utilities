@@ -93,9 +93,9 @@ public class RegexPatternTests
     public void RegexPattern_Equals_ReturnsTrue_WhenSniffLiteralsAreEqual()
     {
         // Arrange
-        var sniffLiterals = new HashSet<string>(new[] { "sniff" });
-        var secret1 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", sniffLiterals: sniffLiterals);
-        var secret2 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", sniffLiterals: sniffLiterals);
+        var signatures = new HashSet<string>(new[] { "sniff" });
+        var secret1 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", signatures: signatures);
+        var secret2 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", signatures: signatures);
 
         // Act
         var result = secret1.Equals(secret2);
@@ -109,8 +109,8 @@ public class RegexPatternTests
     {
         // Arrange
         var sniffLiterals = new HashSet<string>(new[] { "sniff" });
-        var secret1 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", sniffLiterals: sniffLiterals);
-        var secret2 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", sniffLiterals: new HashSet<string>());
+        var secret1 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", signatures: sniffLiterals);
+        var secret2 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", signatures: new HashSet<string>());
 
         // Act
         var result = secret1.Equals(secret2);
@@ -301,8 +301,8 @@ public class RegexPatternTests
     public void RegexPattern_GetHashCode_ReturnsUniqueValue_WhenSniffLiteralsDiffer()
     {
         // Arrange
-        var secret1 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", sniffLiterals: new HashSet<string>(new[] { "sniff1" }));
-        var secret2 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", sniffLiterals: new HashSet<string>(new[] { "sniff2" }));
+        var secret1 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", signatures: new HashSet<string>(new[] { "sniff1" }));
+        var secret2 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc", signatures: new HashSet<string>(new[] { "sniff2" }));
 
         // Act
         var hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
