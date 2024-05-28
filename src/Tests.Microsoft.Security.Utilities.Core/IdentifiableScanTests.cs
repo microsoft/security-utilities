@@ -23,13 +23,13 @@ namespace Tests.Microsoft.Security.Utilities.Core
             var masker = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
                                               generateCorrelatingIds: false);
 
-            masker.Start();
-
             string doubleAzCa = "8Ht8juqPlWFke0o5KOxQ+oprdPBxZEanQAzCaAzCakQ=";
 
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(doubleAzCa));
             var buffer = new byte[85 * 1024];
             var text = new byte[256];
+
+            masker.Start();
 
             for (; ; )
             {
