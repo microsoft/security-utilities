@@ -67,16 +67,19 @@ namespace Tests.Microsoft.Security.Utilities.Core
                 {
                     for (int i = 0; i < iterations; i++)
                     {
-                        string key = IdentifiableSecrets.GenerateBase64KeyHelper(seed,
-                                                                                 identifiable.KeyLength,
-                                                                                 identifiable.Signature,
-                                                                                 identifiable.EncodeForUrl);
+                        foreach (string signature in identifiable.Signatures!)
+                        {
+                            string key = IdentifiableSecrets.GenerateBase64KeyHelper(seed,
+                                                                                     identifiable.KeyLength,
+                                                                                     signature,
+                                                                                     identifiable.EncodeForUrl);
 
-                        string moniker = pattern.GetMatchMoniker(key);
-                        moniker.Should().NotBeNull(because: $"{pattern.Name} should produce a moniker using '{key}'");
+                            string moniker = pattern.GetMatchMoniker(key);
+                            moniker.Should().NotBeNull(because: $"{pattern.Name} should produce a moniker using '{key}'");
 
-                        int found = masker.DetectSecrets(key).Count();
-                        found.Should().Be(1, because: $"{moniker} should match against '{key}' a single time, not {found} time(s)");
+                            int found = masker.DetectSecrets(key).Count();
+                            found.Should().Be(1, because: $"{moniker} should match against '{key}' a single time, not {found} time(s)");
+                        }
                     }
                 }
             }

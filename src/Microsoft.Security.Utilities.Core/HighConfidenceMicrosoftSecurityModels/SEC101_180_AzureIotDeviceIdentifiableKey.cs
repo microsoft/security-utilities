@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AzureIotDeviceIdentifiableKey);
         }
 
-        public override string Signature => IdentifiableMetadata.AzureIotSignature;
+        public override ISet<string> Signatures => IdentifiableMetadata.AzureIotSignature.ToSet();
 
         public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureIotDeviceChecksumSeed };
     }

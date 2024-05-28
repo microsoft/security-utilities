@@ -7,9 +7,6 @@ namespace Microsoft.Security.Utilities
 {
     public class SecretScanningSampleToken : RegexPattern
     {
-        public const string AadClientAppLegacyCredentials = nameof(AadClientAppLegacyCredentials);
-
-
         /// <summary>
         /// Detect 32-character Azure Active Directory client application legacy credentials.
         /// The generated key is a 32-character string that contains alphanumeric characters
@@ -22,6 +19,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(SecretScanningSampleToken);
             DetectionMetadata = DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy;
             Pattern = @$"{WellKnownRegexPatterns.PrefixBase62}(?P<secret>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{{5}}){WellKnownRegexPatterns.SuffixBase62}";
+            Signatures = "ab85".ToSet();
         }
 
         public override IEnumerable<string> GenerateTestExamples()

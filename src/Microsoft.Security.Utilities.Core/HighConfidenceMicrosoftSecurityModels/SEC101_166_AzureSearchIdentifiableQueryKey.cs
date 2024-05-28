@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Security.Utilities
 {
@@ -15,13 +16,13 @@ namespace Microsoft.Security.Utilities
 
         public override bool EncodeForUrl => true;
 
-        override public string Signature => IdentifiableMetadata.AzureSearchSignature;
+        override public ISet<string> Signatures => IdentifiableMetadata.AzureSearchSignature.ToSet();
 
         override public IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureSearchQueryKeyChecksumSeed };
 
         public override string Pattern
         {
-            get => @$"{WellKnownRegexPatterns.PrefixAllBase64}(?<refine>[{WellKnownRegexPatterns.Base62}]{{42}}{Signature}[A-D][{WellKnownRegexPatterns.Base62}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}";
+            get => @$"{WellKnownRegexPatterns.PrefixAllBase64}(?<refine>[{WellKnownRegexPatterns.Base62}]{{42}}{Signatures!.First()}[A-D][{WellKnownRegexPatterns.Base62}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}";
             protected set => base.Pattern = value;
         }
 

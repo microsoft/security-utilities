@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AzureCosmosDBIdentifiableKey);
         }
 
-        public override string Signature => IdentifiableMetadata.AzureCosmosDBSignature;
+        public override ISet<string> Signatures => IdentifiableMetadata.AzureCosmosDBSignature.ToSet();
 
         public override IEnumerable<ulong> ChecksumSeeds => new[] {
             IdentifiableMetadata.AzureCosmosDBDataEncryptionKeyChecksumSeed,

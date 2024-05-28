@@ -29,7 +29,7 @@ internal sealed class UrlCredentials : RegexPattern
 
         DetectionMetadata = DetectionMetadata.None;
 
-        SniffLiterals = new HashSet<string>(new[]
+        Signatures = new HashSet<string>(new[]
         {
             "http",
             "https",

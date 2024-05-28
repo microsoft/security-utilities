@@ -11,11 +11,11 @@ namespace Microsoft.Security.Utilities
 
         public string Name { get; } 
         
-        public string Signature { get; }
-
         public uint KeyLength { get; }
         
         public bool EncodeForUrl { get; }
+
+        public ISet<string> Signatures { get; }
 
         public IEnumerable<ulong> ChecksumSeeds { get; }
     }

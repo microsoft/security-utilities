@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AzureEventGridIdentifiableKey);
         }
 
-        public override string Signature => "AZEG";
+        public override ISet<string> Signatures => IdentifiableMetadata.AzureEventGridSignature.ToSet();
 
         public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableSecrets.VersionTwoChecksumSeed };
     }

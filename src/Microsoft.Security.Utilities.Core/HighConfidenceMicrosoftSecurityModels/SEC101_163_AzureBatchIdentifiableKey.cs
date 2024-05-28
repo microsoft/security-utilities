@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AzureBatchIdentifiableKey);
         }
 
-        public override string Signature => IdentifiableMetadata.AzureBatchSignature;
+        public override ISet<string> Signatures=> IdentifiableMetadata.AzureBatchSignature.ToSet();
 
         public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureBatchChecksumSeed };
     }

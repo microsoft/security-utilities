@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(NuGetApiKey);
             DetectionMetadata = DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy;
             Pattern = "(^|[^0-9a-z])(?<refine>oy2[a-p][0-9a-z]{15}[aq][0-9a-z]{11}[eu][bdfhjlnprtvxz357][a-p][0-9a-z]{11}[aeimquy4])([^aeimquy4]|$)";
-            SniffLiterals = new HashSet<string>(new[] { "oy2" });
+            Signatures = new HashSet<string>(new[] { "oy2" });
         }
 
         public override IEnumerable<string> GenerateTestExamples()
