@@ -19,44 +19,44 @@ public class IdentifiableScan : ISecretMasker, IDisposable
     private bool generateCorrelatingIds;
 
     [DllImport("microsoft_security_utilities_core")]
-    static extern IntPtr identifiable_scan_create(
+    internal static extern IntPtr identifiable_scan_create(
          byte[] filter,
          long filterLength);
 
     [DllImport("microsoft_security_utilities_core")]
-    static extern void identifiable_scan_destroy(IntPtr scan);
+    internal static extern void identifiable_scan_destroy(IntPtr scan);
 
     [DllImport("microsoft_security_utilities_core")]
-    static extern void identifiable_scan_start(IntPtr scan);
+    internal static extern void identifiable_scan_start(IntPtr scan);
 
     [DllImport("microsoft_security_utilities_core")]
-    static extern bool identifiable_scan_parse(
+    internal static extern bool identifiable_scan_parse(
         IntPtr scan,
         byte[] bytes,
         long len);
 
     [DllImport("microsoft_security_utilities_core")]
-    static extern UInt32 identifiable_scan_match_count(IntPtr scan);
+    internal static extern UInt32 identifiable_scan_match_count(IntPtr scan);
 
     [DllImport("microsoft_security_utilities_core")]
-    static extern UInt32 identifiable_scan_def_count(IntPtr scan);
+    internal static extern UInt32 identifiable_scan_def_count(IntPtr scan);
 
     [DllImport("microsoft_security_utilities_core")]
-    static extern void identifiable_scan_def_name(
+    internal static extern void identifiable_scan_def_name(
         IntPtr scan,
         UInt32 index,
         byte[] name,
         ref long nameLength);
 
     [DllImport("microsoft_security_utilities_core")]
-    static extern bool identifiable_scan_match_get(
+    internal static extern bool identifiable_scan_match_get(
         IntPtr scan,
         UInt32 index,
         out UInt64 start,
         out UInt64 len);
 
     [DllImport("microsoft_security_utilities_core")]
-    static extern bool identifiable_scan_match_check(
+    internal static extern bool identifiable_scan_match_check(
         IntPtr scan,
         UInt32 index,
         byte[] input,

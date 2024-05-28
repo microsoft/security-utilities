@@ -8,13 +8,44 @@ using Microsoft.Security.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using System;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Tests.Microsoft.Security.Utilities.Core
 {
     [TestClass]
     public class IdentifiableScanTests
     {
+        [TestMethod]
+        public void IdentifiableScan_AzureCacheAdHocFiresOnce()
+        {
+            var masker = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
+                                              generateCorrelatingIds: false);
+
+            masker.Start();
+
+            string doubleAzCa = "8Ht8juqPlWFke0o5KOxQ+oprdPBxZEanQAzCaAzCakQ=";
+
+            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(doubleAzCa));
+            var buffer = new byte[85 * 1024];
+            var text = new byte[256];
+
+            for (; ; )
+            {
+                var read = stream.Read(buffer, 0, buffer.Length);
+
+                if (read == 0)
+                {
+                    break;
+                }
+
+                masker.Scan(buffer, read);
+            }
+
+            masker.PossibleMatches.Should().Be(1, because: "Azure Cache pattern should only fire a single detection");
+        }
+
         [TestMethod]
         public void IdentifiableScan_IdentifiableKeys()
         {
