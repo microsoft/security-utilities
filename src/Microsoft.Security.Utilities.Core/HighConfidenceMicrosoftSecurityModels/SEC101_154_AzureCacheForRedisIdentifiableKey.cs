@@ -14,7 +14,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AzureCacheForRedisIdentifiableKey);
         }
 
-        public override string Signature => IdentifiableMetadata.AzureCacheForRedisSignature;
+        public override ISet<string> Signatures => IdentifiableMetadata.AzureCacheForRedisSignature.ToSet();
 
         public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureCacheForRedisChecksumSeed};
 

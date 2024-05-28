@@ -5,22 +5,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Security.Utilities
 {
     public abstract class IdentifiableKey : RegexPattern, IIdentifiableKey
     {
-        private ISet<string>? _sniffLiterals;
-
         public IdentifiableKey()
         {
             RotationPeriod = TimeSpan.FromDays(365 * 2);
             DetectionMetadata = DetectionMetadata.Identifiable;
         }
 
-        public string RegexNormalizedSignature => Signature.Replace("+", "\\+");
-
-        public abstract string Signature { get; }
+        public string RegexNormalizedSignature => Signatures!.First().Replace("+", "\\+");
 
         public virtual uint KeyLength => 32;
 
@@ -43,17 +40,6 @@ namespace Microsoft.Security.Utilities
             return null;
         }
 
-        public override ISet<string>? SniffLiterals
-        {
-            get
-            {
-                _sniffLiterals ??= new HashSet<string>(new[] { Signature });
-                return _sniffLiterals;
-            }
-
-            protected set => _sniffLiterals = value;
-        }
-
         public override IEnumerable<string> GenerateTestExamples()
         {
             foreach (ulong checksumSeed in ChecksumSeeds)
@@ -70,7 +56,7 @@ namespace Microsoft.Security.Utilities
                     yield return
                         IdentifiableSecrets.GenerateBase64KeyHelper(checksumSeed,
                                                                     keyLengthInBytes: KeyLength,
-                                                                    Signature,
+                                                                    Signatures!.First(),
                                                                     EncodeForUrl,
                                                                     bytes);
                 }

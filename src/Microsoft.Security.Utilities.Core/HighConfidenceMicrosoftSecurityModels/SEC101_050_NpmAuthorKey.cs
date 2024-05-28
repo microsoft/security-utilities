@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(NpmAuthorKey);
             DetectionMetadata = DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy;
             Pattern = @$"{WellKnownRegexPatterns.PrefixBase62}(?<refine>npm_[{WellKnownRegexPatterns.Base62}]{{36}}){WellKnownRegexPatterns.SuffixBase62}";
-            SniffLiterals = new HashSet<string>(new[] { "npm_" });
+            Signatures = new HashSet<string>(new[] { "npm_" });
         }
 
         public override IEnumerable<string> GenerateTestExamples()

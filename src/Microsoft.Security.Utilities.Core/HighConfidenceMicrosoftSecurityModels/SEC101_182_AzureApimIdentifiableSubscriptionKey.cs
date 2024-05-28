@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AzureApimIdentifiableSubscriptionKey);
         }
 
-        public override string Signature => IdentifiableMetadata.AzureApimSignature;
+        public override ISet<string> Signatures => IdentifiableMetadata.AzureApimSignature.ToSet();
 
         public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureApimSubscriptionChecksumSeed };
     }

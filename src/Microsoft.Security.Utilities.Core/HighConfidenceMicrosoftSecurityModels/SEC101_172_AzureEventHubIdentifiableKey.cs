@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
+
 namespace Microsoft.Security.Utilities
 {
     public class AzureEventHubIdentifiableKey : AzureMessagingIdentifiableKey
@@ -11,6 +13,6 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AzureEventHubIdentifiableKey);
         }
 
-        public override string Signature => IdentifiableMetadata.AzureEventHubSignature;
+        override public ISet<string> Signatures => IdentifiableMetadata.AzureEventHubSignature.ToSet();
     }
 }

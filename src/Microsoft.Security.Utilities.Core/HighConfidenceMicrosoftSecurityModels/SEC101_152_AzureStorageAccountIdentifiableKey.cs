@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AzureStorageAccountIdentifiableKey);
         }
 
-        public override string Signature => IdentifiableMetadata.AzureStorageSignature;
+        public override ISet<string> Signatures => IdentifiableMetadata.AzureStorageSignature.ToSet();
 
         public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureStorageAccountChecksumSeed };
     }

@@ -180,20 +180,23 @@ namespace Microsoft.Security.Utilities
 
                     foreach (ulong checksumSeed in identifiablePattern.ChecksumSeeds)
                     {
-                        if (IdentifiableSecrets.TryValidateBase64Key(securityKey, checksumSeed, identifiablePattern.Signature, identifiablePattern.EncodeForUrl))                        
+                        foreach (string signature in identifiablePattern.Signatures)
                         {
-                            matched = true;
-                            string textToSign = $"{Guid.NewGuid()}";
-
-                            foreach (ulong derivedChecksumSeed in new[] { checksumSeed, ~checksumSeed })
+                            if (IdentifiableSecrets.TryValidateBase64Key(securityKey, checksumSeed, signature, identifiablePattern.EncodeForUrl))
                             {
-                                string derivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(textToSign, securityKey, checksumSeed, derivedChecksumSeed, identifiablePattern.EncodeForUrl);
-                                bool isValid = IdentifiableSecrets.TryValidateBase64Key(derivedKey, derivedChecksumSeed, identifiablePattern.Signature);
-                                isValid.Should().BeTrue(because: $"the '{pattern.Name} derived key '{derivedKey}' should validate");
+                                matched = true;
+                                string textToSign = $"{Guid.NewGuid()}";
 
-                                derivedKey.Length.Should().Be(56, because: $"the '{pattern.Name} derived key should be 56 characters long");
-                                derivedKey.Substring(42, 4).Should().Be("deri", because: $"the '{pattern.Name} derived key should contain the 'deri' signature");
-                                derivedKey.Substring(46, 4).Should().Be(identifiablePattern.Signature, because: $"the '{pattern.Name} derived key should contain the '{identifiablePattern.Signature}' signature");
+                                foreach (ulong derivedChecksumSeed in new[] { checksumSeed, ~checksumSeed })
+                                {
+                                    string derivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(textToSign, securityKey, checksumSeed, derivedChecksumSeed, identifiablePattern.EncodeForUrl);
+                                    bool isValid = IdentifiableSecrets.TryValidateBase64Key(derivedKey, derivedChecksumSeed, signature);
+                                    isValid.Should().BeTrue(because: $"the '{pattern.Name} derived key '{derivedKey}' should validate");
+
+                                    derivedKey.Length.Should().Be(56, because: $"the '{pattern.Name} derived key should be 56 characters long");
+                                    derivedKey.Substring(42, 4).Should().Be("deri", because: $"the '{pattern.Name} derived key should contain the 'deri' signature");
+                                    derivedKey.Substring(46, 4).Should().Be(signature, because: $"the '{pattern.Name} derived key should contain the '{signature}' signature");
+                                }
                             }
                         }
                     }

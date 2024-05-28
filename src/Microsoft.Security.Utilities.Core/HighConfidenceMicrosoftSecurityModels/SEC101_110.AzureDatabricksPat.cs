@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AzureDatabricksPat);
             DetectionMetadata = DetectionMetadata.HighEntropy;
             Pattern = $"(?:^|[^0-9a-f\\-])(?P<refine>dapi[0-9a-f\\-]{{32,34}})(?:[^0-9a-f\\-]|$)";
-            SniffLiterals = new HashSet<string>(new[] { "dapi" });
+            Signatures = new HashSet<string>(new[] { "dapi" });
         }
 
         public override IEnumerable<string> GenerateTestExamples()

@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AzureContainerRegistryIdentifiableKey);
         }
 
-        override public string Signature => IdentifiableMetadata.AzureContainerRegistrySignature;
+        public override ISet<string> Signatures => IdentifiableMetadata.AzureContainerRegistrySignature.ToSet();
 
         override public IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureContainerRegistryChecksumSeed };
 
