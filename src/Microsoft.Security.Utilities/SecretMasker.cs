@@ -24,7 +24,10 @@ public class SecretMasker : ISecretMasker, IDisposable
 {
     IRegexEngine? _regexEngine;
 
-    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets, bool generateSha256Hashes = false, IRegexEngine? regexEngine = default)
+    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets,
+                        bool generateSha256Hashes = false,
+                        IRegexEngine? regexEngine = default,
+                        string defaultRegexRedactionToken = null)
     {
         m_disposed = false;
 
@@ -40,7 +43,7 @@ public class SecretMasker : ISecretMasker, IDisposable
 
         _regexEngine = regexEngine ??= CachedDotNetRegex.Instance;
 
-        DefaultRegexRedactionToken = "+++";
+        DefaultRegexRedactionToken = defaultRegexRedactionToken;
         DefaultLiteralRedactionToken = "***";
     }
 
@@ -140,7 +143,8 @@ public class SecretMasker : ISecretMasker, IDisposable
                                   detection.Length,
                                   detection.Metadata,
                                   detection.RotationPeriod,
-                                  detection.RedactionToken);
+                                  detection.CrossCompanyCorrelatingId,
+                                  DefaultRegexRedactionToken ?? detection.RedactionToken);
 
                 currentDetections.Add(currentDetection);
             }
@@ -162,7 +166,8 @@ public class SecretMasker : ISecretMasker, IDisposable
                                       detection.Length,
                                       detection.Metadata,
                                       detection.RotationPeriod,
-                                      detection.RedactionToken);
+                                      detection.CrossCompanyCorrelatingId,
+                                      DefaultRegexRedactionToken ?? detection.RedactionToken);
 
                     currentDetections.Add(currentDetection);
                 }

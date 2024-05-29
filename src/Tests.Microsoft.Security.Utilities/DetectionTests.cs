@@ -18,7 +18,7 @@ namespace Tests.Microsoft.Security.Utilities
         {
             string id = $"{Guid.NewGuid()}";
             string name = $"{Guid.NewGuid()}";
-            string sha256Hash = $"{Guid.NewGuid()}";
+            string crossCompanyCorrelatingId = $"{Guid.NewGuid()}";
             string redactionToken = $"{Guid.NewGuid()}";
 
             var metadata = (DetectionMetadata)0B_11111;
@@ -32,7 +32,8 @@ namespace Tests.Microsoft.Security.Utilities
                                           length,
                                           metadata,
                                           rotationPeriod,
-                                          sha256Hash);
+                                          crossCompanyCorrelatingId,
+                                          redactionToken);
 
             Assert.AreEqual(id, detection.Id);
             Assert.AreEqual(name, detection.Name);
@@ -41,7 +42,8 @@ namespace Tests.Microsoft.Security.Utilities
             Assert.AreEqual(metadata, detection.Metadata);
             Assert.AreEqual(start + length, detection.End);
             Assert.AreEqual(rotationPeriod, detection.RotationPeriod);
-            Assert.AreEqual(sha256Hash, detection.RedactionToken);
+            Assert.AreEqual(redactionToken, detection.CrossCompanyCorrelatingId );
+            Assert.AreEqual(redactionToken, detection.RedactionToken);
 
             detection = new Detection(string.Empty,
                                       string.Empty,
@@ -57,8 +59,9 @@ namespace Tests.Microsoft.Security.Utilities
             Assert.AreNotEqual(length, detection.Length);
             Assert.AreNotEqual(metadata, detection.Metadata);
             Assert.AreNotEqual(start + length, detection.End);
+            Assert.AreNotEqual(rotationPeriod, detection.CrossCompanyCorrelatingId);
             Assert.AreNotEqual(rotationPeriod, detection.RotationPeriod);
-            Assert.AreNotEqual(sha256Hash, detection.RedactionToken);
+            Assert.AreNotEqual(redactionToken, detection.RedactionToken);
         }
 
         [TestMethod]

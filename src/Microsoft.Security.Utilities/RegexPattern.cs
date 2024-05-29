@@ -14,6 +14,8 @@ namespace Microsoft.Security.Utilities;
 
 public class RegexPattern
 {
+    public string FallbackRegexRedactionToken = "+++";
+
     public RegexPattern(string id,
                         string name,
                         DetectionMetadata patternMetadata,
@@ -161,11 +163,9 @@ public class RegexPattern
         return result;
     }
 
-    public const string DefaultRedactionToken = "***";
-
     public virtual IEnumerable<Detection> GetDetections(string input, 
                                                         bool generateCrossCompanyCorrelatingIds,
-                                                        string defaultRedactionToken = DefaultRedactionToken,
+                                                        string? defaultRedactionToken = null,
                                                         IRegexEngine? regexEngine = null)
     {
         if (input == null)
@@ -196,10 +196,16 @@ public class RegexPattern
             {
                 startIndex = match.Index + 1;
 
-                string? redactionToken =
+                string? crossCompanyCorrelatingId =
                     generateCrossCompanyCorrelatingIds && DetectionMetadata.HasFlag(DetectionMetadata.HighEntropy)
-                        ? $"{Id}:{GenerateCrossCompanyCorrelatingId(match.Value)}"
+                        ? GenerateCrossCompanyCorrelatingId(match.Value)
+                        : null;
+
+                string? redactionToken = defaultRedactionToken == null && crossCompanyCorrelatingId != null
+                        ? $"{Id}:{crossCompanyCorrelatingId}"
                         : defaultRedactionToken;
+
+                redactionToken ??= FallbackRegexRedactionToken;
 
                 var moniker = GetMatchIdAndName(match.Value);
                 if (moniker == default)
@@ -216,6 +222,7 @@ public class RegexPattern
                                            match.Length,
                                            DetectionMetadata,
                                            RotationPeriod,
+                                           crossCompanyCorrelatingId,
                                            redactionToken);
             }
 
