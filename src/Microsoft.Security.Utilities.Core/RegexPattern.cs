@@ -14,7 +14,7 @@ namespace Microsoft.Security.Utilities;
 
 public class RegexPattern
 {
-    public string FallbackRegexRedactionToken = "+++";
+    public const string FallbackRegexRedactionToken = "+++";
 
     public RegexPattern(string id,
                         string name,
@@ -201,7 +201,7 @@ public class RegexPattern
                         ? GenerateCrossCompanyCorrelatingId(match.Value)
                         : null;
 
-                string? redactionToken = defaultRedactionToken == null && crossCompanyCorrelatingId != null
+                string? redactionToken = crossCompanyCorrelatingId != null
                         ? $"{Id}:{crossCompanyCorrelatingId}"
                         : defaultRedactionToken;
 

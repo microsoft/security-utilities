@@ -20,23 +20,22 @@ namespace Microsoft.Security.Utilities;
 /// <returns>The escaped or encoded literal.</returns>
 public delegate string LiteralEncoder(string literal);
 
-
-public static Version Version = RetrieveVersion();
-
 public class SecretMasker : ISecretMasker, IDisposable
 {
     IRegexEngine? _regexEngine;
 
-    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets,
-                        bool generateSha256Hashes = false,
-                        IRegexEngine? regexEngine = default,
-                        string defaultRegexRedactionToken = null)
+    public static Version Version => RetrieveVersion();
+
+    internal static Version RetrieveVersion()
     {
         var version = new Version(ThisAssembly.AssemblyFileVersion);
         return new Version(version.Major, version.Minor, version.Build);
     }
 
-    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets, bool generateCorrelatingIds = false, IRegexEngine? regexEngine = default)
+    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets,
+                        bool generateCorrelatingIds = false,
+                        IRegexEngine? regexEngine = default,
+                        string defaultRegexRedactionToken = null)
     {
         m_disposed = false;
 
@@ -52,7 +51,7 @@ public class SecretMasker : ISecretMasker, IDisposable
 
         _regexEngine = regexEngine ??= CachedDotNetRegex.Instance;
 
-        DefaultRegexRedactionToken = defaultRegexRedactionToken;
+        DefaultRegexRedactionToken = defaultRegexRedactionToken ?? RegexPattern.FallbackRegexRedactionToken;
         DefaultLiteralRedactionToken = "***";
     }
 
@@ -153,7 +152,7 @@ public class SecretMasker : ISecretMasker, IDisposable
                                   detection.Metadata,
                                   detection.RotationPeriod,
                                   detection.CrossCompanyCorrelatingId,
-                                  DefaultRegexRedactionToken ?? detection.RedactionToken);
+                                  detection.RedactionToken);
 
                 currentDetections.Add(currentDetection);
             }
@@ -176,7 +175,7 @@ public class SecretMasker : ISecretMasker, IDisposable
                                       detection.Metadata,
                                       detection.RotationPeriod,
                                       detection.CrossCompanyCorrelatingId,
-                                      DefaultRegexRedactionToken ?? detection.RedactionToken);
+                                      detection.RedactionToken);
 
                     currentDetections.Add(currentDetection);
                 }

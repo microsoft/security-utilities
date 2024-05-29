@@ -39,7 +39,14 @@ public class SecretLiteral
                 startIndex = input.IndexOf(m_value, startIndex, StringComparison.Ordinal);
                 if (startIndex > -1)
                 {
-                    yield return new Detection(null, null, startIndex, m_value.Length, 0, default, redactionToken);
+                    yield return new Detection(id: null,
+                                               name: null,
+                                               start: startIndex,
+                                               length: m_value.Length,
+                                               metadata: 0,
+                                               rotationPeriod: default,
+                                               crossCompanyCorrelatingId: null,
+                                               redactionToken);
                     ++startIndex;
                 }
             }

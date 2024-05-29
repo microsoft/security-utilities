@@ -42,8 +42,8 @@ namespace Tests.Microsoft.Security.Utilities
             Assert.AreEqual(metadata, detection.Metadata);
             Assert.AreEqual(start + length, detection.End);
             Assert.AreEqual(rotationPeriod, detection.RotationPeriod);
-            Assert.AreEqual(redactionToken, detection.CrossCompanyCorrelatingId );
             Assert.AreEqual(redactionToken, detection.RedactionToken);
+            Assert.AreEqual(crossCompanyCorrelatingId, detection.CrossCompanyCorrelatingId);
 
             detection = new Detection(string.Empty,
                                       string.Empty,
