@@ -1,0 +1,11 @@
+[package]
+name = "microsoft_security_utilities_core_ffi"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "microsoft_security_utilities_core"
+crate-type = ["dylib"]
+
+[dependencies]
+microsoft_security_utilities_core = { path = "../security_utilities_rust" }

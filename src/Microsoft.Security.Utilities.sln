@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Microsoft.Security.Utilities", "Tests.Microsoft.Security.Utilities\Tests.Microsoft.Security.Utilities.csproj", "{972A2EAB-3601-4F2C-8A4E-85FB383FBFB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Microsoft.Security.Utilities.Core", "Tests.Microsoft.Security.Utilities.Core\Tests.Microsoft.Security.Utilities.Core.csproj", "{972A2EAB-3601-4F2C-8A4E-85FB383FBFB5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Security.Utilities", "Microsoft.Security.Utilities\Microsoft.Security.Utilities.csproj", "{9F466A4A-4D9E-401B-ACBD-22AAA402E335}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Security.Utilities.Core", "Microsoft.Security.Utilities.Core\Microsoft.Security.Utilities.Core.csproj", "{9F466A4A-4D9E-401B-ACBD-22AAA402E335}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D0E95576-A9A6-432D-A3D8-1BFE8347AD1B}"
 	ProjectSection(SolutionItems) = preProject
@@ -25,7 +25,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		..\.github\workflows\dotnet-format.yml = ..\.github\workflows\dotnet-format.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Security.Utilities.Cli", "Microsoft.Security.Utilities.Cli\Microsoft.Security.Utilities.Cli.csproj", "{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Security.Utilities.Cli", "Microsoft.Security.Utilities.Cli\Microsoft.Security.Utilities.Cli.csproj", "{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Security.Utilities.Benchmarks", "Microsoft.Security.Utilities.Benchmarks\Microsoft.Security.Utilities.Benchmarks.csproj", "{58337536-C935-47D8-A3B3-5336D7143FD9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58337536-C935-47D8-A3B3-5336D7143FD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58337536-C935-47D8-A3B3-5336D7143FD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58337536-C935-47D8-A3B3-5336D7143FD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58337536-C935-47D8-A3B3-5336D7143FD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

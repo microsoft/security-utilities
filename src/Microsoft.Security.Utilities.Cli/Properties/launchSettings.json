@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Microsoft.Security.Utilities.Cli": {
-      "commandName": "Project",
-      "commandLineArgs": "generate-v2 --seed 0x800 --signature AzDo --count"
-    }
-  }
-}

@@ -1,0 +1,19 @@
+[package]
+name = "microsoft_security_utilities_core"
+version = "1.0.1"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+base-62 = "0.1.1"
+base64 = "0.21.0"
+chrono = "0.4.38"
+lazy_static = "1.4.0"
+rand_chacha = "0.3.1"
+rand_core = "0.6.4"
+rand = "0.8.4"
+regex = "1.7.1"
+sha2 = "0.10.8"
+substring = "1.4.5"
+uuid = { version = "1.8.0", features = ["v4"] }
