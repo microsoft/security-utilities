@@ -55,6 +55,31 @@ public static class IdentifiableSecrets
     public static bool TryValidateCommonAnnotatedKey(string key,
                                                      string base64EncodedSignature)
     {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return false;
+        }
+
+        try
+        {
+            ValidateCommonAnnotatedKeySignature(base64EncodedSignature);
+        }
+        catch (ArgumentException)
+        {
+            return false;
+        }
+
+        if (key.Length != 84 && key.Length != 86)
+        {
+            return false;
+        }
+
+        string signature = key.Substring(76, 4);
+
+        string alternate = char.IsUpper(signature[0]) 
+            ? signature.ToLowerInvariant() 
+            : signature.ToUpperInvariant();
+
         ulong checksumSeed = VersionTwoChecksumSeed;
 
         string componentToChecksum = key.Substring(0, key.Length - 4);
@@ -157,6 +182,8 @@ public static class IdentifiableSecrets
     {
         const int platformReservedLength = 9; 
         const int providerReservedLength = 3;
+
+        ValidateCommonAnnotatedKeySignature(base64EncodedSignature);
 
         if (platformReserved != null && platformReserved?.Length != platformReservedLength)
         {
@@ -452,6 +479,13 @@ public static class IdentifiableSecrets
                 nameof(base64EncodedSignature));
         }
 
+        if (char.IsDigit(base64EncodedSignature[0]))
+        {
+            throw new ArgumentException(
+                "The first character of the signature must not be a digit.");
+
+        }
+
         foreach (char ch in base64EncodedSignature)
         {
             if (!IsBase62EncodingChar(ch))
@@ -460,6 +494,21 @@ public static class IdentifiableSecrets
                     "Signature can only contain alphabetic or numeric values.");
             }
         }
+
+        string allUpper = base64EncodedSignature.ToUpperInvariant();
+        if (base64EncodedSignature.Equals(allUpper))
+        {
+            return;
+        }
+
+        string allLower = base64EncodedSignature.ToLowerInvariant();
+        if (base64EncodedSignature.Equals(allLower))
+        {
+            return;
+        }
+
+        throw new ArgumentException(
+                    $"Signature characters must all upper- or all lower-case: {base64EncodedSignature}");
     }
 
     private static void ValidateBase64EncodedSignature(string base64EncodedSignature, bool encodeForUrl)

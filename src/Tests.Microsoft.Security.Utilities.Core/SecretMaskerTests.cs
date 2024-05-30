@@ -735,7 +735,8 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_NotAddShortEncodedSecrets()
     {
-        using var secretMasker = new SecretMasker();
+        string redactionToken = "qqq";
+        using var secretMasker = new SecretMasker(regexSecrets: null, defaultLiteralRedactionToken: redactionToken);
         secretMasker.AddLiteralEncoder(new LiteralEncoder(x => x.Replace("123", "ab")));
         secretMasker.AddValue("123");
         secretMasker.AddValue("345");
@@ -744,7 +745,7 @@ public class SecretMaskerTests
         var input = "ab123cd345";
         var result = secretMasker.MaskSecrets(input);
 
-        Assert.AreEqual("abyyycdyyy", result);
+        Assert.AreEqual(redactionToken, result);
     }
 
     [TestMethod]
