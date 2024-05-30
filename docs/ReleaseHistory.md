@@ -18,6 +18,7 @@
 - BUG: Correct length of `SEC101/166.AzureSearchIdentifiableQueryKey` and `SEC101/167.AzureSearchIdentifiableAdminKey` rules to 39 bytes and properly mark it as `DetectionMetadata.Identifiable`.
 - BUG: Remove `/AM7` signature + check from rust code.
 - NEW: Add `SEC101/190.AzureEventGridIdentifiableKey` check.
+- NEW: Create distinct `Detection.CrossCompanyCorrelatingId` property.
 - BUG: Correct `SEC101/170.AzureMLWebServiceClassicIdentifiableKey` signature to `+AMC`.
 - FPS: Correct `SEC101/166.AzureSearchIdentifiableQueryKey` and `SEC101/167.AzureSearchIdentifiableAdminKey` regex to disallow special characters in checksum region.
 

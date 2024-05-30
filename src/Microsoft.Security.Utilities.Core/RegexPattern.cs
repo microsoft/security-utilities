@@ -14,6 +14,8 @@ namespace Microsoft.Security.Utilities;
 
 public class RegexPattern
 {
+    public const string FallbackRedactionToken = "+++";
+
     public RegexPattern(string id,
                         string name,
                         DetectionMetadata patternMetadata,
@@ -161,11 +163,9 @@ public class RegexPattern
         return result;
     }
 
-    public const string DefaultRedactionToken = "***";
-
     public virtual IEnumerable<Detection> GetDetections(string input,
                                                         bool generateCrossCompanyCorrelatingIds,
-                                                        string defaultRedactionToken = DefaultRedactionToken,
+                                                        string defaultRedactionToken = FallbackRedactionToken,
                                                         IRegexEngine? regexEngine = null)
     {
         if (input == null)
@@ -196,10 +196,21 @@ public class RegexPattern
             {
                 startIndex = match.Index + 1;
 
-                string? redactionToken =
+                string? crossCompanyCorrelatingId =
                     generateCrossCompanyCorrelatingIds && DetectionMetadata.HasFlag(DetectionMetadata.HighEntropy)
-                        ? $"{Id}:{GenerateCrossCompanyCorrelatingId(match.Value)}"
+                        ? GenerateCrossCompanyCorrelatingId(match.Value)
+                        : null;
+
+                string? redactionToken = crossCompanyCorrelatingId != null
+                        ? $"{Id}:{crossCompanyCorrelatingId}"
                         : defaultRedactionToken;
+
+                // If the user has provided null or empty redaction token,
+                // we will use the fallback.
+                if (string.IsNullOrWhiteSpace(redactionToken))
+                {
+                    redactionToken = FallbackRedactionToken;
+                }
 
                 var moniker = GetMatchIdAndName(match.Value);
                 if (moniker == default)
@@ -216,6 +227,7 @@ public class RegexPattern
                                            match.Length,
                                            DetectionMetadata,
                                            RotationPeriod,
+                                           crossCompanyCorrelatingId,
                                            redactionToken);
             }
 

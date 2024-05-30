@@ -10,6 +10,8 @@ namespace Microsoft.Security.Utilities;
 
 public class SecretLiteral
 {
+    public const string FallbackRedactionToken = "***";
+
     public SecretLiteral(string value)
     {
         m_value = value ?? throw new ArgumentNullException(nameof(value));
@@ -29,6 +31,11 @@ public class SecretLiteral
 
     public IEnumerable<Detection> GetDetections(string input, string redactionToken)
     {
+        if (string.IsNullOrWhiteSpace(redactionToken))
+        {
+            redactionToken = FallbackRedactionToken;
+        }
+
         if (!string.IsNullOrEmpty(input) && !string.IsNullOrEmpty(m_value))
         {
             int startIndex = 0;
@@ -39,7 +46,14 @@ public class SecretLiteral
                 startIndex = input.IndexOf(m_value, startIndex, StringComparison.Ordinal);
                 if (startIndex > -1)
                 {
-                    yield return new Detection(null, null, startIndex, m_value.Length, 0, default, redactionToken);
+                    yield return new Detection(id: null,
+                                               name: null,
+                                               start: startIndex,
+                                               length: m_value.Length,
+                                               metadata: 0,
+                                               rotationPeriod: default,
+                                               crossCompanyCorrelatingId: null,
+                                               redactionToken);
                     ++startIndex;
                 }
             }

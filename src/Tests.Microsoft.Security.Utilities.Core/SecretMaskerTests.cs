@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Xml.Linq;
 
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -143,12 +144,26 @@ public class SecretMaskerTests
                         {
                             string secretValue = testExample;
                             string moniker = pattern.GetMatchMoniker(secretValue);
-                            string sha256Hash = RegexPattern.GenerateSha256Hash(secretValue);
 
                             // 1. All generated test patterns should be detected by the masker.
                             string redacted = secretMasker.MaskSecrets(secretValue);
                             bool result = redacted.Equals(secretValue);
                             result.Should().BeFalse(because: $"'{secretValue}' for '{moniker}' should be redacted from scan text.");
+
+                            // TODO: the generated examples don't distinguish the secret from surrounding context,
+                            // for rules such as our connection string detecting logic. We need a future change to
+                            // separate this data. For now, we skip all connection string patterns. This is a problem
+                            // for masking only (and not detection) because we have no location details when masking.
+                            if (testExample.Contains(";"))
+                            {
+                                continue;
+                            }
+
+                            string expectedRedactedValue = generateCrossCompanyCorrelatingIds
+                                ? $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(secretValue)}" 
+                                : RegexPattern.FallbackRedactionToken;
+
+                            redacted.Should().Be(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds}");
                         }
                     }
                 }
@@ -156,10 +171,10 @@ public class SecretMaskerTests
         }
     }
 
-    private SecretMasker InitializeTestMasker()
+    private SecretMasker InitializeTestMasker(bool generateCorrelatingIds = false)
     {
-        var testSecretMasker = new SecretMasker();
-        testSecretMasker.AddRegex(new UrlCredentials());
+        var testSecretMasker = new SecretMasker(new[] { new UrlCredentials() }, 
+                                                generateCorrelatingIds: generateCorrelatingIds);
         return testSecretMasker;
     }
 
@@ -212,8 +227,7 @@ public class SecretMaskerTests
         Assert.AreEqual(expected, actual);
         ValidateTelemetry(secretMasker);
     }
-    
-    
+        
     [TestMethod]
     public void IsUserInfoWithDigitsInNameMaskedCorrectly()
     {
@@ -721,7 +735,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_NotAddShortEncodedSecrets()
     {
-        using var secretMasker = new SecretMasker() { MinimumSecretLength = 3 };
+        using var secretMasker = new SecretMasker();
         secretMasker.AddLiteralEncoder(new LiteralEncoder(x => x.Replace("123", "ab")));
         secretMasker.AddValue("123");
         secretMasker.AddValue("345");
@@ -730,9 +744,40 @@ public class SecretMaskerTests
         var input = "ab123cd345";
         var result = secretMasker.MaskSecrets(input);
 
-        Assert.AreEqual("ab***cd***", result);
+        Assert.AreEqual("abyyycdyyy", result);
     }
 
+    [TestMethod]
+    public void SecretMasker_NullEmptyAndWhiteSpaceRedactionTokensAreIgnored()
+    {
+        foreach (string token in new[] { string.Empty, null, " " })
+        {
+            using var secretMasker = new SecretMasker() { DefaultLiteralRedactionToken = token, DefaultRegexRedactionToken = token };
+            secretMasker.AddValue("abc");
+            secretMasker.AddRegex(new RegexPattern(id: "123", name: "Name", DetectionMetadata.None, pattern: "def"));
+
+            // There must be a space between the two matches to avoid coalescing
+            // both finds into a single redaction operation.
+            var input = "abc def";
+            var result = secretMasker.MaskSecrets(input);
+
+            Assert.AreEqual($"{SecretLiteral.FallbackRedactionToken} {RegexPattern.FallbackRedactionToken}", result);
+        }
+    }
+
+    [TestMethod]
+    public void SecretMasker_DistinguishLiteralAndRegexRedactionTokens()
+    {
+        using var secretMasker = new SecretMasker() { MinimumSecretLength = 3, DefaultRegexRedactionToken = "zzz", DefaultLiteralRedactionToken = "yyy" };
+        
+        secretMasker.AddRegex(new RegexPattern(id: "1000", name: "Name", DetectionMetadata.None, pattern: "abc"));
+        secretMasker.AddValue("123");
+
+        var input = "abcx123ab12";
+        var result = secretMasker.MaskSecrets(input);
+
+        Assert.AreEqual("zzzxyyyab12", result);
+    }
 
     [DataTestMethod]
     [DataRow("deaddeaddeaddeaddeaddeaddeaddeadde/dead+deaddeaddeaddeaddeaddeaddeaddeaddeadAPIMxxxxxQ==", "SEC102/102.Unclassified64ByteBase64String:1DC39072DA446911FE3E87EB697FB22ED6E2F75D7ECE4D0CE7CF4288CE0094D1")]

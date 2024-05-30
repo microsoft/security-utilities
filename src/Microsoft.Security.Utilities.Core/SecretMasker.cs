@@ -24,15 +24,19 @@ public class SecretMasker : ISecretMasker, IDisposable
 {
     IRegexEngine? _regexEngine;
 
-    public static Version Version = RetrieveVersion();
+    public static Version Version => RetrieveVersion();
 
-    private static Version RetrieveVersion()
+    internal static Version RetrieveVersion()
     {
         var version = new Version(ThisAssembly.AssemblyFileVersion);
         return new Version(version.Major, version.Minor, version.Build);
     }
 
-    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets, bool generateCorrelatingIds = false, IRegexEngine? regexEngine = default)
+    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets,
+                        bool generateCorrelatingIds = false,
+                        IRegexEngine? regexEngine = default,
+                        string? defaultRegexRedactionToken = null,
+                        string? defaultLiteralRedactionToken = null)
     {
         m_disposed = false;
 
@@ -48,8 +52,8 @@ public class SecretMasker : ISecretMasker, IDisposable
 
         _regexEngine = regexEngine ??= CachedDotNetRegex.Instance;
 
-        DefaultRegexRedactionToken = "+++";
-        DefaultLiteralRedactionToken = "***";
+        DefaultRegexRedactionToken = defaultRegexRedactionToken ?? RegexPattern.FallbackRedactionToken;
+        DefaultLiteralRedactionToken = defaultLiteralRedactionToken ?? SecretLiteral.FallbackRedactionToken;
     }
 
     public SecretMasker()
@@ -148,6 +152,7 @@ public class SecretMasker : ISecretMasker, IDisposable
                                   detection.Length,
                                   detection.Metadata,
                                   detection.RotationPeriod,
+                                  detection.CrossCompanyCorrelatingId,
                                   detection.RedactionToken);
 
                 currentDetections.Add(currentDetection);
@@ -170,6 +175,7 @@ public class SecretMasker : ISecretMasker, IDisposable
                                       detection.Length,
                                       detection.Metadata,
                                       detection.RotationPeriod,
+                                      detection.CrossCompanyCorrelatingId,
                                       detection.RedactionToken);
 
                     currentDetections.Add(currentDetection);

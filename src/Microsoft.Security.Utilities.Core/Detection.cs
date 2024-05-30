@@ -14,12 +14,12 @@ public class Detection : IEquatable<Detection>
     }
 
     public Detection(Detection other)
-        : this(other?.Id, other?.Name, other?.Start ?? default, other?.Length ?? default, other?.Metadata ?? default, other?.RotationPeriod ?? default, other?.RedactionToken ?? default)
+        : this(other?.Id, other?.Name, other?.Start ?? default, other?.Length ?? default, other?.Metadata ?? default, other?.RotationPeriod ?? default, other?.CrossCompanyCorrelatingId ?? default, other?.RedactionToken ?? default)
     {
         other = other ?? throw new ArgumentNullException(nameof(other));
     }
 
-    public Detection(string? id, string? name, int start, int length, DetectionMetadata metadata, TimeSpan rotationPeriod = default, string? redactionToken = null)
+    public Detection(string? id, string? name, int start, int length, DetectionMetadata metadata, TimeSpan rotationPeriod = default, string? crossCompanyCorrelatingId = null, string? redactionToken = null)
     {
         Id = id;
         Name = name;
@@ -28,6 +28,7 @@ public class Detection : IEquatable<Detection>
         Metadata = metadata;
         RedactionToken = redactionToken;
         RotationPeriod = rotationPeriod;
+        CrossCompanyCorrelatingId = crossCompanyCorrelatingId;
     }
 
     /// <summary>
@@ -52,7 +53,9 @@ public class Detection : IEquatable<Detection>
 
     public TimeSpan RotationPeriod { get; set; }
 
-    public string? RedactionToken { get; set; }
+    public string? CrossCompanyCorrelatingId { get; set; }
+
+    public virtual string? RedactionToken { get; set; }
 
     public bool Equals(Detection? other)
     {
@@ -63,6 +66,7 @@ public class Detection : IEquatable<Detection>
 
         return string.Equals(Id, other.Id, StringComparison.Ordinal)
             && string.Equals(Name, other.Name, StringComparison.Ordinal)
+            && string.Equals(CrossCompanyCorrelatingId, other.CrossCompanyCorrelatingId, StringComparison.Ordinal)
             && string.Equals(RedactionToken, other.RedactionToken, StringComparison.Ordinal)
             && Metadata.Equals(other.Metadata)
             && int.Equals(Start, other.Start)
@@ -106,6 +110,15 @@ public class Detection : IEquatable<Detection>
 #endif
             }
 
+            if (CrossCompanyCorrelatingId != null)
+            {
+#if NET5_0_OR_GREATER
+                hashCode = (hashCode * 31) + CrossCompanyCorrelatingId.GetHashCode(StringComparison.Ordinal);
+#else
+                hashCode = (hashCode * 31) + CrossCompanyCorrelatingId.GetHashCode();
+#endif
+            }
+
             if (RedactionToken != null)
             {
 #if NET5_0_OR_GREATER
@@ -143,7 +156,7 @@ public class Detection : IEquatable<Detection>
 #if DEBUG
     public override string ToString()
     {
-        return $"{Id}.{Name}:{Start}-{Start + Length}:{Metadata}:{RedactionToken}";
+        return $"{Id}.{Name}:{Start}-{Start + Length}:{Metadata}:{CrossCompanyCorrelatingId}:{RedactionToken}";
     }
 #endif
 }
