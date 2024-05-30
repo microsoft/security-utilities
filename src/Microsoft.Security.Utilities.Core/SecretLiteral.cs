@@ -10,7 +10,7 @@ namespace Microsoft.Security.Utilities;
 
 public class SecretLiteral
 {
-    public const string FallbackRedactionToken = "+++";
+    public const string FallbackRedactionToken = "***";
 
     public SecretLiteral(string value)
     {
@@ -31,6 +31,11 @@ public class SecretLiteral
 
     public IEnumerable<Detection> GetDetections(string input, string redactionToken)
     {
+        if (string.IsNullOrWhiteSpace(redactionToken))
+        {
+            redactionToken = FallbackRedactionToken;
+        }
+
         if (!string.IsNullOrEmpty(input) && !string.IsNullOrEmpty(m_value))
         {
             int startIndex = 0;

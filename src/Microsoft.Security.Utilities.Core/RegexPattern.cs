@@ -205,7 +205,12 @@ public class RegexPattern
                         ? $"{Id}:{crossCompanyCorrelatingId}"
                         : defaultRedactionToken;
 
-                redactionToken ??= FallbackRedactionToken;
+                // If the user has provided null or empty redaction token,
+                // we will use the fallback.
+                if (string.IsNullOrWhiteSpace(redactionToken))
+                {
+                    redactionToken = FallbackRedactionToken;
+                }
 
                 var moniker = GetMatchIdAndName(match.Value);
                 if (moniker == default)

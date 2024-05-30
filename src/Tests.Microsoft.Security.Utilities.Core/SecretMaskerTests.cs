@@ -747,6 +747,23 @@ public class SecretMaskerTests
         Assert.AreEqual("abyyycdyyy", result);
     }
 
+    [TestMethod]
+    public void SecretMasker_NullEmptyAndWhiteSpaceRedactionTokensAreIgnored()
+    {
+        foreach (string token in new[] { string.Empty, null, " " })
+        {
+            using var secretMasker = new SecretMasker() { DefaultLiteralRedactionToken = token, DefaultRegexRedactionToken = token };
+            secretMasker.AddValue("abc");
+            secretMasker.AddRegex(new RegexPattern(id: "123", name: "Name", DetectionMetadata.None, pattern: "def"));
+
+            // There must be a space between the two matches to avoid coalescing
+            // both finds into a single redaction operation.
+            var input = "abc def";
+            var result = secretMasker.MaskSecrets(input);
+
+            Assert.AreEqual($"{SecretLiteral.FallbackRedactionToken} {RegexPattern.FallbackRedactionToken}", result);
+        }
+    }
 
     [TestMethod]
     public void SecretMasker_DistinguishLiteralAndRegexRedactionTokens()
