@@ -10,6 +10,8 @@ namespace Microsoft.Security.Utilities;
 
 public class SecretLiteral
 {
+    public const string FallbackRedactionToken = "+++";
+
     public SecretLiteral(string value)
     {
         m_value = value ?? throw new ArgumentNullException(nameof(value));

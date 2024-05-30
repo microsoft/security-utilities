@@ -14,7 +14,7 @@ namespace Microsoft.Security.Utilities;
 
 public class RegexPattern
 {
-    public const string FallbackRegexRedactionToken = "+++";
+    public const string FallbackRedactionToken = "+++";
 
     public RegexPattern(string id,
                         string name,
@@ -165,7 +165,7 @@ public class RegexPattern
 
     public virtual IEnumerable<Detection> GetDetections(string input,
                                                         bool generateCrossCompanyCorrelatingIds,
-                                                        string? defaultRedactionToken = null,
+                                                        string defaultRedactionToken = FallbackRedactionToken,
                                                         IRegexEngine? regexEngine = null)
     {
         if (input == null)
@@ -205,7 +205,7 @@ public class RegexPattern
                         ? $"{Id}:{crossCompanyCorrelatingId}"
                         : defaultRedactionToken;
 
-                redactionToken ??= FallbackRegexRedactionToken;
+                redactionToken ??= FallbackRedactionToken;
 
                 var moniker = GetMatchIdAndName(match.Value);
                 if (moniker == default)
