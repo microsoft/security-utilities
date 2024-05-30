@@ -150,6 +150,10 @@ public class SecretMaskerTests
                             bool result = redacted.Equals(secretValue);
                             result.Should().BeFalse(because: $"'{secretValue}' for '{moniker}' should be redacted from scan text.");
 
+                            // TODO: the generated examples don't distinguish the secret from surrounding context,
+                            // for rules such as our connection string detecting logic. We need a future change to
+                            // separate this data. For now, we skip all connection string patterns. This is a problem
+                            // for masking only (and not detection) because we have no location details when masking.
                             if (testExample.Contains(";"))
                             {
                                 continue;
@@ -157,7 +161,7 @@ public class SecretMaskerTests
 
                             string expectedRedactedValue = generateCrossCompanyCorrelatingIds
                                 ? $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(secretValue)}" 
-                                : "+++";
+                                : RegexPattern.FallbackRedactionToken;
 
                             redacted.Should().Be(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds}");
                         }
@@ -705,12 +709,12 @@ public class SecretMaskerTests
         var result = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual("abc+++3", result);
-    }    
+    }
 
     [TestMethod]
     public void SecretMasker_RemoveEncodedSecrets()
     {
-        using var secretMasker = new SecretMasker() { MinimumSecretLength = 0, DefaultRegexRedactionToken = "zzz" };
+        using var secretMasker = new SecretMasker(0);
         secretMasker.AddValue("1");
         secretMasker.AddValue("2");
         secretMasker.AddValue("3");
@@ -719,6 +723,7 @@ public class SecretMaskerTests
         secretMasker.AddLiteralEncoder(new LiteralEncoder(x => x.Replace("3", "6789")));
 
         secretMasker.MinimumSecretLength = 3;
+        secretMasker.RemoveShortSecretsFromDictionary();
 
         var input = "123456789";
         var result = secretMasker.MaskSecrets(input);
@@ -730,7 +735,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_NotAddShortEncodedSecrets()
     {
-        using var secretMasker = new SecretMasker() { MinimumSecretLength = 3, DefaultRegexRedactionToken = "zzz", DefaultLiteralRedactionToken = "yyy" };
+        using var secretMasker = new SecretMasker();
         secretMasker.AddLiteralEncoder(new LiteralEncoder(x => x.Replace("123", "ab")));
         secretMasker.AddValue("123");
         secretMasker.AddValue("345");
@@ -748,7 +753,7 @@ public class SecretMaskerTests
     {
         using var secretMasker = new SecretMasker() { MinimumSecretLength = 3, DefaultRegexRedactionToken = "zzz", DefaultLiteralRedactionToken = "yyy" };
         
-        secretMasker.AddRegex(new RegexPattern("1000", "Name", 0, "abc"));
+        secretMasker.AddRegex(new RegexPattern(id: "1000", name: "Name", DetectionMetadata.None, pattern: "abc"));
         secretMasker.AddValue("123");
 
         var input = "abcx123ab12";
