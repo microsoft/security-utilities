@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Text;
 
 using FluentAssertions;
@@ -29,6 +30,91 @@ namespace Microsoft.Security.Utilities
 
         private static string s_base62Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
+        [TestMethod]
+        public void IdentifiableSecrets_TryValidateCommonAnnotatedKey_RejectNullEmptyAndWhitespaceArguments()
+        {
+            using var assertionScope = new AssertionScope();
+
+            string validSignature = "ABCD";
+            string validKey = IdentifiableSecrets.GenerateCommonAnnotatedKey(validSignature, 
+                                                                             customerManagedKey: true,
+                                                                             new byte[9],
+                                                                             new byte[3]);
+
+            bool result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(validKey, validSignature);
+            result.Should().BeTrue(because: "a generated key should validate");
+
+            foreach (string arg in new[] { string.Empty, " ", null })
+            {
+                result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key: arg, base64EncodedSignature: validSignature);
+                result.Should().BeFalse(because: $"the key '{arg}' is not a valid argument");
+
+                result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key: validKey, base64EncodedSignature: arg);
+                result.Should().BeFalse(because: $"the signature '{arg}' is not a valid argument");
+            }
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_TryValidateCommonAnnotatedKey_RejectInvalidSignatures()
+        {
+            using var assertionScope = new AssertionScope();
+
+            string validSignature = "ABCD";
+            string validKey = IdentifiableSecrets.GenerateCommonAnnotatedKey(validSignature,
+                                                                             customerManagedKey: true,
+                                                                             new byte[9],
+                                                                             new byte[3]);
+
+            bool result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(validKey, validSignature);
+            result.Should().BeTrue(because: "a generated key should validate");
+
+            foreach (string signature in new[] { "Z", "YY", "XXX", "WWWWW", "1AAA" })
+            {
+                Action action = () =>
+                    IdentifiableSecrets.GenerateCommonAnnotatedKey(signature,
+                                                                   customerManagedKey: true,
+                                                                   new byte[9],
+                                                                   new byte[3]);
+                
+                action.Should().Throw<ArgumentException>(because: $"the signature '{signature}' is not valid");
+
+                result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key: validKey, base64EncodedSignature: signature);
+                result.Should().BeFalse(because: $"'{signature}' is not a valid signature argument");
+            }
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_TryValidateCommonAnnotatedKey_RejectInvalidKey()
+        {
+            using var assertionScope = new AssertionScope();
+
+            string validSignature = "Z123";
+            string validKey = IdentifiableSecrets.GenerateCommonAnnotatedKey(validSignature,
+                                                                             customerManagedKey: true,
+                                                                             new byte[9],
+                                                                             new byte[3]);
+
+            bool result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(validKey, validSignature);
+            result.Should().BeTrue(because: "a generated key should validate");
+
+            result = IdentifiableSecrets.TryValidateCommonAnnotatedKey($"{validKey}a", validSignature);
+            result.Should().BeFalse(because: "a key with an invalid length should not validate");
+
+            result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(validKey.Substring(1), validSignature);
+            result.Should().BeFalse(because: "a key with an invalid length should not validate");
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_ValidateCommonAnnotatedKeySignature()
+        {
+            using var assertionScope = new AssertionScope();
+
+            foreach (string invalidSignature in new[] { "AbAA", "aaaB", "1AAA"})
+            {
+                var action = () => IdentifiableSecrets.ValidateCommonAnnotatedKeySignature(invalidSignature);
+                action.Should().Throw<ArgumentException>(because: $"the signature '{invalidSignature}' is invalid");
+            }
+        }
 
         [TestMethod]
         public void IdentifiableSecrets_VariableLengthIdentifiableAndDerivedKeysValidate()
@@ -262,6 +348,8 @@ namespace Microsoft.Security.Utilities
 
                         foreach (bool customerManaged in new[] { true, false })
                         {
+                            signature = customerManaged ? signature.ToUpperInvariant() : signature.ToLowerInvariant();
+
                             string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature,
                                                                                         customerManaged,
                                                                                         platformReserved, 
