@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Security.Utilities.Core" Version="1.4.22-gda2bd0f88d" />
+    <PackageReference Include="Microsoft.Security.Utilities.Core" Version="*-*" />
   </ItemGroup>
 
 </Project>
