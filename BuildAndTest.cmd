@@ -29,10 +29,10 @@ if "%ERRORLEVEL%" NEQ "0" (
 )
 popd
 
-xcopy /Y .\src\security_utilities_rust_ffi\target\i686-pc-windows-msvc\release\microsoft_security_utilities_core.dll .\refs\win-x86
-xcopy /Y .\src\security_utilities_rust_ffi\target\i686-pc-windows-msvc\release\microsoft_security_utilities_core.pdb .\refs\win-x86
-xcopy /Y .\src\security_utilities_rust_ffi\target\x86_64-pc-windows-msvc\release\microsoft_security_utilities_core.dll .\refs\win-x64
-xcopy /Y .\src\security_utilities_rust_ffi\target\x86_64-pc-windows-msvc\release\microsoft_security_utilities_core.pdb .\refs\win-x64
+xcopy /Y .\src\security_utilities_rust_ffi\target\i686-pc-windows-msvc\release\microsoft_security_utilities_core.dll .\refs\win-x86\
+xcopy /Y .\src\security_utilities_rust_ffi\target\i686-pc-windows-msvc\release\microsoft_security_utilities_core.pdb .\refs\win-x86\
+xcopy /Y .\src\security_utilities_rust_ffi\target\x86_64-pc-windows-msvc\release\microsoft_security_utilities_core.dll .\refs\win-x64\
+xcopy /Y .\src\security_utilities_rust_ffi\target\x86_64-pc-windows-msvc\release\microsoft_security_utilities_core.pdb .\refs\win-x64\
 
 powershell -ExecutionPolicy RemoteSigned -File %~dp0\scripts\BuildAndTest.ps1 %*
 set result=%ERRORLEVEL%
