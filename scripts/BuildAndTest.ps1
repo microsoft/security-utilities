@@ -96,8 +96,20 @@ if ($LASTEXITCODE -ne 0) {
     Exit-WithFailureMessage $ScriptName "Build of SecurityUtilitiesPackageReference failed."
 }
 
-Write-Information "Running API examples using compiled Microsoft.Security.Utilities.Core package..."
+Write-Information "Running API examples using compiled Microsoft.Security.Utilities.Core package on net462..."
+Invoke-Expression "$RepoRoot\src\SecurityUtilitiesPackageReference\SecurityUtilitiesApiUtilizationExample\bin\$Configuration\net462\SecurityUtilitiesApiUtilizationExample.exe"
+if ($LASTEXITCODE -ne 0) {
+    Exit-WithFailureMessage $ScriptName "Microsoft.Security.Utilities.Core API example execution failed."
+}
+
+Write-Information "Running API examples using compiled Microsoft.Security.Utilities.Core package on net6.0..."
 Invoke-Expression "$RepoRoot\src\SecurityUtilitiesPackageReference\SecurityUtilitiesApiUtilizationExample\bin\$Configuration\net6.0\SecurityUtilitiesApiUtilizationExample.exe"
+if ($LASTEXITCODE -ne 0) {
+    Exit-WithFailureMessage $ScriptName "Microsoft.Security.Utilities.Core API example execution failed."
+}
+
+Write-Information "Running API examples using compiled Microsoft.Security.Utilities.Core package on netstandard2.0..."
+Invoke-Expression "$RepoRoot\src\SecurityUtilitiesPackageReference\SecurityUtilitiesApiUtilizationExample\bin\$Configuration\netstandard2.0\SecurityUtilitiesApiUtilizationExample.exe"
 if ($LASTEXITCODE -ne 0) {
     Exit-WithFailureMessage $ScriptName "Microsoft.Security.Utilities.Core API example execution failed."
 }

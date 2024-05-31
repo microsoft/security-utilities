@@ -1,4 +1,6 @@
-﻿using Microsoft.Security.Utilities;
+﻿using System;
+
+using Microsoft.Security.Utilities;
 
 namespace SecurityUtilitiesApiUtilizationExample
 {
@@ -20,13 +22,13 @@ namespace SecurityUtilitiesApiUtilizationExample
                 {
                     for (int i = 0; i < iterations; i++)
                     {
-                        foreach (string signature in identifiable.Signatures!)
+                        foreach (string signature in identifiable.Signatures)
                         {
                             string key = IdentifiableSecrets.GenerateStandardBase64Key(seed,
                                                                                      identifiable.KeyLength,
                                                                                      signature);
 
-                            int found = masker.DetectSecrets(key).Count();
+                            masker.DetectSecrets(key);
                         }
                     }
                 }
