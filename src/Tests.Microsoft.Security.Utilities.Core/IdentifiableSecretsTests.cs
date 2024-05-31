@@ -30,6 +30,33 @@ namespace Microsoft.Security.Utilities
 
         private static string s_base62Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
+
+
+        [TestMethod]
+        public void IdentifiableSecrets_TryValidateCommonAnnotatedKey_GenerateCommonAnnotatedKey_LongForm()
+        {
+            using var assertionScope = new AssertionScope();
+
+            foreach (bool longForm in new[] { true, false })
+            {
+                string validSignature = "ABCD";
+                string validKey = IdentifiableSecrets.GenerateCommonAnnotatedKey(validSignature,
+                                                                                 customerManagedKey: true,
+                                                                                 new byte[9],
+                                                                                 new byte[3],
+                                                                                 longForm: true);
+
+                bool result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(validKey, validSignature);
+                result.Should().BeTrue(because: "a generated key should validate");
+
+                result = validKey.Length == IdentifiableSecrets.LongFormCommonAnnotatedKeySize
+                    ? validKey.Length == IdentifiableSecrets.LongFormCommonAnnotatedKeySize
+                    : validKey.Length == IdentifiableSecrets.StandardCommonAnnotatedKeySize;
+
+                result.Should().BeTrue(because: $"generated key should have correct length with longForm == '{longForm}'");
+            }
+        }
+
         [TestMethod]
         public void IdentifiableSecrets_TryValidateCommonAnnotatedKey_RejectNullEmptyAndWhitespaceArguments()
         {
@@ -70,16 +97,20 @@ namespace Microsoft.Security.Utilities
 
             foreach (string signature in new[] { "Z", "YY", "XXX", "WWWWW", "1AAA" })
             {
-                Action action = () =>
-                    IdentifiableSecrets.GenerateCommonAnnotatedKey(signature,
-                                                                   customerManagedKey: true,
-                                                                   new byte[9],
-                                                                   new byte[3]);
-                
-                action.Should().Throw<ArgumentException>(because: $"the signature '{signature}' is not valid");
+                foreach (bool longForm in new[] { true, false })
+                {
+                    Action action = () =>
+                        IdentifiableSecrets.GenerateCommonAnnotatedKey(signature,
+                                                                       customerManagedKey: true,
+                                                                       new byte[9],
+                                                                       new byte[3],
+                                                                       longForm: true);
 
-                result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key: validKey, base64EncodedSignature: signature);
-                result.Should().BeFalse(because: $"'{signature}' is not a valid signature argument");
+                    action.Should().Throw<ArgumentException>(because: $"the signature '{signature}' is not valid");
+
+                    result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key: validKey, base64EncodedSignature: signature);
+                    result.Should().BeFalse(because: $"'{signature}' is not a valid signature argument");
+                }
             }
         }
 

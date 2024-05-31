@@ -27,6 +27,10 @@ public static class IdentifiableSecrets
 
     public static uint MinimumGeneratedKeySize => 24;
 
+    public static uint StandardCommonAnnotatedKeySize => 84;
+
+    public static uint LongFormCommonAnnotatedKeySize => 88;
+
     public static string CommonAnnotatedKeySignature => "JQQJ99";
 
     public static string CommonAnnotatedDerivedKeySignature => "JQQJ9D";
@@ -69,12 +73,14 @@ public static class IdentifiableSecrets
             return false;
         }
 
-        if (key.Length != 84 && key.Length != 86)
+        if (key.Length != StandardCommonAnnotatedKeySize && key.Length != LongFormCommonAnnotatedKeySize)
         {
             return false;
         }
 
-        string signature = key.Substring(76, 4);
+        bool longForm = key.Length == LongFormCommonAnnotatedKeySize;
+
+        string signature = key.Substring(CommonAnnotatedKey.ProviderFixedSignatureOffset, CommonAnnotatedKey.ProviderFixedSignatureLength);
 
         string alternate = char.IsUpper(signature[0]) 
             ? signature.ToLowerInvariant() 
@@ -82,22 +88,17 @@ public static class IdentifiableSecrets
 
         ulong checksumSeed = VersionTwoChecksumSeed;
 
-        string componentToChecksum = key.Substring(0, key.Length - 4);
-        string checksumText = key.Substring(key.Length - 4);
+        string componentToChecksum = key.Substring(0, CommonAnnotatedKey.ChecksumOffset);
+        string checksumText = key.Substring(CommonAnnotatedKey.ChecksumOffset);
 
         byte[] keyBytes = Convert.FromBase64String(componentToChecksum);
 
         int checksum = Marvin.ComputeHash32(keyBytes, checksumSeed, 0, keyBytes.Length);
 
         byte[] checksumBytes = BitConverter.GetBytes(checksum);
-        byte[] truncatedChecksumBytes = new byte[3];
 
-        truncatedChecksumBytes[0] = checksumBytes[0];
-        truncatedChecksumBytes[1] = checksumBytes[1];
-        truncatedChecksumBytes[2] = checksumBytes[2];
-
-        string encoded = Convert.ToBase64String(truncatedChecksumBytes);
-
+        // A long-form has a full 4-byte checksum, while a standard form has only 3.
+        string encoded = Convert.ToBase64String(checksumBytes, 0, longForm ? 4 : 3);
         return encoded == checksumText;
     }
 
@@ -146,7 +147,8 @@ public static class IdentifiableSecrets
         byte[] derivedKeyBytes = new byte[40];
         Array.Copy(hashBytes, derivedKeyBytes, derivedKeyBytes.Length);
 
-        string encodedRandom = derivedKeyBytes.ToBase62().Substring(0, 52);
+        // All data preceding the standard fixed signature comprises the random content.
+        string encodedRandom = derivedKeyBytes.ToBase62().Substring(0, CommonAnnotatedKey.StandardFixedSignatureOffset);
 
         string standardSignature = "JQQJ9D";
 
@@ -163,6 +165,7 @@ public static class IdentifiableSecrets
                                                     bool customerManagedKey,
                                                     byte[] platformReserved,
                                                     byte[] providerReserved,
+                                                    bool longForm = false,
                                                     char? testChar = null)
     {
         return GenerateCommonAnnotatedTestKey(VersionTwoChecksumSeed,
@@ -170,6 +173,7 @@ public static class IdentifiableSecrets
                                               customerManagedKey,
                                               platformReserved,
                                               providerReserved,
+                                              longForm,
                                               testChar);
     }
 
@@ -178,7 +182,8 @@ public static class IdentifiableSecrets
                                                         bool customerManagedKey,
                                                         byte[] platformReserved,
                                                         byte[] providerReserved,
-                                                        char? testChar)
+                                                        bool longForm = false,
+                                                        char? testChar = null)
     {
         const int platformReservedLength = 9; 
         const int providerReservedLength = 3;
@@ -223,7 +228,14 @@ public static class IdentifiableSecrets
                 using var generator = RandomNumberGenerator.Create();
                 generator.GetBytes(keyBytes, 0, (int)keyLengthInBytes);
 
-                key = keyBytes.ToBase62().Substring(0, 86);
+                key = keyBytes.ToBase62();
+                
+                if (key.Length < 86)
+                {
+                    throw new InvalidOperationException($"The key length is less than 86 characters: {key}");
+                }
+                
+                key = key.Substring(0, 86);
                 key = $"{key}==";
             }
             else
@@ -231,7 +243,14 @@ public static class IdentifiableSecrets
                 key = $"{new string(testChar!.Value, 86)}==";
             }
 
-            keyBytes = Convert.FromBase64String(key);
+            try
+            {
+                keyBytes = Convert.FromBase64String(key);
+            }
+            catch (FormatException)
+            {
+                throw new InvalidOperationException($"Key could not be decoded: {key}"); ;
+            }
 
             byte jBits = 'J' - 'A';
             byte qBits = 'Q' - 'A';
@@ -287,7 +306,10 @@ public static class IdentifiableSecrets
 
             if (!key.Contains("+") && !key.Contains("/"))
             {
-                key = key.Substring(0, key.Length - 4);
+                if (!longForm)
+                {
+                    key = key.Substring(0, key.Length - 4);
+                }
                 break;
             }
             else if (testChar != null)
