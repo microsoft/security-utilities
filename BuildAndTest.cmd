@@ -22,11 +22,16 @@ popd
 pushd .\src\security_utilities_rust_ffi\
 call cargo clean --release
 call cargo build --release --target x86_64-pc-windows-msvc
-call cargo build --release --target i686-pc-windows-msvc
 if "%ERRORLEVEL%" NEQ "0" (
-  echo "security_utilities_rust_ffi build failed..."
+  echo "security_utilities_rust_ffi build failed for x86_64-pc-windows-msvc target..."
   exit /b %ERRORLEVEL%
 )
+call cargo build --release --target i686-pc-windows-msvc
+if "%ERRORLEVEL%" NEQ "0" (
+  echo "security_utilities_rust_ffi build failed for i686-pc-windows-msvc target..."
+  exit /b %ERRORLEVEL%
+)
+
 popd
 
 xcopy /Y .\src\security_utilities_rust_ffi\target\i686-pc-windows-msvc\release\microsoft_security_utilities_core.dll .\refs\win-x86\
