@@ -93,6 +93,7 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
+*.dll
 
 # Chutzpah Test files
 _Chutzpah*
@@ -364,3 +365,6 @@ Cargo.lock
 
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
+
+# Ignore the globalPackagesFolderTest
+**/globalPackagesFolderTest/
