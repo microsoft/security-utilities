@@ -90,4 +90,16 @@ if ($LASTEXITCODE -ne 0) {
     Exit-WithFailureMessage $ScriptName "Package build failed."
 }
 
+Write-Information "Building SecurityUtilitiesPackageReference.sln (dotnet)..."
+dotnet build $RepoRoot\src\SecurityUtilitiesPackageReference\SecurityUtilitiesPackageReference.sln -c $Configuration
+if ($LASTEXITCODE -ne 0) {
+    Exit-WithFailureMessage $ScriptName "Build of SecurityUtilitiesPackageReference failed."
+}
+
+Write-Information "Running API examples using compiled Microsoft.Security.Utilities.Core package..."
+Invoke-Expression "$RepoRoot\src\SecurityUtilitiesPackageReference\SecurityUtilitiesApiUtilizationExample\bin\$Configuration\net6.0\SecurityUtilitiesApiUtilizationExample.exe"
+if ($LASTEXITCODE -ne 0) {
+    Exit-WithFailureMessage $ScriptName "Microsoft.Security.Utilities.Core API example execution failed."
+}
+
 Write-Information "$ScriptName SUCCEEDED."
