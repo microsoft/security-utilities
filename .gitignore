@@ -368,3 +368,6 @@ Cargo.lock
 
 # Ignore the globalPackagesFolderTest
 **/globalPackagesFolderTest/
+
+# Ignore any .idea rust folder
+**/.idea/
