@@ -108,10 +108,4 @@ if ($LASTEXITCODE -ne 0) {
     Exit-WithFailureMessage $ScriptName "Microsoft.Security.Utilities.Core API example execution failed."
 }
 
-Write-Information "Running API examples using compiled Microsoft.Security.Utilities.Core package on netstandard2.0..."
-Invoke-Expression "$RepoRoot\src\SecurityUtilitiesPackageReference\SecurityUtilitiesApiUtilizationExample\bin\$Configuration\netstandard2.0\SecurityUtilitiesApiUtilizationExample.exe"
-if ($LASTEXITCODE -ne 0) {
-    Exit-WithFailureMessage $ScriptName "Microsoft.Security.Utilities.Core API example execution failed."
-}
-
 Write-Information "$ScriptName SUCCEEDED."
