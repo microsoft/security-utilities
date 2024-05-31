@@ -80,7 +80,7 @@ public static class IdentifiableSecrets
 
         bool longForm = key.Length == LongFormCommonAnnotatedKeySize;
 
-        string signature = key.Substring(76, 4);
+        string signature = key.Substring(CommonAnnotatedKey.ProviderFixedSignatureOffset, CommonAnnotatedKey.ProviderFixedSignatureLength);
 
         string alternate = char.IsUpper(signature[0]) 
             ? signature.ToLowerInvariant() 
@@ -88,8 +88,8 @@ public static class IdentifiableSecrets
 
         ulong checksumSeed = VersionTwoChecksumSeed;
 
-        string componentToChecksum = key.Substring(0, 80);
-        string checksumText = key.Substring(80);
+        string componentToChecksum = key.Substring(0, CommonAnnotatedKey.ChecksumOffset);
+        string checksumText = key.Substring(CommonAnnotatedKey.ChecksumOffset);
 
         byte[] keyBytes = Convert.FromBase64String(componentToChecksum);
 
@@ -147,7 +147,8 @@ public static class IdentifiableSecrets
         byte[] derivedKeyBytes = new byte[40];
         Array.Copy(hashBytes, derivedKeyBytes, derivedKeyBytes.Length);
 
-        string encodedRandom = derivedKeyBytes.ToBase62().Substring(0, 52);
+        // All data preceding the standard fixed signature comprises the random content.
+        string encodedRandom = derivedKeyBytes.ToBase62().Substring(0, CommonAnnotatedKey.StandardFixedSignatureOffset);
 
         string standardSignature = "JQQJ9D";
 
