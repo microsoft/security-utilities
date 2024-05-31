@@ -19,12 +19,19 @@ namespace Microsoft.Security.Utilities
             string base64EncodedSignature = key.Substring(76, 4);
             bool isDerived = key[DerivedKeyCharacterOffset] == 'D';
 
-            if (key.Length != 88 && key.Length != 84)
+            if (key.Length != IdentifiableSecrets.StandardCommonAnnotatedKeySize &&
+                key.Length != IdentifiableSecrets.LongFormCommonAnnotatedKeySize)
             {
                 return false;
             }
 
-            if (key.Length == 84)
+            bool longForm = key.Length == IdentifiableSecrets.LongFormCommonAnnotatedKeySize;
+
+            // This code path is intended to ensure that common annotated security keys are
+            // highly backwards compatible with the older identifiable keys format. This
+            // should only entail providing the missing compute checksum byte of the key if
+            // it is absent. The validation performed below is a fairly expensive operation.
+            if (!longForm)
             {
                 string partialEncodedChecksum = key.Substring(key.Length - 4);
 
@@ -70,7 +77,63 @@ namespace Microsoft.Security.Utilities
             this.base64Key = Convert.ToBase64String(this.bytes);
         }
 
-        public const int DerivedKeyCharacterOffset = 57;
+        /// <summary>
+        /// The offset to the encoded standard fixed signature ('JQQJ99' or 'JQQJ9D').
+        /// </summary>
+        public const int StandardFixedSignatureOffset = 52;
+
+        /// <summary>
+        /// The encoded length of the standard fixed signature ('JQQJ99' or 'JQQJ9D').
+        /// </summary>
+        public const int StandardFixedSignatureLength = 6;
+
+        /// <summary>
+        /// The offset to the encoded character that denotes a derived ('D')
+        /// or standard ('9') common annotated security key.
+        /// </summary>
+        public const int DerivedKeyCharacterOffset = StandardFixedSignatureOffset + StandardFixedSignatureLength - 1;
+
+        /// <summary>
+        /// The offset to the two-character encoded key creation date.
+        /// </summary>
+        public const int DateOffset = StandardFixedSignatureOffset + StandardFixedSignatureLength;
+
+        /// <summary>
+        /// The encoded length of the creation date (a value such as 'AE').
+        /// </summary>
+        public const int DateLength = 2;
+
+        /// <summary>
+        /// The offset to the 12-character encoded platform-reserved data.
+        /// </summary>
+        public const int PlatformReservedOffset = DateOffset + DateLength;
+
+        /// <summary>
+        /// The encoded length of the platform-reserved bytes.
+        /// </summary>
+        public const int PlatformReservedLength = 12;
+
+        /// <summary>
+        /// The offset to the 4-character encoded provider-reserved data.
+        /// </summary>
+        public const int ProviderReservedOffset = PlatformReservedOffset + PlatformReservedLength;
+
+        /// <summary>
+        /// The encoded length of the provider-reserved bytes.
+        /// </summary>
+        public const int ProviderReservedLength = 4;
+
+        /// <summary>
+        /// The offset to the 4-character encoded provider fixed signature.
+        /// </summary>
+        public const int ProviderFixedSignatureOffset = ProviderReservedOffset + ProviderReservedLength;
+
+        /// <summary>
+        /// The encoded length of the provider fixed signature, e.g., 'AZEG'.
+        /// </summary>
+        public const int ProviderFixedSignatureLength = 4;
+
+        public const int ChecksumOffset = ProviderFixedSignatureOffset + ProviderFixedSignatureLength;
 
         public bool IsDerivedKey => this.base64Key[DerivedKeyCharacterOffset] == 'D';
 
@@ -79,15 +142,15 @@ namespace Microsoft.Security.Utilities
         // 123456789012345678901234567890123456789012345678901234567890123456789012345678901234[5678]
         // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaJQQJ99ADccrrrrrtttttppppASIGixi1[xx==]
 
-        public string StandardFixedSignature => this.base64Key.Substring(52, 6);
+        public string StandardFixedSignature => this.base64Key.Substring(StandardFixedSignatureOffset, StandardFixedSignatureLength);
 
-        public string DateText => this.base64Key.Substring(58, 2);
+        public string DateText => this.base64Key.Substring(DateOffset, DateLength);
 
-        public string PlatformReserved => this.base64Key.Substring(60, 12);
+        public string PlatformReserved => this.base64Key.Substring(PlatformReservedOffset, PlatformReservedLength);
 
-        public string ProviderReserved => this.base64Key.Substring(72, 4);
+        public string ProviderReserved => this.base64Key.Substring(ProviderReservedOffset, ProviderReservedLength);
 
-        public string ProviderFixedSignature => this.base64Key.Substring(76, 4);
+        public string ProviderFixedSignature => this.base64Key.Substring(ProviderFixedSignatureOffset, ProviderFixedSignatureLength);
 
         public DateTime CreationDate => ComputeDateTime(DateText);
 

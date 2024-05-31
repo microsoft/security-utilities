@@ -11,6 +11,7 @@
 - FNS => Flase negative reduction in static analysis.
 
 # UNRELEASED
+- BRK: Add `longForm` argument to `IdentifiableSecrets.GenerateCommonAnnotatedKey`, to produce the optional full 64-byte form (which includes the full 4-byte Marvin checksum).
 - BRK: Coalesce `AadClientAppIdentifiableCredentialsCurrent` and `AadClientAppIdentifiableCredentialsPrevious` into a single `AadClientAppIdentifiableCredentials` check.
 - BRK: Rename `IIdentifiableKey.SniffLiterals` to `IIdentifiableKey.Signatures` to precisely reflect their purpose to signify fixed signatures in keys.
 - BUG: Update `IdentifiableScan` to post-process finds (e.g., with checksum validation) to eliminate false positives.

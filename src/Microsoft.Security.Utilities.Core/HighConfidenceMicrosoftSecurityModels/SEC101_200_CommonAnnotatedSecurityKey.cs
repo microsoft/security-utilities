@@ -24,22 +24,26 @@ namespace Microsoft.Security.Utilities
 
             while(true)
             {
-                char testChar = (char)('a' + attempts++);
-                string example = IdentifiableSecrets.GenerateCommonAnnotatedTestKey(IdentifiableSecrets.VersionTwoChecksumSeed,
-                                                                                    "TEST", 
-                                                                                    customerManagedKey: true,
-                                                                                    platformReserved: null,
-                                                                                    providerReserved: null,
-                                                                                    testChar);  
-
-                if (example == null) { continue; }
-
-                if (++count == 10)
+                foreach (bool longForm in new[] { true, false })
                 {
-                    break;
-                }
+                    char testChar = (char)('a' + attempts++);
+                    string example = IdentifiableSecrets.GenerateCommonAnnotatedTestKey(IdentifiableSecrets.VersionTwoChecksumSeed,
+                                                                                        "TEST",
+                                                                                        customerManagedKey: true,
+                                                                                        platformReserved: null,
+                                                                                        providerReserved: null,
+                                                                                        longForm: false,
+                                                                                        testChar);
 
-                yield return example;
+                    if (example == null) { continue; }
+
+                    if (++count == 20)
+                    {
+                        break;
+                    }
+
+                    yield return example;
+                }
             }
         }
     }
