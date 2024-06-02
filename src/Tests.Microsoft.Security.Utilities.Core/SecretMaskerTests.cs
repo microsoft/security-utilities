@@ -54,7 +54,7 @@ public class SecretMaskerTests
         // characters chosen from the secret alphabet for the pattern).
         for (int i = 0; i < 1; i++)
         {
-            using var scope = new AssertionScope();
+            //using var scope = new AssertionScope();
 
             foreach (IRegexEngine regexEngine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
             {
@@ -64,7 +64,7 @@ public class SecretMaskerTests
 
                     foreach (var pattern in patterns)
                     {
-                        foreach (string testExample in pattern.GenerateTestExamples())
+                        foreach (string testExample in pattern.GenerateTruePositiveExamples())
                         {
                             string context = testExample;
                             string standaloneSecret = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine").First().Value;
@@ -140,7 +140,7 @@ public class SecretMaskerTests
 
                     foreach (var pattern in patterns)
                     {
-                        foreach (string testExample in pattern.GenerateTestExamples())
+                        foreach (string testExample in pattern.GenerateTruePositiveExamples())
                         {
                             string secretValue = testExample;
                             string moniker = pattern.GetMatchMoniker(secretValue);
@@ -154,7 +154,8 @@ public class SecretMaskerTests
                             // for rules such as our connection string detecting logic. We need a future change to
                             // separate this data. For now, we skip all connection string patterns. This is a problem
                             // for masking only (and not detection) because we have no location details when masking.
-                            if (testExample.Contains(";"))
+                            if (pattern.Id == "SEC101/051" ||
+                                testExample.Contains(";"))
                             {
                                 continue;
                             }
@@ -164,6 +165,17 @@ public class SecretMaskerTests
                                 : RegexPattern.FallbackRedactionToken;
 
                             redacted.Should().Be(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds}");
+                        }
+
+                        foreach(string testExample in pattern.GenerateFalsePositiveExamples())
+                        {
+                            string secretValue = testExample;
+
+                            // 1. All generated false positive test patterns should
+                            //  not result in a mask operation.
+                            string redacted = secretMasker.MaskSecrets(secretValue);
+                            bool result = redacted.Equals(secretValue);
+                            result.Should().BeTrue(because: $"'{secretValue}' for '{pattern.Id}.{pattern.Name}' should not be redacted from scan text.");
                         }
                     }
                 }

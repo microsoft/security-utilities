@@ -1,0 +1,65 @@
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Microsoft.Security.Utilities
+{
+    public class GenericJwt : RegexPattern
+    {
+        public GenericJwt()
+        {
+            Id = "SEC101/528";
+            Name = nameof(GenericJwt);
+            DetectionMetadata = DetectionMetadata.HighEntropy;
+            Pattern = @$"(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{{23,}}\.e[0-9A-Za-z-_=]{{23,}}\.[0-9A-Za-z-_=]{{24,}}(?:[^0-9A-Za-z-_]|$)";
+            Signatures = new[] { "eyJ", "eyAi", "ewog" }.ToSet();
+        }
+
+        public override Tuple<string, string> GetMatchIdAndName(string match)
+        {
+            string header = match.Substring(0, match.IndexOf('.'));
+            string decoded = null;
+
+            try
+            {
+                header = $"{header}{Base64Padding(header)}";
+                decoded = Encoding.UTF8.GetString(Convert.FromBase64String(header));
+            }
+            catch(FormatException)
+            {
+                return null;
+            }
+
+            return decoded.IndexOf("\"alg\"") != -1
+                ? base.GetMatchIdAndName(match)
+                : null;
+        }
+
+        public static string Base64Padding(string base64Segment)
+        {
+            int length = base64Segment.Length;
+            int remainder = length % 4;
+
+            if (remainder == 0)
+            {
+                // No padding needed
+                return string.Empty;
+            }
+            else
+            {
+                // Padding needed
+                return new string('=', 4 - remainder);
+            }
+        }
+
+        public override IEnumerable<string> GenerateTruePositiveExamples()
+        {
+            yield return $"eyAidHlwIiA6ICJKV1QiLCAiYWxnIiA6ICJIUzI1NiIgfQ.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+            yield return $"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+            yield return $"eyJraWQiOiJ5ZXMiLCJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Im1lIGFnYWluIiwiaWF0IjoxNTE2MjM5MDIyfQ.i6jPt5VrHYb77j8bPA2lWWiasPAR-_xa4ZtQCJTdnjI";
+        }
+    }
+}

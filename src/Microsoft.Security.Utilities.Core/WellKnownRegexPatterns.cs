@@ -49,6 +49,8 @@ public static class WellKnownRegexPatterns
 
     public static IEnumerable<RegexPattern> LowConfidencePotentialSecurityKeys { get; } = new RegexPattern[]
     {
+        new GenericJwt(),
+        new LooseSasSecret(),
         new Unclassified32ByteBase64String(),
         new Unclassified64ByteBase64String(),
         new Unclassified16ByteHexadecimalString(),

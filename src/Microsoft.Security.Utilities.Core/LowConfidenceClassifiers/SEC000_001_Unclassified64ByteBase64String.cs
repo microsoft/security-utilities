@@ -24,7 +24,7 @@ internal sealed class Unclassified64ByteBase64String : RegexPattern
         DetectionMetadata = DetectionMetadata.HighEntropy;
     }
 
-    public override IEnumerable<string> GenerateTestExamples()
+    public override IEnumerable<string> GenerateTruePositiveExamples()
     {
         yield return $"{WellKnownRegexPatterns.RandomBase64(86)}==";
     }

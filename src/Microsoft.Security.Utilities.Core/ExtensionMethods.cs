@@ -12,5 +12,9 @@ namespace Microsoft.Security.Utilities
         {
             return new HashSet<string> { value };
         }
+        public static ISet<string> ToSet(this IEnumerable<string> value)
+        {
+            return new HashSet<string>(value);
+        }
     }
 }

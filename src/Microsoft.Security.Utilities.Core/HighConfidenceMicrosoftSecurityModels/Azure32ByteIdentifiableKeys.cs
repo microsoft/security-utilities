@@ -52,7 +52,7 @@ internal sealed class Azure32ByteIdentifiableKeys : RegexPattern
         };
     }
 
-    public override IEnumerable<string> GenerateTestExamples()
+    public override IEnumerable<string> GenerateTruePositiveExamples()
     {
         const string aiotSignature = IdentifiableMetadata.AzureIotSignature;
 

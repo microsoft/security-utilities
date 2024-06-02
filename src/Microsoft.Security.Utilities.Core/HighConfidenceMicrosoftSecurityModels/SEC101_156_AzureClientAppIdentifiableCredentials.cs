@@ -26,7 +26,7 @@ namespace Microsoft.Security.Utilities
             return null;
         }
 
-        public override IEnumerable<string> GenerateTestExamples()
+        public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             yield return $"yyy7Q~yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy";
             yield return $"zzz8Q~zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzblP";

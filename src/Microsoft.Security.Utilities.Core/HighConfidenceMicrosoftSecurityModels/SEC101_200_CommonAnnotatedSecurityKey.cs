@@ -17,7 +17,7 @@ namespace Microsoft.Security.Utilities
             Signatures = "JQQJ9".ToSet();
         }
 
-        public override IEnumerable<string> GenerateTestExamples()
+        public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             int count = 0;
             int attempts = 0;

@@ -288,7 +288,7 @@ namespace Microsoft.Security.Utilities
                     continue; 
                 }
 
-                foreach (string securityKey in pattern.GenerateTestExamples())
+                foreach (string securityKey in pattern.GenerateTruePositiveExamples())
                 {
                     IIdentifiableKey identifiablePattern = pattern as IIdentifiableKey;
                     if (identifiablePattern == null) { continue; }

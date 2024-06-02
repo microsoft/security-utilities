@@ -2,7 +2,6 @@
 time /T
 
 pushd .\src\security_utilities_rust\
-call cargo clean --release
 call cargo test --release
 if "%ERRORLEVEL%" NEQ "0" (
   echo "security_utilities_rust testing failed..."
@@ -11,7 +10,6 @@ if "%ERRORLEVEL%" NEQ "0" (
 popd
 
 pushd .\src\security_utilities_rust_ffi\
-call cargo clean --release
 call cargo test --release
 if "%ERRORLEVEL%" NEQ "0" (
   echo "security_utilities_rust_ffi testing failed..."
@@ -21,7 +19,6 @@ popd
 
 
 pushd .\src\security_utilities_rust_ffi\
-call cargo clean --release
 call cargo build --release
 if "%ERRORLEVEL%" NEQ "0" (
   echo "security_utilities_rust_ffi build failed..."

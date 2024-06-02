@@ -24,7 +24,7 @@ internal sealed class Unclassified32ByteBase64String : RegexPattern
 
     public override Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>("SEC000/000", "Unclassified32ByteBase64String");
 
-    public override IEnumerable<string> GenerateTestExamples()
+    public override IEnumerable<string> GenerateTruePositiveExamples()
     {
         yield return $"{WellKnownRegexPatterns.RandomBase64(43)}=";
     }

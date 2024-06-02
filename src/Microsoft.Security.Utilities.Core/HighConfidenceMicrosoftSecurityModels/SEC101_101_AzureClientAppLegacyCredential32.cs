@@ -34,7 +34,7 @@ namespace Microsoft.Security.Utilities
             return base.GetMatchIdAndName(match);
         }
 
-        public override IEnumerable<string> GenerateTestExamples()
+        public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             while (true)
             {
@@ -46,6 +46,12 @@ namespace Microsoft.Security.Utilities
                 }
             }
         }
+
+        public override IEnumerable<string> GenerateFalsePositiveExamples()
+        {
+            yield return DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+        }
+
 
         private static bool HasAtLeastOneSymbol(string text)
         {

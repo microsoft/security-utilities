@@ -72,7 +72,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
 
                 foreach (var regexPattern in RegexPatterns)
                 {
-                    foreach (string example in regexPattern.GenerateTestExamples())
+                    foreach (string example in regexPattern.GenerateTruePositiveExamples())
                     {
                         localCount++;
 

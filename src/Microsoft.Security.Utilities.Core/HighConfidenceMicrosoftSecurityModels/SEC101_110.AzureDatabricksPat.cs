@@ -16,7 +16,7 @@ namespace Microsoft.Security.Utilities
             Signatures = new HashSet<string>(new[] { "dapi" });
         }
 
-        public override IEnumerable<string> GenerateTestExamples()
+        public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             yield return $"dapi{WellKnownRegexPatterns.RandomHexadecimal(32)}";
             yield return $"dapi{WellKnownRegexPatterns.RandomHexadecimal(32)}-3";

@@ -26,7 +26,7 @@ namespace Microsoft.Security.Utilities
             return base.GetMatchIdAndName(match);
         }
 
-        public override IEnumerable<string> GenerateTestExamples()
+        public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             yield return $"Endpoint=sb://doesnotexist.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey={WellKnownRegexPatterns.RandomBase64(43)}=";
         }

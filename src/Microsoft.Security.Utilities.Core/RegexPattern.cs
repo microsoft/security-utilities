@@ -205,8 +205,9 @@ public class RegexPattern
                         ? $"{Id}:{crossCompanyCorrelatingId}"
                         : defaultRedactionToken;
 
-                // If the user has provided null or empty redaction token,
-                // we will use the fallback.
+                // If the user has provided a null or empty redaction
+                // token, we will use the fallback so that redaction
+                // is clearly evident in the output.
                 if (string.IsNullOrWhiteSpace(redactionToken))
                 {
                     redactionToken = FallbackRedactionToken;
@@ -234,7 +235,11 @@ public class RegexPattern
         }
     }
 
-    public virtual IEnumerable<string> GenerateTestExamples()
+    /// <summary>
+    /// Generate test examples that should result in a positive match.
+    /// </summary>
+    /// <returns></returns>
+    public virtual IEnumerable<string> GenerateTruePositiveExamples()
     {
         if (m_sampleGenerator == null)
         {
@@ -245,6 +250,15 @@ public class RegexPattern
         {
             yield return example;
         }
+    }
+
+    /// <summary>
+    /// Generate test examples that should not result in a positive match.
+    /// </summary>
+    /// <returns></returns>
+    public virtual IEnumerable<string> GenerateFalsePositiveExamples()
+    {
+        yield break;
     }
 
     [ThreadStatic]

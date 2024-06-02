@@ -40,7 +40,7 @@ namespace Microsoft.Security.Utilities
             return null;
         }
 
-        public override IEnumerable<string> GenerateTestExamples()
+        public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             foreach (ulong checksumSeed in ChecksumSeeds)
             {
