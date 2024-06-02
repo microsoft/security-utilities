@@ -54,7 +54,7 @@ public class SecretMaskerTests
         // characters chosen from the secret alphabet for the pattern).
         for (int i = 0; i < 1; i++)
         {
-            //using var scope = new AssertionScope();
+            using var scope = new AssertionScope();
 
             foreach (IRegexEngine regexEngine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
             {
