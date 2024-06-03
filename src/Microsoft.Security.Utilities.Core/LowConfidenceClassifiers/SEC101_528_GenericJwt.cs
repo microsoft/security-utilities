@@ -15,6 +15,9 @@ namespace Microsoft.Security.Utilities
             Name = nameof(GenericJwt);
             DetectionMetadata = DetectionMetadata.HighEntropy;
             Pattern = @$"(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{{23,}}\.e[0-9A-Za-z-_=]{{23,}}\.[0-9A-Za-z-_=]{{24,}}(?:[^0-9A-Za-z-_]|$)";
+
+            // These signatures represent base64-encoding of the following
+            // constants, respectively: '{"', '{" ', and '{\r\n`.
             Signatures = new[] { "eyJ", "eyAi", "ewog" }.ToSet();
         }
 
@@ -57,9 +60,12 @@ namespace Microsoft.Security.Utilities
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
+            // Patterns for JWTs with varying prefixes in base64 encoding, a brace followed by a
+            // quote, a brace followed by a space and quote, and a brace followed by a newline
+            // sequence.
             yield return $"eyAidHlwIiA6ICJKV1QiLCAiYWxnIiA6ICJIUzI1NiIgfQ.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
             yield return $"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-            yield return $"eyJraWQiOiJ5ZXMiLCJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Im1lIGFnYWluIiwiaWF0IjoxNTE2MjM5MDIyfQ.i6jPt5VrHYb77j8bPA2lWWiasPAR-_xa4ZtQCJTdnjI";
+            yield return $"ewogaWQiOiJ5ZXMiLCJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Im1lIGFnYWluIiwiaWF0IjoxNTE2MjM5MDIyfQ.i6jPt5VrHYb77j8bPA2lWWiasPAR-_xa4ZtQCJTdnjI";
         }
     }
 }

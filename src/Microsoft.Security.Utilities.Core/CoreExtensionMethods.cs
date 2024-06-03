@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal static class ExtensionMethods
+    internal static class CoreExtensionMethods
     {
         public static ISet<string> ToSet(this string value)
         {

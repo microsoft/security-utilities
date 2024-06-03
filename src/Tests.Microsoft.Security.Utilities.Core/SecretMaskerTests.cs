@@ -154,7 +154,7 @@ public class SecretMaskerTests
                             // for rules such as our connection string detecting logic. We need a future change to
                             // separate this data. For now, we skip all connection string patterns. This is a problem
                             // for masking only (and not detection) because we have no location details when masking.
-                            if (pattern.Id == "SEC101/051" ||
+                            if (pattern.Id == "SEC101/060" ||
                                 testExample.Contains(";"))
                             {
                                 continue;
