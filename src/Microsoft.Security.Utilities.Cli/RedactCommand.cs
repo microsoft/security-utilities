@@ -18,7 +18,7 @@ namespace Microsoft.Security.Utilities.Cli
             var secretMasker = new SecretMasker(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
                                                 generateCorrelatingIds: true);
 
-            secretMasker.AddPatterns(WellKnownRegexPatterns.LowConfidencePotentialSecurityKeys);
+            secretMasker.AddPatterns(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys);
 
             if (!string.IsNullOrEmpty(output) && !Directory.Exists(output))
             {

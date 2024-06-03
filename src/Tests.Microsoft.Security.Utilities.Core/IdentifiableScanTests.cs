@@ -25,7 +25,7 @@ namespace Tests.Microsoft.Security.Utilities.Core
             var masker = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
                                               generateCorrelatingIds: false);
 
-            foreach (var pattern in WellKnownRegexPatterns.HighConfidenceSecurityModels)
+            foreach (var pattern in WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys)
             {
                 var identifiable = pattern as IIdentifiableKey;
                 if (identifiable == null) { continue; }

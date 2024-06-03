@@ -14,7 +14,7 @@ namespace Microsoft.Security.Utilities.Cli
         {
             string input = options.Input;
 
-            var scan = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceSecurityModels, generateCorrelatingIds: true);
+            var scan = new IdentifiableScan(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys, generateCorrelatingIds: true);
 
             string directory = Path.GetDirectoryName(input);
             string fileSpecifier = Path.GetFileName(input);

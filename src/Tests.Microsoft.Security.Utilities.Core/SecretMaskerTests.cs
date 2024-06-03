@@ -40,7 +40,7 @@ public class SecretMaskerTests
     {
         foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
         {
-            ValidateSecurityModelsDetections(WellKnownRegexPatterns.LowConfidencePotentialSecurityKeys,
+            ValidateSecurityModelsDetections(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
                                              engine,
                                              lowEntropyModels: false);
         }
@@ -115,7 +115,7 @@ public class SecretMaskerTests
     {
         foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
         {
-            ValidateSecurityModelsMasking(WellKnownRegexPatterns.LowConfidencePotentialSecurityKeys,
+            ValidateSecurityModelsMasking(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
                                           engine,
                                           lowEntropyModels: false);
         }
@@ -816,7 +816,7 @@ public class SecretMaskerTests
     [DataRow("xxx7Q~dead.dead.DEAD-DEAD-dead~deadxx", "SEC101/156.AadClientAppSecret:23F12851970BB19BD76A448449F16F85BF4AFE915AD14BAFEE635F15021CE6BB")]
     public void SecretMasker_PlaceholderTestSecretsAreMasked(string input, string expected)
     {
-        using var secretMasker = new SecretMasker(WellKnownRegexPatterns.HighConfidenceSecurityModels);
+        using var secretMasker = new SecretMasker(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys);
         string actual = secretMasker.MaskSecrets(input);
         Assert.AreEqual("+++", actual);
     }
