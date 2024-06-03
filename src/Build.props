@@ -60,10 +60,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(MsBuildThisFileDirectory)../refs/microsoft_security_utilities_core.dll">
+    <None Include="$(MsBuildThisFileDirectory)../refs/win-x64/microsoft_security_utilities_core.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(MsBuildThisFileDirectory)../refs/microsoft_security_utilities_core.pdb">
+    <None Include="$(MsBuildThisFileDirectory)../refs/win-x64/microsoft_security_utilities_core.pdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
