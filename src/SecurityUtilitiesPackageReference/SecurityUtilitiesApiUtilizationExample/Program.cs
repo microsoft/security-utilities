@@ -10,7 +10,7 @@ namespace SecurityUtilitiesApiUtilizationExample
         {
             int iterations = 10;
 
-            var masker = new IdentifiableScan(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
+            var masker = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
                                               generateCorrelatingIds: false);
 
             foreach (var pattern in WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys)
