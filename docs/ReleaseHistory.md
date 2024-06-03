@@ -12,7 +12,7 @@
 - FNS => Flase negative reduction in static analysis.
 
 # UNRELEASED
-- RUL: Add `SEC101/051.LooseSasSecret` detection.
+- RUL: Add `SEC101/060.LooseSasSecret` detection.
 - RUL: Add `SEC101/528.GenericJwt` detection.
 - BRK: Rename `WellknownPatterns.HighConfidenceSecurityModels` to `WellknownPatterns.PreciselyClassifiedSecurityKeys`.
 - BRK: Rename `WellknownPatterns.LowConfidencePotentialSecurityKeys` to `WellknownPatterns.UnclassifiedPotentialSecurityKeys`.
