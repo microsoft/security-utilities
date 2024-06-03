@@ -40,7 +40,7 @@ public class SecretMaskerTests
     {
         foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
         {
-            ValidateSecurityModelsDetections(WellKnownRegexPatterns.LowConfidencePotentialSecurityKeys,
+            ValidateSecurityModelsDetections(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
                                              engine,
                                              lowEntropyModels: false);
         }
@@ -64,7 +64,7 @@ public class SecretMaskerTests
 
                     foreach (var pattern in patterns)
                     {
-                        foreach (string testExample in pattern.GenerateTestExamples())
+                        foreach (string testExample in pattern.GenerateTruePositiveExamples())
                         {
                             string context = testExample;
                             string standaloneSecret = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine").First().Value;
@@ -115,7 +115,7 @@ public class SecretMaskerTests
     {
         foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
         {
-            ValidateSecurityModelsMasking(WellKnownRegexPatterns.LowConfidencePotentialSecurityKeys,
+            ValidateSecurityModelsMasking(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
                                           engine,
                                           lowEntropyModels: false);
         }
@@ -140,7 +140,7 @@ public class SecretMaskerTests
 
                     foreach (var pattern in patterns)
                     {
-                        foreach (string testExample in pattern.GenerateTestExamples())
+                        foreach (string testExample in pattern.GenerateTruePositiveExamples())
                         {
                             string secretValue = testExample;
                             string moniker = pattern.GetMatchMoniker(secretValue);
@@ -154,7 +154,8 @@ public class SecretMaskerTests
                             // for rules such as our connection string detecting logic. We need a future change to
                             // separate this data. For now, we skip all connection string patterns. This is a problem
                             // for masking only (and not detection) because we have no location details when masking.
-                            if (testExample.Contains(";"))
+                            if (pattern.Id == "SEC101/060" ||
+                                testExample.Contains(";"))
                             {
                                 continue;
                             }
@@ -164,6 +165,17 @@ public class SecretMaskerTests
                                 : RegexPattern.FallbackRedactionToken;
 
                             redacted.Should().Be(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds}");
+                        }
+
+                        foreach(string testExample in pattern.GenerateFalsePositiveExamples())
+                        {
+                            string secretValue = testExample;
+
+                            // 1. All generated false positive test patterns should
+                            //  not result in a mask operation.
+                            string redacted = secretMasker.MaskSecrets(secretValue);
+                            bool result = redacted.Equals(secretValue);
+                            result.Should().BeTrue(because: $"'{secretValue}' for '{pattern.Id}.{pattern.Name}' should not be redacted from scan text.");
                         }
                     }
                 }
@@ -804,7 +816,7 @@ public class SecretMaskerTests
     [DataRow("xxx7Q~dead.dead.DEAD-DEAD-dead~deadxx", "SEC101/156.AadClientAppSecret:23F12851970BB19BD76A448449F16F85BF4AFE915AD14BAFEE635F15021CE6BB")]
     public void SecretMasker_PlaceholderTestSecretsAreMasked(string input, string expected)
     {
-        using var secretMasker = new SecretMasker(WellKnownRegexPatterns.HighConfidenceSecurityModels);
+        using var secretMasker = new SecretMasker(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys);
         string actual = secretMasker.MaskSecrets(input);
         Assert.AreEqual("+++", actual);
     }

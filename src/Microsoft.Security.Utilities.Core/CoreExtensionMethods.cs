@@ -6,11 +6,15 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    internal static class ExtensionMethods
+    internal static class CoreExtensionMethods
     {
         public static ISet<string> ToSet(this string value)
         {
             return new HashSet<string> { value };
+        }
+        public static ISet<string> ToSet(this IEnumerable<string> value)
+        {
+            return new HashSet<string>(value);
         }
     }
 }

@@ -37,7 +37,7 @@ internal sealed class UrlCredentials : RegexPattern
     }
 
 
-    public override IEnumerable<string> GenerateTestExamples()
+    public override IEnumerable<string> GenerateTruePositiveExamples()
     {
         // https://tools.ietf.org/html/rfc3986#section-3.2)
         return new[]

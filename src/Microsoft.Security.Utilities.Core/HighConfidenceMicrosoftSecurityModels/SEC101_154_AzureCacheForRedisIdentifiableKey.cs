@@ -28,7 +28,7 @@ namespace Microsoft.Security.Utilities
             return base.GetMatchIdAndName(match);
         }
 
-        public override IEnumerable<string> GenerateTestExamples()
+        public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             while (true)
             {

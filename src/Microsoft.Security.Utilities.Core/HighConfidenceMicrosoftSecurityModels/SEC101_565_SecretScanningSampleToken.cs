@@ -22,7 +22,7 @@ namespace Microsoft.Security.Utilities
             Signatures = "ab85".ToSet();
         }
 
-        public override IEnumerable<string> GenerateTestExamples()
+        public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             yield return $"secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_{WellKnownRegexPatterns.RandomBase62(5)}";
         }

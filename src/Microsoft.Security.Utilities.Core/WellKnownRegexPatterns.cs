@@ -26,13 +26,13 @@ public static class WellKnownRegexPatterns
             yield return detection;
         }
 
-        foreach (RegexPattern detection in LowConfidencePotentialSecurityKeys)
+        foreach (RegexPattern detection in UnclassifiedPotentialSecurityKeys)
         {
             yield return detection;
         }
     }
 
-    public static IEnumerable<RegexPattern> HighConfidenceSecurityModels { get; } = HighConfidenceSecurityModelsIterator();
+    public static IEnumerable<RegexPattern> PreciselyClassifiedSecurityKeys { get; } = HighConfidenceSecurityModelsIterator();
 
     public static IEnumerable<RegexPattern> HighConfidenceSecurityModelsIterator()
     {
@@ -47,8 +47,10 @@ public static class WellKnownRegexPatterns
         }
     }
 
-    public static IEnumerable<RegexPattern> LowConfidencePotentialSecurityKeys { get; } = new RegexPattern[]
+    public static IEnumerable<RegexPattern> UnclassifiedPotentialSecurityKeys { get; } = new RegexPattern[]
     {
+        new GenericJwt(),
+        new LooseSasSecret(),
         new Unclassified32ByteBase64String(),
         new Unclassified64ByteBase64String(),
         new Unclassified16ByteHexadecimalString(),

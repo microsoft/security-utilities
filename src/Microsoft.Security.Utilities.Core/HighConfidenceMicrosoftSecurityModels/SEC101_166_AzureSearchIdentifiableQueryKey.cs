@@ -28,9 +28,9 @@ namespace Microsoft.Security.Utilities
 
         override public uint KeyLength => 39;
 
-        public override IEnumerable<string> GenerateTestExamples()
+        public override IEnumerable<string> GenerateTruePositiveExamples()
         {
-            foreach (var example in base.GenerateTestExamples())
+            foreach (var example in base.GenerateTruePositiveExamples())
             {
                 if (example.Contains("_") || example.Contains("-")) { continue; }
                 yield return example;

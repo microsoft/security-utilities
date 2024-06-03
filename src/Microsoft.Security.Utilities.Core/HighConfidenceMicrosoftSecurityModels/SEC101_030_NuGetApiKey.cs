@@ -16,7 +16,7 @@ namespace Microsoft.Security.Utilities
             Signatures = new HashSet<string>(new[] { "oy2" });
         }
 
-        public override IEnumerable<string> GenerateTestExamples()
+        public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             yield return $"oy2a{WellKnownRegexPatterns.RandomLowercase(15)}a{WellKnownRegexPatterns.RandomLowercase(11)}e7a{WellKnownRegexPatterns.RandomLowercase(11)}a";
         }

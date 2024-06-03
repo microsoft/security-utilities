@@ -15,7 +15,7 @@ namespace Microsoft.Security.Utilities
             Pattern = $"^(?i)[a-z0-9=+/]{32}$";
         }
 
-        public override IEnumerable<string> GenerateTestExamples()
+        public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             string alphabet = $"={WellKnownRegexPatterns.Base64}";
             yield return $"{WellKnownRegexPatterns.GenerateString(alphabet, 32)}";

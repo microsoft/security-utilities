@@ -29,10 +29,15 @@ namespace Microsoft.Security.Utilities
                 return null;
             }
 
+            if (DateTime.TryParse(match, out DateTime result))
+            {
+                return null;
+            }
+
             return base.GetMatchIdAndName(match);
         }
 
-        public override IEnumerable<string> GenerateTestExamples()
+        public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             while (true)
             {
@@ -43,6 +48,11 @@ namespace Microsoft.Security.Utilities
                     break;
                 }
             }
+        }
+
+        public override IEnumerable<string> GenerateFalsePositiveExamples()
+        {
+            yield return "2024-03-07T02:50:56.464790+00:00";
         }
 
         private static bool HasAtLeastOneSymbol(string text)

@@ -19,12 +19,18 @@ namespace Microsoft.Security.Utilities.Cli
             string outputDirectory = options.OutputDirectory;
             string outputFileName;
 
-            outputFileName = Path.Combine(outputDirectory, "HighConfidenceMicrosoftSecurityModels.json");
-            string json = JsonConvert.SerializeObject(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
+            outputFileName = Path.Combine(outputDirectory, "PreciselyClassifiedSecurityKeys.json");
+            string json = JsonConvert.SerializeObject(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
                                                       Formatting.Indented,
                                                       new StringEnumConverter());
             File.WriteAllText(outputFileName, json);
-            
+
+            outputFileName = Path.Combine(outputDirectory, "UnclassifiedPotentialSecurityKeys.json");
+            json = JsonConvert.SerializeObject(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
+                                                      Formatting.Indented,
+                                                      new StringEnumConverter());
+            File.WriteAllText(outputFileName, json);
+
             return 0;
         }
     }

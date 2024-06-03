@@ -16,7 +16,7 @@ namespace Microsoft.Security.Utilities
             Signatures = new HashSet<string>(new[] { "npm_" });
         }
 
-        public override IEnumerable<string> GenerateTestExamples()
+        public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             yield return $"npm_{WellKnownRegexPatterns.RandomBase62(36)}";
         }

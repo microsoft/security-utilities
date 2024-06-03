@@ -52,7 +52,7 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
         };
     }
 
-    public override IEnumerable<string> GenerateTestExamples()
+    public override IEnumerable<string> GenerateTruePositiveExamples()
     {
         foreach (string sniffLiteral in Signatures!)
         {

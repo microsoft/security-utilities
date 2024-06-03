@@ -1,0 +1,44 @@
+[
+  {
+    "Pattern": "(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{23,}\\.e[0-9A-Za-z-_=]{23,}\\.[0-9A-Za-z-_=]{24,}(?:[^0-9A-Za-z-_]|$)",
+    "Id": "SEC101/528",
+    "Name": "GenericJwt",
+    "Signatures": [
+      "eyJ",
+      "eyAi",
+      "ewog"
+    ],
+    "DetectionMetadata": "HighEntropy"
+  },
+  {
+    "Pattern": "(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?<refine>[0-9a-z\\/+%]{43,129}(?:=|%3d))",
+    "Id": "SEC101/060",
+    "Name": "LooseSasSecret",
+    "Signatures": [
+      "sig=",
+      "ret="
+    ],
+    "DetectionMetadata": "HighEntropy"
+  },
+  {
+    "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=$",
+    "Id": "SEC000/000",
+    "Name": "Unclassified32ByteBase64String",
+    "Signatures": null,
+    "DetectionMetadata": "HighEntropy"
+  },
+  {
+    "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==$",
+    "Id": "SEC000/001",
+    "Name": "Unclassified64ByteBase64String",
+    "Signatures": null,
+    "DetectionMetadata": "HighEntropy"
+  },
+  {
+    "Pattern": "^[1234567890abcdef]{32}$",
+    "Id": "SEC000/002",
+    "Name": "Unclassified16ByteHexadecimalString",
+    "Signatures": null,
+    "DetectionMetadata": "HighEntropy"
+  }
+]
