@@ -5,7 +5,6 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -68,12 +67,12 @@ public class IdentifiableScan : ISecretMasker, IDisposable
     private readonly Dictionary<string, IList<RegexPattern>> signatureToPatternsMap;
     private readonly Dictionary<string, ISet<string>> idToSignaturesMap;
     private SecretMasker backupSecretMasker;
+    private IRegexEngine regexEngine;
     private List<string> orderedIds;
     private IntPtr scan;
 
     private static readonly ISet<string> HighPerformanceEnabledSignatures = new HashSet<string>(new string[]
         {
-            "+ASt",
             "+ASt",
             "AzCa",
             "7Q~",
@@ -94,10 +93,11 @@ public class IdentifiableScan : ISecretMasker, IDisposable
             "JQQJ",
         });
 
-    public IdentifiableScan(IEnumerable<RegexPattern> regexPatterns, bool generateCorrelatingIds)
+    public IdentifiableScan(IEnumerable<RegexPattern> regexPatterns, bool generateCorrelatingIds, IRegexEngine regexEngine = null)
     {   
         this.signatureToPatternsMap = new Dictionary<string, IList<RegexPattern>>();
         this.idToSignaturesMap = new Dictionary<string, ISet<string>>();
+        this.regexEngine = regexEngine ?? CachedDotNetRegex.Instance;
         this.generateCorrelatingIds = generateCorrelatingIds;
         this.orderedIds = new List<string>();
 
@@ -105,8 +105,7 @@ public class IdentifiableScan : ISecretMasker, IDisposable
         {
             if (pattern.Signatures == null)
             {
-                this.backupSecretMasker ??= new SecretMasker(regexSecrets: null,
-                                                             generateCorrelatingIds: generateCorrelatingIds);
+                PopulateBackupMasker(generateCorrelatingIds);
 
                 this.backupSecretMasker.AddRegex(pattern);
                 continue;
@@ -116,8 +115,7 @@ public class IdentifiableScan : ISecretMasker, IDisposable
             {
                 if (!HighPerformanceEnabledSignatures.Contains(signature))
                 {
-                    this.backupSecretMasker ??= new SecretMasker(regexSecrets: null,
-                                                                 generateCorrelatingIds: generateCorrelatingIds);
+                    PopulateBackupMasker(generateCorrelatingIds);
 
                     this.backupSecretMasker.AddRegex(pattern);
                     continue;
@@ -139,6 +137,13 @@ public class IdentifiableScan : ISecretMasker, IDisposable
                 patterns.Add(pattern);
             }
         }
+    }
+
+    private void PopulateBackupMasker(bool generateCorrelatingIds)
+    {
+        this.backupSecretMasker ??= new SecretMasker(regexSecrets: null,
+                                                     generateCorrelatingIds,
+                                                     this.regexEngine);
     }
 
     public UInt32 PossibleMatches
