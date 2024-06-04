@@ -11,7 +11,7 @@
 - FPS => False positive reduction in static analysis.
 - FNS => Flase negative reduction in static analysis.
 
-# UNRELEASED
+# 1.4.24 - 06/03/2024
 - RUL: Add `SEC101/060.LooseSasSecret` detection.
 - RUL: Add `SEC101/528.GenericJwt` detection.
 - BRK: Rename `WellknownPatterns.HighConfidenceSecurityModels` to `WellknownPatterns.PreciselyClassifiedSecurityKeys`.
@@ -20,6 +20,7 @@
 - BRK: Add `longForm` argument to `IdentifiableSecrets.GenerateCommonAnnotatedKey`, to produce the optional full 64-byte form (which includes the full 4-byte Marvin checksum).
 - BRK: Coalesce `AadClientAppIdentifiableCredentialsCurrent` and `AadClientAppIdentifiableCredentialsPrevious` into a single `AadClientAppIdentifiableCredentials` check.
 - BRK: Rename `IIdentifiableKey.SniffLiterals` to `IIdentifiableKey.Signatures` to precisely reflect their purpose to signify fixed signatures in keys.
+- BUG: Make `microsoft_security_utilities_core` Rust module public. The module cannot be consumed otherwise.
 - BUG: Update `IdentifiableScan` to post-process finds (e.g., with checksum validation) to eliminate false positives.
 - BUG: Correct `AzureCosmosDBIdentifiableKey` rule id to `SEC101/160` (previously incorrectly listed as `SEC101/163`).
 - BUG: Correct length of `SEC101/166.AzureSearchIdentifiableQueryKey` and `SEC101/167.AzureSearchIdentifiableAdminKey` rules to 39 bytes and properly mark it as `DetectionMetadata.Identifiable`.
