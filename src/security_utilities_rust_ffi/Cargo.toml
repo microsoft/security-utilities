@@ -1,6 +1,6 @@
 [package]
 name = "microsoft_security_utilities_core_ffi"
-version = "0.1.0"
+version = "1.4.24"
 edition = "2021"
 
 [lib]
