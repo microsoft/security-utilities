@@ -309,15 +309,6 @@
     "DetectionMetadata": "Identifiable"
   },
   {
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<secret>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]|$)",
-    "Id": "SEC101/565",
-    "Name": "SecretScanningSampleToken",
-    "Signatures": [
-      "ab85"
-    ],
-    "DetectionMetadata": "HighEntropy, FixedSignature"
-  },
-  {
     "Pattern": "(^|[^0-9a-z])(?<refine>oy2[a-p][0-9a-z]{15}[aq][0-9a-z]{11}[eu][bdfhjlnprtvxz357][a-p][0-9a-z]{11}[aeimquy4])([^aeimquy4]|$)",
     "Id": "SEC101/030",
     "Name": "NuGetApiKey",
@@ -398,6 +389,15 @@
     "Name": "NpmAuthorKey",
     "Signatures": [
       "npm_"
+    ],
+    "DetectionMetadata": "HighEntropy, FixedSignature"
+  },
+  {
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<secret>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]|$)",
+    "Id": "SEC101/565",
+    "Name": "SecretScanningSampleToken",
+    "Signatures": [
+      "ab85"
     ],
     "DetectionMetadata": "HighEntropy, FixedSignature"
   }
