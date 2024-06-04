@@ -78,7 +78,6 @@ public static class WellKnownRegexPatterns
         new AzureApimIdentifiableRepositoryKey(),
         new AzureCacheForRedisIdentifiableKey(),
         new AzureContainerRegistryIdentifiableKey(),
-        new SecretScanningSampleToken(),
         new NuGetApiKey(),
         new AadClientAppLegacyCredentials32(),      // SEC101/101
         new AadClientAppLegacyCredentials34(),      // SEC101/101
@@ -93,6 +92,7 @@ public static class WellKnownRegexPatterns
     public static IEnumerable<RegexPattern> HighConfidenceThirdPartySecurityModels { get; } = new List<RegexPattern>
     {
         new NpmAuthorKey(),
+        new SecretScanningSampleToken(),
     };
 
 

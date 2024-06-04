@@ -25,28 +25,20 @@ public class SecretMaskerTests
     }
 
     [TestMethod]
-    public void SecretMasker_HighConfidenceSecurityModels_Detections()
+    public void SecretMasker_PreciselyClassifiedSecurityKeys_Detections()
     {
-        foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
-        {
-            ValidateSecurityModelsDetections(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
-                                             engine,
-                                             lowEntropyModels: false);
-        }
+        ValidateSecurityModelsDetections(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
+                                         generalClassifications: false);
     }
 
     [TestMethod]
-    public void SecretMasker_LowConfidenceSecurityModels_Detections()
+    public void SecretMasker_UnclassifiedPotentialSecurityKeys_Detections()
     {
-        foreach (IRegexEngine engine in new IRegexEngine[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
-        {
-            ValidateSecurityModelsDetections(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
-                                             engine,
-                                             lowEntropyModels: false);
-        }
+        ValidateSecurityModelsDetections(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
+                                         generalClassifications: false);
     }
 
-    private void ValidateSecurityModelsDetections(IEnumerable<RegexPattern> patterns, IRegexEngine engine, bool lowEntropyModels)
+    private void ValidateSecurityModelsDetections(IEnumerable<RegexPattern> patterns, bool generalClassifications)
     {
         // These tests generate randomized values. It may be useful to
         // bump up the # of iterations on an ad hoc basis to flush
@@ -56,11 +48,20 @@ public class SecretMaskerTests
         {
             using var scope = new AssertionScope();
 
-            foreach (IRegexEngine regexEngine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
+            foreach (IRegexEngine engine  in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance, null })
             {
                 foreach (bool generateCrossCompanyCorrelatingIds in new[] { true, false })
                 {
-                    using var secretMasker = new SecretMasker(patterns, generateCrossCompanyCorrelatingIds, engine);
+                    // The high-performance engine doesn't support the imprecisely classified 
+                    // models. These are currently misnamed as 'low entropy'. TBD.
+                    if (engine == null && generalClassifications)
+                    {
+                        continue;
+                    }
+
+                    using ISecretMasker secretMasker = engine != null
+                        ? new SecretMasker(patterns, generateCrossCompanyCorrelatingIds, engine)
+                        : new IdentifiableScan(patterns, generateCrossCompanyCorrelatingIds);
 
                     foreach (var pattern in patterns)
                     {
@@ -80,16 +81,24 @@ public class SecretMaskerTests
                             detection.Moniker.Should().Be(moniker);
 
                             // 2. All identifiable or high confidence findings should be marked as high entropy.
-                            result = lowEntropyModels ? true : detection.Metadata.HasFlag(DetectionMetadata.HighEntropy);
+                            result = generalClassifications ? true : detection.Metadata.HasFlag(DetectionMetadata.HighEntropy);
                             result.Should().BeTrue(because: $"{moniker} finding should be classified as high entropy");
 
-                            // 3. All high entropy secret kinds should generate a fingerprint, but only
+
+                            // 3. All high entropy secret kinds should generate a cross-company correlating id,
+                            //    but only if the masker was initialized to produce them. Every low entropy model
+                            //    should refuse to generate a c3id, no matter how the masker is configured.
+
+                            string c3id = RegexPattern.GenerateCrossCompanyCorrelatingId(standaloneSecret);
+                            detection.CrossCompanyCorrelatingId.Should().Be((generateCrossCompanyCorrelatingIds && !generalClassifications) ? c3id : null);
+
+                            // 4. All high entropy secret kinds should generate a fingerprint, but only
                             //    if the masker was initialized to produce them. Every low entropy model
                             //    should refuse to generate a fingerprint, no matter how the masker is configured.
-                            string redactionToken = $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(standaloneSecret)}";
-                            detection.RedactionToken.Should().Be((generateCrossCompanyCorrelatingIds && !lowEntropyModels) ? redactionToken : "+++");
+                            string redactionToken = $"{pattern.Id}:{c3id}";
+                            detection.RedactionToken.Should().Be((generateCrossCompanyCorrelatingIds && !generalClassifications) ? redactionToken : "+++");
 
-                            // 4. Moniker that flows to classified secret should match the detection.
+                            // 5. Moniker that flows to classified secret should match the detection.
                             result = detection.Moniker.Equals(moniker);
                             result.Should().BeTrue(because: $"{moniker} finding should not be reported as {detection.Moniker} for test data {context}");
                         }

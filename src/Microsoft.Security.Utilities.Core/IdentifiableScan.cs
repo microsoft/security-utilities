@@ -65,27 +65,64 @@ public class IdentifiableScan : ISecretMasker, IDisposable
         byte[] output,
         ref long outputLength);
 
-    private IntPtr scan;
-    private readonly Dictionary<string, ISet<string>> idToSignaturesMap;
     private readonly Dictionary<string, IList<RegexPattern>> signatureToPatternsMap;
+    private readonly Dictionary<string, ISet<string>> idToSignaturesMap;
+    private SecretMasker backupSecretMasker;
     private List<string> orderedIds;
-    
+    private IntPtr scan;
+
+    private static readonly ISet<string> HighPerformanceEnabledSignatures = new HashSet<string>(new string[]
+        {
+            "+ASt",
+            "+ASt",
+            "AzCa",
+            "7Q~",
+            "8Q~",
+            "AzFu",
+            "ACDb",
+            "+ABa",
+            "AzSe",
+            "AzSe",
+            "+AMC",
+            "+ASb",
+            "+AEh",
+            "+ARm",
+            "+ACR",
+            "+AIoT",
+            "APIM",
+            "AZEG",
+            "JQQJ",
+        });
+
     public IdentifiableScan(IEnumerable<RegexPattern> regexPatterns, bool generateCorrelatingIds)
     {   
-        this.generateCorrelatingIds = generateCorrelatingIds;
-        this.idToSignaturesMap = new Dictionary<string, ISet<string>>();
         this.signatureToPatternsMap = new Dictionary<string, IList<RegexPattern>>();
+        this.idToSignaturesMap = new Dictionary<string, ISet<string>>();
+        this.generateCorrelatingIds = generateCorrelatingIds;
         this.orderedIds = new List<string>();
 
         foreach (RegexPattern pattern in regexPatterns)
         {
             if (pattern.Signatures == null)
             {
+                this.backupSecretMasker ??= new SecretMasker(regexSecrets: null,
+                                                             generateCorrelatingIds: generateCorrelatingIds);
+
+                this.backupSecretMasker.AddRegex(pattern);
                 continue;
             }
 
             foreach (string signature in pattern.Signatures)
             {
+                if (!HighPerformanceEnabledSignatures.Contains(signature))
+                {
+                    this.backupSecretMasker ??= new SecretMasker(regexSecrets: null,
+                                                                 generateCorrelatingIds: generateCorrelatingIds);
+
+                    this.backupSecretMasker.AddRegex(pattern);
+                    continue;
+                }
+
                 if (!this.idToSignaturesMap.TryGetValue(pattern.Id, out ISet<string> signatures))
                 {
                     signatures = new HashSet<string>();
@@ -249,6 +286,14 @@ public class IdentifiableScan : ISecretMasker, IDisposable
         {
             yield return detection;
         }
+
+        if (this.backupSecretMasker != null)
+        {
+            foreach (var detection in this.backupSecretMasker.DetectSecrets(input))
+            {
+                yield return detection;
+            }
+        }
     }
 
     public IEnumerable<Detection> DetectSecrets(Stream file)
@@ -315,30 +360,37 @@ public class IdentifiableScan : ISecretMasker, IDisposable
                 {
                     foreach (string signature in signatures)
                     {
-                        string found = System.Text.Encoding.UTF8.GetString(text, 0, (int)textLength);
+                        string found = Encoding.UTF8.GetString(text, 0, (int)textLength);
 
                         if (found.IndexOf(signature) != -1 &&
                             signatureToPatternsMap.TryGetValue(signature, out IList<RegexPattern> patterns))
                         {
                             foreach (RegexPattern pattern in patterns)
                             {
-                                string redactionToken = null;
-
-                                if (generateCorrelatingIds)
-                                {
-                                    redactionToken = RegexPattern.GenerateCrossCompanyCorrelatingId(found);
-                                }
-
                                 var result = pattern.GetMatchIdAndName(found);
 
                                 if (result != null)
                                 {
+                                    string c3id = null;
+                                    string preciseId = result.Item1;
+
+                                    if (generateCorrelatingIds)
+                                    {
+                                        c3id = RegexPattern.GenerateCrossCompanyCorrelatingId(found);
+                                    }
+
+                                    string redactionToken = c3id != null 
+                                        ? $"{preciseId}:{c3id}"
+                                        : RegexPattern.FallbackRedactionToken;
+
                                     yield return new Detection
                                     {
-                                        Id = result.Item1,
+                                        Id = preciseId,
                                         Name = result.Item2,
                                         Start = (int)start,
                                         Length = (int)textLength,
+                                        Metadata = DetectionMetadata.HighEntropy,
+                                        CrossCompanyCorrelatingId = c3id,
                                         RedactionToken = redactionToken,
                                     };
                                 }
