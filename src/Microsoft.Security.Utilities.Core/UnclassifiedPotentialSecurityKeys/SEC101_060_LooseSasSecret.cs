@@ -12,7 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/060";
             Name = nameof(LooseSasSecret);
-            DetectionMetadata = DetectionMetadata.HighEntropy;
+            DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.MediumConfidence;
             Pattern = @$"(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?<refine>[0-9a-z\/+%]{{43,129}}(?:=|%3d))";
             Signatures = new HashSet<string>(new[] { "sig=", "ret=" });
         }

@@ -11,6 +11,10 @@
 - FPS => False positive reduction in static analysis.
 - FNS => Flase negative reduction in static analysis.
 
+# 1.5 PLEASE START TO VERSION MINOR NUMBER FOR BREAKING CHANGES
+- RUL: Add `SEC101/061.LooseOAuth2BearerToken` detection.
+- NEW: Add `DetectionMetadata.LowConfidence` and `Detection.MediumConfidence` designations.
+
 # 1.4.25 - 06/04/2024
 - BUG: Bring `IdentifiableScan` into precise equivalence with other maskers, e.g., `Detection.RedactionToken` is now in alignment.
 - NEW: Provide hybrid capability to run high-performance detections in `IdentifiableScan` and fall back to other masker as required.
