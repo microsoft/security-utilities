@@ -19,7 +19,6 @@ namespace Microsoft.Security.Utilities
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
-            int count = 0;
             int attempts = 0;
 
             foreach (bool longForm in new[] { true, false })
@@ -30,7 +29,7 @@ namespace Microsoft.Security.Utilities
 
                     if (testChar == '{')
                     {
-                        int z = 10;
+                        break;
                     }
 
                     string example;
@@ -48,11 +47,6 @@ namespace Microsoft.Security.Utilities
                     catch (InvalidOperationException)
                     {
                         example = null;
-                    }
-
-                    if (++count > 26)
-                    {
-                        break;
                     }
 
                     if (example == null) { continue; }
