@@ -73,7 +73,7 @@ namespace Microsoft.Security.Utilities
 
             if (string.IsNullOrEmpty(inputString))
             {
-                return Array.Empty<byte>();
+                return new byte[0];
             }
 
             int outputSize = inputString.Length * OutputPerByteSize / InputPerByteSize;
