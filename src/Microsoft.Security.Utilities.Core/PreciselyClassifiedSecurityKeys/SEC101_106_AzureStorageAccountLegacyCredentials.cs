@@ -7,6 +7,8 @@ namespace Microsoft.Security.Utilities
 {
     public class AzureStorageAccountLegacyCredentials : RegexPattern
     {
+        private static readonly byte[] EmptyByteArray = new byte[0];
+
         public AzureStorageAccountLegacyCredentials() 
         {
             Id = "SEC101/106";
@@ -72,7 +74,7 @@ namespace Microsoft.Security.Utilities
 
             if (string.IsNullOrEmpty(inputString))
             {
-                return new byte[0];
+                return EmptyByteArray;
             }
 
             int outputSize = inputString.Length * OutputPerByteSize / InputPerByteSize;

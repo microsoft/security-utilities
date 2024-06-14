@@ -7,6 +7,8 @@ namespace Microsoft.Security.Utilities
 {
     public class AdoPat : RegexPattern
     {
+        private static readonly byte[] EmptyByteArray = new byte[0];
+
         public AdoPat() 
         {
             Id = "SEC101/102";
@@ -73,7 +75,7 @@ namespace Microsoft.Security.Utilities
 
             if (string.IsNullOrEmpty(inputString))
             {
-                return new byte[0];
+                return EmptyByteArray;
             }
 
             int outputSize = inputString.Length * OutputPerByteSize / InputPerByteSize;
