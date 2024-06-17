@@ -54,6 +54,8 @@ public static class WellKnownRegexPatterns
         new Unclassified32ByteBase64String(),
         new Unclassified64ByteBase64String(),
         new Unclassified16ByteHexadecimalString(),
+         
+        // Tracking issue with UrlCredentials via https://github.com/microsoft/security-utilities/issues/48
         // new UrlCredentials()
     };
 
@@ -80,6 +82,8 @@ public static class WellKnownRegexPatterns
         new AzureApimIdentifiableRepositoryKey(),
         new AzureCacheForRedisIdentifiableKey(),
         new AzureContainerRegistryIdentifiableKey(),
+
+        // Tracking issue with AzureContainerRegistryLegacyKey via https://github.com/microsoft/security-utilities/issues/49
         // new AzureContainerRegistryLegacyKey(),
         new NuGetApiKey(),
         new AadClientAppLegacyCredentials32(),      // SEC101/101
