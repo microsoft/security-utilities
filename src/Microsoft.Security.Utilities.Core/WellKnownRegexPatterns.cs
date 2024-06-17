@@ -54,7 +54,7 @@ public static class WellKnownRegexPatterns
         new Unclassified32ByteBase64String(),
         new Unclassified64ByteBase64String(),
         new Unclassified16ByteHexadecimalString(),
-        new UrlCredentials()
+        // new UrlCredentials()
     };
 
     public static IEnumerable<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } = new RegexPattern[]
@@ -80,7 +80,7 @@ public static class WellKnownRegexPatterns
         new AzureApimIdentifiableRepositoryKey(),
         new AzureCacheForRedisIdentifiableKey(),
         new AzureContainerRegistryIdentifiableKey(),
-        new AzureContainerRegistryLegacyKey(),
+        // new AzureContainerRegistryLegacyKey(),
         new NuGetApiKey(),
         new AadClientAppLegacyCredentials32(),      // SEC101/101
         new AadClientAppLegacyCredentials34(),      // SEC101/101

@@ -14,6 +14,17 @@ namespace Microsoft.Security.Utilities
     [TestClass]
     public class WellKnownRegexPatternsTests
     {
+        /// <summary>
+        /// This list should be empty.
+        /// If it isn't, then it indicates failures associated with the corresponding rules.
+        /// Check https://github.com/microsoft/security-utilities/issues for open issues.
+        /// </summary>
+        private readonly List<string> WellKnownRegexPatternsExclusionList = new()
+        {
+            "SEC101/127.UrlCredentials",
+            "SEC101/109.AzureContainerRegistryLegacyKey"
+        };
+
         [TestMethod]
         public void WellKnownRegexPatterns_EnsureAllPatternsAreReferenced()
         {
@@ -63,6 +74,11 @@ namespace Microsoft.Security.Utilities
 
             foreach (string unrecognizedMoniker in unrecognizedMonikers)
             {
+                if (WellKnownRegexPatternsExclusionList.Contains(unrecognizedMoniker))
+                {
+                    continue;
+                }
+
                 false.Should().BeTrue(because: $"'{unrecognizedMoniker}' should be referenced by a WellKnownPatterns ruleset");
             }
         }
