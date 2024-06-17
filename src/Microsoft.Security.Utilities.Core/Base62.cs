@@ -13,6 +13,7 @@ namespace Base62
     // https://github.com/JoyMoe/Base62.Net/blob/dev/LICENSE
     public static class EncodingExtensions
     {
+        [ThreadStatic]
         private static StringBuilder s_sb;
         private const string DefaultCharacterSet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         private const string InvertedCharacterSet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";

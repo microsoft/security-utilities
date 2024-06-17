@@ -17,6 +17,9 @@ namespace Microsoft.Security.Utilities;
 /// </summary>
 public static class IdentifiableSecrets
 {
+    [ThreadStatic]
+    private static RandomNumberGenerator s_generator;
+
     public static readonly ulong VersionTwoChecksumSeed = ComputeHisV1ChecksumSeed("Default0");
 
     public const string CommonAnnotatedKeyRegexPattern = "[A-Za-z0-9]{52}JQQJ9(9|D)[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
@@ -225,8 +228,8 @@ public static class IdentifiableSecrets
 
             if (testChar == null)
             {
-                using var generator = RandomNumberGenerator.Create();
-                generator.GetBytes(keyBytes, 0, (int)keyLengthInBytes);
+                s_generator ??= RandomNumberGenerator.Create();
+                s_generator.GetBytes(keyBytes, 0, (int)keyLengthInBytes);
 
                 key = keyBytes.ToBase62();
                 
@@ -390,8 +393,8 @@ public static class IdentifiableSecrets
     {
         byte[] randomBytes = new byte[(int)keyLengthInBytes];
 
-        using var generator = RandomNumberGenerator.Create();
-        generator.GetBytes(randomBytes, 0, (int)keyLengthInBytes);
+        s_generator ??= RandomNumberGenerator.Create();
+        s_generator.GetBytes(randomBytes, 0, (int)keyLengthInBytes);
 
         string secret = GenerateBase64KeyHelper(checksumSeed,
                                                 keyLengthInBytes,
@@ -421,8 +424,8 @@ public static class IdentifiableSecrets
     {
         byte[] randomBytes = new byte[(int)keyLengthInBytes];
 
-        using var generator = RandomNumberGenerator.Create();
-        generator.GetBytes(randomBytes, 0, (int)keyLengthInBytes);
+        s_generator ??= RandomNumberGenerator.Create();
+        s_generator.GetBytes(randomBytes, 0, (int)keyLengthInBytes);
 
         return GenerateBase64KeyHelper(checksumSeed,
                                        keyLengthInBytes,
@@ -480,8 +483,8 @@ public static class IdentifiableSecrets
         if (randomBytes == null)
         {
             randomBytes = new byte[(int)keyLengthInBytes];
-            using var generator = RandomNumberGenerator.Create();
-            generator.GetBytes(randomBytes, 0, (int)keyLengthInBytes);
+            s_generator ??= RandomNumberGenerator.Create();
+            s_generator.GetBytes(randomBytes, 0, (int)keyLengthInBytes);
         }
 
         return GenerateKeyWithAppendedSignatureAndChecksum(randomBytes,
