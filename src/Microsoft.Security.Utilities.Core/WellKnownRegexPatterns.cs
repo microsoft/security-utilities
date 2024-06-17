@@ -57,6 +57,9 @@ public static class WellKnownRegexPatterns
          
         // Tracking issue with UrlCredentials via https://github.com/microsoft/security-utilities/issues/48
         // new UrlCredentials()
+
+        // Tracking issue with LooseOAuth2BearerToken via https://github.com/microsoft/security-utilities/issues/51
+        //new OAuth2BearerToken()
     };
 
     public static IEnumerable<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } = new RegexPattern[]

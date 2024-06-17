@@ -22,7 +22,8 @@ namespace Microsoft.Security.Utilities
         private readonly List<string> WellKnownRegexPatternsExclusionList = new()
         {
             "SEC101/127.UrlCredentials",
-            "SEC101/109.AzureContainerRegistryLegacyKey"
+            "SEC101/109.AzureContainerRegistryLegacyKey",
+            "SEC101/061.OAuth2BearerToken"
         };
 
         [TestMethod]
