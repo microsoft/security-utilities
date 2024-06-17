@@ -13,6 +13,7 @@
 
 # 1.5 PLEASE START TO VERSION MINOR NUMBER FOR BREAKING CHANGES
 - RUL: Add `SEC101/061.LooseOAuth2BearerToken` detection.
+- DEP: Added support for net451 in `Microsoft.Security.Utilities.Core` for backward compatibility.
 - NEW: Add `DetectionMetadata.LowConfidence` and `Detection.MediumConfidence` designations.
 
 # 1.4.25 - 06/04/2024
