@@ -9,11 +9,13 @@
 - NEW => New API or feature.
 - PRF => Performance work.
 - FPS => False positive reduction in static analysis.
-- FNS => Flase negative reduction in static analysis.
+- FNS => False negative reduction in static analysis.
 
 # 1.5 PLEASE START TO VERSION MINOR NUMBER FOR BREAKING CHANGES
 - RUL: Add `SEC101/061.LooseOAuth2BearerToken` detection.
 - DEP: Added support for net451 in `Microsoft.Security.Utilities.Core` for backward compatibility.
+- BUG: Fix the logic in `CommonAnnotatedSecurityKey.GenerateTruePositiveExamples()` to handle invalid test key characters, and to properly break out of the testing loop.
+- FNS: Added `SEC101/200.CommonAnnotatedSecurityKey` to `WellKnownPatterns.HighConfidenceMicrosoftSecurityModels`.
 - NEW: Add `DetectionMetadata.LowConfidence` and `Detection.MediumConfidence` designations.
 
 # 1.4.25 - 06/04/2024
