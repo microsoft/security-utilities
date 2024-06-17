@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
+using System.Threading.Tasks;
 
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -63,7 +64,7 @@ namespace Microsoft.Security.Utilities
             using var assertionScope = new AssertionScope();
 
             string validSignature = "ABCD";
-            string validKey = IdentifiableSecrets.GenerateCommonAnnotatedKey(validSignature, 
+            string validKey = IdentifiableSecrets.GenerateCommonAnnotatedKey(validSignature,
                                                                              customerManagedKey: true,
                                                                              new byte[9],
                                                                              new byte[3]);
@@ -140,7 +141,7 @@ namespace Microsoft.Security.Utilities
         {
             using var assertionScope = new AssertionScope();
 
-            foreach (string invalidSignature in new[] { "AbAA", "aaaB", "1AAA"})
+            foreach (string invalidSignature in new[] { "AbAA", "aaaB", "1AAA" })
             {
                 var action = () => IdentifiableSecrets.ValidateCommonAnnotatedKeySignature(invalidSignature);
                 action.Should().Throw<ArgumentException>(because: $"the signature '{invalidSignature}' is invalid");
@@ -155,7 +156,7 @@ namespace Microsoft.Security.Utilities
             string textToHash = "NonsensitiveData";
 
             string shortKey = IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureIotDeviceChecksumSeed,
-                                                                            32, 
+                                                                            32,
                                                                             IdentifiableMetadata.AzureIotSignature);
 
             string shortDerivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(textToHash,
@@ -170,8 +171,8 @@ namespace Microsoft.Security.Utilities
                                                                                       longKey,
                                                                                       IdentifiableMetadata.AzureIotDeviceChecksumSeed);
 
-            foreach (string key in new[] {shortKey, shortDerivedKey, longKey, longDerivedKey}) 
-            { 
+            foreach (string key in new[] { shortKey, shortDerivedKey, longKey, longDerivedKey })
+            {
                 bool result = IdentifiableSecrets.TryValidateBase64Key(key,
                                                                        IdentifiableMetadata.AzureIotDeviceChecksumSeed,
                                                                        IdentifiableMetadata.AzureIotSignature);
@@ -194,7 +195,7 @@ namespace Microsoft.Security.Utilities
                 {
                     string platformEncoded = new string((char)('A' + i + 1), 12);
                     string providerEncoded = new string((char)('A' + i + 2), 4);
-                    
+
                     byte[] platformReserved = Convert.FromBase64String(platformEncoded);
                     byte[] providerReserved = Convert.FromBase64String(providerEncoded);
 
@@ -283,9 +284,9 @@ namespace Microsoft.Security.Utilities
 
             foreach (RegexPattern pattern in WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels)
             {
-                if (!pattern.DetectionMetadata.HasFlag(DetectionMetadata.Identifiable)) 
+                if (!pattern.DetectionMetadata.HasFlag(DetectionMetadata.Identifiable))
                 {
-                    continue; 
+                    continue;
                 }
 
                 foreach (string securityKey in pattern.GenerateTruePositiveExamples())
@@ -329,72 +330,84 @@ namespace Microsoft.Security.Utilities
             ulong keysGenerated = 0;
             const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-            using var assertionScope = new AssertionScope();
-
             for (byte i = 0; i < iterations; i++)
             {
                 for (short j = 0; j < iterations; j++)
                 {
+                    var signatures = new List<string>();
+
                     for (byte k = 0; k < iterations; k++)
                     {
                         string signature = Guid.NewGuid().ToString("N").Substring(0, 4);
-
-                        signature = $"{alphabet[(int)keysGenerated % alphabet.Length]}{ signature.Substring(1)}";
-
-                        byte[] platformReserved = new byte[9];
-                        byte[] providerReserved = new byte[3];
-
-                        int cBits = 28;
-                        int pBits = 41;
-                        int rBits = 43;
-                        int tBits = 45;
-
-                        int? metadata = (cBits << 18) | (cBits << 12) | (cBits << 6) | cBits;
-                        byte[] metadataBytes = BitConverter.GetBytes(metadata.Value);
-
-                        platformReserved[0] = metadataBytes[2];
-                        platformReserved[1] = metadataBytes[1];
-                        platformReserved[2] = metadataBytes[0];
-
-                        metadata = (rBits << 18) | (rBits << 12) | (rBits << 6) | rBits;
-                        metadataBytes = BitConverter.GetBytes(metadata.Value);
-
-                        platformReserved[3] = metadataBytes[2];
-                        platformReserved[4] = metadataBytes[1];
-                        platformReserved[5] = metadataBytes[0];
-
-                        metadata = (tBits << 18) | (tBits << 12) | (tBits << 6) | tBits;
-                        metadataBytes = BitConverter.GetBytes(metadata.Value);
-
-                        platformReserved[6] = metadataBytes[2];
-                        platformReserved[7] = metadataBytes[1];
-                        platformReserved[8] = metadataBytes[0];
-
-                        metadata = (pBits << 18) | (pBits << 12) | (pBits << 6) | pBits;
-                        metadataBytes = BitConverter.GetBytes(metadata.Value);
-
-                        providerReserved[0] = metadataBytes[2];
-                        providerReserved[1] = metadataBytes[1];
-                        providerReserved[2] = metadataBytes[0];
-
-                        foreach (bool customerManaged in new[] { true, false })
-                        {
-                            signature = customerManaged ? signature.ToUpperInvariant() : signature.ToLowerInvariant();
-
-                            string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature,
-                                                                                        customerManaged,
-                                                                                        platformReserved, 
-                                                                                        providerReserved);
-
-                            bool result = IdentifiableSecrets.CommonAnnotatedKeyRegex.IsMatch(key);
-                            result.Should().BeTrue(because: $"the key '{key}' should match the common annotated key regex");
-
-                            result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, signature);
-                            result.Should().BeTrue(because: $"the key '{key}' should comprise an HIS v2-conformant pattern");
-
-                            keysGenerated++;
-                        }
+                        signature = $"{alphabet[(int)keysGenerated % alphabet.Length]}{signature.Substring(1)}";
+                        signatures.Add(signature);
                     }
+
+                    Parallel.ForEach(signatures, signature =>
+                    {
+                        using var assertionScope = new AssertionScope();
+
+                        try
+                        {
+                            byte[] platformReserved = new byte[9];
+                            byte[] providerReserved = new byte[3];
+
+                            int cBits = 28;
+                            int pBits = 41;
+                            int rBits = 43;
+                            int tBits = 45;
+
+                            int? metadata = (cBits << 18) | (cBits << 12) | (cBits << 6) | cBits;
+                            byte[] metadataBytes = BitConverter.GetBytes(metadata.Value);
+
+                            platformReserved[0] = metadataBytes[2];
+                            platformReserved[1] = metadataBytes[1];
+                            platformReserved[2] = metadataBytes[0];
+
+                            metadata = (rBits << 18) | (rBits << 12) | (rBits << 6) | rBits;
+                            metadataBytes = BitConverter.GetBytes(metadata.Value);
+
+                            platformReserved[3] = metadataBytes[2];
+                            platformReserved[4] = metadataBytes[1];
+                            platformReserved[5] = metadataBytes[0];
+
+                            metadata = (tBits << 18) | (tBits << 12) | (tBits << 6) | tBits;
+                            metadataBytes = BitConverter.GetBytes(metadata.Value);
+
+                            platformReserved[6] = metadataBytes[2];
+                            platformReserved[7] = metadataBytes[1];
+                            platformReserved[8] = metadataBytes[0];
+
+                            metadata = (pBits << 18) | (pBits << 12) | (pBits << 6) | pBits;
+                            metadataBytes = BitConverter.GetBytes(metadata.Value);
+
+                            providerReserved[0] = metadataBytes[2];
+                            providerReserved[1] = metadataBytes[1];
+                            providerReserved[2] = metadataBytes[0];
+
+                            foreach (bool customerManaged in new[] { true, false })
+                            {
+                                signature = customerManaged ? signature.ToUpperInvariant() : signature.ToLowerInvariant();
+
+                                string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature,
+                                                                                            customerManaged,
+                                                                                            platformReserved,
+                                                                                            providerReserved);
+
+                                bool result = IdentifiableSecrets.CommonAnnotatedKeyRegex.IsMatch(key);
+                                result.Should().BeTrue(because: $"the key '{key}' should match the common annotated key regex");
+
+                                result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, signature);
+                                result.Should().BeTrue(because: $"the key '{key}' should comprise an HIS v2-conformant pattern");
+
+                                keysGenerated++;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            false.Should().BeTrue(because: $"an unhandled exception occurred: {ex}");
+                        }
+                    });
                 }
             }
         }
@@ -435,7 +448,7 @@ namespace Microsoft.Security.Utilities
 
         [TestMethod]
         public void IdentifiableSecrets_GenerateBase64Key_ShouldThrowExceptionForInvalidLengths()
-        {        
+        {
             const string signature = "ABCD";
             const string seedText = "DEFAULT0";
             ulong seed = BitConverter.ToUInt64(Encoding.ASCII.GetBytes(seedText).Reverse().ToArray(), 0);
@@ -541,7 +554,7 @@ namespace Microsoft.Security.Utilities
                                                                                              signature,
                                                                                              encodeForUrl))
                             {
-                                ValidateSecret(secret, seed, signature, encodeForUrl);                                
+                                ValidateSecret(secret, seed, signature, encodeForUrl);
                             }
                         }
                     }
@@ -639,7 +652,7 @@ namespace Microsoft.Security.Utilities
                     string base64Encoded = Convert.ToBase64String(apiDecodedBytes);
                     string urlSafeEncoded = Base64UrlEncoder.Encode(dotNetDecodedBytes);
 
-                    Assert.IsTrue(base64Encoded == secret && 
+                    Assert.IsTrue(base64Encoded == secret &&
                                   urlSafeEncoded == secret.TrimEnd('='));
                     break;
                 }

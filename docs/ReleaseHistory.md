@@ -11,13 +11,15 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# 1.5 PLEASE START TO VERSION MINOR NUMBER FOR BREAKING CHANGES
+# 1.5.0 - 06/17/2024
 - RUL: Add `SEC101/061.LooseOAuth2BearerToken` detection.
 - DEP: Added support for net451 in `Microsoft.Security.Utilities.Core` for backward compatibility.
+- BUG: Resolve `System.ArgumentOutOfRangeException: Index was out of range` and `System.FormatException: The input is not a valid Base-46 string` errors when calling `IdentifiableSecrets.GenerateCommonAnnotatedTestKey(ulong, string, bool, byte[], byte[], bool, char?)`. These exceptions originated in multithreading issues in `Base62.EncodingExtensions.ToBase62(this string)`.
 - BUG: Fix the logic in `CommonAnnotatedSecurityKey.GenerateTruePositiveExamples()` to handle invalid test key characters, and to properly break out of the testing loop.
 - FNS: Added `SEC101/200.CommonAnnotatedSecurityKey` to `WellKnownPatterns.HighConfidenceMicrosoftSecurityModels`.
 - NEW: Add `DetectionMetadata.LowConfidence` and `Detection.MediumConfidence` designations.
-
+- PRF: Eliminate instantiation of `RandomNumberGenerator` object on every key allocation.
+ 
 # 1.4.25 - 06/04/2024
 - BUG: Bring `IdentifiableScan` into precise equivalence with other maskers, e.g., `Detection.RedactionToken` is now in alignment.
 - NEW: Provide hybrid capability to run high-performance detections in `IdentifiableScan` and fall back to other masker as required.
