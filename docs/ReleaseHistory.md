@@ -11,6 +11,9 @@
 - FPS => False positive reduction in static analysis.
 - FNS => Flase negative reduction in static analysis.
 
+# UNRELEASED
+- DEP: Added support for net451 in `Microsoft.Security.Utilities.Core` for backward compatibility.
+
 # 1.4.25 - 06/04/2024
 - BUG: Bring `IdentifiableScan` into precise equivalence with other maskers, e.g., `Detection.RedactionToken` is now in alignment.
 - NEW: Provide hybrid capability to run high-performance detections in `IdentifiableScan` and fall back to other masker as required.
