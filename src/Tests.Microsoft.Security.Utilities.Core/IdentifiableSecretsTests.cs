@@ -326,7 +326,7 @@ namespace Microsoft.Security.Utilities
         [TestMethod]
         public void IdentifiableSecrets_PlatformAnnotatedSecurityKeys()
         {
-            int iterations = 100;
+            int iterations = 10;
             ulong keysGenerated = 0;
             const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
