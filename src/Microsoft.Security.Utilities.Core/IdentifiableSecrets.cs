@@ -231,6 +231,8 @@ public static class IdentifiableSecrets
                 s_generator ??= RandomNumberGenerator.Create();
                 s_generator.GetBytes(keyBytes, 0, (int)keyLengthInBytes);
 
+                generator.GetBytes(keyBytes);
+
                 key = keyBytes.ToBase62();
                 
                 if (key.Length < 86)

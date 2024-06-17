@@ -20,7 +20,13 @@ public enum DetectionMetadata
 
     ClearSurroundingContext = 1 << 4,
 
-    Identifiable = FixedSignature | EmbeddedChecksum | HighEntropy,
+    Identifiable = FixedSignature | EmbeddedChecksum | HighEntropy | HighConfidence,
 
     RequiresRotation = 1 << 5,
+
+    LowConfidence = 1 << 6,
+
+    MediumConfidence = 1 << 7,
+
+    HighConfidence = 1 << 8,
 }

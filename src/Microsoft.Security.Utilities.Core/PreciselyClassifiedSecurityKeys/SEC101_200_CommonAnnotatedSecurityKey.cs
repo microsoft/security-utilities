@@ -19,28 +19,37 @@ namespace Microsoft.Security.Utilities
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
-            int count = 0;
             int attempts = 0;
 
-            while(true)
+            foreach (bool longForm in new[] { true, false })
             {
-                foreach (bool longForm in new[] { true, false })
+                while (true) 
                 {
                     char testChar = (char)('a' + attempts++);
-                    string example = IdentifiableSecrets.GenerateCommonAnnotatedTestKey(IdentifiableSecrets.VersionTwoChecksumSeed,
-                                                                                        "TEST",
-                                                                                        customerManagedKey: true,
-                                                                                        platformReserved: null,
-                                                                                        providerReserved: null,
-                                                                                        longForm: false,
-                                                                                        testChar);
 
-                    if (example == null) { continue; }
-
-                    if (++count == 20)
+                    if (testChar == '{')
                     {
                         break;
                     }
+
+                    string example;
+
+                    try
+                    { 
+                        example = IdentifiableSecrets.GenerateCommonAnnotatedTestKey(IdentifiableSecrets.VersionTwoChecksumSeed,
+                                                                                     "TEST",
+                                                                                     customerManagedKey: true,
+                                                                                     platformReserved: null,
+                                                                                     providerReserved: null,
+                                                                                     longForm,
+                                                                                     testChar);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        example = null;
+                    }
+
+                    if (example == null) { continue; }
 
                     yield return example;
                 }

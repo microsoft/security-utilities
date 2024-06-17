@@ -46,7 +46,7 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
             IdentifiableMetadata.AzureApimSignature => GetApimMatchIdAndName(match),
             IdentifiableMetadata.AzureBatchSignature => new Tuple<string, string>("SEC101/163", "AzureBatchIdentifiableKey"),
             IdentifiableMetadata.AzureStorageSignature => new Tuple<string, string>("SEC101/152", "AzureStorageAccountIdentifiableKey"),
-            IdentifiableMetadata.AzureCosmosDBSignature => new Tuple<string, string>("SEC101/160", "AzureCosmosDbIdentifiableKeyResource"),
+            IdentifiableMetadata.AzureCosmosDBSignature => new Tuple<string, string>("SEC101/160", "AzureCosmosDBIdentifiableKey"),
             IdentifiableMetadata.AzureMLClassicSignature => new Tuple<string, string>("SEC101/170", "AzureMLWebServiceClassicIdentifiableKey"),
             _ => null,
         };
