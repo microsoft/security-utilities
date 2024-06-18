@@ -8,22 +8,11 @@ namespace Microsoft.Security.Utilities;
 
 internal sealed class UrlCredentials : RegexPattern
 {
-    // https://datatracker.ietf.org/doc/html/rfc3986#section-2.3
-    private const string UnreservedCharacters = @"[\w\.~\-]";
-
-    // https://datatracker.ietf.org/doc/html/rfc3986#section-2.1
-    private const string PercentEncodedCharacters = @"(%|%AZP25)[0-9a-fA-F]{2}";
-
-    // https://datatracker.ietf.org/doc/html/rfc3986#section-2.2
-    private const string SubDelimiters = @"[!\$&'\(\)\*\+,;=]";
-
-    private static string Url = $"({UnreservedCharacters}|{PercentEncodedCharacters}|{SubDelimiters}|:)+";
-
     public UrlCredentials()
     {
         Id = "SEC101/127";
 
-        Name = "UrlCredentials";
+        Name = nameof(UrlCredentials);
 
         Pattern = @"https?:\/\/(?:[^:@]+):(?<refine>[^:@?]+)@";
 
@@ -35,7 +24,6 @@ internal sealed class UrlCredentials : RegexPattern
             "https",
         });
     }
-
 
     public override IEnumerable<string> GenerateTruePositiveExamples()
     {
