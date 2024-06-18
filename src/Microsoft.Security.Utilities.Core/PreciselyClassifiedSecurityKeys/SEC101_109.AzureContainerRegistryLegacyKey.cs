@@ -12,7 +12,7 @@ namespace Microsoft.Security.Utilities
             Id = "SEC101/109";
             Name = nameof(AzureContainerRegistryLegacyKey);
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat;
-            Pattern = $"^(?i)[a-z0-9=+/]{32}$";
+            Pattern = "^(?i)(?<refine>[a-z0-9=+/]{32})$";
         }
 
         public override IEnumerable<string> GenerateTruePositiveExamples()

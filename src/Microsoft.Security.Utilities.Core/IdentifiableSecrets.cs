@@ -229,9 +229,7 @@ public static class IdentifiableSecrets
             if (testChar == null)
             {
                 s_generator ??= RandomNumberGenerator.Create();
-                s_generator.GetBytes(keyBytes, 0, (int)keyLengthInBytes);
-
-                generator.GetBytes(keyBytes);
+                s_generator.GetBytes(keyBytes);
 
                 key = keyBytes.ToBase62();
                 
@@ -396,7 +394,7 @@ public static class IdentifiableSecrets
         byte[] randomBytes = new byte[(int)keyLengthInBytes];
 
         s_generator ??= RandomNumberGenerator.Create();
-        s_generator.GetBytes(randomBytes, 0, (int)keyLengthInBytes);
+        s_generator.GetBytes(randomBytes);
 
         string secret = GenerateBase64KeyHelper(checksumSeed,
                                                 keyLengthInBytes,
@@ -427,7 +425,7 @@ public static class IdentifiableSecrets
         byte[] randomBytes = new byte[(int)keyLengthInBytes];
 
         s_generator ??= RandomNumberGenerator.Create();
-        s_generator.GetBytes(randomBytes, 0, (int)keyLengthInBytes);
+        s_generator.GetBytes(randomBytes);
 
         return GenerateBase64KeyHelper(checksumSeed,
                                        keyLengthInBytes,
@@ -486,7 +484,7 @@ public static class IdentifiableSecrets
         {
             randomBytes = new byte[(int)keyLengthInBytes];
             s_generator ??= RandomNumberGenerator.Create();
-            s_generator.GetBytes(randomBytes, 0, (int)keyLengthInBytes);
+            s_generator.GetBytes(randomBytes);
         }
 
         return GenerateKeyWithAppendedSignatureAndChecksum(randomBytes,

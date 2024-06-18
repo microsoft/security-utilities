@@ -25,7 +25,7 @@ internal sealed class UrlCredentials : RegexPattern
 
         Name = "UrlCredentials";
 
-        Pattern = $"(?<=//[^:/?#\\n]+:){Url}(?=@)";
+        Pattern = @"https?:\/\/(?:[^:@]+):(?<refine>[^:@?]+)@";
 
         DetectionMetadata = DetectionMetadata.None;
 
