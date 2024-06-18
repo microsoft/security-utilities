@@ -50,17 +50,18 @@ public static class WellKnownRegexPatterns
     public static IEnumerable<RegexPattern> UnclassifiedPotentialSecurityKeys { get; } = new RegexPattern[]
     {
         new GenericJwt(),
+        new UrlCredentials(),
         new LooseSasSecret(),
+        new OAuth2BearerToken(),
+        new Unclassified32CharacterString(),
         new Unclassified32ByteBase64String(),
         new Unclassified64ByteBase64String(),
-        new Unclassified16ByteHexadecimalString(),
-         
-        // Tracking issue with UrlCredentials via https://github.com/microsoft/security-utilities/issues/48
-        // new UrlCredentials()
+        new Unclassified16ByteHexadecimalString(),         
     };
 
     public static IEnumerable<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } = new RegexPattern[]
     {
+        new AzureContainerRegistryLegacyKey(),
         new CommonAnnotatedSecurityKey(),
         new AadClientAppIdentifiableCredentials(),
         new AzureFunctionIdentifiableKey(),
@@ -82,11 +83,7 @@ public static class WellKnownRegexPatterns
         new AzureApimIdentifiableRepositoryKey(),
         new AzureCacheForRedisIdentifiableKey(),
         new AzureContainerRegistryIdentifiableKey(),
-
-        // Tracking issue with AzureContainerRegistryLegacyKey via https://github.com/microsoft/security-utilities/issues/49
-        // new AzureContainerRegistryLegacyKey(),
         new NuGetApiKey(),
-        new AadClientAppLegacyCredentials32(),      // SEC101/101
         new AadClientAppLegacyCredentials34(),      // SEC101/101
         new AdoPat(),                               // SEC101/102
         new AzureCosmosDBLegacyCredentials(),       // SEC101/104

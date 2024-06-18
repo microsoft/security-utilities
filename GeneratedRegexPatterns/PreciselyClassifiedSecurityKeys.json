@@ -1,5 +1,21 @@
 [
   {
+    "Pattern": "^(?i)(?<refine>[a-z0-9=+/]{32})$",
+    "Id": "SEC101/109",
+    "Name": "AzureContainerRegistryLegacyKey",
+    "Signatures": null,
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
+  },
+  {
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?P<secret>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ9(?:9|D)[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{16}[A-Za-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{7}(?:[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{2}==)?)",
+    "Id": "SEC101/200",
+    "Name": "CommonAnnotatedSecurityKey",
+    "Signatures": [
+      "JQQJ9"
+    ],
+    "DetectionMetadata": "Identifiable"
+  },
+  {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{3}(7|8)Q~[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{31,34})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=]|$)",
     "Id": "SEC101/156",
     "Name": "AadClientAppIdentifiableCredentials",
@@ -316,13 +332,6 @@
       "oy2"
     ],
     "DetectionMetadata": "HighEntropy, FixedSignature"
-  },
-  {
-    "Pattern": "^(?i)[a-z0-9.=\\-:[_@\\/*\\]+?]{32}$",
-    "Id": "SEC101/101",
-    "Name": "AadClientAppLegacyCredentials",
-    "Signatures": null,
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
   },
   {
     "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{34}$",

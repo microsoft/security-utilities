@@ -11,6 +11,16 @@
     "DetectionMetadata": "HighEntropy, MediumConfidence"
   },
   {
+    "Pattern": "https?:\\/\\/(?:[^:@]+):(?<refine>[^:@?]+)@",
+    "Id": "SEC101/127",
+    "Name": "UrlCredentials",
+    "Signatures": [
+      "http",
+      "https"
+    ],
+    "DetectionMetadata": "None"
+  },
+  {
     "Pattern": "(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?<refine>[0-9a-z\\/+%]{43,129}(?:=|%3d))",
     "Id": "SEC101/060",
     "Name": "LooseSasSecret",
@@ -19,6 +29,23 @@
       "ret="
     ],
     "DetectionMetadata": "HighEntropy, MediumConfidence"
+  },
+  {
+    "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_~.+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_~.+/=]|$)",
+    "Id": "SEC101/061",
+    "Name": "OAuth2BearerToken",
+    "Signatures": [
+      "sig=",
+      "ret="
+    ],
+    "DetectionMetadata": "LowConfidence"
+  },
+  {
+    "Pattern": "^(?i)[a-z0-9.=\\-:[_@\\/*\\]+?]{32}$",
+    "Id": "SEC000/003",
+    "Name": "Unclassified32CharacterString",
+    "Signatures": null,
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
   },
   {
     "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=$",
