@@ -1,12 +1,5 @@
 [
   {
-    "Pattern": "^(?i)(?<refine>[a-z0-9=+/]{32})$",
-    "Id": "SEC101/109",
-    "Name": "AzureContainerRegistryLegacyKey",
-    "Signatures": null,
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
-  },
-  {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?P<secret>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ9(?:9|D)[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{16}[A-Za-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{7}(?:[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{2}==)?)",
     "Id": "SEC101/200",
     "Name": "CommonAnnotatedSecurityKey",
