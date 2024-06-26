@@ -94,6 +94,13 @@ pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &s
         return false;
     }
     
+    match validate_common_annotated_key_signature(base64_encoded_signature) {
+        Ok(_) => true,
+        Err(s) => {
+            println!("{}", s);
+            return false;
+        },
+    };
    
     
     if key.len() != STANDARD_COMMON_ANNOTATED_KEY_SIZE && key.len() != LONG_FORM_COMMON_ANNOTATED_KEY_SIZE {

@@ -42,9 +42,11 @@ fn identifiable_secrets_platform_annotated_security_keys() {
         {
             for k in 0..iterations 
             {
-                let mut signature = format!("{:?}", Uuid::new_v4().simple()).chars().skip(1).take(4).collect::<String>();
+                let mut signature: String = format!("{:?}", Uuid::new_v4().simple()).chars().skip(1).take(4).collect::<String>();
 
                 signature = format!("{}{}", alphabet.chars().nth(((keys_generated as i32) % (alphabet.len() as i32)) as usize).unwrap().to_string(), &signature[1..]);
+
+                signature = signature.to_uppercase();
 
                 let mut platform_reserved = [0u8; 9];
                 let mut provider_reserved = [0u8; 3];
