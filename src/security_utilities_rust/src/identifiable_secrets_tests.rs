@@ -46,8 +46,6 @@ fn identifiable_secrets_platform_annotated_security_keys() {
 
                 signature = format!("{}{}", alphabet.chars().nth(((keys_generated as i32) % (alphabet.len() as i32)) as usize).unwrap().to_string(), &signature[1..]);
 
-                signature = signature.to_uppercase();
-
                 let mut platform_reserved = [0u8; 9];
                 let mut provider_reserved = [0u8; 3];
 
@@ -88,12 +86,20 @@ fn identifiable_secrets_platform_annotated_security_keys() {
                 let provider_reserved_vec = provider_reserved.to_vec();
 
                 for &customer_managed in &[true, false] {
-                    let key = microsoft_security_utilities_core::identifiable_secrets::generate_common_annotated_key(&signature, customer_managed, Some(&platform_reserved_vec), Some(&provider_reserved_vec), None).unwrap();
+
+                    let mut cased_signature = signature.clone();
+                    if customer_managed {
+                        cased_signature = cased_signature.to_uppercase();
+                    } else {
+                        cased_signature = cased_signature.to_lowercase();
+                    }
+
+                    let key = microsoft_security_utilities_core::identifiable_secrets::generate_common_annotated_key(&cased_signature, customer_managed, Some(&platform_reserved_vec), Some(&provider_reserved_vec), true, None).unwrap();
 
                     let mut result = microsoft_security_utilities_core::identifiable_secrets::COMMON_ANNOTATED_KEY_REGEX.is_match(key.as_str());
                     assert!(result, "the key '{}' should match the common annotated key regex", key);
-
-                    result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(key.as_str(), &signature);
+                    
+                    result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(key.as_str(), &cased_signature);
                     assert!(result, "the key '{}' should comprise an HIS v2-conformant pattern", key);
 
                     keys_generated += 1;

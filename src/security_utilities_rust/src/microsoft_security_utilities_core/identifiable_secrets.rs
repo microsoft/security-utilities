@@ -95,14 +95,13 @@ pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &s
     }
     
     match validate_common_annotated_key_signature(base64_encoded_signature) {
-        Ok(_) => true,
+        Ok(_) => (),
         Err(s) => {
             println!("{}", s);
             return false;
         },
     };
    
-    
     if key.len() != STANDARD_COMMON_ANNOTATED_KEY_SIZE && key.len() != LONG_FORM_COMMON_ANNOTATED_KEY_SIZE {
         return false;
     }
@@ -158,12 +157,14 @@ pub fn generate_common_annotated_key(base64_encoded_signature: &str,
     customer_managed_key: bool,
     platform_reserved: Option<&[u8]>,
     provider_reserved: Option<&[u8]>,
+    long_form: bool,
     test_char: Option<char>) -> Result<String, String> {
 generate_common_annotated_test_key(VERSION_TWO_CHECKSUM_SEED.clone(),
       base64_encoded_signature,
       customer_managed_key,
       platform_reserved,
       provider_reserved,
+      long_form,
       test_char)
 }
 
@@ -173,10 +174,16 @@ pub fn generate_common_annotated_test_key(
     customer_managed_key: bool,
     platform_reserved: Option<&[u8]>,
     provider_reserved: Option<&[u8]>,
+    long_form: bool,
     test_char: Option<char>,
 ) -> Result<String, String> {
     const PLATFORM_RESERVED_LENGTH: usize = 9;
     const PROVIDER_RESERVED_LENGTH: usize = 3;
+
+    match validate_common_annotated_key_signature(base64_encoded_signature) {
+        Ok(_) => base64_encoded_signature,
+        Err(s) => return Err(format!("Common Annotated Key generation failed due to: {}", s)),
+    };
 
     let platform_reserved = match platform_reserved {
         Some(reserved) if reserved.len() != PLATFORM_RESERVED_LENGTH => {
@@ -213,14 +220,16 @@ pub fn generate_common_annotated_test_key(
         let mut key_bytes = vec![0; key_length_in_bytes];
 
         if let Some(test_char) = test_char {
-            key = format!("{:86}==", test_char.to_string().repeat(86));
+            key = format!("{:88}", test_char.to_string().repeat(88));
+
+            key_bytes = match general_purpose::STANDARD.decode(&key) {
+                Ok(bytes) => bytes,
+                Err(_) => return Err(format!("Failed to decode test character {}.", test_char.to_string())),
+            };
         } else {
             let mut rng = rand::thread_rng();
             rng.fill_bytes(&mut key_bytes);
         }
-
-        let key_string = general_purpose::STANDARD.encode(&key_bytes);
-        key_bytes = general_purpose::STANDARD.decode(&key_string).unwrap();
 
         let j_bits = b'J' - b'A';
         let q_bits = b'Q' - b'A';
@@ -274,11 +283,15 @@ pub fn generate_common_annotated_test_key(
         key_bytes[key_bytes_length - 4] = checksum_bytes[2];
         key_bytes[key_bytes_length - 3] = checksum_bytes[3];
 
-        key = general_purpose::STANDARD.encode(&key_bytes[..COMMON_ANNOTATED_KEY_SIZE_IN_BYTES]);
+        key = general_purpose::STANDARD.encode(&key_bytes);
+
+        assert_eq!(key.len(), LONG_FORM_COMMON_ANNOTATED_KEY_SIZE);
 
         // The HIS v2 standard requires that there be no special characters in the generated key.
         if !key.contains('+') && !key.contains('/') {
-            break;
+            if !long_form {
+                key = key.substring(0, STANDARD_COMMON_ANNOTATED_KEY_SIZE).to_string();
+            }
         } else if test_char.is_some() {
             key = String::new();
             break;
