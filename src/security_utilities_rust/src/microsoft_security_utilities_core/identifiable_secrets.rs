@@ -292,12 +292,12 @@ pub fn generate_common_annotated_test_key(
             if !long_form {
                 key = key.substring(0, STANDARD_COMMON_ANNOTATED_KEY_SIZE).to_string();
             }
+            return Ok(key)
         } else if test_char.is_some() {
             key = String::new();
             break;
         }
     }
-
     Ok(key)
 }
 
