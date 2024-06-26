@@ -25,21 +25,54 @@ lazy_static! {
 
 pub static MAXIMUM_GENERATED_KEY_SIZE: u32 = 4096;
 pub static MINIMUM_GENERATED_KEY_SIZE: u32 = 24;
-pub static STANDARD_COMMON_ANNOTATED_KEY_SIZE: u32 = 84;
-pub static LONG_FORM_COMMON_ANNOTATED_KEY_SIZE: u32 = 88;
-pub static COMMON_ANNOTATED_KEY_SIGNATURE: String = "JQQJ99";
-pub static COMMON_ANNOTATED_DERIVED_KEY_SIGNATURE = "JQQJ9D";
+pub static STANDARD_COMMON_ANNOTATED_KEY_SIZE: usize = 84;
+pub static LONG_FORM_COMMON_ANNOTATED_KEY_SIZE: usize = 88;
+pub static COMMON_ANNOTATED_KEY_SIGNATURE: &str = "JQQJ99";
+pub static COMMON_ANNOTATED_DERIVED_KEY_SIGNATURE: &str = "JQQJ9D";
 static BITS_IN_BYTES: i32 = 8;
 static BITS_IN_BASE64_CHARACTER: i32 = 6;
 static SIZE_OF_CHECKSUM_IN_BYTES: i32 = mem::size_of::<u32>() as i32;
 
 static COMMON_ANNOTATED_KEY_SIZE_IN_BYTES: usize = 63;
 
-pub fn is_base62_encoding_char(ch: char) -> bool
-{
-    return (ch >= 'a' && ch <= 'z') ||
-            (ch >= 'A' && ch <= 'Z') ||
-            (ch >= '0' && ch <= '9');
+/// The offset to the encoded standard fixed signature ('JQQJ99' or 'JQQJ9D').
+pub static STANDARD_FIXED_SIGNATURE_OFFSET: usize = 52;
+
+/// The encoded length of the standard fixed signature ('JQQJ99' or 'JQQJ9D').
+pub static STANDARD_FIXED_SIGNATURE_LENGTH: usize = 6;
+
+/// The offset to the encoded character that denotes a derived ('D')
+/// or standard ('9') common annotated security key.
+pub static DERIVED_KEY_CHARACTER_OFFSET: usize = STANDARD_FIXED_SIGNATURE_OFFSET + STANDARD_FIXED_SIGNATURE_LENGTH - 1;
+
+/// The offset to the two-character encoded key creation date.
+pub static DATE_OFFSET: usize = STANDARD_FIXED_SIGNATURE_OFFSET + STANDARD_FIXED_SIGNATURE_LENGTH;
+
+/// The encoded length of the creation date (a value such as 'AE').
+pub static DATE_LENGTH: usize = 2;
+
+/// The offset to the 12-character encoded platform-reserved data.
+pub static PLATFORM_RESERVED_OFFSET: usize = DATE_OFFSET + DATE_LENGTH;
+
+/// The encoded length of the platform-reserved bytes.
+pub static PLATFORM_RESERVED_LENGTH: usize = 12;
+
+/// The offset to the 4-character encoded provider-reserved data.
+pub static PROVIDER_RESERVED_OFFSET: usize = PLATFORM_RESERVED_OFFSET + PLATFORM_RESERVED_LENGTH;
+
+/// The encoded length of the provider-reserved bytes.
+pub static PROVIDER_RESERVED_LENGTH: usize = 4;
+
+/// The offset to the 4-character encoded provider fixed signature.
+pub static PROVIDER_FIXED_SIGNATURE_OFFSET: usize = PROVIDER_RESERVED_OFFSET + PROVIDER_RESERVED_LENGTH;
+
+/// The encoded length of the provider fixed signature, e.g., 'AZEG'.
+pub static PROVIDER_FIXED_SIGNATURE_LENGTH: usize = 4;
+
+pub static CHECKSUM_OFFSET: usize = PROVIDER_FIXED_SIGNATURE_OFFSET + PROVIDER_FIXED_SIGNATURE_LENGTH;
+
+pub fn is_base62_encoding_char(ch: char) -> bool {
+    ch.is_ascii_alphanumeric()
 }
 
 pub fn is_base64_encoding_char(ch: char) -> bool 
@@ -54,6 +87,36 @@ pub fn is_base64_url_encoding_char(ch: char) -> bool
     return is_base62_encoding_char(ch) ||
                    ch == '-' ||
                    ch == '_';
+}
+
+pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &str) -> bool {
+    if key.is_empty() || key.trim().is_empty() {
+        return false;
+    }
+    
+   
+    
+    if key.len() != STANDARD_COMMON_ANNOTATED_KEY_SIZE && key.len() != LONG_FORM_COMMON_ANNOTATED_KEY_SIZE {
+        return false;
+    }
+    
+    let long_form = key.len() == LONG_FORM_COMMON_ANNOTATED_KEY_SIZE;
+    let checksum_seed: u64 = VERSION_TWO_CHECKSUM_SEED.clone();
+
+    let key_bytes = general_purpose::STANDARD.decode(&key).unwrap();
+
+    let key_bytes_length = key_bytes.len();
+
+    let bytes_for_checksum = &key_bytes[..key_bytes_length - 3];
+    let actual_checksum_bytes = &key_bytes[key_bytes_length - 3..key_bytes_length];
+
+    let computed_marvin = marvin::compute_hash32(bytes_for_checksum, checksum_seed, 0, bytes_for_checksum.len() as i32);
+    let computed_marvin_bytes = computed_marvin.to_ne_bytes();
+
+    // The HIS v2 standard requires a match for the first 3-bytes (24 bits) of the Marvin checksum.
+    actual_checksum_bytes[0] == computed_marvin_bytes[0]
+    && actual_checksum_bytes[1] == computed_marvin_bytes[1]
+    && actual_checksum_bytes[2] == computed_marvin_bytes[2]
 }
 
 /// Generate a u64 an HIS v1 compliant checksum seed from a string literal
@@ -82,27 +145,6 @@ pub fn compute_his_v1_checksum_seed(versioned_key_kind: &str) -> u64 {
     let result = u64::from_le_bytes(bytes.try_into().unwrap());
 
     result
-}
-
-pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &str) -> bool {
-    let checksum_seed: u64 = VERSION_TWO_CHECKSUM_SEED.clone();
-
-    let key_bytes = general_purpose::STANDARD.decode(&key).unwrap();
-
-    assert_eq!(key_bytes.len(), COMMON_ANNOTATED_KEY_SIZE_IN_BYTES);
-
-    let key_bytes_length = key_bytes.len();
-
-    let bytes_for_checksum = &key_bytes[..key_bytes_length - 3];
-    let actual_checksum_bytes = &key_bytes[key_bytes_length - 3..key_bytes_length];
-
-    let computed_marvin = marvin::compute_hash32(bytes_for_checksum, checksum_seed, 0, bytes_for_checksum.len() as i32);
-    let computed_marvin_bytes = computed_marvin.to_ne_bytes();
-
-    // The HIS v2 standard requires a match for the first 3-bytes (24 bits) of the Marvin checksum.
-    actual_checksum_bytes[0] == computed_marvin_bytes[0]
-    && actual_checksum_bytes[1] == computed_marvin_bytes[1]
-    && actual_checksum_bytes[2] == computed_marvin_bytes[2]
 }
 
 pub fn generate_common_annotated_key(base64_encoded_signature: &str,
@@ -476,6 +518,40 @@ fn generate_base64_key_helper(checksum_seed: u64,
                                                             String::from(base64_encoded_signature),
                                                             checksum_seed,
                                                             encode_for_url);
+}
+
+fn validate_common_annotated_key_signature(base64_encoded_signature: &str) -> Result<String, String> {
+    const REQUIRED_ENCODED_SIGNATURE_LENGTH: usize = 4;
+
+    if base64_encoded_signature.len() != REQUIRED_ENCODED_SIGNATURE_LENGTH {
+        return Err(format!("Base64-encoded signature {} must be 4 characters long.",
+                            base64_encoded_signature));
+    }
+
+    if base64_encoded_signature.chars().next().unwrap().is_digit(10) {
+        return Err(format!("The first character of the signature {} must not be a digit.",
+                            base64_encoded_signature));
+    }
+
+    for ch in base64_encoded_signature.chars() {
+        if !is_base62_encoding_char(ch) {
+            return Err(format!("Signature {} can only contain alphabetic or numeric values.",
+                                base64_encoded_signature));
+        }
+    }
+
+    let all_upper = base64_encoded_signature.to_uppercase();
+    if base64_encoded_signature == all_upper {
+        return Ok(format!("Valid signature {}", base64_encoded_signature));
+    }
+
+    let all_lower = base64_encoded_signature.to_lowercase();
+    if base64_encoded_signature == all_lower {
+        return Ok(format!("Valid signature {}", base64_encoded_signature));
+    }
+
+    return Err(format!("Signature {} characters must all upper- or all lower-case.",
+                        base64_encoded_signature));
 }
 
 fn validate_base64_encoded_signature(base64_encoded_signature: &String, encode_for_url: bool)
