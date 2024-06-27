@@ -50,13 +50,13 @@ fn identifiable_secrets_try_validate_common_annotated_key_generate_common_annota
 fn identifiable_secrets_try_validate_common_annotated_key_reject_null_empty_and_whitespace_arguments() {
     let valid_signature = "ABCD";
     let valid_key = microsoft_security_utilities_core::identifiable_secrets::
-    generate_common_annotated_key(
-        valid_signature,
-        true,
-        Some(&vec![0; 9]),
-        Some(&vec![0; 3]),
-        true,
-        None
+        generate_common_annotated_key(
+            valid_signature,
+            true,
+            Some(&vec![0; 9]),
+            Some(&vec![0; 3]),
+            true,
+            None
     );
 
     let valid_key = valid_key.unwrap().clone();
@@ -71,6 +71,50 @@ fn identifiable_secrets_try_validate_common_annotated_key_reject_null_empty_and_
 
         let result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(&valid_key, &arg);
         assert!(!result, "{}", format!("the signature '{}' is not a valid argument", arg.to_string()));
+    }
+}
+
+#[test]
+fn identifiable_secrets_try_validate_common_annotated_key_reject_invalid_signatures() {
+    let valid_signature = "ABCD";
+    let valid_key = microsoft_security_utilities_core::identifiable_secrets::
+        generate_common_annotated_key(
+            valid_signature,
+            true,
+            Some(&vec![0; 9]),
+            Some(&vec![0; 3]),
+            true,
+            None
+    );
+
+    let valid_key = valid_key.unwrap().clone();
+
+    let result = microsoft_security_utilities_core::identifiable_secrets::
+        try_validate_common_annotated_key(&valid_key, valid_signature);
+    assert!(result, "a generated key should validate");
+
+    let signatures = vec!["Z", "YY", "XXX", "WWWWW", "1AAA"];
+
+    for signature in signatures {
+        for &long_form in &[true, false] {
+            let action =
+                microsoft_security_utilities_core::identifiable_secrets::
+                generate_common_annotated_key(
+                    signature,
+                    true,
+                    Some(&vec![0; 9]),
+                    Some(&vec![0; 3]),
+                    long_form,
+                    None
+                );
+
+
+            assert!(action.is_err(), "{}", format!("the signature '{}' is not valid", signature));
+
+            let result = microsoft_security_utilities_core::identifiable_secrets::
+                try_validate_common_annotated_key(&valid_key, signature);
+            assert!(!result, "{}", format!("'{}' is not a valid signature argument", signature));
+        }
     }
 }
 
