@@ -14,7 +14,8 @@ static S_BASE62_ALPHABET: &str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRST
 fn identifiable_secrets_try_validate_common_annotated_key_generate_common_annotated_key_long_form() {
     for &long_form in &[true, false] {
         let valid_signature = "ABCD";
-        let valid_key = microsoft_security_utilities_core::identifiable_secrets::generate_common_annotated_key(
+        let valid_key = microsoft_security_utilities_core::identifiable_secrets::
+            generate_common_annotated_key(
             valid_signature,
             true,
             Some(&vec![0; 9]),
@@ -42,6 +43,34 @@ fn identifiable_secrets_try_validate_common_annotated_key_generate_common_annota
             valid_key_len,
             expected_length
         );
+    }
+}
+
+#[test]
+fn identifiable_secrets_try_validate_common_annotated_key_reject_null_empty_and_whitespace_arguments() {
+    let valid_signature = "ABCD";
+    let valid_key = microsoft_security_utilities_core::identifiable_secrets::
+    generate_common_annotated_key(
+        valid_signature,
+        true,
+        Some(&vec![0; 9]),
+        Some(&vec![0; 3]),
+        true,
+        None
+    );
+
+    let valid_key = valid_key.unwrap().clone();
+
+    let result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(&valid_key, valid_signature);
+    assert!(result, "a generated key should validate");
+
+    let args = vec![String::new(), String::from(" ")];
+    for arg in args {
+        let result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(&arg, valid_signature);
+        assert!(!result, "{}", format!("the key {} is not a valid argument", arg));
+
+        let result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(&valid_key, &arg);
+        assert!(!result, "{}", format!("the signature '{}' is not a valid argument", arg.to_string()));
     }
 }
 
