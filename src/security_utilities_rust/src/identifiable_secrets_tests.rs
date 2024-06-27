@@ -11,6 +11,41 @@ use uuid::Uuid;
 static S_BASE62_ALPHABET: &str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
 #[test]
+fn identifiable_secrets_try_validate_common_annotated_key_generate_common_annotated_key_long_form() {
+    for &long_form in &[true, false] {
+        let valid_signature = "ABCD";
+        let valid_key = microsoft_security_utilities_core::identifiable_secrets::generate_common_annotated_key(
+            valid_signature,
+            true,
+            Some(&vec![0; 9]),
+            Some(&vec![0; 3]),
+            long_form.clone(),
+            None
+        );
+
+        let valid_key = valid_key.unwrap().clone();
+        let valid_key_len = valid_key.len();
+
+        let result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(
+            &valid_key,
+            valid_signature,
+        );
+        assert!(result, "a generated key should validate");
+
+        let expected_length = if long_form {
+            microsoft_security_utilities_core::identifiable_secrets::LONG_FORM_COMMON_ANNOTATED_KEY_SIZE
+        } else {
+            microsoft_security_utilities_core::identifiable_secrets::STANDARD_COMMON_ANNOTATED_KEY_SIZE
+        };
+
+        assert_eq!(
+            valid_key_len,
+            expected_length
+        );
+    }
+}
+
+#[test]
 fn identifiable_secrets_compute_checksum_seed_enforces_length_requirement() 
 {
     for i in 0..16 

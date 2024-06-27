@@ -304,7 +304,7 @@ pub fn generate_common_annotated_test_key(
         // The HIS v2 standard requires that there be no special characters in the generated key.
         if !key.contains('+') && !key.contains('/') {
             if !long_form {
-                key = key.substring(0, key.len()).to_string();
+                key = key.substring(0, key.len() - 4).to_string();
             }
             return Ok(key);
         } else if test_char.is_some() {
