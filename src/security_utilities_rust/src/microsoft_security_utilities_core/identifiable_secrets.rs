@@ -556,7 +556,7 @@ fn generate_base64_key_helper(checksum_seed: u64,
                                                             encode_for_url);
 }
 
-fn validate_common_annotated_key_signature(base64_encoded_signature: &str) -> Result<String, String> {
+pub fn validate_common_annotated_key_signature(base64_encoded_signature: &str) -> Result<String, String> {
     const REQUIRED_ENCODED_SIGNATURE_LENGTH: usize = 4;
 
     if base64_encoded_signature.len() != REQUIRED_ENCODED_SIGNATURE_LENGTH {

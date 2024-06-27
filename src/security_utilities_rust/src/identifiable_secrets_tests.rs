@@ -153,6 +153,16 @@ fn identifiable_secrets_try_validate_common_annotated_key_reject_invalid_key() {
 }
 
 #[test]
+fn identifiable_secrets_validate_common_annotated_key_signature() {
+    for invalid_signature in ["AbAA", "aaaB", "1AAA"] {
+        assert!(matches!(
+                    microsoft_security_utilities_core::identifiable_secrets::validate_common_annotated_key_signature(invalid_signature),
+                    Err(_)
+                ));
+    }
+}
+
+#[test]
 fn identifiable_secrets_compute_checksum_seed_enforces_length_requirement() 
 {
     for i in 0..16 
