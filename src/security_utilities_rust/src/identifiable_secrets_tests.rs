@@ -119,6 +119,40 @@ fn identifiable_secrets_try_validate_common_annotated_key_reject_invalid_signatu
 }
 
 #[test]
+fn identifiable_secrets_try_validate_common_annotated_key_reject_invalid_key() {
+    let valid_signature = "Z123";
+    let valid_key = microsoft_security_utilities_core::identifiable_secrets::
+        generate_common_annotated_key(
+            valid_signature,
+            true,
+            Some(&vec![0; 9]),
+            Some(&vec![0; 3]),
+            true,
+            None
+    );
+
+    let valid_key = valid_key.unwrap().clone();
+
+    let result = microsoft_security_utilities_core::identifiable_secrets::
+    try_validate_common_annotated_key(&valid_key, valid_signature);
+    assert!(result, "a generated key should validate");
+
+    let result = microsoft_security_utilities_core::identifiable_secrets::
+        try_validate_common_annotated_key(
+            &format!("{}a", valid_key),
+            valid_signature,
+    );
+    assert!(!result, "a key with an invalid length should not validate");
+
+    let result = microsoft_security_utilities_core::identifiable_secrets::
+        try_validate_common_annotated_key(
+            &valid_key[1..],
+            valid_signature,
+    );
+    assert!(!result, "a key with an invalid length should not validate");
+}
+
+#[test]
 fn identifiable_secrets_compute_checksum_seed_enforces_length_requirement() 
 {
     for i in 0..16 
