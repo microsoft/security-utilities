@@ -3,8 +3,7 @@
 
 #[cfg(test)]
 use super::*;
-use std::{collections::HashSet, hash::Hash};
-use base64::alphabet;
+use std::{collections::HashSet};
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 use uuid::Uuid;

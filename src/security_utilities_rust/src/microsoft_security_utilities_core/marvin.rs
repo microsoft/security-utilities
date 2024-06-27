@@ -68,13 +68,13 @@ pub fn compute_hash(data: &[u8], seed: u64, offset: i32, mut length: i32) -> i64
         1 => p0 = p0.wrapping_add(0x8000 | (data[remaining_data_offset as usize] as u32)),
         2 => {
             let d1 = (data[(remaining_data_offset as usize) + 1] as u32) << 8;
-            let d0: u32 = data[(remaining_data_offset as usize)] as u32;
+            let d0: u32 = data[remaining_data_offset as usize] as u32;
             p0 = p0.wrapping_add(0x800000 | d1 | d0);
         },
         3 => {
             let d2 = (data[(remaining_data_offset as usize) + 2] as u32) << 16;
             let d1 = (data[(remaining_data_offset as usize) + 1] as u32) << 8;
-            let d0: u32 = data[(remaining_data_offset as usize)] as u32;
+            let d0: u32 = data[remaining_data_offset as usize] as u32;
             p0 = p0.wrapping_add(0x80000000 | d2 | d1 | d0);
         },
         _ => panic!("Hash computation reached an invalid state")

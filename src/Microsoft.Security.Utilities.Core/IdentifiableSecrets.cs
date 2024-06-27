@@ -83,12 +83,6 @@ public static class IdentifiableSecrets
 
         bool longForm = key.Length == LongFormCommonAnnotatedKeySize;
 
-        string signature = key.Substring(CommonAnnotatedKey.ProviderFixedSignatureOffset, CommonAnnotatedKey.ProviderFixedSignatureLength);
-
-        string alternate = char.IsUpper(signature[0]) 
-            ? signature.ToLowerInvariant() 
-            : signature.ToUpperInvariant();
-
         ulong checksumSeed = VersionTwoChecksumSeed;
 
         string componentToChecksum = key.Substring(0, CommonAnnotatedKey.ChecksumOffset);

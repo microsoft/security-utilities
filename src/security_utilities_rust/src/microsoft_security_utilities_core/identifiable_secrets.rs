@@ -109,14 +109,6 @@ pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &s
     
     let long_form = key.len() == LONG_FORM_COMMON_ANNOTATED_KEY_SIZE;
 
-    let signature = key.substring(PROVIDER_FIXED_SIGNATURE_OFFSET, PROVIDER_FIXED_SIGNATURE_OFFSET + PROVIDER_FIXED_SIGNATURE_LENGTH);
-    
-    let alternate = if signature.chars().next().unwrap().is_uppercase() {
-        signature.to_lowercase()
-    } else {
-        signature.to_uppercase()
-    };
-
     let checksum_seed = VERSION_TWO_CHECKSUM_SEED.clone();
 
     let component_to_checksum = &key[..CHECKSUM_OFFSET];
@@ -226,7 +218,7 @@ pub fn generate_common_annotated_test_key(
         base64_encoded_signature.to_lowercase()
     };
 
-    let mut key = String::new();
+    let mut key: String;
 
     loop {
         let key_length_in_bytes = 66;
@@ -638,7 +630,7 @@ fn get_csrandom_bytes(key_length_in_bytes: u32) -> Vec<u8>
     let mut rng = ChaCha20Rng::from_entropy();
     let mut random_bytes: Vec<u8> = Vec::new();
 
-    for i in 0..key_length_in_bytes
+    for _i in 0..key_length_in_bytes
     {
         random_bytes.push(rng.gen::<u8>());
     }

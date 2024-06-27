@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 use base64::{engine::general_purpose::STANDARD, Engine as _};
-use lazy_static::lazy_static;
 use sha2::{Sha256, Digest};
 use std::fmt;
 use std::cell::RefCell;

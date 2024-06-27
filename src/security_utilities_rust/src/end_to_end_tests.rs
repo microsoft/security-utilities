@@ -12,7 +12,7 @@ fn generate_and_detect_common_annotated_key_test() {
                                                     true,
                                                     None,
                                                     None,
-                                                    true,
+                                                    false,
                                                     Some('a')
                                                     );
 
