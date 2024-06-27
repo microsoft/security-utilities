@@ -9,6 +9,7 @@ use lazy_static::lazy_static;
 use std::{mem};
 use super::*;
 use rand::prelude::*;
+use rand::RngCore;
 use rand_chacha::ChaCha20Rng;
 use regex::Regex;
 use substring::Substring;
@@ -107,22 +108,34 @@ pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &s
     }
     
     let long_form = key.len() == LONG_FORM_COMMON_ANNOTATED_KEY_SIZE;
-    let checksum_seed: u64 = VERSION_TWO_CHECKSUM_SEED.clone();
 
-    let key_bytes = general_purpose::STANDARD.decode(&key).unwrap();
+    let signature = key.substring(PROVIDER_FIXED_SIGNATURE_OFFSET, PROVIDER_FIXED_SIGNATURE_OFFSET + PROVIDER_FIXED_SIGNATURE_LENGTH);
+    
+    let alternate = if signature.chars().next().unwrap().is_uppercase() {
+        signature.to_lowercase()
+    } else {
+        signature.to_uppercase()
+    };
 
-    let key_bytes_length = key_bytes.len();
+    let checksum_seed = VERSION_TWO_CHECKSUM_SEED.clone();
 
-    let bytes_for_checksum = &key_bytes[..key_bytes_length - 3];
-    let actual_checksum_bytes = &key_bytes[key_bytes_length - 3..key_bytes_length];
+    let component_to_checksum = &key[..CHECKSUM_OFFSET];
+    let checksum_text = &key[CHECKSUM_OFFSET..];
 
-    let computed_marvin = marvin::compute_hash32(bytes_for_checksum, checksum_seed, 0, bytes_for_checksum.len() as i32);
-    let computed_marvin_bytes = computed_marvin.to_ne_bytes();
+    let key_bytes = general_purpose::STANDARD.decode(component_to_checksum).unwrap();
 
-    // The HIS v2 standard requires a match for the first 3-bytes (24 bits) of the Marvin checksum.
-    actual_checksum_bytes[0] == computed_marvin_bytes[0]
-    && actual_checksum_bytes[1] == computed_marvin_bytes[1]
-    && actual_checksum_bytes[2] == computed_marvin_bytes[2]
+    let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, key_bytes.len() as i32);
+
+    let checksum_bytes = checksum.to_ne_bytes();
+
+    // A long-form has a full 4-byte checksum, while a standard form has only 3.
+    let encoded = general_purpose::STANDARD.encode(if long_form {
+        &checksum_bytes[..4]
+    } else {
+        &checksum_bytes[..3]
+    });
+
+    encoded == checksum_text
 }
 
 /// Generate a u64 an HIS v1 compliant checksum seed from a string literal
@@ -220,16 +233,26 @@ pub fn generate_common_annotated_test_key(
         let mut key_bytes = vec![0; key_length_in_bytes];
 
         if let Some(test_char) = test_char {
-            key = format!("{:88}", test_char.to_string().repeat(88));
-
-            key_bytes = match general_purpose::STANDARD.decode(&key) {
-                Ok(bytes) => bytes,
-                Err(_) => return Err(format!("Failed to decode test character {}.", test_char.to_string())),
-            };
-        } else {
+            key = format!("{:85}Q==", test_char.to_string().repeat(85));
+        } 
+        else {
             let mut rng = rand::thread_rng();
-            rng.fill_bytes(&mut key_bytes);
+            rng.try_fill_bytes(&mut key_bytes).expect("Failed to generate random bytes.");
+
+            key  = base_62::encode(&key_bytes);
+
+            if key.len() < 86 {
+                return Err(format!("The key length is less than 86 characters: {}", key));
+            }
+
+            key = key.substring(0, 85).to_string();
+            key = format!("{}Q==", key);
         }
+
+        key_bytes = match general_purpose::STANDARD.decode(&key) {
+            Ok(bytes) => bytes,
+            Err(_) => return Err(format!("Key could not be decoded: {}.", key)),
+        };
 
         let j_bits = b'J' - b'A';
         let q_bits = b'Q' - b'A';
@@ -239,60 +262,62 @@ pub fn generate_common_annotated_test_key(
 
         let key_bytes_length = key_bytes.len();
 
-        key_bytes[key_bytes_length - 27] = reserved_bytes[2];
-        key_bytes[key_bytes_length - 26] = reserved_bytes[1];
-        key_bytes[key_bytes_length - 25] = reserved_bytes[0];
+        key_bytes[key_bytes_length - 25] = reserved_bytes[2];
+        key_bytes[key_bytes_length - 24] = reserved_bytes[1];
+        key_bytes[key_bytes_length - 23] = reserved_bytes[0];
 
+        // Simplistic timestamp computation.
         let years_since_2024 = (chrono::Utc::now().year() - 2024) as u8;
         let zero_indexed_month = (chrono::Utc::now().month() - 1) as u8;
 
         let metadata: i32 = (61 << 18) | (61 << 12) | (years_since_2024 << 6) as i32 | zero_indexed_month as i32;
         let metadata_bytes = metadata.to_ne_bytes();
 
-        key_bytes[key_bytes_length - 24] = metadata_bytes[2];
-        key_bytes[key_bytes_length - 23] = metadata_bytes[1];
-        key_bytes[key_bytes_length - 22] = metadata_bytes[0];
+        key_bytes[key_bytes_length - 22] = metadata_bytes[2];
+        key_bytes[key_bytes_length - 21] = metadata_bytes[1];
+        key_bytes[key_bytes_length - 20] = metadata_bytes[0];
 
-        key_bytes[key_bytes_length - 21] = platform_reserved[0];
-        key_bytes[key_bytes_length - 20] = platform_reserved[1];
-        key_bytes[key_bytes_length - 19] = platform_reserved[2];
-        key_bytes[key_bytes_length - 18] = platform_reserved[3];
-        key_bytes[key_bytes_length - 17] = platform_reserved[4];
-        key_bytes[key_bytes_length - 16] = platform_reserved[5];
-        key_bytes[key_bytes_length - 15] = platform_reserved[6];
-        key_bytes[key_bytes_length - 14] = platform_reserved[7];
-        key_bytes[key_bytes_length - 13] = platform_reserved[8];
+        key_bytes[key_bytes_length - 19] = platform_reserved[0];
+        key_bytes[key_bytes_length - 18] = platform_reserved[1];
+        key_bytes[key_bytes_length - 17] = platform_reserved[2];
+        key_bytes[key_bytes_length - 16] = platform_reserved[3];
+        key_bytes[key_bytes_length - 15] = platform_reserved[4];
+        key_bytes[key_bytes_length - 14] = platform_reserved[5];
+        key_bytes[key_bytes_length - 13] = platform_reserved[6];
+        key_bytes[key_bytes_length - 12] = platform_reserved[7];
+        key_bytes[key_bytes_length - 11] = platform_reserved[8];
 
-        key_bytes[key_bytes_length - 12] = provider_reserved[0];
-        key_bytes[key_bytes_length - 11] = provider_reserved[1];
-        key_bytes[key_bytes_length - 10] = provider_reserved[2];
+        key_bytes[key_bytes_length - 10] = provider_reserved[0];
+        key_bytes[key_bytes_length - 9] = provider_reserved[1];
+        key_bytes[key_bytes_length - 8] = provider_reserved[2];
 
-        let signature_offset = key_bytes_length - 9;
+        let signature_offset = key_bytes_length - 7;
         let sig_bytes = general_purpose::STANDARD.decode(&base64_encoded_signature).unwrap();
 
         for i in 0..sig_bytes.len() {
             key_bytes[signature_offset + i] = sig_bytes[i];
         }
 
-        let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, (key_bytes_length - 6) as i32);
+        let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, (key_bytes_length - 4) as i32);
 
         let checksum_bytes = checksum.to_ne_bytes();
 
-        key_bytes[key_bytes_length - 6] = checksum_bytes[0];
-        key_bytes[key_bytes_length - 5] = checksum_bytes[1];
-        key_bytes[key_bytes_length - 4] = checksum_bytes[2];
-        key_bytes[key_bytes_length - 3] = checksum_bytes[3];
+        key_bytes[key_bytes_length - 4] = checksum_bytes[0];
+        key_bytes[key_bytes_length - 3] = checksum_bytes[1];
+        key_bytes[key_bytes_length - 2] = checksum_bytes[2];
+        key_bytes[key_bytes_length - 1] = checksum_bytes[3];
 
         key = general_purpose::STANDARD.encode(&key_bytes);
-
-        assert_eq!(key.len(), LONG_FORM_COMMON_ANNOTATED_KEY_SIZE);
 
         // The HIS v2 standard requires that there be no special characters in the generated key.
         if !key.contains('+') && !key.contains('/') {
             if !long_form {
-                key = key.substring(0, STANDARD_COMMON_ANNOTATED_KEY_SIZE).to_string();
+                key = key.substring(0, key.len()).to_string();
             }
+            return Ok(key);
         } else if test_char.is_some() {
+            // We could not produce a valid test key given the current signature,
+            // checksum seed, reserved bits and specified test character.
             key = String::new();
             break;
         }

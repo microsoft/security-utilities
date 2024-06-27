@@ -238,12 +238,17 @@ public static class IdentifiableSecrets
                     throw new InvalidOperationException($"The key length is less than 86 characters: {key}");
                 }
                 
-                key = key.Substring(0, 86);
-                key = $"{key}==";
+                key = key.Substring(0, 85);
+
+                // We use Q== as the suffix to keep the key format consistent with the usage in Rust.
+                // In C#, the base64 decoder can handle illegal base64 strings, but not in Rust.
+                key = $"{key}Q==";
             }
             else
             {
-                key = $"{new string(testChar!.Value, 86)}==";
+                // We use Q== as the suffix to keep the key format consistent with the usage in Rust.
+                // In C#, the base64 decoder can handle illegal base64 strings, but not in Rust.
+                key = $"{new string(testChar!.Value, 85)}Q==";
             }
 
             try
