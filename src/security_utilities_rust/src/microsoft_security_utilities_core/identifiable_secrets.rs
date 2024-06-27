@@ -322,7 +322,6 @@ pub fn generate_common_annotated_test_key(
             break;
         }
     }
-
     Ok(key)
 }
 
