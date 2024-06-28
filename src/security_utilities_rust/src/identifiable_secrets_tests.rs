@@ -3,13 +3,164 @@
 
 #[cfg(test)]
 use super::*;
-use std::{collections::HashSet, hash::Hash};
-use base64::alphabet;
+use std::{collections::HashSet};
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 use uuid::Uuid;
 
 static S_BASE62_ALPHABET: &str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+#[test]
+fn identifiable_secrets_try_validate_common_annotated_key_generate_common_annotated_key_long_form() {
+    for &long_form in &[true, false] {
+        let valid_signature = "ABCD";
+        let valid_key = microsoft_security_utilities_core::identifiable_secrets::
+            generate_common_annotated_key(
+            valid_signature,
+            true,
+            Some(&vec![0; 9]),
+            Some(&vec![0; 3]),
+            long_form.clone(),
+            None
+        );
+
+        let valid_key = valid_key.unwrap().clone();
+        let valid_key_len = valid_key.len();
+
+        let result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(
+            &valid_key,
+            valid_signature,
+        );
+        assert!(result, "a generated key should validate");
+
+        let expected_length = if long_form {
+            microsoft_security_utilities_core::identifiable_secrets::LONG_FORM_COMMON_ANNOTATED_KEY_SIZE
+        } else {
+            microsoft_security_utilities_core::identifiable_secrets::STANDARD_COMMON_ANNOTATED_KEY_SIZE
+        };
+
+        assert_eq!(
+            valid_key_len,
+            expected_length
+        );
+    }
+}
+
+#[test]
+fn identifiable_secrets_try_validate_common_annotated_key_reject_null_empty_and_whitespace_arguments() {
+    let valid_signature = "ABCD";
+    let valid_key = microsoft_security_utilities_core::identifiable_secrets::
+        generate_common_annotated_key(
+            valid_signature,
+            true,
+            Some(&vec![0; 9]),
+            Some(&vec![0; 3]),
+            true,
+            None
+    );
+
+    let valid_key = valid_key.unwrap().clone();
+
+    let result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(&valid_key, valid_signature);
+    assert!(result, "a generated key should validate");
+
+    let args = vec![String::new(), String::from(" ")];
+    for arg in args {
+        let result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(&arg, valid_signature);
+        assert!(!result, "{}", format!("the key {} is not a valid argument", arg));
+
+        let result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(&valid_key, &arg);
+        assert!(!result, "{}", format!("the signature '{}' is not a valid argument", arg.to_string()));
+    }
+}
+
+#[test]
+fn identifiable_secrets_try_validate_common_annotated_key_reject_invalid_signatures() {
+    let valid_signature = "ABCD";
+    let valid_key = microsoft_security_utilities_core::identifiable_secrets::
+        generate_common_annotated_key(
+            valid_signature,
+            true,
+            Some(&vec![0; 9]),
+            Some(&vec![0; 3]),
+            true,
+            None
+    );
+
+    let valid_key = valid_key.unwrap().clone();
+
+    let result = microsoft_security_utilities_core::identifiable_secrets::
+        try_validate_common_annotated_key(&valid_key, valid_signature);
+    assert!(result, "a generated key should validate");
+
+    let signatures = vec!["Z", "YY", "XXX", "WWWWW", "1AAA"];
+
+    for signature in signatures {
+        for &long_form in &[true, false] {
+            let action =
+                microsoft_security_utilities_core::identifiable_secrets::
+                generate_common_annotated_key(
+                    signature,
+                    true,
+                    Some(&vec![0; 9]),
+                    Some(&vec![0; 3]),
+                    long_form,
+                    None
+                );
+
+
+            assert!(action.is_err(), "{}", format!("the signature '{}' is not valid", signature));
+
+            let result = microsoft_security_utilities_core::identifiable_secrets::
+                try_validate_common_annotated_key(&valid_key, signature);
+            assert!(!result, "{}", format!("'{}' is not a valid signature argument", signature));
+        }
+    }
+}
+
+#[test]
+fn identifiable_secrets_try_validate_common_annotated_key_reject_invalid_key() {
+    let valid_signature = "Z123";
+    let valid_key = microsoft_security_utilities_core::identifiable_secrets::
+        generate_common_annotated_key(
+            valid_signature,
+            true,
+            Some(&vec![0; 9]),
+            Some(&vec![0; 3]),
+            true,
+            None
+    );
+
+    let valid_key = valid_key.unwrap().clone();
+
+    let result = microsoft_security_utilities_core::identifiable_secrets::
+    try_validate_common_annotated_key(&valid_key, valid_signature);
+    assert!(result, "a generated key should validate");
+
+    let result = microsoft_security_utilities_core::identifiable_secrets::
+        try_validate_common_annotated_key(
+            &format!("{}a", valid_key),
+            valid_signature,
+    );
+    assert!(!result, "a key with an invalid length should not validate");
+
+    let result = microsoft_security_utilities_core::identifiable_secrets::
+        try_validate_common_annotated_key(
+            &valid_key[1..],
+            valid_signature,
+    );
+    assert!(!result, "a key with an invalid length should not validate");
+}
+
+#[test]
+fn identifiable_secrets_validate_common_annotated_key_signature() {
+    for invalid_signature in ["AbAA", "aaaB", "1AAA"] {
+        assert!(matches!(
+                    microsoft_security_utilities_core::identifiable_secrets::validate_common_annotated_key_signature(invalid_signature),
+                    Err(_)
+                ));
+    }
+}
 
 #[test]
 fn identifiable_secrets_compute_checksum_seed_enforces_length_requirement() 
@@ -42,7 +193,7 @@ fn identifiable_secrets_platform_annotated_security_keys() {
         {
             for k in 0..iterations 
             {
-                let mut signature = format!("{:?}", Uuid::new_v4().simple()).chars().skip(1).take(4).collect::<String>();
+                let mut signature: String = format!("{:?}", Uuid::new_v4().simple()).chars().skip(1).take(4).collect::<String>();
 
                 signature = format!("{}{}", alphabet.chars().nth(((keys_generated as i32) % (alphabet.len() as i32)) as usize).unwrap().to_string(), &signature[1..]);
 
@@ -86,15 +237,24 @@ fn identifiable_secrets_platform_annotated_security_keys() {
                 let provider_reserved_vec = provider_reserved.to_vec();
 
                 for &customer_managed in &[true, false] {
-                    let key = microsoft_security_utilities_core::identifiable_secrets::generate_common_annotated_key(&signature, customer_managed, Some(&platform_reserved_vec), Some(&provider_reserved_vec), None).unwrap();
+                    for &long_form in &[true, false] {
+                        let mut cased_signature = signature.clone();
+                        if customer_managed {
+                            cased_signature = cased_signature.to_uppercase();
+                        } else {
+                            cased_signature = cased_signature.to_lowercase();
+                        }
 
-                    let mut result = microsoft_security_utilities_core::identifiable_secrets::COMMON_ANNOTATED_KEY_REGEX.is_match(key.as_str());
-                    assert!(result, "the key '{}' should match the common annotated key regex", key);
+                        let key = microsoft_security_utilities_core::identifiable_secrets::generate_common_annotated_key(&cased_signature, customer_managed, Some(&platform_reserved_vec), Some(&provider_reserved_vec), long_form, None).unwrap();
 
-                    result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(key.as_str(), &signature);
-                    assert!(result, "the key '{}' should comprise an HIS v2-conformant pattern", key);
+                        let mut result = microsoft_security_utilities_core::identifiable_secrets::COMMON_ANNOTATED_KEY_REGEX.is_match(key.as_str());
+                        assert!(result, "the key '{}' should match the common annotated key regex", key);
 
-                    keys_generated += 1;
+                        result = microsoft_security_utilities_core::identifiable_secrets::try_validate_common_annotated_key(key.as_str(), &cased_signature);
+                        assert!(result, "the key '{}' should comprise an HIS v2-conformant pattern", key);
+
+                        keys_generated += 1;
+                    }
                 }
             }
         }

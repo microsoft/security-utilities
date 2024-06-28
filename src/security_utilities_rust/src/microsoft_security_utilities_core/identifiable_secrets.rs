@@ -9,6 +9,7 @@ use lazy_static::lazy_static;
 use std::{mem};
 use super::*;
 use rand::prelude::*;
+use rand::RngCore;
 use rand_chacha::ChaCha20Rng;
 use regex::Regex;
 use substring::Substring;
@@ -25,17 +26,54 @@ lazy_static! {
 
 pub static MAXIMUM_GENERATED_KEY_SIZE: u32 = 4096;
 pub static MINIMUM_GENERATED_KEY_SIZE: u32 = 24;
+pub static STANDARD_COMMON_ANNOTATED_KEY_SIZE: usize = 84;
+pub static LONG_FORM_COMMON_ANNOTATED_KEY_SIZE: usize = 88;
+pub static COMMON_ANNOTATED_KEY_SIGNATURE: &str = "JQQJ99";
+pub static COMMON_ANNOTATED_DERIVED_KEY_SIGNATURE: &str = "JQQJ9D";
 static BITS_IN_BYTES: i32 = 8;
 static BITS_IN_BASE64_CHARACTER: i32 = 6;
 static SIZE_OF_CHECKSUM_IN_BYTES: i32 = mem::size_of::<u32>() as i32;
 
 static COMMON_ANNOTATED_KEY_SIZE_IN_BYTES: usize = 63;
 
-pub fn is_base62_encoding_char(ch: char) -> bool
-{
-    return (ch >= 'a' && ch <= 'z') ||
-            (ch >= 'A' && ch <= 'Z') ||
-            (ch >= '0' && ch <= '9');
+/// The offset to the encoded standard fixed signature ('JQQJ99' or 'JQQJ9D').
+pub static STANDARD_FIXED_SIGNATURE_OFFSET: usize = 52;
+
+/// The encoded length of the standard fixed signature ('JQQJ99' or 'JQQJ9D').
+pub static STANDARD_FIXED_SIGNATURE_LENGTH: usize = 6;
+
+/// The offset to the encoded character that denotes a derived ('D')
+/// or standard ('9') common annotated security key.
+pub static DERIVED_KEY_CHARACTER_OFFSET: usize = STANDARD_FIXED_SIGNATURE_OFFSET + STANDARD_FIXED_SIGNATURE_LENGTH - 1;
+
+/// The offset to the two-character encoded key creation date.
+pub static DATE_OFFSET: usize = STANDARD_FIXED_SIGNATURE_OFFSET + STANDARD_FIXED_SIGNATURE_LENGTH;
+
+/// The encoded length of the creation date (a value such as 'AE').
+pub static DATE_LENGTH: usize = 2;
+
+/// The offset to the 12-character encoded platform-reserved data.
+pub static PLATFORM_RESERVED_OFFSET: usize = DATE_OFFSET + DATE_LENGTH;
+
+/// The encoded length of the platform-reserved bytes.
+pub static PLATFORM_RESERVED_LENGTH: usize = 12;
+
+/// The offset to the 4-character encoded provider-reserved data.
+pub static PROVIDER_RESERVED_OFFSET: usize = PLATFORM_RESERVED_OFFSET + PLATFORM_RESERVED_LENGTH;
+
+/// The encoded length of the provider-reserved bytes.
+pub static PROVIDER_RESERVED_LENGTH: usize = 4;
+
+/// The offset to the 4-character encoded provider fixed signature.
+pub static PROVIDER_FIXED_SIGNATURE_OFFSET: usize = PROVIDER_RESERVED_OFFSET + PROVIDER_RESERVED_LENGTH;
+
+/// The encoded length of the provider fixed signature, e.g., 'AZEG'.
+pub static PROVIDER_FIXED_SIGNATURE_LENGTH: usize = 4;
+
+pub static CHECKSUM_OFFSET: usize = PROVIDER_FIXED_SIGNATURE_OFFSET + PROVIDER_FIXED_SIGNATURE_LENGTH;
+
+pub fn is_base62_encoding_char(ch: char) -> bool {
+    ch.is_ascii_alphanumeric()
 }
 
 pub fn is_base64_encoding_char(ch: char) -> bool 
@@ -50,6 +88,46 @@ pub fn is_base64_url_encoding_char(ch: char) -> bool
     return is_base62_encoding_char(ch) ||
                    ch == '-' ||
                    ch == '_';
+}
+
+pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &str) -> bool {
+    if key.is_empty() || key.trim().is_empty() {
+        return false;
+    }
+    
+    match validate_common_annotated_key_signature(base64_encoded_signature) {
+        Ok(_) => (),
+        Err(s) => {
+            println!("{}", s);
+            return false;
+        },
+    };
+   
+    if key.len() != STANDARD_COMMON_ANNOTATED_KEY_SIZE && key.len() != LONG_FORM_COMMON_ANNOTATED_KEY_SIZE {
+        return false;
+    }
+    
+    let long_form = key.len() == LONG_FORM_COMMON_ANNOTATED_KEY_SIZE;
+
+    let checksum_seed = VERSION_TWO_CHECKSUM_SEED.clone();
+
+    let component_to_checksum = &key[..CHECKSUM_OFFSET];
+    let checksum_text = &key[CHECKSUM_OFFSET..];
+
+    let key_bytes = general_purpose::STANDARD.decode(component_to_checksum).unwrap();
+
+    let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, key_bytes.len() as i32);
+
+    let checksum_bytes = checksum.to_ne_bytes();
+
+    // A long-form has a full 4-byte checksum, while a standard form has only 3.
+    let encoded = general_purpose::STANDARD.encode(if long_form {
+        &checksum_bytes[..4]
+    } else {
+        &checksum_bytes[..3]
+    });
+
+    encoded == checksum_text
 }
 
 /// Generate a u64 an HIS v1 compliant checksum seed from a string literal
@@ -80,37 +158,18 @@ pub fn compute_his_v1_checksum_seed(versioned_key_kind: &str) -> u64 {
     result
 }
 
-pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &str) -> bool {
-    let checksum_seed: u64 = VERSION_TWO_CHECKSUM_SEED.clone();
-
-    let key_bytes = general_purpose::STANDARD.decode(&key).unwrap();
-
-    assert_eq!(key_bytes.len(), COMMON_ANNOTATED_KEY_SIZE_IN_BYTES);
-
-    let key_bytes_length = key_bytes.len();
-
-    let bytes_for_checksum = &key_bytes[..key_bytes_length - 3];
-    let actual_checksum_bytes = &key_bytes[key_bytes_length - 3..key_bytes_length];
-
-    let computed_marvin = marvin::compute_hash32(bytes_for_checksum, checksum_seed, 0, bytes_for_checksum.len() as i32);
-    let computed_marvin_bytes = computed_marvin.to_ne_bytes();
-
-    // The HIS v2 standard requires a match for the first 3-bytes (24 bits) of the Marvin checksum.
-    actual_checksum_bytes[0] == computed_marvin_bytes[0]
-    && actual_checksum_bytes[1] == computed_marvin_bytes[1]
-    && actual_checksum_bytes[2] == computed_marvin_bytes[2]
-}
-
 pub fn generate_common_annotated_key(base64_encoded_signature: &str,
     customer_managed_key: bool,
     platform_reserved: Option<&[u8]>,
     provider_reserved: Option<&[u8]>,
+    long_form: bool,
     test_char: Option<char>) -> Result<String, String> {
 generate_common_annotated_test_key(VERSION_TWO_CHECKSUM_SEED.clone(),
       base64_encoded_signature,
       customer_managed_key,
       platform_reserved,
       provider_reserved,
+      long_form,
       test_char)
 }
 
@@ -120,10 +179,16 @@ pub fn generate_common_annotated_test_key(
     customer_managed_key: bool,
     platform_reserved: Option<&[u8]>,
     provider_reserved: Option<&[u8]>,
+    long_form: bool,
     test_char: Option<char>,
 ) -> Result<String, String> {
     const PLATFORM_RESERVED_LENGTH: usize = 9;
     const PROVIDER_RESERVED_LENGTH: usize = 3;
+
+    match validate_common_annotated_key_signature(base64_encoded_signature) {
+        Ok(_) => base64_encoded_signature,
+        Err(s) => return Err(format!("Common Annotated Key generation failed due to: {}", s)),
+    };
 
     let platform_reserved = match platform_reserved {
         Some(reserved) if reserved.len() != PLATFORM_RESERVED_LENGTH => {
@@ -153,21 +218,33 @@ pub fn generate_common_annotated_test_key(
         base64_encoded_signature.to_lowercase()
     };
 
-    let mut key = String::new();
+    let mut key: String;
 
     loop {
         let key_length_in_bytes = 66;
         let mut key_bytes = vec![0; key_length_in_bytes];
 
         if let Some(test_char) = test_char {
-            key = format!("{:86}==", test_char.to_string().repeat(86));
-        } else {
+            key = format!("{:85}Q==", test_char.to_string().repeat(85));
+        } 
+        else {
             let mut rng = rand::thread_rng();
-            rng.fill_bytes(&mut key_bytes);
+            rng.try_fill_bytes(&mut key_bytes).expect("Failed to generate random bytes.");
+
+            key  = base_62::encode(&key_bytes);
+
+            if key.len() < 86 {
+                return Err(format!("The key length is less than 86 characters: {}", key));
+            }
+
+            key = key.substring(0, 85).to_string();
+            key = format!("{}Q==", key);
         }
 
-        let key_string = general_purpose::STANDARD.encode(&key_bytes);
-        key_bytes = general_purpose::STANDARD.decode(&key_string).unwrap();
+        key_bytes = match general_purpose::STANDARD.decode(&key) {
+            Ok(bytes) => bytes,
+            Err(_) => return Err(format!("Key could not be decoded: {}.", key)),
+        };
 
         let j_bits = b'J' - b'A';
         let q_bits = b'Q' - b'A';
@@ -177,61 +254,66 @@ pub fn generate_common_annotated_test_key(
 
         let key_bytes_length = key_bytes.len();
 
-        key_bytes[key_bytes_length - 27] = reserved_bytes[2];
-        key_bytes[key_bytes_length - 26] = reserved_bytes[1];
-        key_bytes[key_bytes_length - 25] = reserved_bytes[0];
+        key_bytes[key_bytes_length - 25] = reserved_bytes[2];
+        key_bytes[key_bytes_length - 24] = reserved_bytes[1];
+        key_bytes[key_bytes_length - 23] = reserved_bytes[0];
 
+        // Simplistic timestamp computation.
         let years_since_2024 = (chrono::Utc::now().year() - 2024) as u8;
         let zero_indexed_month = (chrono::Utc::now().month() - 1) as u8;
 
         let metadata: i32 = (61 << 18) | (61 << 12) | (years_since_2024 << 6) as i32 | zero_indexed_month as i32;
         let metadata_bytes = metadata.to_ne_bytes();
 
-        key_bytes[key_bytes_length - 24] = metadata_bytes[2];
-        key_bytes[key_bytes_length - 23] = metadata_bytes[1];
-        key_bytes[key_bytes_length - 22] = metadata_bytes[0];
+        key_bytes[key_bytes_length - 22] = metadata_bytes[2];
+        key_bytes[key_bytes_length - 21] = metadata_bytes[1];
+        key_bytes[key_bytes_length - 20] = metadata_bytes[0];
 
-        key_bytes[key_bytes_length - 21] = platform_reserved[0];
-        key_bytes[key_bytes_length - 20] = platform_reserved[1];
-        key_bytes[key_bytes_length - 19] = platform_reserved[2];
-        key_bytes[key_bytes_length - 18] = platform_reserved[3];
-        key_bytes[key_bytes_length - 17] = platform_reserved[4];
-        key_bytes[key_bytes_length - 16] = platform_reserved[5];
-        key_bytes[key_bytes_length - 15] = platform_reserved[6];
-        key_bytes[key_bytes_length - 14] = platform_reserved[7];
-        key_bytes[key_bytes_length - 13] = platform_reserved[8];
+        key_bytes[key_bytes_length - 19] = platform_reserved[0];
+        key_bytes[key_bytes_length - 18] = platform_reserved[1];
+        key_bytes[key_bytes_length - 17] = platform_reserved[2];
+        key_bytes[key_bytes_length - 16] = platform_reserved[3];
+        key_bytes[key_bytes_length - 15] = platform_reserved[4];
+        key_bytes[key_bytes_length - 14] = platform_reserved[5];
+        key_bytes[key_bytes_length - 13] = platform_reserved[6];
+        key_bytes[key_bytes_length - 12] = platform_reserved[7];
+        key_bytes[key_bytes_length - 11] = platform_reserved[8];
 
-        key_bytes[key_bytes_length - 12] = provider_reserved[0];
-        key_bytes[key_bytes_length - 11] = provider_reserved[1];
-        key_bytes[key_bytes_length - 10] = provider_reserved[2];
+        key_bytes[key_bytes_length - 10] = provider_reserved[0];
+        key_bytes[key_bytes_length - 9] = provider_reserved[1];
+        key_bytes[key_bytes_length - 8] = provider_reserved[2];
 
-        let signature_offset = key_bytes_length - 9;
+        let signature_offset = key_bytes_length - 7;
         let sig_bytes = general_purpose::STANDARD.decode(&base64_encoded_signature).unwrap();
 
         for i in 0..sig_bytes.len() {
             key_bytes[signature_offset + i] = sig_bytes[i];
         }
 
-        let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, (key_bytes_length - 6) as i32);
+        let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, (key_bytes_length - 4) as i32);
 
         let checksum_bytes = checksum.to_ne_bytes();
 
-        key_bytes[key_bytes_length - 6] = checksum_bytes[0];
-        key_bytes[key_bytes_length - 5] = checksum_bytes[1];
-        key_bytes[key_bytes_length - 4] = checksum_bytes[2];
-        key_bytes[key_bytes_length - 3] = checksum_bytes[3];
+        key_bytes[key_bytes_length - 4] = checksum_bytes[0];
+        key_bytes[key_bytes_length - 3] = checksum_bytes[1];
+        key_bytes[key_bytes_length - 2] = checksum_bytes[2];
+        key_bytes[key_bytes_length - 1] = checksum_bytes[3];
 
-        key = general_purpose::STANDARD.encode(&key_bytes[..COMMON_ANNOTATED_KEY_SIZE_IN_BYTES]);
+        key = general_purpose::STANDARD.encode(&key_bytes);
 
         // The HIS v2 standard requires that there be no special characters in the generated key.
         if !key.contains('+') && !key.contains('/') {
-            break;
+            if !long_form {
+                key = key.substring(0, key.len() - 4).to_string();
+            }
+            return Ok(key);
         } else if test_char.is_some() {
+            // We could not produce a valid test key given the current signature,
+            // checksum seed, reserved bits and specified test character.
             key = String::new();
             break;
         }
     }
-
     Ok(key)
 }
 
@@ -474,6 +556,40 @@ fn generate_base64_key_helper(checksum_seed: u64,
                                                             encode_for_url);
 }
 
+pub fn validate_common_annotated_key_signature(base64_encoded_signature: &str) -> Result<String, String> {
+    const REQUIRED_ENCODED_SIGNATURE_LENGTH: usize = 4;
+
+    if base64_encoded_signature.len() != REQUIRED_ENCODED_SIGNATURE_LENGTH {
+        return Err(format!("Base64-encoded signature {} must be 4 characters long.",
+                            base64_encoded_signature));
+    }
+
+    if base64_encoded_signature.chars().next().unwrap().is_digit(10) {
+        return Err(format!("The first character of the signature {} must not be a digit.",
+                            base64_encoded_signature));
+    }
+
+    for ch in base64_encoded_signature.chars() {
+        if !is_base62_encoding_char(ch) {
+            return Err(format!("Signature {} can only contain alphabetic or numeric values.",
+                                base64_encoded_signature));
+        }
+    }
+
+    let all_upper = base64_encoded_signature.to_uppercase();
+    if base64_encoded_signature == all_upper {
+        return Ok(format!("Valid signature {}", base64_encoded_signature));
+    }
+
+    let all_lower = base64_encoded_signature.to_lowercase();
+    if base64_encoded_signature == all_lower {
+        return Ok(format!("Valid signature {}", base64_encoded_signature));
+    }
+
+    return Err(format!("Signature {} characters must all upper- or all lower-case.",
+                        base64_encoded_signature));
+}
+
 fn validate_base64_encoded_signature(base64_encoded_signature: &String, encode_for_url: bool)
 {
     let required_encoded_signature_length = 4;
@@ -514,7 +630,7 @@ fn get_csrandom_bytes(key_length_in_bytes: u32) -> Vec<u8>
     let mut rng = ChaCha20Rng::from_entropy();
     let mut random_bytes: Vec<u8> = Vec::new();
 
-    for i in 0..key_length_in_bytes
+    for _i in 0..key_length_in_bytes
     {
         random_bytes.push(rng.gen::<u8>());
     }
