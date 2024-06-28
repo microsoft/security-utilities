@@ -1,6 +1,6 @@
 [package]
 name = "microsoft_security_utilities_core_ffi"
-version = "1.5.0"
+version = "1.5.1"
 edition = "2021"
 
 [lib]
@@ -9,3 +9,6 @@ crate-type = ["dylib"]
 
 [dependencies]
 microsoft_security_utilities_core = { path = "../security_utilities_rust" }
+
+# Causes the project to link with the Spectre-mitigated CRT and libs.
+msvc_spectre_libs = { version = "0.1", features = ["error"] }
