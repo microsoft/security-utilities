@@ -1156,7 +1156,7 @@ mod tests {
 
     #[test]
     fn his_v1_scan_bytes() {
-        let mut options = ScanOptions::default();
+        let options = ScanOptions::default();
 
         let mut scan = Scan::new(options);
         let empty: [u8; 0] = [0; 0];

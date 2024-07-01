@@ -1,4 +1,11 @@
-#[cfg(test)]
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+#![cfg(test)]
+#![allow(unused_imports)]
+#![allow(dead_code)]
+#![allow(unused_assignments)]
+
 use super::*;
 
 /// Compare a Marvin checksum against a well-known test case from the native code.

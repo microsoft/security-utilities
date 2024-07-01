@@ -1,7 +1,10 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-#[cfg(test)]
+#![cfg(test)]
+#![allow(unused_imports)]
+#![allow(dead_code)]
+
 use super::*;
 use std::{collections::HashSet};
 use rand::prelude::*;
@@ -169,7 +172,7 @@ fn identifiable_secrets_compute_checksum_seed_enforces_length_requirement()
     {
         let literal = "A".repeat(i) + "0";
 
-        let mut result = std::panic::catch_unwind(|| microsoft_security_utilities_core::identifiable_secrets::compute_his_v1_checksum_seed(&literal));
+        let result = std::panic::catch_unwind(|| microsoft_security_utilities_core::identifiable_secrets::compute_his_v1_checksum_seed(&literal));
 
         if i == 7 
         {
@@ -187,11 +190,11 @@ fn identifiable_secrets_platform_annotated_security_keys() {
     let mut keys_generated: u64 = 0;
     let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-    for i in 0..iterations 
+    for _i in 0..iterations
     {
-        for j in 0..iterations 
+        for _j in 0..iterations
         {
-            for k in 0..iterations 
+            for _k in 0..iterations
             {
                 let mut signature: String = format!("{:?}", Uuid::new_v4().simple()).chars().skip(1).take(4).collect::<String>();
 
@@ -497,7 +500,7 @@ fn identifiable_secrets_generate_standard_base64_key_basic()
         key_length_in_bytes,
         signature.as_str());
         
-        // validate_secret(secret, seed, signature, false);
+        validate_secret(secret, seed, signature, false);
     }
 }
 

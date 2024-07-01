@@ -1,6 +1,10 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#![allow(unused_imports)]
+#![allow(dead_code)]
+#![allow(unused_assignments)]
+
 use base_62;
 use base64::{engine::general_purpose, Engine as _};
 use chrono::Datelike;
