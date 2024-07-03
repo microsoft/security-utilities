@@ -102,11 +102,12 @@ impl ScanMatch {
     }
 }
 
+#[derive(Clone)]
 pub struct PossibleScanMatch {
     name: &'static str,
     def_index: u32,
-    start: u64,
-    len: usize,
+    pub start: u64,
+    pub len: usize,
     utf8: bool,
     validator: Rc<dyn Fn(&[u8]) -> usize>,
 }

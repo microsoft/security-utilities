@@ -55,7 +55,7 @@ fn identifiable_scanning_and_validation_perf_benchmark() {
             Some(&vec![0; 9]),
             Some(&vec![0; 3]),
             true,
-            Some('a')
+            Some('A')
         );
 
         let generated_input = valid_key.clone().unwrap();

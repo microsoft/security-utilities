@@ -11,12 +11,15 @@ use chrono::Datelike;
 use core::panic;
 use lazy_static::lazy_static;
 use std::{mem};
+use std::any::Any;
 use super::*;
 use rand::prelude::*;
 use rand::RngCore;
 use rand_chacha::ChaCha20Rng;
 use regex::Regex;
 use substring::Substring;
+use crate::microsoft_security_utilities_core;
+use crate::microsoft_security_utilities_core::identifiable_scans::PossibleScanMatch;
 
 lazy_static! {
     pub static ref VERSION_TWO_CHECKSUM_SEED: u64 = compute_his_v1_checksum_seed("Default0");
@@ -810,4 +813,96 @@ fn index_of(input_string: String, search_char: char) -> i32
         Some(index) => index as i32
     }
 }
+
+#[derive(Clone)]
+struct Detection {
+    start: u64,
+    end: u64,
+    length: usize,
+    redaction_token: String
+}
+
+pub struct SecretMasker {
+    pub scan: identifiable_scans::Scan
+}
+
+impl SecretMasker {
+    pub fn mask_secrets(&mut self, input: &str, default_redaction_token: Option<&str>, validate_checksum: bool) -> String {
+        if input.is_empty() {
+            return String::new();
+        }
+
+        let input_as_bytes = input.as_bytes();
+        self.scan.parse_bytes(input_as_bytes);
+
+        let detections = self.scan.possible_matches();
+        let mut detections = detections.clone();
+
+        // Short-circuit if nothing to replace.
+        if detections.is_empty() {
+            return input.to_string();
+        }
+
+        // Merge positions into ranges of characters to replace.
+        let mut current_detections = Vec::new();
+        let mut current_detection : Option<Detection> = None;
+
+        detections.sort_unstable_by_key(|item| item.start);
+
+        for detection in detections.iter() {
+            let scan_match = detection.matches_bytes(input_as_bytes, true).unwrap();
+            let match_text = scan_match.text();
+
+            // Get c3id for the find
+            let match_text_c3id = cross_company_correlating_id::generate_cross_company_correlating_id(match_text);
+
+            let redaction_token = match default_redaction_token {
+                Some(token) => token,
+                None => &format!("SEC101/200:{}", match_text_c3id),
+            };
+
+            if current_detection.is_none() {
+                current_detection = Some(Detection {
+                    start: detection.start(),
+                    end: detection.start() + detection.len() as u64,
+                    length: detection.len(),
+                    redaction_token: redaction_token.to_string()
+                });
+                current_detections.push(current_detection.clone().unwrap());
+            }
+            else {
+                if detection.start <= current_detection.clone().unwrap().end {
+                    // Overlapping case or contiguous case.
+                    let current = current_detection.as_mut().unwrap();
+                    current.length = (std::cmp::max(current.end,
+                                                    detection.start() + detection.len() as u64)
+                        - current.start) as usize;
+                } else {
+                    current_detection = Some(Detection {
+                        start: detection.start(),
+                        end: detection.start() + detection.len() as u64,
+                        length: detection.len(),
+                        redaction_token: redaction_token.to_string()
+                    });
+                    current_detections.push(current_detection.clone().unwrap());
+                }
+            }
+        }
+
+        let mut result = String::new();
+        let mut start_index = 0;
+        for detection in current_detections {
+            result.push_str(&input[start_index as usize..detection.start as usize]);
+            result.push_str(&detection.redaction_token);
+            start_index = detection.start + detection.length as u64;
+        }
+
+        if start_index < input.len() as u64 {
+            result.push_str(&input[start_index as usize..]);
+        }
+
+        result
+    }
+}
+
 

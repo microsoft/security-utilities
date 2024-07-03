@@ -10,8 +10,37 @@ use std::{collections::HashSet};
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 use uuid::Uuid;
+use crate::microsoft_security_utilities_core::identifiable_secrets::SecretMasker;
 
 static S_BASE62_ALPHABET: &str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+#[test]
+fn secret_masker_test() {
+    let valid_signature = "ABCD";
+    let valid_key = microsoft_security_utilities_core::identifiable_secrets::
+    generate_common_annotated_key(
+        valid_signature,
+        true,
+        Some(&vec![0; 9]),
+        Some(&vec![0; 3]),
+        true,
+        Some('A')
+    );
+
+    let valid_key = valid_key.unwrap().clone();
+
+    let input = format!("{} test_string {}", valid_key, valid_key);
+
+    let options = microsoft_security_utilities_core::identifiable_scans::ScanOptions::default();
+
+    let mut secret_masker = SecretMasker {
+        scan:  microsoft_security_utilities_core::identifiable_scans::Scan::new(options)
+    };
+
+    let masked_valid_key = secret_masker.mask_secrets(&input, None, false);
+
+    println!("{}", masked_valid_key);
+}
 
 #[test]
 fn identifiable_secrets_try_validate_common_annotated_key_generate_common_annotated_key_long_form() {
