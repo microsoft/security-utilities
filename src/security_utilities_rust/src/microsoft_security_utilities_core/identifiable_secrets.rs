@@ -832,6 +832,8 @@ impl SecretMasker {
             return String::new();
         }
 
+        self.scan.reset();
+
         let input_as_bytes = input.as_bytes();
         self.scan.parse_bytes(input_as_bytes);
 
@@ -852,6 +854,23 @@ impl SecretMasker {
         for detection in detections.iter() {
             let scan_match = detection.matches_bytes(input_as_bytes, true).unwrap();
             let match_text = scan_match.text();
+
+            if validate_checksum {
+                let match_text_as_bytes = match_text.as_bytes();
+                let mut signature_bytes = vec![0; 3];
+                signature_bytes[0] = match_text_as_bytes[57];
+                signature_bytes[1] = match_text_as_bytes[58];
+                signature_bytes[2] = match_text_as_bytes[59];
+
+                let signature = general_purpose::STANDARD.encode(&signature_bytes);
+
+                let checksum_validation_result = try_validate_common_annotated_key(
+                    &match_text,
+                    &signature,
+                );
+
+                assert!(checksum_validation_result);
+            }
 
             // Get c3id for the find
             let match_text_c3id = cross_company_correlating_id::generate_cross_company_correlating_id(match_text);

@@ -7,6 +7,8 @@
 
 use super::*;
 use std::{collections::HashSet};
+use std::time::{Duration, Instant};
+use base64::{engine::general_purpose, Engine as _};
 use rand::prelude::*;
 use rand_chacha::ChaCha20Rng;
 use uuid::Uuid;
@@ -14,32 +16,61 @@ use crate::microsoft_security_utilities_core::identifiable_secrets::SecretMasker
 
 static S_BASE62_ALPHABET: &str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
+use rand::Rng;
+use crate::microsoft_security_utilities_core::cross_company_correlating_id;
+
 #[test]
 fn secret_masker_test() {
+    let mut masking_times_with_checksum_validation: Vec<Duration> = Vec::new();
+    let mut masking_times_without_checksum_validation: Vec<Duration> = Vec::new();
+
     let valid_signature = "ABCD";
-    let valid_key = microsoft_security_utilities_core::identifiable_secrets::
-    generate_common_annotated_key(
-        valid_signature,
-        true,
-        Some(&vec![0; 9]),
-        Some(&vec![0; 3]),
-        true,
-        Some('A')
-    );
-
-    let valid_key = valid_key.unwrap().clone();
-
-    let input = format!("{} test_string {}", valid_key, valid_key);
-
     let options = microsoft_security_utilities_core::identifiable_scans::ScanOptions::default();
-
     let mut secret_masker = SecretMasker {
         scan:  microsoft_security_utilities_core::identifiable_scans::Scan::new(options)
     };
 
-    let masked_valid_key = secret_masker.mask_secrets(&input, None, false);
+    for _ in 0..1_000_000 {
+        // generate a key
+        let valid_key = microsoft_security_utilities_core::identifiable_secrets::
+        generate_common_annotated_key(
+            valid_signature,
+            true,
+            Some(&vec![0; 9]),
+            Some(&vec![0; 3]),
+            true,
+            Some('A')
+        );
 
-    println!("{}", masked_valid_key);
+        let valid_key = valid_key.unwrap().clone();
+
+        let input = format!("{} test_string {}", valid_key, valid_key);
+        let valid_key_c3id = cross_company_correlating_id::generate_cross_company_correlating_id(&valid_key);
+        let redacted_input = format!("SEC101/200:{} test_string SEC101/200:{}", valid_key_c3id, valid_key_c3id);
+
+        let start = Instant::now();
+        let masked_valid_key_checksum = secret_masker.mask_secrets(&input, None, true);
+        let duration = start.elapsed();
+
+        assert_eq!(masked_valid_key_checksum, redacted_input);
+        masking_times_with_checksum_validation.push(duration);
+
+        let start = Instant::now();
+        let masked_valid_key_no_checksum = secret_masker.mask_secrets(&input, None, false);
+        let duration = start.elapsed();
+
+        assert_eq!(masked_valid_key_no_checksum, redacted_input);
+        masking_times_without_checksum_validation.push(duration);
+    }
+
+    let total_masking_time_with_checksum: Duration = masking_times_with_checksum_validation.iter().sum();
+    let mean_masking_time_with_checksum = total_masking_time_with_checksum / masking_times_with_checksum_validation.len() as u32;
+
+    let total_masking_time_without_checksum: Duration = masking_times_without_checksum_validation.iter().sum();
+    let mean_masking_time_without_checksum = total_masking_time_without_checksum / masking_times_without_checksum_validation.len() as u32;
+
+    println!("Mean time for masking with checksum validation: {:?}", mean_masking_time_with_checksum);
+    println!("Mean time for masking without checksum validation: {:?}", mean_masking_time_without_checksum);
 }
 
 #[test]
