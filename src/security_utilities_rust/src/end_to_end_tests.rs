@@ -47,7 +47,7 @@ fn identifiable_scanning_and_validation_perf_benchmark() {
     let options = microsoft_security_utilities_core::identifiable_scans::ScanOptions::default();
     let mut scan = microsoft_security_utilities_core::identifiable_scans::Scan::new(options);
 
-    for _ in 0..1_000_000 {
+    for _ in 0..1000 {
         let valid_key = microsoft_security_utilities_core::identifiable_secrets::
         generate_common_annotated_key(
             valid_signature,

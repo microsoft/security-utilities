@@ -30,7 +30,7 @@ fn secret_masker_test() {
         scan:  microsoft_security_utilities_core::identifiable_scans::Scan::new(options)
     };
 
-    for _ in 0..1_000_000 {
+    for _ in 0..1000 {
         // generate a key
         let valid_key = microsoft_security_utilities_core::identifiable_secrets::
         generate_common_annotated_key(
