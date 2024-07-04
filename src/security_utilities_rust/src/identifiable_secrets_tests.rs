@@ -44,22 +44,23 @@ fn secret_masker_test() {
 
         let valid_key = valid_key.unwrap().clone();
 
-        let input = format!("{} test_string {}", valid_key, valid_key);
+        let mut input = format!("{} test_string {}", valid_key, valid_key);
         let valid_key_c3id = cross_company_correlating_id::generate_cross_company_correlating_id(&valid_key);
         let redacted_input = format!("SEC101/200:{} test_string SEC101/200:{}", valid_key_c3id, valid_key_c3id);
 
         let start = Instant::now();
-        let masked_valid_key_checksum = secret_masker.mask_secrets(&input, None, true);
+        secret_masker.mask_secrets(&mut input, None, true);
         let duration = start.elapsed();
 
-        assert_eq!(masked_valid_key_checksum, redacted_input);
+        assert_eq!(input, redacted_input);
         masking_times_with_checksum_validation.push(duration);
 
+        let mut input = format!("{} test_string {}", valid_key, valid_key);
         let start = Instant::now();
-        let masked_valid_key_no_checksum = secret_masker.mask_secrets(&input, None, false);
+        secret_masker.mask_secrets(&mut input, None, false);
         let duration = start.elapsed();
 
-        assert_eq!(masked_valid_key_no_checksum, redacted_input);
+        assert_eq!(input, redacted_input);
         masking_times_without_checksum_validation.push(duration);
     }
 

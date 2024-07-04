@@ -106,8 +106,8 @@ impl ScanMatch {
 pub struct PossibleScanMatch {
     name: &'static str,
     def_index: u32,
-    pub start: u64,
-    pub len: usize,
+    start: u64,
+    len: usize,
     utf8: bool,
     validator: Rc<dyn Fn(&[u8]) -> usize>,
 }

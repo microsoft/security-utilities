@@ -827,9 +827,11 @@ pub struct SecretMasker {
 }
 
 impl SecretMasker {
-    pub fn mask_secrets(&mut self, input: &str, default_redaction_token: Option<&str>, validate_checksum: bool) -> String {
+    pub fn mask_secrets(&mut self, input: &mut String, default_redaction_token: Option<&str>, validate_checksum: bool) -> Option<String> {
+        let default_return = String::new();
+
         if input.is_empty() {
-            return String::new();
+            return Some(default_return);
         }
 
         self.scan.reset();
@@ -838,18 +840,19 @@ impl SecretMasker {
         self.scan.parse_bytes(input_as_bytes);
 
         let detections = self.scan.possible_matches();
-        let mut detections = detections.clone();
 
         // Short-circuit if nothing to replace.
         if detections.is_empty() {
-            return input.to_string();
+            return None;
         }
+
+        let mut detections = detections.clone();
 
         // Merge positions into ranges of characters to replace.
         let mut current_detections = Vec::new();
         let mut current_detection : Option<Detection> = None;
 
-        detections.sort_unstable_by_key(|item| item.start);
+        detections.sort_unstable_by_key(|item| item.start());
 
         for detection in detections.iter() {
             let scan_match = detection.matches_bytes(input_as_bytes, true).unwrap();
@@ -888,9 +891,8 @@ impl SecretMasker {
                     redaction_token: redaction_token.to_string()
                 });
                 current_detections.push(current_detection.clone().unwrap());
-            }
-            else {
-                if detection.start <= current_detection.clone().unwrap().end {
+            } else {
+                if detection.start() <= current_detection.clone().unwrap().end {
                     // Overlapping case or contiguous case.
                     let current = current_detection.as_mut().unwrap();
                     current.length = (std::cmp::max(current.end,
@@ -908,19 +910,14 @@ impl SecretMasker {
             }
         }
 
-        let mut result = String::new();
-        let mut start_index = 0;
+        let mut index_adjustment: usize = 0;
         for detection in current_detections {
-            result.push_str(&input[start_index as usize..detection.start as usize]);
-            result.push_str(&detection.redaction_token);
-            start_index = detection.start + detection.length as u64;
+            let start_index = detection.start as usize - index_adjustment;
+            input.replace_range(start_index..start_index + detection.length, &detection.redaction_token);
+            index_adjustment += detection.length - detection.redaction_token.len();
         }
 
-        if start_index < input.len() as u64 {
-            result.push_str(&input[start_index as usize..]);
-        }
-
-        result
+        Some(default_return)
     }
 }
 
