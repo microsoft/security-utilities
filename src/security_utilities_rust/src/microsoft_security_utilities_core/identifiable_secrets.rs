@@ -827,11 +827,9 @@ pub struct SecretMasker {
 }
 
 impl SecretMasker {
-    pub fn mask_secrets(&mut self, input: &mut String, default_redaction_token: Option<&str>, validate_checksum: bool) -> Option<String> {
-        let default_return = String::new();
-
+    pub fn mask_secrets(&mut self, input: &mut String, default_redaction_token: Option<&str>, validate_checksum: bool) -> bool {
         if input.is_empty() {
-            return Some(default_return);
+            return false;
         }
 
         self.scan.reset();
@@ -843,7 +841,7 @@ impl SecretMasker {
 
         // Short-circuit if nothing to replace.
         if detections.is_empty() {
-            return None;
+            return false;
         }
 
         let mut detections = detections.clone();
@@ -917,7 +915,7 @@ impl SecretMasker {
             index_adjustment += detection.length - detection.redaction_token.len();
         }
 
-        Some(default_return)
+        true
     }
 }
 

@@ -11,7 +11,7 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# UNRELEASED
+# 1.5.2 - 07/05/2024
 - NEW: Added an initial secret redaction capability to the Rust package.
 
 # 1.5.1 - 06/27/2024
