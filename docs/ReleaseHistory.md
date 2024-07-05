@@ -11,6 +11,9 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# 1.5.2 - 07/05/2024
+- NEW: Added an initial secret redaction capability to the Rust package.
+
 # 1.5.1 - 06/27/2024
 - DEP: Rust packages now depend on `msvc_spectre_libs` to link Spectre-mitigated libraries for `msvc` targets.
 - NEW: Rust packages now support common annotated security key generation and validation, with semantics equivalent to C# version.

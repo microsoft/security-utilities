@@ -102,6 +102,7 @@ impl ScanMatch {
     }
 }
 
+#[derive(Clone)]
 pub struct PossibleScanMatch {
     name: &'static str,
     def_index: u32,
