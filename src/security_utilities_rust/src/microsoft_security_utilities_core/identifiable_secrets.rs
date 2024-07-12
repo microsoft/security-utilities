@@ -876,9 +876,11 @@ impl SecretMasker {
             // Get c3id for the find
             let match_text_c3id = cross_company_correlating_id::generate_cross_company_correlating_id(match_text);
 
+            let c3id_redaction_format = format!("SEC101/200:{}", match_text_c3id);
+
             let redaction_token = match default_redaction_token {
                 Some(token) => token,
-                None => &format!("SEC101/200:{}", match_text_c3id),
+                None => &c3id_redaction_format
             };
 
             if current_detection.is_none() {
