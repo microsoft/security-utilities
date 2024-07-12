@@ -880,7 +880,7 @@ impl SecretMasker {
 
             let redaction_token = match default_redaction_token {
                 Some(token) => token,
-                None => &c3id_redaction_format.clone(),
+                None => &c3id_redaction_format
             };
 
             if current_detection.is_none() {
