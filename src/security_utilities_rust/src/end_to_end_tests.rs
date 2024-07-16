@@ -60,6 +60,7 @@ fn identifiable_scanning_and_validation_perf_benchmark() {
 
         let generated_input = valid_key.clone().unwrap();
         let input_as_bytes = generated_input.as_bytes();
+        scan.reset();
 
         let start = Instant::now();
         scan.parse_bytes(input_as_bytes);
