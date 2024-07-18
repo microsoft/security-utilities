@@ -838,48 +838,158 @@ impl Default for ScanOptions {
     }
 }
 
-pub struct Scan {
-    options: ScanOptions,
+struct ScanState {
     accum: u64,
     index: u64,
-    checks: Vec<PossibleScanMatch>,
+    must_scan: bool,
+}
+
+impl ScanState {
+    pub fn new() -> Self {
+        Self {
+            accum: 0,
+            index: 0,
+            must_scan: false,
+        }
+    }
+
+    pub fn reset(&mut self) {
+        self.accum = 0;
+        self.index = 0;
+        self.must_scan = false;
+    }
+
+    #[inline(always)]
+    fn check_utf8(&self, data: &ScanData, packed_utf8: u64, checks: &mut Vec<PossibleScanMatch>) {
+        let lane = (packed_utf8 & 31) as usize;
+
+        for def in &data.utf8_lanes[lane] {
+            if def.packed_utf8 == packed_utf8 {
+                if let Some(possible_match) = def.has_possible_utf8_match(self.index) {
+                    checks.push(possible_match);
+                }
+                break;
+            }
+        }
+    }
+
+    #[inline(always)]
+    fn check_utf16(&self, data: &ScanData, packed_utf16: u64, checks: &mut Vec<PossibleScanMatch>) {
+        let lane = (packed_utf16 & 31) as usize;
+
+        for def in &data.utf16_lanes[lane] {
+            if def.packed_utf16 == packed_utf16 {
+                if let Some(possible_match) = def.has_possible_utf16_match(self.index) {
+                    checks.push(possible_match);
+                }
+                break;
+            }
+        }
+    }
+
+    /* Faster without any inline, oddly enough */
+    #[cold]
+    fn byte_scan(&mut self, scan: &ScanData, data: &[u8], checks: &mut Vec<PossibleScanMatch>) {
+        let mut sig_index = 0u64;
+
+        for b in data {
+            let b = *b;
+
+            self.accum = self.accum << 8 | b as u64;
+            self.index += 1;
+
+            /* Determine what to do with the char */
+            let check = scan.char_map[b as usize];
+
+            /* Char is a signature part */
+            if (check & MASK_SIG) == MASK_SIG {
+                /* Track where it was found */
+                sig_index = self.index;
+            }
+
+            if (check & MASK_SMALL) == MASK_SMALL {
+                let packed_utf16_small = self.accum & 0xFFFFFFFFFFFF;
+                let packed_utf8_small = self.accum & 0xFFFFFF;
+
+                self.check_utf8(scan, packed_utf8_small, checks);
+                self.check_utf16(scan, packed_utf16_small, checks);
+            }
+
+            if (check & MASK_LARGE) == MASK_LARGE {
+                let packed_utf16 = self.accum;
+                let packed_utf8: u64 = self.accum & 0xFFFFFFFF;
+
+                self.check_utf8(scan, packed_utf8, checks);
+                self.check_utf16(scan, packed_utf16, checks);
+            }
+        }
+
+        /*
+         * If our signature char is within 7 bytes, we need to scan next time
+         * without the SIMD/vectorized scan. The reason for this is if parts
+         * of the 4 (or 3) byte signature are in the accumulator. If the first
+         * part of the signature is in the accumulator and the last byte or two
+         * are in the new data, it would miss if we omitted this.
+         */
+        self.must_scan = (self.index - sig_index) < 8;
+    }
+
+    fn check_scan_potential(&mut self, scan: &ScanData, chunk: &[u8]) -> bool {
+        /* Check if anything of interest */
+        if !self.must_scan && !scan.has_sig_chars(chunk) {
+            self.index += 16;
+            self.accum = u64::from_be_bytes(chunk[8..16].try_into().unwrap());
+            false
+        } else {
+            true
+        }
+    }
+
+    /// Parse `data` without resetting the internal state, and appending
+    /// any newly found possible matches to `checks`.
+    ///
+    /// If `data` points to a different stream than data previously processed
+    /// by this [`Scan`], you _must_ call [`Scan::reset`] first.
+    fn parse_bytes_continuous(
+        &mut self,
+        scan: &ScanData,
+        data: &[u8],
+        checks: &mut Vec<PossibleScanMatch>,
+    ) {
+        let chunks = data.chunks_exact(16);
+        let rem = chunks.remainder();
+
+        for chunk in chunks {
+            if !self.check_scan_potential(scan, chunk) {
+                continue;
+            }
+
+            self.byte_scan(scan, chunk, checks);
+        }
+
+        self.byte_scan(scan, rem, checks);
+    }
+}
+
+struct ScanData {
     utf8_lanes: [Vec<ScanDefinition>; 32],
     utf16_lanes: [Vec<ScanDefinition>; 32],
     sig_char_chunks: Vec<[u8; 16]>,
     char_map: [u8; 256],
-    must_scan: bool,
 }
 
-impl Scan {
-    pub fn new(options: ScanOptions) -> Self {
-        let mut scan = Self {
-            options,
-            accum: 0,
-            index: 0,
-            checks: Vec::new(),
-            utf8_lanes: Default::default(),
-            utf16_lanes: Default::default(),
-            sig_char_chunks: Vec::new(),
-            char_map: [0; 256],
-            must_scan: false,
-        };
-
-        scan.init();
-
-        scan
-    }
-
-    pub fn scan_defs(&self) -> &Vec<ScanDefinition>
-    {
-        &self.options.defs
-    }
-
-    fn init(&mut self) {
+impl ScanData {
+    pub fn new(mut options: ScanOptions) -> Self {
         let mut unique_chars = [0; 256];
         let mut def_index = 0u32;
 
+        let mut utf8_lanes: [Vec<ScanDefinition>; 32] = Default::default();
+        let mut utf16_lanes: [Vec<ScanDefinition>; 32] = Default::default();
+        let mut sig_char_chunks = Vec::new();
+        let mut char_map = [0u8; 256];
+
         /* Build lookup tables */
-        for def in &mut self.options.defs {
+        for def in &mut options.defs {
             /* Update definition index */
             def.index = def_index;
             def_index += 1;
@@ -892,7 +1002,7 @@ impl Scan {
                  * data.
                  */
                 let chunk: [u8; 16] = [def.sig_char; 16];
-                self.sig_char_chunks.push(chunk);
+                sig_char_chunks.push(chunk);
 
                 /* Mark we've seen it already */
                 unique_chars[def.sig_char as usize] = 1;
@@ -902,32 +1012,28 @@ impl Scan {
              * Store final characters of sig in lookup map. This tells
              * us when to check the accumulator for signatures.
              */
-            self.char_map[def.check_char as usize] |= def.mask_size;
+            char_map[def.check_char as usize] |= def.mask_size;
 
             /*
              * Store sig character in lookup map. This tells us if a
              * byte is a part of a sig check and how far it is away.
              * This is used to see if the accumulator has any sig chars.
              */
-            self.char_map[def.sig_char as usize] |= MASK_SIG;
+            char_map[def.sig_char as usize] |= MASK_SIG;
 
             let utf8_lane = def.packed_utf8 & 31;
             let utf16_lane = def.packed_utf16 & 31;
 
-            self.utf8_lanes[utf8_lane as usize].push(def.clone());
-            self.utf16_lanes[utf16_lane as usize].push(def.clone());
+            utf8_lanes[utf8_lane as usize].push(def.clone());
+            utf16_lanes[utf16_lane as usize].push(def.clone());
         }
-    }
 
-    pub fn has_possible_matches(&self) -> bool { !self.checks.is_empty() }
-
-    pub fn possible_matches(&self) -> &Vec<PossibleScanMatch> { &self.checks }
-
-    pub fn reset(&mut self) {
-        self.accum = 0;
-        self.index = 0;
-        self.must_scan = false;
-        self.checks.clear();
+        Self {
+            utf8_lanes,
+            utf16_lanes,
+            sig_char_chunks,
+            char_map,
+        }
     }
 
     #[inline(always)]
@@ -944,113 +1050,54 @@ impl Scan {
 
         count != 0
     }
+}
 
-    #[inline(always)]
-    fn check_utf8(
-        &mut self,
-        packed_utf8: u64) {
-        let lane = (packed_utf8 & 31) as usize;
+pub struct Scan {
+    scan: ScanData,
+    state: ScanState,
+    scan_definitions: Vec<ScanDefinition>,
+    checks: Vec<PossibleScanMatch>,
+}
 
-        for def in &self.utf8_lanes[lane] {
-            if def.packed_utf8 == packed_utf8 {
-                if let Some(possible_match) = def.has_possible_utf8_match(self.index) {
-                    self.checks.push(possible_match);
-                }
-                break;
-            }
+impl Scan {
+    pub fn new(options: ScanOptions) -> Self {
+        Self {
+            scan_definitions: options.defs.iter().cloned().collect(),
+            scan: ScanData::new(options),
+            state: ScanState::new(),
+            checks: Vec::new(),
         }
     }
 
-    #[inline(always)]
-    fn check_utf16(
-        &mut self,
-        packed_utf16: u64) {
-        let lane = (packed_utf16 & 31) as usize;
-
-        for def in &self.utf16_lanes[lane] {
-            if def.packed_utf16 == packed_utf16 {
-                if let Some(possible_match) = def.has_possible_utf16_match(self.index) {
-                    self.checks.push(possible_match);
-                }
-                break;
-            }
-        }
+    pub fn scan_defs(&self) -> &Vec<ScanDefinition> {
+        &self.scan_definitions
     }
 
-    /* Faster without any inline, oddly enough */
-    #[cold]
-    fn byte_scan(
-        &mut self,
-        data: &[u8]) {
-        let mut sig_index = 0u64;
+    pub fn has_possible_matches(&self) -> bool { !self.checks.is_empty() }
 
-        for b in data {
-            let b = *b;
+    pub fn possible_matches(&self) -> &Vec<PossibleScanMatch> { &self.checks }
 
-            self.accum = self.accum << 8 | b as u64;
-            self.index += 1;
 
-            /* Determine what to do with the char */
-            let check = self.char_map[b as usize];
-
-            /* Char is a signature part */
-            if (check & MASK_SIG) == MASK_SIG {
-                /* Track where it was found */
-                sig_index = self.index;
-            }
-
-            if (check & MASK_SMALL) == MASK_SMALL {
-                let packed_utf16_small = self.accum & 0xFFFFFFFFFFFF;
-                let packed_utf8_small = self.accum & 0xFFFFFF;
-
-                self.check_utf8(packed_utf8_small);
-                self.check_utf16(packed_utf16_small);
-            }
-
-            if (check & MASK_LARGE) == MASK_LARGE {
-                let packed_utf16 = self.accum;
-                let packed_utf8: u64 = self.accum & 0xFFFFFFFF;
-
-                self.check_utf8(packed_utf8);
-                self.check_utf16(packed_utf16);
-            }
-        }
-
-        /*
-         * If our signature char is within 7 bytes, we need to scan next time
-         * without the SIMD/vectorized scan. The reason for this is if parts
-         * of the 4 (or 3) byte signature are in the accumulator. If the first
-         * part of the signature is in the accumulator and the last byte or two
-         * are in the new data, it would miss if we omitted this.
-         */
-        self.must_scan = (self.index - sig_index) < 8;
+    pub fn reset(&mut self) {
+        self.state.reset();
     }
 
-        /// Parse `data` without resetting the internal state, and appending
-    /// any newly found possible matches to `checks`.
-    ///
-    /// If `data` points to a different stream than data previously processed
-    /// by this [`Scan`], you _must_ call [`Scan::reset`] first.
-    pub fn parse_bytes(
-        &mut self,
-        data: &[u8]) {
-        let chunks = data.chunks_exact(16);
-        let rem = chunks.remainder();
-
-        for chunk in chunks {
-            /* Check if anything of interest */
-            if !self.must_scan && !self.has_sig_chars(chunk) {
-                self.index += 16;
-                self.accum = u64::from_be_bytes(chunk[8..16].try_into().unwrap());
-                continue;
-            }
-
-            self.byte_scan(chunk);
-        }
-
-        self.byte_scan(rem);
+    pub fn parse_bytes_continuous(&mut self, data: &[u8], checks: &mut Vec<PossibleScanMatch>) {
+        self.state.parse_bytes_continuous(&self.scan, data, checks)
     }
 
+    /// Reset the internal state and parse all bytes in `data`.
+    pub fn parse_bytes(&mut self, data: &[u8]) -> Vec<PossibleScanMatch> {
+        self.reset();
+
+        let mut checks = Vec::new();
+        self.state
+            .parse_bytes_continuous(&self.scan, data, &mut checks);
+        checks
+    }
+
+    /// Reset the internal state and parse all bytes in `reader`, using `buf` as intermediary
+    /// buffer for storing buffered data.
     pub fn parse_reader(
         &mut self,
         reader: &mut impl std::io::Read,
