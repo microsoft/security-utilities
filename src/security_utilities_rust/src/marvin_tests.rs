@@ -45,9 +45,11 @@ fn marvin_longer_string()
 
     // Act
     let marvin: i64 = microsoft_security_utilities_core::marvin::compute_hash(&input, seed, 0, input.len() as i32);
+    let marvin_slice = microsoft_security_utilities_core::marvin::compute_hash_slice(&input, seed);
 
     // Assert
     assert_eq!(expected, marvin);
+    assert_eq!(marvin, marvin_slice);
 }
 
 struct TestCase {
@@ -56,7 +58,7 @@ struct TestCase {
     checksum: u64
 }
 
-    /// In the spirit of cross-checking, these tests are pulled from a non-Microsoft
+/// In the spirit of cross-checking, these tests are pulled from a non-Microsoft
 /// Marvin32 implementation. This implementation, per Niels Ferguson is not considered
 /// completely compliant/correct and so it should not be used. But the simple test
 /// cases here do result in matching output.
@@ -128,11 +130,15 @@ fn marvin_various_cases()
 
         // Act
         let marvin64 = microsoft_security_utilities_core::marvin::compute_hash(input, seed, 0, input.len() as i32);
+        let marvin64_slice = microsoft_security_utilities_core::marvin::compute_hash_slice(input, seed);
         let marvin32: i32 = microsoft_security_utilities_core::marvin::compute_hash32(input, seed, 0, input.len() as i32);
+        let marvin32_slice = microsoft_security_utilities_core::marvin::compute_hash32_slice(input, seed);
 
         // Assert
         assert_eq!(expected64, marvin64);
+        assert_eq!(marvin64, marvin64_slice);
         assert_eq!(expected32, marvin32);
+        assert_eq!(marvin32, marvin32_slice);
     }
 }
 
