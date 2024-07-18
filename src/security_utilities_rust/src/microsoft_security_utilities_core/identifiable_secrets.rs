@@ -106,13 +106,10 @@ pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &s
         return false;
     }
 
-    match validate_common_annotated_key_signature(base64_encoded_signature) {
-        Ok(_) => (),
-        Err(s) => {
-            println!("{}", s);
-            return false;
-        },
-    };
+    if let Err(e) = validate_common_annotated_key_signature(base64_encoded_signature) {
+        println!("{}", e);
+        return false;
+    }
 
     if key.len() != STANDARD_COMMON_ANNOTATED_KEY_SIZE && key.len() != LONG_FORM_COMMON_ANNOTATED_KEY_SIZE {
         return false;
@@ -614,25 +611,37 @@ pub fn validate_common_annotated_key_signature(base64_encoded_signature: &str) -
                             base64_encoded_signature));
     }
 
+    let mut all_upper = true;
+    let mut all_lower = true;
     for ch in base64_encoded_signature.chars() {
         if !is_base62_encoding_char(ch) {
             return Err(format!("Signature {} can only contain alphabetic or numeric values.",
                                 base64_encoded_signature));
         }
+
+        // Digits are allowed, and don't count towards
+        // upper- or lowercaseness.
+        if ch.is_digit(10) {
+            continue;
+        }
+
+        if !ch.is_uppercase() {
+            all_upper = false;
+        }
+
+        if !ch.is_lowercase() {
+            all_lower = false;
+        }
     }
 
-    let all_upper = base64_encoded_signature.to_uppercase();
-    if base64_encoded_signature == all_upper {
-        return Ok(format!("Valid signature {}", base64_encoded_signature));
+    if all_upper {
+        Ok(format!("Valid signature {}", base64_encoded_signature))
+    } else if all_lower {
+        Ok(format!("Valid signature {}", base64_encoded_signature))
+    } else {
+        Err(format!("Signature {} characters must all upper- or all lower-case.",
+                           base64_encoded_signature))
     }
-
-    let all_lower = base64_encoded_signature.to_lowercase();
-    if base64_encoded_signature == all_lower {
-        return Ok(format!("Valid signature {}", base64_encoded_signature));
-    }
-
-    return Err(format!("Signature {} characters must all upper- or all lower-case.",
-                        base64_encoded_signature));
 }
 
 fn validate_base64_encoded_signature(base64_encoded_signature: &String, encode_for_url: bool)
