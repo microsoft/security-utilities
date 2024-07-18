@@ -103,10 +103,6 @@ pub fn is_base64_url_encoding_char(ch: char) -> bool
 
 // TODO: change return type to Result<bool, String>?
 pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &str) -> bool {
-    if key.is_empty() || key.trim().is_empty() {
-        return false;
-    }
-
     if let Err(e) = validate_common_annotated_key_signature(base64_encoded_signature) {
         println!("{}", e);
         return false;
