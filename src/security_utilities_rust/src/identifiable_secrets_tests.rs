@@ -233,11 +233,16 @@ fn identifiable_secrets_compute_checksum_seed_enforces_length_requirement()
     {
         let literal = "A".repeat(i) + "0";
 
-        let result = std::panic::catch_unwind(|| microsoft_security_utilities_core::identifiable_secrets::compute_his_v1_checksum_seed(&literal));
+        let result =
+            std::panic::catch_unwind(|| microsoft_security_utilities_core::identifiable_secrets::compute_his_v1_checksum_seed(&literal));
+        let array_result = <[u8; 8]>::try_from(literal.as_bytes()).ok().and_then(|v| microsoft_security_utilities_core::identifiable_secrets::compute_his_v1_checksum_seed_from_array(&v).ok());
+
+        assert!(result.is_ok() ==  array_result.is_some(), "Array result and result have differing success.");
 
         if i == 7 
         {
             assert!(result.is_ok(), "literal '{}' should generate a valid seed", literal);
+            assert_eq!(result.unwrap(), array_result.unwrap(), "Result and array result are not equal.")
         } else 
         {
             assert!(result.is_err(), "literal '{}' should raise an exception as it's not the correct length", literal);
@@ -335,10 +340,17 @@ fn identifiable_secrets_compute_checksum_seed()
     let expected_checksum_seed2 = 0x5257536565643030;
 
     let checksum_seed1 = microsoft_security_utilities_core::identifiable_secrets::compute_his_v1_checksum_seed(input_literal1);
+    let checksum_seed1_array =
+        microsoft_security_utilities_core::identifiable_secrets::compute_his_v1_checksum_seed_from_array(input_literal1.as_bytes().try_into().unwrap());
+
     let checksum_seed2 = microsoft_security_utilities_core::identifiable_secrets::compute_his_v1_checksum_seed(input_literal2);
+    let checksum_seed2_array =
+        microsoft_security_utilities_core::identifiable_secrets::compute_his_v1_checksum_seed_from_array(input_literal2.as_bytes().try_into().unwrap());
 
     assert_eq!(checksum_seed1, expected_checksum_seed1);
+    assert_eq!(checksum_seed1, checksum_seed1_array.unwrap());
     assert_eq!(checksum_seed2, expected_checksum_seed2);
+    assert_eq!(checksum_seed2, checksum_seed2_array.unwrap());
 }
 
 #[test]
