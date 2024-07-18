@@ -102,22 +102,19 @@ pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &s
         return false;
     }
 
-    match validate_common_annotated_key_signature(base64_encoded_signature) {
-        Ok(_) => (),
-        Err(s) => {
-            println!("{}", s);
-            return false;
-        },
-    };
-
-    if key.len() != STANDARD_COMMON_ANNOTATED_KEY_SIZE && key.len() != LONG_FORM_COMMON_ANNOTATED_KEY_SIZE {
+    if let Err(e) = validate_common_annotated_key_signature(base64_encoded_signature) {
+        println!("{}", e);
         return false;
     }
 
-    let long_form = key.len() == LONG_FORM_COMMON_ANNOTATED_KEY_SIZE;
-
     // A long-form has a full 4-byte checksum, while a standard form has only 3.
-    let checksum_len = if long_form { 4 } else { 3 };
+    let checksum_len = if key.len() == STANDARD_COMMON_ANNOTATED_KEY_SIZE {
+        3
+    } else if key.len() == LONG_FORM_COMMON_ANNOTATED_KEY_SIZE {
+        4
+    } else {
+        return false;
+    };
 
     let component_data = general_purpose::STANDARD.decode(key).unwrap();
     let key_bytes = &component_data[..component_data.len() - checksum_len];
