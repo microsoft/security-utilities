@@ -21,11 +21,15 @@ use substring::Substring;
 use crate::microsoft_security_utilities_core;
 use crate::microsoft_security_utilities_core::identifiable_scans::PossibleScanMatch;
 
-lazy_static! {
-    pub static ref VERSION_TWO_CHECKSUM_SEED: u64 = compute_his_v1_checksum_seed("Default0");
-}
+pub const VERSION_TWO_CHECKSUM_SEED: u64 = {
+    // TODO: Option::unwrap is not const yet
+    if let Some(v) = compute_his_v1_checksum_seed_from_array(b"Default0") {
+        v
+    } else {
+        panic!("Generating V2 checksum seed failed.");
+    }};
 
-pub static COMMON_ANNOTATED_KEY_REGEX_PATTERN: &str = r"(?-i)[A-Za-z0-9]{52}JQQJ9(9|D)[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
+pub const COMMON_ANNOTATED_KEY_REGEX_PATTERN: &str = r"(?-i)[A-Za-z0-9]{52}JQQJ9(9|D)[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
 
 lazy_static! {
     pub static ref COMMON_ANNOTATED_KEY_REGEX: Regex = Regex::new(COMMON_ANNOTATED_KEY_REGEX_PATTERN).unwrap();
@@ -116,14 +120,13 @@ pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &s
 
     let long_form = key.len() == LONG_FORM_COMMON_ANNOTATED_KEY_SIZE;
 
-    let checksum_seed = VERSION_TWO_CHECKSUM_SEED.clone();
     let checksum_len = if long_form { 4 } else { 3 };
 
     let component_data = general_purpose::STANDARD.decode(key).unwrap();
     let key_bytes = &component_data[..component_data.len() - checksum_len];
     let input_checksum_bytes = &component_data[component_data.len() - checksum_len..];
 
-    let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, key_bytes.len() as i32);
+    let checksum = marvin::compute_hash32(&key_bytes, VERSION_TWO_CHECKSUM_SEED, 0, key_bytes.len() as i32);
 
     let checksum_bytes = checksum.to_ne_bytes();
 
@@ -152,17 +155,52 @@ pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &s
 ///
 /// # Errors
 ///
-/// This function will return an error if the `versioned_key_kind` does not meet the required criteria.
+/// This function will panic if the `versioned_key_kind` does not meet the required criteria.
 pub fn compute_his_v1_checksum_seed(versioned_key_kind: &str) -> u64 {
 
-    if versioned_key_kind.len() != 8 || !versioned_key_kind.chars().nth(7).unwrap().is_digit(10) {
-        panic!("The versioned literal must be 8 characters long and end with a digit.");
+    if versioned_key_kind.len() != 8 {
+        panic!("The versioned literal must be 8 characters long.");
     }
 
-    let bytes = versioned_key_kind.as_bytes().iter().rev().cloned().collect::<Vec<u8>>();
-    let result = u64::from_le_bytes(bytes.try_into().unwrap());
+    let bytes: [u8; 8] = versioned_key_kind.as_bytes().try_into().unwrap();
 
-    result
+    compute_his_v1_checksum_seed_from_array(&bytes).unwrap()
+}
+
+/// Generate a u64 an HIS v1 compliant checksum seed from a literal byte array
+/// that is 8 characters long and ends with at least one digit, e.g., 'ReadKey0', 'RWSeed00',
+/// etc. The checksum seed is used to initialize the Marvin32 algorithm to watermark a
+/// specific class of generated security keys.
+///
+/// # Arguments
+///
+/// * `versioned_key_kind` - An ASCII-encoded name that identifies a specific set of generated keys with at least one trailing digit in the name.
+///
+/// # Returns
+///
+/// The computed checksum seed as a u64.
+///
+/// # Errors
+///
+/// This function return `None` if the last character of the array is not in the range '0'..'9' (ASCII)
+pub const fn compute_his_v1_checksum_seed_from_array(versioned_key_kind: &[u8; 8]) -> Option<u64> {
+
+    if versioned_key_kind[7] < b'0' || versioned_key_kind[7] > b'9' {
+        return None;
+    }
+
+    let mut count = 8;
+    let mut output = [0u8; 8];
+    loop {
+        if count == 0 {
+            break;
+        }
+        let idx = count - 1;
+        output[idx] = versioned_key_kind[7 - idx];
+        count -= 1;
+    }
+
+    Some(u64::from_le_bytes(output))
 }
 
 pub fn generate_common_annotated_key(base64_encoded_signature: &str,
