@@ -328,37 +328,33 @@ impl ScanDefinition {
         packed
     }
 
-    fn push_possible_match(
-        &self,
-        index: u64,
-        utf8: bool,
-        checks: &mut Vec<PossibleScanMatch>) {
-        match utf8 {
-            true => {
-                if index >= self.before_utf8 {
-                    checks.push(
-                        PossibleScanMatch::new(
-                            self.name,
-                            self.index,
-                            index - self.before_utf8,
-                            self.len_utf8 as usize,
-                            utf8,
-                            self.validator.clone()));
-                }
-            },
+    fn possible_utf8_match(&self, index: u64) -> Option<PossibleScanMatch> {
+        if index >= self.before_utf8 {
+            Some(PossibleScanMatch::new(
+                self.name,
+                self.index,
+                index - self.before_utf8,
+                self.len_utf8 as usize,
+                true,
+                self.validator,
+            ))
+        } else {
+            None
+        }
+    }
 
-            false => {
-                if index >= self.before_utf16 {
-                    checks.push(
-                        PossibleScanMatch::new(
-                            self.name,
-                            self.index,
-                            index - self.before_utf16,
-                            self.len_utf16 as usize,
-                            utf8,
-                            self.validator.clone()));
-                }
-            },
+    fn possible_utf16_match(&self, index: u64) -> Option<PossibleScanMatch> {
+        if index >= self.before_utf16 {
+            Some(PossibleScanMatch::new(
+                self.name,
+                self.index,
+                index - self.before_utf16,
+                self.len_utf16 as usize,
+                false,
+                self.validator,
+            ))
+        } else {
+            None
         }
     }
 }
@@ -960,11 +956,9 @@ impl Scan {
 
         for def in &self.utf8_lanes[lane] {
             if def.packed_utf8 == packed_utf8 {
-                def.push_possible_match(
-                    self.index,
-                    true,
-                    &mut self.checks);
-
+                if let Some(possible_match) = def.possible_utf8_match(self.index) {
+                    self.checks.push(possible_match);
+                }
                 break;
             }
         }
@@ -978,11 +972,9 @@ impl Scan {
 
         for def in &self.utf16_lanes[lane] {
             if def.packed_utf16 == packed_utf16 {
-                def.push_possible_match(
-                    self.index,
-                    false,
-                    &mut self.checks);
-
+                if let Some(possible_match) = def.possible_utf16_match(self.index) {
+                    self.checks.push(possible_match);
+                }
                 break;
             }
         }
@@ -1012,44 +1004,25 @@ impl Scan {
                     sig_index = self.index;
                 }
 
-                /* Check if small, large, or both */
-                match check & MASK_BOTH {
-                    MASK_SMALL => {
-                        let packed_utf8 = self.accum & 0xFFFFFF;
-                        let packed_utf16 = self.accum & 0xFFFFFFFFFFFF;
+                let packed_utf8 = self.accum & 0xFFFFFFFF;
+                let packed_utf8_small = self.accum & 0xFFFFFF;
 
-                        self.check_utf8(packed_utf8);
-                        self.check_utf16(packed_utf16);
-                    },
+                let packed_utf16 = self.accum;
+                let packed_utf16_small = self.accum & 0xFFFFFFFFFFFF;
 
-                    MASK_LARGE => {
-                        let packed_utf8 = self.accum & 0xFFFFFFFF;
-                        let packed_utf16 = self.accum;
+                if (check & MASK_SMALL) == MASK_SMALL {
+                    self.check_utf8(packed_utf8_small);
+                    self.check_utf16(packed_utf16_small);
+                }
 
-                        self.check_utf8(packed_utf8);
-                        self.check_utf16(packed_utf16);
-                    },
-
-                    MASK_BOTH => {
-                        let packed_utf8 = self.accum & 0xFFFFFFFF;
-                        let packed_utf8_small = self.accum & 0xFFFFFF;
-
-                        let packed_utf16 = self.accum;
-                        let packed_utf16_small = self.accum & 0xFFFFFFFFFFFF;
-
-                        self.check_utf8(packed_utf8);
-                        self.check_utf8(packed_utf8_small);
-
-                        self.check_utf16(packed_utf16);
-                        self.check_utf16(packed_utf16_small);
-                    },
-
-                    _ => { },
+                if (check & MASK_LARGE) == MASK_LARGE {
+                    self.check_utf8(packed_utf8);
+                    self.check_utf16(packed_utf16);
                 }
             }
         }
 
-        /* 
+        /*
          * If our signature char is within 7 bytes, we need to scan next time
          * without the SIMD/vectorized scan. The reason for this is if parts
          * of the 4 (or 3) byte signature are in the accumulator. If the first
