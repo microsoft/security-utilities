@@ -7,6 +7,7 @@
 #![allow(unused_assignments)]
 
 use super::*;
+use microsoft_security_utilities_core::marvin::{compute_hash, compute_hash32};
 
 /// Compare a Marvin checksum against a well-known test case from the native code.
 #[test]
@@ -14,7 +15,7 @@ fn marvin_basic() {
     // This test verifies that our Rust implementation provides
     // the same result as SymCrypt for their standard test.
     // https://github.com/microsoft/SymCrypt/blob/master/lib/marvin32.c#L316
-    
+
     // Assume
     let seed: u64 = 0xd53cd9cecd0893b7;
     let v: Vec<u8> = String::from("abc").into_bytes();
@@ -22,8 +23,8 @@ fn marvin_basic() {
     let expected: i64 = 0x22c74339492769bf;
 
     // Act
-    let marvin: i64 = microsoft_security_utilities_core::marvin::compute_hash(&input, seed, 0, input.len() as i32);
-    
+    let marvin: i64 = compute_hash(&input, seed, 0, input.len() as i32);
+
     // Assert
     assert_eq!(expected, marvin);
 }
@@ -31,12 +32,11 @@ fn marvin_basic() {
 /// Compare a Marvin checksum against a well-known test case from the native code.
 #[test]
 #[allow(overflowing_literals)]
-fn marvin_longer_string()
-{
+fn marvin_longer_string() {
     // This test verifies that our C# implementation provides
     // the same result as SymCrypt for their standard test.
     // https://github.com/microsoft/SymCrypt/blob/master/lib/marvin32.c#L316
-    
+
     // Assume
     let seed: u64 = 0xddddeeeeffff000;
     let v: Vec<u8> = String::from("abcdefghijklmnopqrstuvwxyz").into_bytes();
@@ -44,7 +44,7 @@ fn marvin_longer_string()
     let expected: i64 = 0xa128eb7e7260aca2;
 
     // Act
-    let marvin: i64 = microsoft_security_utilities_core::marvin::compute_hash(&input, seed, 0, input.len() as i32);
+    let marvin: i64 = compute_hash(&input, seed, 0, input.len() as i32);
 
     // Assert
     assert_eq!(expected, marvin);
@@ -53,14 +53,15 @@ fn marvin_longer_string()
 struct TestCase {
     seed: u64,
     text: Vec<u8>,
-    checksum: u64
+    checksum: u64,
 }
 
-    /// In the spirit of cross-checking, these tests are pulled from a non-Microsoft
+/// In the spirit of cross-checking, these tests are pulled from a non-Microsoft
 /// Marvin32 implementation. This implementation, per Niels Ferguson is not considered
 /// completely compliant/correct and so it should not be used. But the simple test
 /// cases here do result in matching output.
 /// https://github.com/skeeto/marvin32/blob/21020faea884799879492204af70414facfd27e9/marvin32.c#L112
+#[rustfmt::skip]
 fn create_test_cases() -> Vec<TestCase>
 {
     let mut v: Vec<TestCase> = Vec::new();
@@ -114,12 +115,10 @@ fn create_test_cases() -> Vec<TestCase>
 }
 
 #[test]
-fn marvin_various_cases()
-{
+fn marvin_various_cases() {
     let testcases = create_test_cases();
 
-    for testcase in testcases 
-    {
+    for testcase in testcases {
         // Assume
         let input: &[u8] = &(testcase.text);
         let seed = testcase.seed;
@@ -127,8 +126,8 @@ fn marvin_various_cases()
         let expected32: i32 = (expected64 ^ expected64 >> 32) as i32;
 
         // Act
-        let marvin64 = microsoft_security_utilities_core::marvin::compute_hash(input, seed, 0, input.len() as i32);
-        let marvin32: i32 = microsoft_security_utilities_core::marvin::compute_hash32(input, seed, 0, input.len() as i32);
+        let marvin64 = compute_hash(input, seed, 0, input.len() as i32);
+        let marvin32: i32 = compute_hash32(input, seed, 0, input.len() as i32);
 
         // Assert
         assert_eq!(expected64, marvin64);
@@ -138,32 +137,28 @@ fn marvin_various_cases()
 
 #[test]
 #[should_panic]
-fn marvin_compute_hash_panic_if_invalid_args_1()
-{
+fn marvin_compute_hash_panic_if_invalid_args_1() {
     let input = "".as_bytes();
-    microsoft_security_utilities_core::marvin::compute_hash(input, 0, -1, 0);
+    compute_hash(input, 0, -1, 0);
 }
 
 #[test]
 #[should_panic]
-fn marvin_compute_hash_panic_if_invalid_args_2()
-{
+fn marvin_compute_hash_panic_if_invalid_args_2() {
     let input = "".as_bytes();
-    microsoft_security_utilities_core::marvin::compute_hash(input, 0, 5, 0);
+    compute_hash(input, 0, 5, 0);
 }
 
 #[test]
 #[should_panic]
-fn marvin_compute_hash_panic_if_invalid_args_3()
-{
+fn marvin_compute_hash_panic_if_invalid_args_3() {
     let input = "".as_bytes();
-    microsoft_security_utilities_core::marvin::compute_hash(input, 0, 1, -1);
+    compute_hash(input, 0, 1, -1);
 }
 
 #[test]
 #[should_panic]
-fn marvin_compute_hash_panic_if_invalid_args_4()
-{
+fn marvin_compute_hash_panic_if_invalid_args_4() {
     let input = "".as_bytes();
-    microsoft_security_utilities_core::marvin::compute_hash(input, 0, 3, 3);
+    compute_hash(input, 0, 3, 3);
 }
