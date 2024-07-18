@@ -31,53 +31,53 @@ lazy_static! {
     pub static ref COMMON_ANNOTATED_KEY_REGEX: Regex = Regex::new(COMMON_ANNOTATED_KEY_REGEX_PATTERN).unwrap();
     }
 
-pub static MAXIMUM_GENERATED_KEY_SIZE: u32 = 4096;
-pub static MINIMUM_GENERATED_KEY_SIZE: u32 = 24;
-pub static STANDARD_COMMON_ANNOTATED_KEY_SIZE: usize = 84;
-pub static LONG_FORM_COMMON_ANNOTATED_KEY_SIZE: usize = 88;
-pub static COMMON_ANNOTATED_KEY_SIGNATURE: &str = "JQQJ99";
-pub static COMMON_ANNOTATED_DERIVED_KEY_SIGNATURE: &str = "JQQJ9D";
-static BITS_IN_BYTES: i32 = 8;
-static BITS_IN_BASE64_CHARACTER: i32 = 6;
-static SIZE_OF_CHECKSUM_IN_BYTES: i32 = mem::size_of::<u32>() as i32;
+pub const MAXIMUM_GENERATED_KEY_SIZE: u32 = 4096;
+pub const MINIMUM_GENERATED_KEY_SIZE: u32 = 24;
+pub const STANDARD_COMMON_ANNOTATED_KEY_SIZE: usize = 84;
+pub const LONG_FORM_COMMON_ANNOTATED_KEY_SIZE: usize = 88;
+pub const COMMON_ANNOTATED_KEY_SIGNATURE: &str = "JQQJ99";
+pub const COMMON_ANNOTATED_DERIVED_KEY_SIGNATURE: &str = "JQQJ9D";
+const BITS_IN_BYTES: i32 = 8;
+const BITS_IN_BASE64_CHARACTER: i32 = 6;
+const SIZE_OF_CHECKSUM_IN_BYTES: i32 = mem::size_of::<u32>() as i32;
 
-static COMMON_ANNOTATED_KEY_SIZE_IN_BYTES: usize = 63;
+const COMMON_ANNOTATED_KEY_SIZE_IN_BYTES: usize = 63;
 
 /// The offset to the encoded standard fixed signature ('JQQJ99' or 'JQQJ9D').
-pub static STANDARD_FIXED_SIGNATURE_OFFSET: usize = 52;
+pub const STANDARD_FIXED_SIGNATURE_OFFSET: usize = 52;
 
 /// The encoded length of the standard fixed signature ('JQQJ99' or 'JQQJ9D').
-pub static STANDARD_FIXED_SIGNATURE_LENGTH: usize = 6;
+pub const STANDARD_FIXED_SIGNATURE_LENGTH: usize = 6;
 
 /// The offset to the encoded character that denotes a derived ('D')
 /// or standard ('9') common annotated security key.
-pub static DERIVED_KEY_CHARACTER_OFFSET: usize = STANDARD_FIXED_SIGNATURE_OFFSET + STANDARD_FIXED_SIGNATURE_LENGTH - 1;
+pub const DERIVED_KEY_CHARACTER_OFFSET: usize = STANDARD_FIXED_SIGNATURE_OFFSET + STANDARD_FIXED_SIGNATURE_LENGTH - 1;
 
 /// The offset to the two-character encoded key creation date.
-pub static DATE_OFFSET: usize = STANDARD_FIXED_SIGNATURE_OFFSET + STANDARD_FIXED_SIGNATURE_LENGTH;
+pub const DATE_OFFSET: usize = STANDARD_FIXED_SIGNATURE_OFFSET + STANDARD_FIXED_SIGNATURE_LENGTH;
 
 /// The encoded length of the creation date (a value such as 'AE').
-pub static DATE_LENGTH: usize = 2;
+pub const DATE_LENGTH: usize = 2;
 
 /// The offset to the 12-character encoded platform-reserved data.
-pub static PLATFORM_RESERVED_OFFSET: usize = DATE_OFFSET + DATE_LENGTH;
+pub const PLATFORM_RESERVED_OFFSET: usize = DATE_OFFSET + DATE_LENGTH;
 
 /// The encoded length of the platform-reserved bytes.
-pub static PLATFORM_RESERVED_LENGTH: usize = 12;
+pub const PLATFORM_RESERVED_LENGTH: usize = 12;
 
 /// The offset to the 4-character encoded provider-reserved data.
-pub static PROVIDER_RESERVED_OFFSET: usize = PLATFORM_RESERVED_OFFSET + PLATFORM_RESERVED_LENGTH;
+pub const PROVIDER_RESERVED_OFFSET: usize = PLATFORM_RESERVED_OFFSET + PLATFORM_RESERVED_LENGTH;
 
 /// The encoded length of the provider-reserved bytes.
-pub static PROVIDER_RESERVED_LENGTH: usize = 4;
+pub const PROVIDER_RESERVED_LENGTH: usize = 4;
 
 /// The offset to the 4-character encoded provider fixed signature.
-pub static PROVIDER_FIXED_SIGNATURE_OFFSET: usize = PROVIDER_RESERVED_OFFSET + PROVIDER_RESERVED_LENGTH;
+pub const PROVIDER_FIXED_SIGNATURE_OFFSET: usize = PROVIDER_RESERVED_OFFSET + PROVIDER_RESERVED_LENGTH;
 
 /// The encoded length of the provider fixed signature, e.g., 'AZEG'.
-pub static PROVIDER_FIXED_SIGNATURE_LENGTH: usize = 4;
+pub const PROVIDER_FIXED_SIGNATURE_LENGTH: usize = 4;
 
-pub static CHECKSUM_OFFSET: usize = PROVIDER_FIXED_SIGNATURE_OFFSET + PROVIDER_FIXED_SIGNATURE_LENGTH;
+pub const CHECKSUM_OFFSET: usize = PROVIDER_FIXED_SIGNATURE_OFFSET + PROVIDER_FIXED_SIGNATURE_LENGTH;
 
 pub fn is_base62_encoding_char(ch: char) -> bool {
     ch.is_ascii_alphanumeric()
