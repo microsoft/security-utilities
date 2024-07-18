@@ -130,7 +130,7 @@ pub fn try_validate_common_annotated_key_valid_signature(key: &str) -> bool {
     let key_bytes = &component_data[..component_data.len() - checksum_len];
     let input_checksum_bytes = &component_data[component_data.len() - checksum_len..];
 
-    let checksum = marvin::compute_hash32(&key_bytes, VERSION_TWO_CHECKSUM_SEED, 0, key_bytes.len() as i32);
+    let checksum = marvin::compute_hash32_slice(&key_bytes, VERSION_TWO_CHECKSUM_SEED);
 
     let checksum_bytes = checksum.to_ne_bytes();
 
