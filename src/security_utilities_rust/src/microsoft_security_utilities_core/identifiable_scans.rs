@@ -328,7 +328,7 @@ impl ScanDefinition {
         packed
     }
 
-    fn possible_utf8_match(&self, index: u64) -> Option<PossibleScanMatch> {
+    fn has_possible_utf8_match(&self, index: u64) -> Option<PossibleScanMatch> {
         if index >= self.before_utf8 {
             Some(PossibleScanMatch::new(
                 self.name,
@@ -343,7 +343,7 @@ impl ScanDefinition {
         }
     }
 
-    fn possible_utf16_match(&self, index: u64) -> Option<PossibleScanMatch> {
+    fn has_possible_utf16_match(&self, index: u64) -> Option<PossibleScanMatch> {
         if index >= self.before_utf16 {
             Some(PossibleScanMatch::new(
                 self.name,
@@ -956,7 +956,7 @@ impl Scan {
 
         for def in &self.utf8_lanes[lane] {
             if def.packed_utf8 == packed_utf8 {
-                if let Some(possible_match) = def.possible_utf8_match(self.index) {
+                if let Some(possible_match) = def.has_possible_utf8_match(self.index) {
                     self.checks.push(possible_match);
                 }
                 break;
@@ -972,7 +972,7 @@ impl Scan {
 
         for def in &self.utf16_lanes[lane] {
             if def.packed_utf16 == packed_utf16 {
-                if let Some(possible_match) = def.possible_utf16_match(self.index) {
+                if let Some(possible_match) = def.has_possible_utf16_match(self.index) {
                     self.checks.push(possible_match);
                 }
                 break;
