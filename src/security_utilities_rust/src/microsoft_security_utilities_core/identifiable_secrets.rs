@@ -847,8 +847,7 @@ impl SecretMasker {
         let mut detections = detections.clone();
 
         // Merge positions into ranges of characters to replace.
-        let mut current_detections = Vec::new();
-        let mut current_detection : Option<Detection> = None;
+        let mut current_detections: Vec<Detection> = Vec::new();
 
         detections.sort_unstable_by_key(|item| item.start());
 
@@ -873,40 +872,44 @@ impl SecretMasker {
                 assert!(checksum_validation_result);
             }
 
-            // Get c3id for the find
-            let match_text_c3id = cross_company_correlating_id::generate_cross_company_correlating_id(match_text);
-
-            let c3id_redaction_format = format!("SEC101/200:{}", match_text_c3id);
-
             let redaction_token = match default_redaction_token {
-                Some(token) => token,
-                None => &c3id_redaction_format
+                Some(token) => token.to_string(),
+                None => {
+                    // Get c3id for the find
+                    let match_text_c3id = cross_company_correlating_id::generate_cross_company_correlating_id(match_text);
+
+                    let mut c3id_redaction_format = String::from("SEC101/200:");
+                    c3id_redaction_format.push_str(&match_text_c3id);
+
+                    c3id_redaction_format
+                }
             };
 
-            if current_detection.is_none() {
-                current_detection = Some(Detection {
-                    start: detection.start(),
-                    end: detection.start() + detection.len() as u64,
-                    length: detection.len(),
-                    redaction_token: redaction_token.to_string()
-                });
-                current_detections.push(current_detection.clone().unwrap());
-            } else {
-                if detection.start() <= current_detection.clone().unwrap().end {
+            if let Some(current) = current_detections.last_mut() {
+                if detection.start() <= current.end {
                     // Overlapping case or contiguous case.
-                    let current = current_detection.as_mut().unwrap();
                     current.length = (std::cmp::max(current.end,
                                                     detection.start() + detection.len() as u64)
                         - current.start) as usize;
                 } else {
-                    current_detection = Some(Detection {
+                    let next = Detection {
                         start: detection.start(),
                         end: detection.start() + detection.len() as u64,
                         length: detection.len(),
-                        redaction_token: redaction_token.to_string()
-                    });
-                    current_detections.push(current_detection.clone().unwrap());
+                        redaction_token,
+                    };
+
+                    current_detections.push(next);
                 }
+            } else  {
+                let next = Detection {
+                    start: detection.start(),
+                    end: detection.start() + detection.len() as u64,
+                    length: detection.len(),
+                    redaction_token,
+                };
+
+                current_detections.push(next);
             }
         }
 
