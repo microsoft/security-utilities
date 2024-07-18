@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 use std::rc::Rc;
+use std::cell::RefCell;
 
 /* Indicates the char is part of a small mask */
 const MASK_SMALL: u8 = 1 << 0;
@@ -847,30 +848,47 @@ impl Default for ScanOptions {
     }
 }
 
+#[derive(Default)]
+pub struct ScanState {
+    pub accum: u64,
+    pub index: u64,
+    pub must_scan: bool,
+    pub checks: Vec<PossibleScanMatch>,
+}
+
+impl ScanState {
+    pub fn reset(&mut self) {
+        self.accum = 0;
+        self.index = 0;
+        self.must_scan = false;
+        self.checks.clear();
+    }
+
+    pub fn has_possible_matches(&self) -> bool { !self.possible_matches().is_empty() }
+
+    pub fn possible_matches(&self) -> &Vec<PossibleScanMatch> { &self.checks }
+}
+
 pub struct Scan {
     options: ScanOptions,
-    accum: u64,
-    index: u64,
+    stream_state: RefCell<ScanState>,
     checks: Vec<PossibleScanMatch>,
     utf8_lanes: [Vec<ScanDefinition>; 32],
     utf16_lanes: [Vec<ScanDefinition>; 32],
     sig_char_chunks: Vec<[u8; 16]>,
     char_map: [u8; 256],
-    must_scan: bool,
 }
 
 impl Scan {
     pub fn new(options: ScanOptions) -> Self {
         let mut scan = Self {
             options,
-            accum: 0,
-            index: 0,
+            stream_state: RefCell::new(ScanState::default()),
             checks: Vec::new(),
             utf8_lanes: Default::default(),
             utf16_lanes: Default::default(),
             sig_char_chunks: Vec::new(),
             char_map: [0; 256],
-            must_scan: false,
         };
 
         scan.init();
@@ -928,14 +946,12 @@ impl Scan {
         }
     }
 
-    pub fn has_possible_matches(&self) -> bool { !self.checks.is_empty() }
+    pub fn has_possible_matches(&self) -> bool { !self.possible_matches().is_empty() }
 
     pub fn possible_matches(&self) -> &Vec<PossibleScanMatch> { &self.checks }
 
     pub fn reset(&mut self) {
-        self.accum = 0;
-        self.index = 0;
-        self.must_scan = false;
+        self.stream_state.borrow_mut().reset();
         self.checks.clear();
     }
 
@@ -956,16 +972,17 @@ impl Scan {
 
     #[inline(always)]
     fn check_utf8(
-        &mut self,
+        &self,
+        state: &mut ScanState,
         packed_utf8: u64) {
         let lane = (packed_utf8 & 31) as usize;
 
         for def in &self.utf8_lanes[lane] {
             if def.packed_utf8 == packed_utf8 {
                 def.push_possible_match(
-                    self.index,
+                    state.index,
                     true,
-                    &mut self.checks);
+                    &mut state.checks);
 
                 break;
             }
@@ -974,16 +991,17 @@ impl Scan {
 
     #[inline(always)]
     fn check_utf16(
-        &mut self,
+        &self,
+        state: &mut ScanState,
         packed_utf16: u64) {
         let lane = (packed_utf16 & 31) as usize;
 
         for def in &self.utf16_lanes[lane] {
             if def.packed_utf16 == packed_utf16 {
                 def.push_possible_match(
-                    self.index,
+                    state.index,
                     false,
-                    &mut self.checks);
+                    &mut state.checks);
 
                 break;
             }
@@ -993,15 +1011,16 @@ impl Scan {
     /* Faster without any inline, oddly enough */
     #[cold]
     fn byte_scan(
-        &mut self,
+        &self,
+        state: &mut ScanState,
         data: &[u8]) {
         let mut sig_index = 0u64;
 
         for b in data {
             let b = *b;
 
-            self.accum = self.accum << 8 | b as u64;
-            self.index += 1;
+            state.accum = state.accum << 8 | b as u64;
+            state.index += 1;
 
             /* Determine what to do with the char */
             let check = self.char_map[b as usize];
@@ -1011,39 +1030,39 @@ impl Scan {
                 /* Char is a signature part */
                 if check & MASK_SIG != 0 {
                     /* Track where it was found */
-                    sig_index = self.index;
+                    sig_index = state.index;
                 }
 
                 /* Check if small, large, or both */
                 match check & MASK_BOTH {
                     MASK_SMALL => {
-                        let packed_utf8 = self.accum & 0xFFFFFF;
-                        let packed_utf16 = self.accum & 0xFFFFFFFFFFFF;
+                        let packed_utf8 = state.accum & 0xFFFFFF;
+                        let packed_utf16 = state.accum & 0xFFFFFFFFFFFF;
 
-                        self.check_utf8(packed_utf8);
-                        self.check_utf16(packed_utf16);
+                        self.check_utf8(state, packed_utf8);
+                        self.check_utf16(state, packed_utf16);
                     },
 
                     MASK_LARGE => {
-                        let packed_utf8 = self.accum & 0xFFFFFFFF;
-                        let packed_utf16 = self.accum;
+                        let packed_utf8 = state.accum & 0xFFFFFFFF;
+                        let packed_utf16 = state.accum;
 
-                        self.check_utf8(packed_utf8);
-                        self.check_utf16(packed_utf16);
+                        self.check_utf8(state, packed_utf8);
+                        self.check_utf16(state, packed_utf16);
                     },
 
                     MASK_BOTH => {
-                        let packed_utf8 = self.accum & 0xFFFFFFFF;
-                        let packed_utf8_small = self.accum & 0xFFFFFF;
+                        let packed_utf8 = state.accum & 0xFFFFFFFF;
+                        let packed_utf8_small = state.accum & 0xFFFFFF;
 
-                        let packed_utf16 = self.accum;
-                        let packed_utf16_small = self.accum & 0xFFFFFFFFFFFF;
+                        let packed_utf16 = state.accum;
+                        let packed_utf16_small = state.accum & 0xFFFFFFFFFFFF;
 
-                        self.check_utf8(packed_utf8);
-                        self.check_utf8(packed_utf8_small);
+                        self.check_utf8(state, packed_utf8);
+                        self.check_utf8(state, packed_utf8_small);
 
-                        self.check_utf16(packed_utf16);
-                        self.check_utf16(packed_utf16_small);
+                        self.check_utf16(state, packed_utf16);
+                        self.check_utf16(state, packed_utf16_small);
                     },
 
                     _ => { },
@@ -1058,35 +1077,37 @@ impl Scan {
          * part of the signature is in the accumulator and the last byte or two
          * are in the new data, it would miss if we omitted this.
          */
-        self.must_scan = (self.index - sig_index) < 8;
+        state.must_scan = (state.index - sig_index) < 8;
     }
 
-    pub fn parse_bytes(
-        &mut self,
+    pub fn concurrent_parse_bytes(
+        &self,
+        state: &mut ScanState,
         data: &[u8]) {
         let chunks = data.chunks_exact(16);
         let rem = chunks.remainder();
 
         for chunk in chunks {
             /* Check if anything of interest */
-            if !self.must_scan && !self.has_sig_chars(chunk) {
-                self.index += 16;
-                self.accum = u64::from_be_bytes(chunk[8..16].try_into().unwrap());
+            if !state.must_scan && !self.has_sig_chars(chunk) {
+                state.index += 16;
+                state.accum = u64::from_be_bytes(chunk[8..16].try_into().unwrap());
                 continue;
             }
 
-            self.byte_scan(chunk);
+            self.byte_scan(state, chunk);
         }
 
-        self.byte_scan(rem);
+        self.byte_scan(state, rem);
     }
 
-    pub fn parse_reader(
-        &mut self,
+    pub fn concurrent_parse_reader(
+        &self,
+        state: &mut ScanState,
         reader: &mut impl std::io::Read,
         buf: &mut [u8]) -> std::io::Result<()> {
         /* Reset for caller */
-        self.reset();
+        state.reset();
 
         /* Parse all blocks of the reader */
         loop {
@@ -1096,8 +1117,49 @@ impl Scan {
                 break;
             }
 
-            self.parse_bytes(&buf[..len]);
+            self.concurrent_parse_bytes(state, &buf[..len]);
         }
+
+        /* Scanned all blocks */
+        Ok(())
+    }
+
+    pub fn parse_bytes(
+        &mut self,
+        data: &[u8]) {
+        let mut state = self.stream_state.borrow_mut();
+
+        self.concurrent_parse_bytes(
+            &mut state,
+            data);
+
+        /*
+         * Callers need direct refs to these, so unfortunately we
+         * cannot give them a borrowed instance. Thankfully these
+         * are rare, and we will incur a copy shuffle when we see
+         * them. This is better than always copying things around.
+         */
+        self.checks.append(&mut state.checks);
+    }
+
+    pub fn parse_reader(
+        &mut self,
+        reader: &mut impl std::io::Read,
+        buf: &mut [u8]) -> std::io::Result<()> {
+        let mut state = self.stream_state.borrow_mut();
+
+        self.concurrent_parse_reader(
+            &mut state,
+            reader,
+            buf)?;
+
+        /*
+         * Callers need direct refs to these, so unfortunately we
+         * cannot give them a borrowed instance. Thankfully these
+         * are rare, and we will incur a copy shuffle when we see
+         * them. This is better than always copying things around.
+         */
+        self.checks.append(&mut state.checks);
 
         /* Scanned all blocks */
         Ok(())
