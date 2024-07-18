@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-use std::rc::Rc;
+use std::{borrow::Cow, rc::Rc};
 
 /* Indicates the char is part of a small mask */
 const MASK_SMALL: u8 = 1 << 0;
@@ -54,21 +54,21 @@ impl UrlUnreserved for u8 {
     }
 }
 
-pub struct ScanMatch {
+pub struct ScanMatch<'a> {
     name: &'static str,
     def_index: u32,
     start: u64,
     len: u64,
-    text: Option<String>,
+    text: Option<Cow<'a, str>>,
 }
 
-impl ScanMatch {
+impl<'a> ScanMatch<'a> {
     fn new(
         name: &'static str,
         def_index: u32,
         start: u64,
         len: u64,
-        data: &[u8],
+        data: Cow<'a, str>,
         want_text: bool) -> Self {
         Self {
             name,
@@ -76,12 +76,8 @@ impl ScanMatch {
             start,
             len,
             text: match want_text {
-                true => {
-                    Some(std::str::from_utf8(data)
-                         .expect("Already in UTF8")
-                         .to_string())
-                },
-                false => { None }
+                true => Some(data),
+                false => None,
             }
         }
     }
@@ -157,10 +153,10 @@ impl PossibleScanMatch {
         len
     }
 
-    pub fn matches_reader(
-        &self,
+    pub fn matches_reader<'a>(
+        &'a self,
         reader: &mut (impl std::io::Read + std::io::Seek),
-        buf: &mut [u8],
+        buf: &'a mut [u8],
         want_text: bool) -> std::io::Result<Option<ScanMatch>> {
         if buf.len() < self.len() {
             return Err(
@@ -191,10 +187,10 @@ impl PossibleScanMatch {
             want_text))
     }
 
-    pub fn matches_bytes(
+    pub fn matches_bytes<'a>(
         &self,
-        data: &[u8],
-        want_text: bool) -> Option<ScanMatch> {
+        data: &'a [u8],
+        want_text: bool) -> Option<ScanMatch<'a>> {
         match self.utf8 {
             true => {
                 /* UTF8 */
@@ -204,13 +200,16 @@ impl PossibleScanMatch {
                     return None;
                 }
 
+                let data = std::str::from_utf8(&data[..len])
+                         .expect("Already in UTF8");
+                let data = Cow::from(data);
                 Some(
                     ScanMatch::new(
                         self.name,
                         self.def_index,
                         self.start,
                         len as u64,
-                        &data[..len],
+                        data,
                         want_text))
             },
 
@@ -231,13 +230,18 @@ impl PossibleScanMatch {
                     return None;
                 }
 
+                let data = std::str::from_utf8(&bytes[..len])
+                         .expect("Already in UTF8")
+                         .to_string();
+                let data = Cow::from(data);
+
                 Some(
                     ScanMatch::new(
                         self.name,
                         self.def_index,
                         self.start,
                         (len * 2) as u64,
-                        &bytes[..len],
+                        data,
                         want_text))
             }
         }
