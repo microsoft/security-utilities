@@ -1026,6 +1026,11 @@ impl Scan {
         self.must_scan = (self.index - sig_index) < 8;
     }
 
+        /// Parse `data` without resetting the internal state, and appending
+    /// any newly found possible matches to `checks`.
+    ///
+    /// If `data` points to a different stream than data previously processed
+    /// by this [`Scan`], you _must_ call [`Scan::reset`] first.
     pub fn parse_bytes(
         &mut self,
         data: &[u8]) {
