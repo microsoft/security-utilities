@@ -121,7 +121,12 @@ pub fn try_validate_common_annotated_key_valid_signature(key: &str) -> bool {
         return false;
     };
 
-    let component_data = general_purpose::STANDARD.decode(key).unwrap();
+    let component_data = if let Ok(value) = general_purpose::STANDARD.decode(key) {
+        value
+    } else {
+        return false;
+    };
+
     let key_bytes = &component_data[..component_data.len() - checksum_len];
     let input_checksum_bytes = &component_data[component_data.len() - checksum_len..];
 
