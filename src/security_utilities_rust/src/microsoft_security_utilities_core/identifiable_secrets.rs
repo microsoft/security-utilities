@@ -836,7 +836,7 @@ impl SecretMasker {
 
         let input_as_bytes = input.as_bytes();
         self.scan.parse_bytes(input_as_bytes);
-
+        
         let detections = self.scan.possible_matches();
 
         // Short-circuit if nothing to replace.

@@ -1080,20 +1080,15 @@ impl Scan {
 
     pub fn reset(&mut self) {
         self.state.reset();
+        self.checks.clear();
     }
 
-    pub fn parse_bytes_continuous(&mut self, data: &[u8], checks: &mut Vec<PossibleScanMatch>) {
-        self.state.parse_bytes_continuous(&self.scan, data, checks)
-    }
-
-    /// Reset the internal state and parse all bytes in `data`.
-    pub fn parse_bytes(&mut self, data: &[u8]) -> Vec<PossibleScanMatch> {
-        self.reset();
-
-        let mut checks = Vec::new();
+    /// Parse all bytes in `data`, using the existing state.
+    ///
+    /// Call [`Scan::reset`] to reset the state.
+    pub fn parse_bytes(&mut self, data: &[u8]) {
         self.state
-            .parse_bytes_continuous(&self.scan, data, &mut checks);
-        checks
+            .parse_bytes_continuous(&self.scan, data, &mut self.checks);
     }
 
     /// Reset the internal state and parse all bytes in `reader`, using `buf` as intermediary
@@ -1113,7 +1108,8 @@ impl Scan {
                 break;
             }
 
-            self.parse_bytes(&buf[..len]);
+            self.state
+                .parse_bytes_continuous(&self.scan, &buf[..len], &mut self.checks);
         }
 
         /* Scanned all blocks */
@@ -1181,7 +1177,7 @@ mod tests {
 
         /* Less than 16 bytes */
         scan.parse_bytes(" ".as_bytes());
-        assert!(scan.checks.is_empty());
+        assert!(scan.possible_matches().is_empty());
         scan.reset();
 
         /* Empty */
@@ -1343,7 +1339,7 @@ mod tests {
             let data = case.as_bytes();
             scan.reset();
             for i in 0..data.len() {
-                scan.parse_bytes(&data[i..i+1]);
+                scan.parse_bytes(&data[i..i + 1]);
             }
             assert_eq!(1, scan.checks.len(), "UTF8 per-byte Case {}: Scan Check", i);
 
@@ -1447,7 +1443,7 @@ mod tests {
             let data = case.as_bytes();
             scan.reset();
             for i in 0..data.len() {
-                scan.parse_bytes(&data[i..i+1]);
+                scan.parse_bytes(&data[i..i + 1]);
             }
             assert_eq!(1, scan.checks.len(), "UTF8 per-byte Case {}: Scan Check", i);
 
