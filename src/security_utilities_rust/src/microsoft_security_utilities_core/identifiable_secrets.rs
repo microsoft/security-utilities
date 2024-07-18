@@ -857,7 +857,7 @@ impl SecretMasker {
 
             if validate_checksum {
                 let match_text_as_bytes = match_text.as_bytes();
-                let mut signature_bytes = vec![0; 3];
+                let mut signature_bytes = [0; 3];
                 signature_bytes[0] = match_text_as_bytes[57];
                 signature_bytes[1] = match_text_as_bytes[58];
                 signature_bytes[2] = match_text_as_bytes[59];
