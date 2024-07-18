@@ -101,7 +101,7 @@ pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &s
     if key.is_empty() || key.trim().is_empty() {
         return false;
     }
-    
+
     match validate_common_annotated_key_signature(base64_encoded_signature) {
         Ok(_) => (),
         Err(s) => {
@@ -109,32 +109,32 @@ pub fn try_validate_common_annotated_key(key: &str, base64_encoded_signature: &s
             return false;
         },
     };
-   
+
     if key.len() != STANDARD_COMMON_ANNOTATED_KEY_SIZE && key.len() != LONG_FORM_COMMON_ANNOTATED_KEY_SIZE {
         return false;
     }
-    
+
     let long_form = key.len() == LONG_FORM_COMMON_ANNOTATED_KEY_SIZE;
 
     let checksum_seed = VERSION_TWO_CHECKSUM_SEED.clone();
+    let checksum_len = if long_form { 4 } else { 3 };
 
-    let component_to_checksum = &key[..CHECKSUM_OFFSET];
-    let checksum_text = &key[CHECKSUM_OFFSET..];
-
-    let key_bytes = general_purpose::STANDARD.decode(component_to_checksum).unwrap();
+    let component_data = general_purpose::STANDARD.decode(key).unwrap();
+    let key_bytes = &component_data[..component_data.len() - checksum_len];
+    let input_checksum_bytes = &component_data[component_data.len() - checksum_len..];
 
     let checksum = marvin::compute_hash32(&key_bytes, checksum_seed, 0, key_bytes.len() as i32);
 
     let checksum_bytes = checksum.to_ne_bytes();
 
     // A long-form has a full 4-byte checksum, while a standard form has only 3.
-    let encoded = general_purpose::STANDARD.encode(if long_form {
+    let encoded = if long_form {
         &checksum_bytes[..4]
     } else {
         &checksum_bytes[..3]
-    });
+    };
 
-    encoded == checksum_text
+    input_checksum_bytes == encoded
 }
 
 /// Generate a u64 an HIS v1 compliant checksum seed from a string literal
