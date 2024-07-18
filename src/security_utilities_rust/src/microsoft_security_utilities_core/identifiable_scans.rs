@@ -10,9 +10,6 @@ const MASK_LARGE: u8 = 1 << 1;
 /* Indicates the char is a special sig character */
 const MASK_SIG: u8 = 1 << 2;
 
-/* Mask only for size, masks out the MASK_SIG */
-const MASK_BOTH: u8 = MASK_SMALL | MASK_LARGE;
-
 /* We don't expect patterns larger than this */
 const HIS_UTF8_MAX_LEN: usize = 256;
 
@@ -996,29 +993,26 @@ impl Scan {
             /* Determine what to do with the char */
             let check = self.char_map[b as usize];
 
-            /* Skip if nothing */
-            if check != 0 {
-                /* Char is a signature part */
-                if check & MASK_SIG != 0 {
-                    /* Track where it was found */
-                    sig_index = self.index;
-                }
+            /* Char is a signature part */
+            if (check & MASK_SIG) == MASK_SIG {
+                /* Track where it was found */
+                sig_index = self.index;
+            }
 
-                let packed_utf8 = self.accum & 0xFFFFFFFF;
+            if (check & MASK_SMALL) == MASK_SMALL {
+                let packed_utf16_small = self.accum & 0xFFFFFFFFFFFF;
                 let packed_utf8_small = self.accum & 0xFFFFFF;
 
+                self.check_utf8(packed_utf8_small);
+                self.check_utf16(packed_utf16_small);
+            }
+
+            if (check & MASK_LARGE) == MASK_LARGE {
                 let packed_utf16 = self.accum;
-                let packed_utf16_small = self.accum & 0xFFFFFFFFFFFF;
+                let packed_utf8: u64 = self.accum & 0xFFFFFFFF;
 
-                if (check & MASK_SMALL) == MASK_SMALL {
-                    self.check_utf8(packed_utf8_small);
-                    self.check_utf16(packed_utf16_small);
-                }
-
-                if (check & MASK_LARGE) == MASK_LARGE {
-                    self.check_utf8(packed_utf8);
-                    self.check_utf16(packed_utf16);
-                }
+                self.check_utf8(packed_utf8);
+                self.check_utf16(packed_utf16);
             }
         }
 
