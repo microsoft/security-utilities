@@ -11,6 +11,9 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# UNRELEASED
+- DEP: `System.Text.Json` updated to `v8.0.4` to resolve Depandabot alert.
+
 # 1.5.2 - 07/05/2024
 - NEW: Added an initial secret redaction capability to the Rust package.
 
