@@ -19,7 +19,7 @@
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.7" />
     <PackageReference Include="MSTest.TestFramework" Version="2.2.7" />
     <PackageReference Include="RE2.Managed" Version="4.5.7" />
-    <PackageReference Include="System.Text.Json" Version="8.0.3" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
   </ItemGroup>
 
   <ItemGroup>
