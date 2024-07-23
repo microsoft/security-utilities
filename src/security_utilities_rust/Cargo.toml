@@ -20,3 +20,10 @@ uuid = { version = "1.8.0", features = ["v4"] }
 
 # Causes the project to link with the Spectre-mitigated CRT and libs.
 msvc_spectre_libs = { version = "0.1", features = ["error"] }
+
+[dev-dependencies]
+criterion = "0.5.1"
+
+[[bench]]
+name = "marvin"
+harness = false
