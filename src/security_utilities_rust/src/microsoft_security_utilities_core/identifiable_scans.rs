@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 use std::rc::Rc;
-use std::cell::RefCell;
 
 /* Indicates the char is part of a small mask */
 const MASK_SMALL: u8 = 1 << 0;
@@ -869,22 +868,18 @@ impl ScanState {
     pub fn possible_matches(&self) -> &Vec<PossibleScanMatch> { &self.checks }
 }
 
-pub struct Scan {
+pub struct ScanEngine {
     options: ScanOptions,
-    stream_state: RefCell<ScanState>,
-    checks: Vec<PossibleScanMatch>,
     utf8_lanes: [Vec<ScanDefinition>; 32],
     utf16_lanes: [Vec<ScanDefinition>; 32],
     sig_char_chunks: Vec<[u8; 16]>,
     char_map: [u8; 256],
 }
 
-impl Scan {
+impl ScanEngine {
     pub fn new(options: ScanOptions) -> Self {
         let mut scan = Self {
             options,
-            stream_state: RefCell::new(ScanState::default()),
-            checks: Vec::new(),
             utf8_lanes: Default::default(),
             utf16_lanes: Default::default(),
             sig_char_chunks: Vec::new(),
@@ -944,15 +939,6 @@ impl Scan {
             self.utf8_lanes[utf8_lane as usize].push(def.clone());
             self.utf16_lanes[utf16_lane as usize].push(def.clone());
         }
-    }
-
-    pub fn has_possible_matches(&self) -> bool { !self.possible_matches().is_empty() }
-
-    pub fn possible_matches(&self) -> &Vec<PossibleScanMatch> { &self.checks }
-
-    pub fn reset(&mut self) {
-        self.stream_state.borrow_mut().reset();
-        self.checks.clear();
     }
 
     #[inline(always)]
@@ -1080,7 +1066,7 @@ impl Scan {
         state.must_scan = (state.index - sig_index) < 8;
     }
 
-    pub fn concurrent_parse_bytes(
+    pub fn parse_bytes(
         &self,
         state: &mut ScanState,
         data: &[u8]) {
@@ -1101,7 +1087,7 @@ impl Scan {
         self.byte_scan(state, rem);
     }
 
-    pub fn concurrent_parse_reader(
+    pub fn parse_reader(
         &self,
         state: &mut ScanState,
         reader: &mut impl std::io::Read,
@@ -1117,49 +1103,51 @@ impl Scan {
                 break;
             }
 
-            self.concurrent_parse_bytes(state, &buf[..len]);
+            self.parse_bytes(state, &buf[..len]);
         }
 
         /* Scanned all blocks */
         Ok(())
     }
+}
+
+pub struct Scan {
+    engine: ScanEngine,
+    state: ScanState,
+}
+
+impl Scan {
+    pub fn new(options: ScanOptions) -> Self {
+        Self {
+            engine: ScanEngine::new(options),
+            state: ScanState::default(),
+        }
+    }
+
+    pub fn has_possible_matches(&self) -> bool { self.state.has_possible_matches() }
+
+    pub fn possible_matches(&self) -> &Vec<PossibleScanMatch> { self.state.possible_matches() }
+
+    pub fn reset(&mut self) {
+        self.state.reset();
+    }
 
     pub fn parse_bytes(
         &mut self,
         data: &[u8]) {
-        let mut state = self.stream_state.borrow_mut();
-
-        self.concurrent_parse_bytes(
-            &mut state,
+        self.engine.parse_bytes(
+            &mut self.state,
             data);
-
-        /*
-         * Callers need direct refs to these, so unfortunately we
-         * cannot give them a borrowed instance. Thankfully these
-         * are rare, and we will incur a copy shuffle when we see
-         * them. This is better than always copying things around.
-         */
-        self.checks.append(&mut state.checks);
     }
 
     pub fn parse_reader(
         &mut self,
         reader: &mut impl std::io::Read,
         buf: &mut [u8]) -> std::io::Result<()> {
-        let mut state = self.stream_state.borrow_mut();
-
-        self.concurrent_parse_reader(
-            &mut state,
+        self.engine.parse_reader(
+            &mut self.state,
             reader,
             buf)?;
-
-        /*
-         * Callers need direct refs to these, so unfortunately we
-         * cannot give them a borrowed instance. Thankfully these
-         * are rare, and we will incur a copy shuffle when we see
-         * them. This is better than always copying things around.
-         */
-        self.checks.append(&mut state.checks);
 
         /* Scanned all blocks */
         Ok(())
@@ -1226,7 +1214,7 @@ mod tests {
 
         /* Less than 16 bytes */
         scan.parse_bytes(" ".as_bytes());
-        assert!(scan.checks.is_empty());
+        assert!(scan.state.checks.is_empty());
         scan.reset();
 
         /* Empty */
@@ -1335,9 +1323,9 @@ mod tests {
             let data = case.as_bytes();
             scan.reset();
             scan.parse_bytes(data);
-            assert_eq!(1, scan.checks.len(), "UTF8 Case {}: Scan Check", i);
+            assert_eq!(1, scan.state.checks.len(), "UTF8 Case {}: Scan Check", i);
 
-            let check = scan.checks.pop().unwrap();
+            let check = scan.state.checks.pop().unwrap();
             assert_eq!(0, check.start(), "UTF8 Case {}: Scan Offset", i);
 
             let scan_match = check.matches_bytes(data, true);
@@ -1355,9 +1343,9 @@ mod tests {
 
             scan.reset();
             scan.parse_bytes(data);
-            assert_eq!(1, scan.checks.len(), "UTF16 LE Case {}: Scan Check", i);
+            assert_eq!(1, scan.state.checks.len(), "UTF16 LE Case {}: Scan Check", i);
 
-            let check = scan.checks.pop().unwrap();
+            let check = scan.state.checks.pop().unwrap();
             assert_eq!(0, check.start(), "UTF16 LE Case {}: Scan Offset", i);
             let scan_match = check.matches_bytes(data, true);
             assert!(scan_match.is_some(), "UTF16 Case {}: Matches", i);
@@ -1374,9 +1362,9 @@ mod tests {
 
             scan.reset();
             scan.parse_bytes(data);
-            assert_eq!(1, scan.checks.len(), "UTF16 BE Case {}: Scan Check", i);
+            assert_eq!(1, scan.state.checks.len(), "UTF16 BE Case {}: Scan Check", i);
 
-            let check = scan.checks.pop().unwrap();
+            let check = scan.state.checks.pop().unwrap();
 
             assert_eq!(1, check.start(), "UTF16 BE Case {}: Scan Offset", i);
             let scan_match = check.matches_bytes(&data[1..], true);
@@ -1390,9 +1378,9 @@ mod tests {
             for i in 0..data.len() {
                 scan.parse_bytes(&data[i..i+1]);
             }
-            assert_eq!(1, scan.checks.len(), "UTF8 per-byte Case {}: Scan Check", i);
+            assert_eq!(1, scan.state.checks.len(), "UTF8 per-byte Case {}: Scan Check", i);
 
-            let check = scan.checks.pop().unwrap();
+            let check = scan.state.checks.pop().unwrap();
             assert_eq!(0, check.start(), "UTF8 per-byte Case {}: Scan Offset", i);
 
             let scan_match = check.matches_bytes(data, true);
@@ -1411,7 +1399,7 @@ mod tests {
 
         /* Less than 16 bytes */
         scan.parse_bytes(" ".as_bytes());
-        assert!(scan.checks.is_empty());
+        assert!(scan.state.checks.is_empty());
         scan.reset();
 
         /* Empty */
@@ -1439,9 +1427,9 @@ mod tests {
             let data = case.as_bytes();
             scan.reset();
             scan.parse_bytes(data);
-            assert_eq!(1, scan.checks.len(), "UTF8 Case {}: Scan Check", i);
+            assert_eq!(1, scan.state.checks.len(), "UTF8 Case {}: Scan Check", i);
 
-            let check = scan.checks.pop().unwrap();
+            let check = scan.state.checks.pop().unwrap();
             assert_eq!(0, check.start(), "UTF8 Case {}: Scan Offset", i);
 
             let scan_match = check.matches_bytes(data, true);
@@ -1459,9 +1447,9 @@ mod tests {
 
             scan.reset();
             scan.parse_bytes(data);
-            assert_eq!(1, scan.checks.len(), "UTF16 LE Case {}: Scan Check", i);
+            assert_eq!(1, scan.state.checks.len(), "UTF16 LE Case {}: Scan Check", i);
 
-            let check = scan.checks.pop().unwrap();
+            let check = scan.state.checks.pop().unwrap();
             assert_eq!(0, check.start(), "UTF16 LE Case {}: Scan Offset", i);
             let scan_match = check.matches_bytes(data, true);
             assert!(scan_match.is_some(), "UTF16 Case {}: Matches", i);
@@ -1478,9 +1466,9 @@ mod tests {
 
             scan.reset();
             scan.parse_bytes(data);
-            assert_eq!(1, scan.checks.len(), "UTF16 BE Case {}: Scan Check", i);
+            assert_eq!(1, scan.state.checks.len(), "UTF16 BE Case {}: Scan Check", i);
 
-            let check = scan.checks.pop().unwrap();
+            let check = scan.state.checks.pop().unwrap();
 
             assert_eq!(1, check.start(), "UTF16 BE Case {}: Scan Offset", i);
             let scan_match = check.matches_bytes(&data[1..], true);
@@ -1494,9 +1482,9 @@ mod tests {
             for i in 0..data.len() {
                 scan.parse_bytes(&data[i..i+1]);
             }
-            assert_eq!(1, scan.checks.len(), "UTF8 per-byte Case {}: Scan Check", i);
+            assert_eq!(1, scan.state.checks.len(), "UTF8 per-byte Case {}: Scan Check", i);
 
-            let check = scan.checks.pop().unwrap();
+            let check = scan.state.checks.pop().unwrap();
             assert_eq!(0, check.start(), "UTF8 per-byte Case {}: Scan Offset", i);
 
             let scan_match = check.matches_bytes(data, true);
