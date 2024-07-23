@@ -1,5 +1,5 @@
 # Release Notes
-This document contains release notes pertaining to the Rust cargo packages.
+This document contains release notes pertaining to the Rust crates.
 
 ## Definitions
 
