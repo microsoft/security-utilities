@@ -33,5 +33,10 @@ name = "identifiable_scans"
 harness = false
 
 [[bench]]
+name = "identifiable_secrets"
+harness = false
+
+[[bench]]
 name = "cross_company_correlating_id"
 harness = false
+
