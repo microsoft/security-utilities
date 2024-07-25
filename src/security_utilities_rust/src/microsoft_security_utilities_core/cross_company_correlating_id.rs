@@ -27,8 +27,9 @@ pub fn generate_cross_company_correlating_id(text: &str) -> String {
 
 fn generate_sha256_hash<'a>(text: &str, buffer: &'a mut [u8; 64]) -> &'a [u8; 64] {
     let result = THREAD_LOCAL_SHA256.with(|sha| {
-        sha.borrow_mut().update(text.as_bytes());
-        sha.borrow_mut().finalize_reset()
+        let mut sha = sha.borrow_mut();
+        sha.update(text.as_bytes());
+        sha.finalize_reset()
     });
 
     let data: [u8; 32] = result.into();
