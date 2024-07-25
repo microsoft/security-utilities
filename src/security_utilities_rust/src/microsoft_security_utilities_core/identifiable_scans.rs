@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 /* Indicates the char is part of a small mask */
 const MASK_SMALL: u8 = 1 << 0;
@@ -109,7 +109,7 @@ pub struct PossibleScanMatch {
     start: u64,
     len: usize,
     utf8: bool,
-    validator: Rc<dyn Fn(&[u8]) -> usize>,
+    validator: Arc<dyn Fn(&[u8]) -> usize + Send + Sync>,
 }
 
 impl PossibleScanMatch {
@@ -119,7 +119,7 @@ impl PossibleScanMatch {
         start: u64,
         len: usize,
         utf8: bool,
-        validator: Rc<dyn Fn(&[u8]) -> usize>) -> Self {
+        validator: Arc<dyn Fn(&[u8]) -> usize + Send + Sync>) -> Self {
         Self {
             name,
             def_index,
@@ -257,7 +257,7 @@ pub struct ScanDefinition {
     mask_size: u8,
     packed_utf8: u64,
     packed_utf16: u64,
-    validator: Rc<dyn Fn(&[u8]) -> usize>,
+    validator: Arc<dyn Fn(&[u8]) -> usize + Send + Sync>,
 }
 
 impl ScanDefinition {
@@ -267,7 +267,7 @@ impl ScanDefinition {
         sig_char: u8,
         before: u64,
         len: usize,
-        validator: impl Fn(&[u8]) -> usize + 'static) -> Self {
+        validator: impl Fn(&[u8]) -> usize + 'static + Send + Sync) -> Self {
         match sig.len() {
             3 | 4 => { },
             _ => { panic!("Signature has to be 3 or 4 bytes"); }
@@ -302,7 +302,7 @@ impl ScanDefinition {
             mask_size,
             packed_utf8: Self::pack_utf8(sig),
             packed_utf16: Self::pack_utf16(sig),
-            validator: Rc::new(validator),
+            validator: Arc::new(validator),
         }
     }
 

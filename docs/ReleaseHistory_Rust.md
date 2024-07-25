@@ -15,6 +15,7 @@ This document contains release notes pertaining to the Rust crates.
 # UNRELEASED
 - DEP: `System.Text.Json` updated to `v8.0.4` to resolve Depandabot alert.
 - NEW: Introduces the `ScanEngine` struct, which allows simplified usage in concurrent scenarios---a single `ScanEngine` instance, along with per-thread `ScanState` instances, suffice without the need for additional synchronization. The existing `Scan` struct is operationally unchanged for users.
+- BRK: `Send` and `Sync` bounds have been added for `ScanDefinition` validators. This allows `ScanEngine` to be `Send + Sync`.
 
 # 1.5.2 - 07/05/2024
 - NEW: Added an initial secret redaction capability to the Rust package.
