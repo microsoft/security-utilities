@@ -32,8 +32,12 @@ fn generate_sha256_hash<'a>(text: &str, buffer: &'a mut [u8; 64]) -> &'a [u8; 64
         sha.finalize_reset()
     });
 
+
     let data: [u8; 32] = result.into();
 
+    // ASCII-Hex encode the data.
+    // This is equivalent to write!(some_str, "{:X}", &data[..]);
+    // but avoids the need for a heap-allocated string buffer.
     for (idx, byte) in data.into_iter().enumerate() {
         // NOTE(unwrap): u8 & 0xF is always valid.
         let lhs = hex_encode((byte >> 4) & 0xF).unwrap();
