@@ -12,6 +12,9 @@ This document contains release notes pertaining to the Rust crates.
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# UNRELEASED
+- NEW: Introduce `marvin::{compute_hash_slice, compute_hash32_slice}` to compute marvin checksums directly from slices. `marvin::{compute_hash, compute_hash32}` also rely on the new, faster implementation.
+
 # 1.5.3 - 07/26/2024
 - DEP: `System.Text.Json` updated to `v8.0.4` to resolve Depandabot alert.
 - NEW: Introduces the `ScanEngine` struct, which allows simplified usage in concurrent scenarios---a single `ScanEngine` instance, along with per-thread `ScanState` instances, suffice without the need for additional synchronization. The existing `Scan` struct is operationally unchanged for users.
