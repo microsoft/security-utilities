@@ -27,9 +27,20 @@ namespace Microsoft.Security.Utilities.Cli
 
             outputFileName = Path.Combine(outputDirectory, "UnclassifiedPotentialSecurityKeys.json");
             json = JsonConvert.SerializeObject(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
-                                                      Formatting.Indented,
-                                                      new StringEnumConverter());
+                                               Formatting.Indented,
+                                               new StringEnumConverter());
             File.WriteAllText(outputFileName, json);
+
+
+            foreach (var precision in new[] { DetectionMetadata.HighConfidence, DetectionMetadata.MediumConfidence, DetectionMetadata.LowConfidence })
+            {
+                outputFileName = Path.Combine(outputDirectory, $"{precision}SecurityModels.json");
+                json = JsonConvert.SerializeObject(WellKnownRegexPatterns.SecretStoreClassificationDetections
+                    .Where(d => d.DetectionMetadata.HasFlag(precision)),
+                    Formatting.Indented,
+                    new StringEnumConverter());
+                File.WriteAllText(outputFileName, json);
+            }
 
             return 0;
         }

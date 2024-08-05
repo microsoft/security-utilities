@@ -45,27 +45,34 @@
     "Id": "SEC000/003",
     "Name": "Unclassified32CharacterString",
     "Signatures": null,
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy, Unclassified"
   },
   {
     "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=$",
     "Id": "SEC000/000",
     "Name": "Unclassified32ByteBase64String",
     "Signatures": null,
-    "DetectionMetadata": "HighEntropy"
+    "DetectionMetadata": "HighEntropy, Unclassified"
   },
   {
     "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==$",
     "Id": "SEC000/001",
     "Name": "Unclassified64ByteBase64String",
     "Signatures": null,
-    "DetectionMetadata": "HighEntropy"
+    "DetectionMetadata": "HighEntropy, Unclassified"
+  },
+  {
+    "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{34}$",
+    "Id": "SEC101/101",
+    "Name": "AadClientAppLegacyCredentials",
+    "Signatures": null,
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
   },
   {
     "Pattern": "^[1234567890abcdef]{32}$",
     "Id": "SEC000/002",
     "Name": "Unclassified16ByteHexadecimalString",
     "Signatures": null,
-    "DetectionMetadata": "HighEntropy"
+    "DetectionMetadata": "HighEntropy, Unclassified"
   }
 ]

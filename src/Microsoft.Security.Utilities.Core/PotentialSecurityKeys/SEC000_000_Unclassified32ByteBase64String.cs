@@ -19,7 +19,7 @@ internal sealed class Unclassified32ByteBase64String : RegexPattern
         Name = nameof(Unclassified32ByteBase64String);
         Pattern = $@"^[{WellKnownRegexPatterns.Base64}]{{43}}=$";
         
-        DetectionMetadata = DetectionMetadata.HighEntropy;
+        DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.Unclassified;
     }
 
     public override Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>("SEC000/000", "Unclassified32ByteBase64String");

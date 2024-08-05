@@ -1,0 +1,23 @@
+[
+  {
+    "Pattern": "(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{23,}\\.e[0-9A-Za-z-_=]{23,}\\.[0-9A-Za-z-_=]{24,}(?:[^0-9A-Za-z-_]|$)",
+    "Id": "SEC101/528",
+    "Name": "GenericJwt",
+    "Signatures": [
+      "eyJ",
+      "eyAi",
+      "ewog"
+    ],
+    "DetectionMetadata": "HighEntropy, MediumConfidence"
+  },
+  {
+    "Pattern": "(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?<refine>[0-9a-z\\/+%]{43,129}(?:=|%3d))",
+    "Id": "SEC101/060",
+    "Name": "LooseSasSecret",
+    "Signatures": [
+      "sig=",
+      "ret="
+    ],
+    "DetectionMetadata": "HighEntropy, MediumConfidence"
+  }
+]

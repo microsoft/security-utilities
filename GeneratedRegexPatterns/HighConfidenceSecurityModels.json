@@ -1,5 +1,14 @@
 [
   {
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?P<secret>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ9(?:9|D)[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{16}[A-Za-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{7}(?:[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{2}==)?)",
+    "Id": "SEC101/200",
+    "Name": "CommonAnnotatedSecurityKey",
+    "Signatures": [
+      "JQQJ9"
+    ],
+    "DetectionMetadata": "Identifiable"
+  },
+  {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=])(?<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{3}(7|8)Q~[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{31,34})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.+/=]|$)",
     "Id": "SEC101/156",
     "Name": "AadClientAppIdentifiableCredentials",
@@ -307,75 +316,6 @@
     "Id": "SEC101/176",
     "Name": "AzureContainerRegistryIdentifiableKey",
     "DetectionMetadata": "Identifiable"
-  },
-  {
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<secret>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]|$)",
-    "Id": "SEC101/565",
-    "Name": "SecretScanningSampleToken",
-    "Signatures": [
-      "ab85"
-    ],
-    "DetectionMetadata": "HighEntropy, FixedSignature"
-  },
-  {
-    "Pattern": "(^|[^0-9a-z])(?<refine>oy2[a-p][0-9a-z]{15}[aq][0-9a-z]{11}[eu][bdfhjlnprtvxz357][a-p][0-9a-z]{11}[aeimquy4])([^aeimquy4]|$)",
-    "Id": "SEC101/030",
-    "Name": "NuGetApiKey",
-    "Signatures": [
-      "oy2"
-    ],
-    "DetectionMetadata": "HighEntropy, FixedSignature"
-  },
-  {
-    "Pattern": "^(?i)[a-z0-9.=\\-:[_@\\/*\\]+?]{32}$",
-    "Id": "SEC101/101",
-    "Name": "AadClientAppLegacyCredentials",
-    "Signatures": null,
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
-  },
-  {
-    "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{34}$",
-    "Id": "SEC101/101",
-    "Name": "AadClientAppLegacyCredentials",
-    "Signatures": null,
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
-  },
-  {
-    "Pattern": "(?:[^2-7a-z]|^)(?<refine>[2-7a-z]{52})(?:[^2-7a-z]|$)",
-    "Id": "SEC101/102",
-    "Name": "AdoPat",
-    "Signatures": null,
-    "DetectionMetadata": "HighEntropy, EmbeddedChecksum"
-  },
-  {
-    "Pattern": "(?i)\\.documents\\.azure\\.com.+(?:^|[^0-9a-z\\/+])(?P<refine>[0-9a-z\\/+]{86}==)(?:[^=]|$)",
-    "Id": "SEC101/104",
-    "Name": "AzureCosmosDBLegacyCredentials",
-    "Signatures": null,
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
-  },
-  {
-    "Pattern": "(?i)(?:AccountName|StorageName|StorageAccount)\\s*=.+(?:Account|Storage)Key\\s*=\\s*(?<refine>[0-9a-z\\\\\\/+]{86}==)(?:[^=]|$)",
-    "Id": "SEC101/106",
-    "Name": "AzureStorageAccountLegacyCredentials",
-    "Signatures": null,
-    "DetectionMetadata": "HighEntropy"
-  },
-  {
-    "Pattern": "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)",
-    "Id": "SEC101/105",
-    "Name": "AzureMessageLegacyCredentials",
-    "Signatures": null,
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
-  },
-  {
-    "Pattern": "(?:^|[^0-9a-f\\-])(?P<refine>dapi[0-9a-f\\-]{32,34})(?:[^0-9a-f\\-]|$)",
-    "Id": "SEC101/110",
-    "Name": "AzureDatabricksPat",
-    "Signatures": [
-      "dapi"
-    ],
-    "DetectionMetadata": "HighEntropy"
   },
   {
     "Signatures": [

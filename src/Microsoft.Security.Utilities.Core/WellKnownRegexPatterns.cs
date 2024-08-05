@@ -56,6 +56,7 @@ public static class WellKnownRegexPatterns
         new Unclassified32CharacterString(),
         new Unclassified32ByteBase64String(),
         new Unclassified64ByteBase64String(),
+        new AadClientAppLegacyCredentials34(),      // SEC101/101
         new Unclassified16ByteHexadecimalString(),         
     };
 
@@ -83,7 +84,6 @@ public static class WellKnownRegexPatterns
         new AzureCacheForRedisIdentifiableKey(),
         new AzureContainerRegistryIdentifiableKey(),
         new NuGetApiKey(),
-        new AadClientAppLegacyCredentials34(),      // SEC101/101
         new AdoPat(),                               // SEC101/102
         new AzureCosmosDBLegacyCredentials(),       // SEC101/104
         new AzureStorageAccountLegacyCredentials(), // SEC101/106
