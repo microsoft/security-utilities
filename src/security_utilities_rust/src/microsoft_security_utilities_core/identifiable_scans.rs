@@ -1128,6 +1128,8 @@ impl Scan {
 
     pub fn possible_matches(&self) -> &Vec<PossibleScanMatch> { self.state.possible_matches() }
 
+    pub fn scan_defs(&self) -> &Vec<ScanDefinition> { &self.engine.options.defs }
+
     pub fn reset(&mut self) {
         self.state.reset();
     }
