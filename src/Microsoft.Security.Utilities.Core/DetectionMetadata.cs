@@ -18,11 +18,11 @@ public enum DetectionMetadata
 
     EmbeddedChecksum = 1 << 3,
 
-    ClearSurroundingContext = 1 << 4,
-
     Identifiable = FixedSignature | EmbeddedChecksum | HighEntropy | HighConfidence,
 
-    RequiresRotation = 1 << 5,
+    RequiresRotation = 1 << 4,
+
+    Unclassified = 1 << 5,
 
     LowConfidence = 1 << 6,
 

@@ -8,8 +8,8 @@ namespace Microsoft.Security.Utilities
 {
     public class Unclassified32CharacterString : RegexPattern
     {
+        public const string AzureContainerRegistryLegacyKey = nameof(AzureContainerRegistryLegacyKey);
         public const string AadClientAppLegacyCredentials = nameof(AadClientAppLegacyCredentials);
-
 
         /// <summary>
         /// Detect 32-character Azure Active Directory client application legacy credentials.
@@ -20,7 +20,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC000/003";
             Name = nameof(Unclassified32CharacterString);
-            DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat;
+            DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat | DetectionMetadata.Unclassified;
             Pattern = $"^(?i)[a-z0-9.=\\-:[_@\\/*\\]+?]{{32}}$";
         }
 
@@ -31,34 +31,47 @@ namespace Microsoft.Security.Utilities
                 return null;
             }
 
-            if (!HasAtLeastOneSymbol(match))
+            if (HasAtLeastOneNonBase64EncodingSymbol(match))
             {
-                return new Tuple<string, string>("SEC000/003", "PotentialAzureContainerRegistryLegacyKey");
+                return new Tuple<string, string>("SEC101/101", AadClientAppLegacyCredentials);
             }
 
-            return new Tuple<string, string>("SEC000/003", "PotentialAadClientAppLegacyCredentials");
+            return new Tuple<string, string>("SEC101/109", AzureContainerRegistryLegacyKey);
         }
+
+        private const string symbols = ".=-:[_@/*]+?";
+        private static readonly HashSet<char> symbolChars = new HashSet<char>(symbols.ToCharArray());
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
-            while (true)
+            int sampleSize = 5;
+
+            string alphabet = $"={WellKnownRegexPatterns.Base64}";
+            yield return $"{WellKnownRegexPatterns.GenerateString(alphabet, 32)}";
+
+            while (sampleSize > 0)
             {
-                string key = WellKnownRegexPatterns.GenerateString($"{WellKnownRegexPatterns.Base62}.=-:[_@/*]+?", 32);
-                if (HasAtLeastOneSymbol(key))
+                string key = WellKnownRegexPatterns.GenerateString($"{WellKnownRegexPatterns.Base62}{symbols}", 32);
+                if (AadClientAppLegacyCredentials34.HasAtLeastOneSymbol(key))
                 {
+                    sampleSize--;
                     yield return key;
-                    break;
                 }
-
-                yield return WellKnownRegexPatterns.GenerateString($"{WellKnownRegexPatterns.Base62}.=-:[_@/*]+?", 32);
-                yield return WellKnownRegexPatterns.GenerateString($"{WellKnownRegexPatterns.Base62}.=-:[_@/*]+?", 32);
-                yield return WellKnownRegexPatterns.GenerateString($"{WellKnownRegexPatterns.Base62}.=-:[_@/*]+?", 32);
-                yield return WellKnownRegexPatterns.GenerateString($"{WellKnownRegexPatterns.Base62}.=-:[_@/*]+?", 32);
-                yield return WellKnownRegexPatterns.GenerateString($"{WellKnownRegexPatterns.Base62}.=-:[_@/*]+?", 32);
-
-                string alphabet = $"={WellKnownRegexPatterns.Base64}";
-                yield return $"{WellKnownRegexPatterns.GenerateString(alphabet, 32)}";
             }
+        }
+
+        internal static bool HasAtLeastOneSymbol(string text)
+        {
+            foreach (char c in text)
+            {
+
+                if (symbolChars.Contains(c))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public override IEnumerable<string> GenerateFalsePositiveExamples()
@@ -70,14 +83,14 @@ namespace Microsoft.Security.Utilities
             yield return WellKnownRegexPatterns.GenerateString($"{WellKnownRegexPatterns.Base62}.=-:[_@/*]+?", 31);
         }
 
-        private static bool HasAtLeastOneSymbol(string text)
+        private static bool HasAtLeastOneNonBase64EncodingSymbol(string text)
         {
             foreach (char c in text)
             {
 
-                if (c == '.' || c == '=' || c == '-' || c == ':' ||
-                    c == '[' || c == '_' || c == '@' || c == '/' ||
-                    c == '*' || c == ']' || c == '+' || c == '?')
+                if (c == '.' || c == '-' || c == ':' ||
+                    c == '[' || c == '_' || c == '@' ||
+                    c == '*' || c == ']' || c == '?')
                 {
                     return true;
                 }
