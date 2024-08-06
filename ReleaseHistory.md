@@ -1,8 +1,26 @@
 # Microsoft.Security.Utilities.Core Release History
+- NR  => new rule
+- PRF => performance work
+- FCR => fingerprint change or refactor
+- RRR => rule rename or refactor
+- FPC => regex candidate reduction
+- FNC => regex candidate increase
+- FPS => FP reduction in static analysis
+- FNS => false negative reduction in static analysis
+- FPD => FP reduction in dynamic phase
+- FND => False negative reduction in dynamic phase
+- UER => eliminate unhandled exceptions in rules
+- UEE => eliminate unhandled exceptions in engine
+- DEP => upgrade dependency versions
+- NEW => new feature 
 
 UNRELEASED
-
-
+* NEW: Provide `StandardCommonAnnotatedKeySizeInBytes` and `LongFormCommonAnnotatedKeySizeInBytes` constants (63 and 64, respectively).
+* NEW: `TryValidateCommonAnnotatedKey(byte[], string)` to facilitate working with keys as byte arrays.
+* NEW: `ComputeDerivedCommonAnnotatedKey(string, byte[])` to facilitate working with keys as byte arrays.
+* NEW: `GenerateCommonAnnotatedKeyBytes(bool, byte[], byte[], bool, char?)` to facilitate working with keys as byte arrays.
+* NEW: Change `ComputeDerivedCommonAnnotatedKey(string, string)` `textToHash` parameter name to `derivationInput` to better reflect its purpose.
+* 
 ## **v1.4.1** [NuGet Package](https://www.nuget.org/packages/Microsoft.Security.Utilities/1.4.1)
 * NEW: Emergent and unfinished classification and redaction capability.
 
