@@ -5,7 +5,6 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -77,15 +76,13 @@ public static class IdentifiableSecrets
 
         ulong checksumSeed = VersionTwoChecksumSeed;
 
-        byte[] bytesToChecksum = new byte[60];
+        int firstChecksumByteIndex = 60;
+        byte[] bytesToChecksum = new byte[firstChecksumByteIndex];
         Array.Copy(key, bytesToChecksum, bytesToChecksum.Length);
-
         
         int checksum = Marvin.ComputeHash32(bytesToChecksum, checksumSeed, 0, bytesToChecksum.Length);
 
         byte[] checksumBytes = BitConverter.GetBytes(checksum);
-
-        int firstChecksumByteIndex = 60;
         
         for (int i = firstChecksumByteIndex; i < key.Length; i++)
         {
