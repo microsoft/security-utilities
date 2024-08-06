@@ -11,7 +11,7 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-UNRELEASED
+# [1.6.0](https://www.nuget.org/packages/Microsoft.Security.Utilities.Core/1.6.0) - 08/06/2024
 - NEW: Provide `StandardCommonAnnotatedKeySizeInBytes` and `LongFormCommonAnnotatedKeySizeInBytes` constants (63 and 64, respectively).
 - NEW: `TryValidateCommonAnnotatedKey(byte[], string)` to facilitate working with keys as byte arrays.
 - NEW: `ComputeDerivedCommonAnnotatedKey(string, byte[])` to facilitate working with keys as byte arrays.
