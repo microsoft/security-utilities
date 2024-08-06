@@ -30,6 +30,10 @@ public static class IdentifiableSecrets
 
     public static uint MinimumGeneratedKeySize => 24;
 
+    public static uint StandardCommonAnnotatedKeySizeInBytes => 63;
+
+    public static uint LongFormCommonAnnotatedKeySizeInBytes => 64;
+
     public static uint StandardCommonAnnotatedKeySize => 84;
 
     public static uint LongFormCommonAnnotatedKeySize => 88;
@@ -57,6 +61,38 @@ public static class IdentifiableSecrets
         return ch.IsBase62EncodingChar() ||
                ch == '-' ||
                ch == '_';
+    }
+
+    public static bool TryValidateCommonAnnotatedKey(byte[] key,
+                                                     string base64EncodedSignature)
+    {
+        if (key == null || 
+            (key.Length != StandardCommonAnnotatedKeySizeInBytes && key.Length != LongFormCommonAnnotatedKeySizeInBytes))
+        {
+            return false;
+        }
+
+        bool longForm = key.Length == LongFormCommonAnnotatedKeySizeInBytes;
+
+        ulong checksumSeed = VersionTwoChecksumSeed;
+
+        int firstChecksumByteIndex = 60;
+        byte[] bytesToChecksum = new byte[firstChecksumByteIndex];
+        Array.Copy(key, bytesToChecksum, bytesToChecksum.Length);
+        
+        int checksum = Marvin.ComputeHash32(bytesToChecksum, checksumSeed, 0, bytesToChecksum.Length);
+
+        byte[] checksumBytes = BitConverter.GetBytes(checksum);
+        
+        for (int i = firstChecksumByteIndex; i < key.Length; i++)
+        {
+            if (key[i] != checksumBytes[i - firstChecksumByteIndex])
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static bool TryValidateCommonAnnotatedKey(string key,
@@ -131,6 +167,13 @@ public static class IdentifiableSecrets
     }
 
     public static string ComputeDerivedCommonAnnotatedKey(string textToHash,
+                                                          byte[] commonAnnotatedSecret)
+    {
+        string keyText = Convert.ToBase64String(commonAnnotatedSecret);
+        return ComputeDerivedCommonAnnotatedKey(textToHash, keyText);
+    }
+
+    public static string ComputeDerivedCommonAnnotatedKey(string derivationInput,
                                                           string commonAnnotatedSecret)
     {
         if (!CommonAnnotatedKey.TryCreate(commonAnnotatedSecret, out CommonAnnotatedKey cask))
@@ -139,7 +182,7 @@ public static class IdentifiableSecrets
         }
 
         using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(commonAnnotatedSecret));
-        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(textToHash));
+        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(derivationInput));
 
         byte[] derivedKeyBytes = new byte[40];
         Array.Copy(hashBytes, derivedKeyBytes, derivedKeyBytes.Length);
@@ -155,6 +198,23 @@ public static class IdentifiableSecrets
         int checksum = Marvin.ComputeHash32(derivedKeyBytes, VersionTwoChecksumSeed, 0, derivedKeyBytes.Length);
 
         return $"{derivedKey}{checksum.ToBase62().Substring(0,4)}";
+    }
+
+    public static byte[] GenerateCommonAnnotatedKeyBytes(string base64EncodedSignature,
+                                                         bool customerManagedKey,
+                                                         byte[] platformReserved,
+                                                         byte[] providerReserved,
+                                                         bool longForm = false,
+                                                         char? testChar = null)
+    {
+        string key = GenerateCommonAnnotatedKey(base64EncodedSignature,
+                                                customerManagedKey,
+                                                platformReserved,
+                                                providerReserved,
+                                                longForm,
+                                                testChar);
+
+        return Convert.FromBase64String(key);
     }
 
 

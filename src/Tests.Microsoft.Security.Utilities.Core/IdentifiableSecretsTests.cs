@@ -47,15 +47,29 @@ namespace Microsoft.Security.Utilities
                                                                                  new byte[3],
                                                                                  longForm: true);
 
-                bool result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(validKey, validSignature);
-                result.Should().BeTrue(because: "a generated key should validate");
+                bool result = TryValidateCommonAnnotatedKeyHelper(validKey, validSignature, out string failedApi);
+                result.Should().BeTrue(because: $"'{validKey}' should validate using '{failedApi}'");
 
                 result = validKey.Length == IdentifiableSecrets.LongFormCommonAnnotatedKeySize
                     ? validKey.Length == IdentifiableSecrets.LongFormCommonAnnotatedKeySize
                     : validKey.Length == IdentifiableSecrets.StandardCommonAnnotatedKeySize;
 
-                result.Should().BeTrue(because: $"generated key should have correct length with longForm == '{longForm}'");
+                result.Should().BeTrue(because: $"'{validKey}' should have correct length with longForm == '{longForm}'");
             }
+        }
+
+        private bool TryValidateCommonAnnotatedKeyHelper(string key, string base64EncodedSignature, out string failedApi)
+        {
+            failedApi = "TryValidateCommonAnnotatedKey(string, string)";
+            if (!IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, base64EncodedSignature)) 
+            { 
+                return false; 
+            }
+
+            failedApi = "TryValidateCommonAnnotatedKey(byte[], string)";
+            byte[] keyBytes = Convert.FromBase64String(key);
+
+            return IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, base64EncodedSignature);
         }
 
         [TestMethod]
