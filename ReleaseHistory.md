@@ -1,4 +1,8 @@
-# Microsoft.Security.Utilities Release History
+# Microsoft.Security.Utilities.Core Release History
+
+UNRELEASED
+
+
 ## **v1.4.1** [NuGet Package](https://www.nuget.org/packages/Microsoft.Security.Utilities/1.4.1)
 * NEW: Emergent and unfinished classification and redaction capability.
 
