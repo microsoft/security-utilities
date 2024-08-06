@@ -12,11 +12,13 @@
 - FNS => False negative reduction in static analysis.
 
 UNRELEASED
-* NEW: Provide `StandardCommonAnnotatedKeySizeInBytes` and `LongFormCommonAnnotatedKeySizeInBytes` constants (63 and 64, respectively).
-* NEW: `TryValidateCommonAnnotatedKey(byte[], string)` to facilitate working with keys as byte arrays.
-* NEW: `ComputeDerivedCommonAnnotatedKey(string, byte[])` to facilitate working with keys as byte arrays.
-* NEW: `GenerateCommonAnnotatedKeyBytes(bool, byte[], byte[], bool, char?)` to facilitate working with keys as byte arrays.
-* NEW: Change `ComputeDerivedCommonAnnotatedKey(string, string)` `textToHash` parameter name to `derivationInput` to better reflect its purpose.
+- NEW: Provide `StandardCommonAnnotatedKeySizeInBytes` and `LongFormCommonAnnotatedKeySizeInBytes` constants (63 and 64, respectively).
+- NEW: `TryValidateCommonAnnotatedKey(byte[], string)` to facilitate working with keys as byte arrays.
+- NEW: `ComputeDerivedCommonAnnotatedKey(string, byte[])` to facilitate working with keys as byte arrays.
+- NEW: `GenerateCommonAnnotatedKeyBytes(bool, byte[], byte[], bool, char?)` to facilitate working with keys as byte arrays.
+- NEW: Change `ComputeDerivedCommonAnnotatedKey(string, string)` `textToHash` parameter name to `derivationInput` to better reflect its purpose.
+- NEW: Add preliminary notion of confidence levels.
+- BUG: Move `AadClientAppLegacyCredentials34` out of `HighConfidenceMicrosoftSecurityModels` as a noisy check.
 
 # 1.5.2 - 07/05/2024
 - NEW: Added an initial secret redaction capability to the Rust package.
