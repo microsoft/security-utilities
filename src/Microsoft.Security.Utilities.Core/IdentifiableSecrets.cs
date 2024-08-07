@@ -166,23 +166,43 @@ public static class IdentifiableSecrets
         return result;
     }
 
-    public static string ComputeDerivedCommonAnnotatedKey(string textToHash,
+    public static string ComputeDerivedCommonAnnotatedKey(string derivationInput,
                                                           byte[] commonAnnotatedSecret)
     {
         string keyText = Convert.ToBase64String(commonAnnotatedSecret);
-        return ComputeDerivedCommonAnnotatedKey(textToHash, keyText);
+        return ComputeDerivedCommonAnnotatedKey(derivationInput, keyText);
     }
 
     public static string ComputeDerivedCommonAnnotatedKey(string derivationInput,
                                                           string commonAnnotatedSecret)
     {
+        return ComputeCommonAnnotatedHash(derivationInput, commonAnnotatedSecret, 'D');
+    }
+
+    public static string ComputeCommonAnnotatedHash(string textToHash,
+                                                    byte[] commonAnnotatedSecret,
+                                                    char hashedDataSignature = 'H')
+    {
+        string keyText = Convert.ToBase64String(commonAnnotatedSecret);
+        return ComputeCommonAnnotatedHash(textToHash, keyText, hashedDataSignature);
+    }
+
+    public static string ComputeCommonAnnotatedHash(string textToHash,
+                                                    string commonAnnotatedSecret,
+                                                    char hashedDataSignature = 'H')
+    {
+        if (hashedDataSignature != 'D' && hashedDataSignature != 'H')
+        {
+            throw new ArgumentException("The hashed data signature must be either 'D' (for derived keys) or 'H' (for arbitrary hashes).");
+        }
+
         if (!CommonAnnotatedKey.TryCreate(commonAnnotatedSecret, out CommonAnnotatedKey cask))
-        { 
+        {
             throw new ArgumentException("The provided key is not a valid common annotated security key.");
         }
 
         using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(commonAnnotatedSecret));
-        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(derivationInput));
+        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(textToHash));
 
         byte[] derivedKeyBytes = new byte[40];
         Array.Copy(hashBytes, derivedKeyBytes, derivedKeyBytes.Length);
@@ -197,7 +217,7 @@ public static class IdentifiableSecrets
 
         int checksum = Marvin.ComputeHash32(derivedKeyBytes, VersionTwoChecksumSeed, 0, derivedKeyBytes.Length);
 
-        return $"{derivedKey}{checksum.ToBase62().Substring(0,4)}";
+        return $"{derivedKey}{checksum.ToBase62().Substring(0, 4)}";
     }
 
     public static byte[] GenerateCommonAnnotatedKeyBytes(string base64EncodedSignature,
