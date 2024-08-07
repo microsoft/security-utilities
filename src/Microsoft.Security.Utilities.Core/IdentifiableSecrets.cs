@@ -179,12 +179,12 @@ public static class IdentifiableSecrets
         return ComputeCommonAnnotatedHash(derivationInput, commonAnnotatedSecret, 'D');
     }
 
-    public static string ComputeCommonAnnotatedHash(string textToHash,
-                                                    byte[] commonAnnotatedSecret,
-                                                    char hashedDataSignature = 'H')
+    public static byte[] ComputeCommonAnnotatedHash(string textToHash,
+                                                    byte[] commonAnnotatedSecret)
     {
         string keyText = Convert.ToBase64String(commonAnnotatedSecret);
-        return ComputeCommonAnnotatedHash(textToHash, keyText, hashedDataSignature);
+        string hash = ComputeCommonAnnotatedHash(textToHash, keyText, 'H');
+        return Convert.FromBase64String(hash);
     }
 
     public static string ComputeCommonAnnotatedHash(string textToHash,
