@@ -196,7 +196,43 @@ namespace Microsoft.Security.Utilities
         }
 
         [TestMethod]
-        public void IdentifiableSecrets_GeneratedDerivedAnnotatedKeys()
+        public void IdentifiableSecrets_ComputeDerivedCommonAnnotatedKeyOverloadsAreEquivalent()
+        {
+            string key = IdentifiableSecrets.GenerateCommonAnnotatedKey("ABCD",
+                                                                        customerManagedKey: true,
+                                                                        new byte[9],
+                                                                        new byte[3]);
+
+            string textToHash = "NonsensitiveData";
+
+            byte[] derivedKeyBytes = IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(textToHash,
+                                                                                            Encoding.UTF8.GetBytes(key));
+
+            string derivedKey = IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(textToHash, key);
+
+            derivedKey.Should().Be(Convert.ToBase64String(derivedKeyBytes), because: "the computed hash should match the byte array");
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_ComputeCommonAnnotatedHashOverloadsAreEquivalent()
+        {
+            string key = IdentifiableSecrets.GenerateCommonAnnotatedKey("ABCD",
+                                                                        customerManagedKey: true,
+                                                                        new byte[9],
+                                                                        new byte[3]);
+
+            string textToHash = "NonsensitiveData";
+
+            byte[] computedHashBytes = IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash,
+                                                                                      Encoding.UTF8.GetBytes(key));
+
+            string computedHash = IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash, key);
+
+            computedHash.Should().Be(Convert.ToBase64String(computedHashBytes), because: "the computed hash should match the byte array");
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_GeneratedDerivedAndHashedAnnotatedKeys()
         {
             using var assertionScope = new AssertionScope();
 
@@ -220,22 +256,29 @@ namespace Microsoft.Security.Utilities
 
                     string textToHash = new string((char)('A' + i + 2), 32);
 
-                    string derivedKey = IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(textToHash, key);
+                    foreach (bool derived in new[] { true, false })
+                    {
+                        string computedKey = derived
+                            ? IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(textToHash, key)
+                            : IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash, key);
+                        
+                        string label = derived ? "derived" : "hashed";
 
-                    bool result = CommonAnnotatedKey.TryCreate(derivedKey, out CommonAnnotatedKey caKey);
-                    result.Should().BeTrue(because: $"the derived key '{derivedKey}' should be a valid common annotated security key");
+                        bool result = CommonAnnotatedKey.TryCreate(computedKey, out CommonAnnotatedKey caKey);
+                        result.Should().BeTrue(because: $"the derived key '{computedKey}' should be a valid common annotated security key");
 
-                    caKey.IsDerivedKey.Should().BeTrue(because: $"the derived key '{derivedKey}' 'IsDerived' property should be correct");
-                    caKey.PlatformReserved.Should().Be(platformEncoded, because: "encoded platform reserved data should match");
-                    caKey.ProviderReserved.Should().Be(providerEncoded, because: "encoded provider reserved data should match");
-                    caKey.StandardFixedSignature.Should().Be(IdentifiableSecrets.CommonAnnotatedDerivedKeySignature);
+                        caKey.IsDerivedKey.Should().BeTrue(because: $"the {label} key '{computedKey}' 'IsDerived' property should be correct");
+                        caKey.PlatformReserved.Should().Be(platformEncoded, because: "encoded platform reserved data should match");
+                        caKey.ProviderReserved.Should().Be(providerEncoded, because: "encoded provider reserved data should match");
+                        caKey.StandardFixedSignature.Should().Be(IdentifiableSecrets.CommonAnnotatedDerivedKeySignature);
 
-                    result = IdentifiableSecrets.CommonAnnotatedKeyRegex.IsMatch(derivedKey);
-                    result.Should().BeTrue(because: $"the derived key '{derivedKey}' should match the canonical format regex");
+                        result = IdentifiableSecrets.CommonAnnotatedKeyRegex.IsMatch(computedKey);
+                        result.Should().BeTrue(because: $"the {label} key '{computedKey}' should match the canonical format regex");
 
-                    DateTime utcNow = DateTime.UtcNow;
-                    caKey.CreationDate.Year.Should().Be(utcNow.Year, because: "the derived key creation year should be correct");
-                    caKey.CreationDate.Month.Should().Be(utcNow.Month, because: "the derived key creation month should be correct");
+                        DateTime utcNow = DateTime.UtcNow;
+                        caKey.CreationDate.Year.Should().Be(utcNow.Year, because: $"the {label} key creation year should be correct");
+                        caKey.CreationDate.Month.Should().Be(utcNow.Month, because: $"the {label} key creation month should be correct");
+                    }
                 }
             }
         }
