@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="../../ReleaseHistory.md" Pack="true" PackagePath="ReleaseHistory.md">
+    <None Include="../../docs/ReleaseHistory.md" Pack="true" PackagePath="ReleaseHistory.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
