@@ -6,17 +6,27 @@ fn generate_and_detect_common_annotated_key_test() {
     let options = microsoft_security_utilities_core::identifiable_scans::ScanOptions::default();
     let mut scan = microsoft_security_utilities_core::identifiable_scans::Scan::new(options);
 
-    let input = microsoft_security_utilities_core::identifiable_secrets::generate_common_annotated_test_key(
-                                                    microsoft_security_utilities_core::identifiable_secrets::VERSION_TWO_CHECKSUM_SEED.clone(),
-                                                    "TEST",
-                                                    true,
-                                                    None,
-                                                    None,
-                                                    false,
-                                                    Some('a')
-                                                    );
+    // Depending on the current date, some choices of test_char will never
+    // generate a valid key, so iterate over different options to avoid.
+    let mut input = String::new();
+    for test_char in 'a'..='z' {
+        let candidate = microsoft_security_utilities_core::identifiable_secrets::generate_common_annotated_test_key(
+            microsoft_security_utilities_core::identifiable_secrets::VERSION_TWO_CHECKSUM_SEED.clone(),
+            "TEST",
+            true,
+            None,
+            None,
+            false,
+            Some(test_char)
+            );
 
-    let generated_input = input.clone().unwrap();
+        input = candidate.unwrap();
+        if !input.is_empty() {
+            break;
+        }
+    }
+
+    let generated_input = input.clone();
     let input_as_bytes = generated_input.as_bytes();
     scan.parse_bytes(input_as_bytes);
 
@@ -96,4 +106,3 @@ fn identifiable_scanning_and_validation_perf_benchmark() {
     println!("Mean time for identifiable_scan: {:?}", mean_identifiable_scan_duration);
     println!("Mean time for checksum validation: {:?}", mean_validation_duration);
 }
-
