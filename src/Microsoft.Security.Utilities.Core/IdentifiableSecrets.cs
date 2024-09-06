@@ -206,13 +206,18 @@ public static class IdentifiableSecrets
 
         if (CommonAnnotatedKey.TryCreate(secret, out CommonAnnotatedKey cask))
         {
-            reserved = $"{cask.PlatformReserved}{cask.ProviderReserved}";
+            reserved = $"{cask.DateText}{cask.PlatformReserved}{cask.ProviderReserved}{cask.ProviderFixedSignature}";
         }
         else
         {
             // This will raise an exception if we don't have a provider signature.
             // This data *must* be provided if the input isn't a CASK secret.
             ValidateBase64EncodedSignature(providerSignature, encodeForUrl: false);
+            // TODO we need to compute the allocation timestamp here and encode it
+            // 
+            // Simplistic timestamp computation.
+            //byte yearsSince2024 = (byte)(DateTime.UtcNow.Year - 2024);
+            //byte zeroIndexedMonth = (byte)(DateTime.UtcNow.Month - 1);
         }
 
         using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(secret));
@@ -226,7 +231,7 @@ public static class IdentifiableSecrets
 
         string standardSignature = $"JQQJ9{hashSignature}";
 
-        string derivedKey = $"{encodedRandom}{reserved}";
+        string derivedKey = $"{encodedRandom}{standardSignature}{reserved}";
         derivedKeyBytes = Convert.FromBase64String(derivedKey);
 
         int checksum = Marvin.ComputeHash32(derivedKeyBytes, VersionTwoChecksumSeed, 0, derivedKeyBytes.Length);
