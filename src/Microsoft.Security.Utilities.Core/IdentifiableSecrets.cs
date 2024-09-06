@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -167,42 +168,54 @@ public static class IdentifiableSecrets
     }
 
     public static byte[] ComputeDerivedCommonAnnotatedKey(string derivationInput,
-                                                          byte[] commonAnnotatedSecret)
+                                                          byte[] commonAnnotatedSecret,
+                                                          string providerSignature = null)
     {
         string keyText = Encoding.UTF8.GetString(commonAnnotatedSecret);
-        string derivedKey = ComputeDerivedCommonAnnotatedKey(derivationInput, keyText);
+        string derivedKey = ComputeDerivedCommonAnnotatedKey(derivationInput, keyText, providerSignature);
         return Convert.FromBase64String(derivedKey);
     }
 
     public static string ComputeDerivedCommonAnnotatedKey(string derivationInput,
-                                                          string commonAnnotatedSecret)
+                                                          string commonAnnotatedSecret,
+                                                          string providerSignature = null)
     {
-        return ComputeCommonAnnotatedHash(derivationInput, commonAnnotatedSecret, 'D');
+        return ComputeCommonAnnotatedHash(derivationInput, commonAnnotatedSecret, providerSignature, hashSignature: 'D');
     }
 
     public static byte[] ComputeCommonAnnotatedHash(string textToHash,
-                                                    byte[] commonAnnotatedSecret)
+                                                    byte[] commonAnnotatedSecret,
+                                                    string providerSignature = null)
     {
         string keyText = Encoding.UTF8.GetString(commonAnnotatedSecret);
-        string hash = ComputeCommonAnnotatedHash(textToHash, keyText, 'H');
+        string hash = ComputeCommonAnnotatedHash(textToHash, keyText, providerSignature, 'H');
         return Convert.FromBase64String(hash);
     }
 
     public static string ComputeCommonAnnotatedHash(string textToHash,
-                                                    string commonAnnotatedSecret,
-                                                    char hashedDataSignature = 'H')
+                                                    string secret,
+                                                    string providerSignature = null,
+                                                    char hashSignature = 'H')
     {
-        if (hashedDataSignature != 'D' && hashedDataSignature != 'H')
+        if (hashSignature != 'D' && hashSignature != 'H')
         {
-            throw new ArgumentException("The hashed data signature must be either 'D' (for derived keys) or 'H' (for arbitrary hashes).");
+            throw new ArgumentException("The hash signature must be either 'D' (for derived keys) or 'H' (for arbitrary hashes).");
         }
 
-        if (!CommonAnnotatedKey.TryCreate(commonAnnotatedSecret, out CommonAnnotatedKey cask))
+        string reserved = "AAAAAAAAAAAAAAAA";
+
+        if (CommonAnnotatedKey.TryCreate(secret, out CommonAnnotatedKey cask))
         {
-            throw new ArgumentException("The provided key is not a valid common annotated security key.");
+            reserved = $"{cask.PlatformReserved}{cask.ProviderReserved}";
+        }
+        else
+        {
+            // This will raise an exception if we don't have a provider signature.
+            // This data *must* be provided if the input isn't a CASK secret.
+            ValidateBase64EncodedSignature(providerSignature, encodeForUrl: false);
         }
 
-        using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(commonAnnotatedSecret));
+        using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(secret));
         byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(textToHash));
 
         byte[] derivedKeyBytes = new byte[40];
@@ -211,9 +224,9 @@ public static class IdentifiableSecrets
         // All data preceding the standard fixed signature comprises the random content.
         string encodedRandom = derivedKeyBytes.ToBase62().Substring(0, CommonAnnotatedKey.StandardFixedSignatureOffset);
 
-        string standardSignature = "JQQJ9D";
+        string standardSignature = $"JQQJ9{hashSignature}";
 
-        string derivedKey = $"{encodedRandom}{standardSignature}{cask.DateText}{cask.PlatformReserved}{cask.ProviderReserved}{cask.ProviderFixedSignature}";
+        string derivedKey = $"{encodedRandom}{reserved}";
         derivedKeyBytes = Convert.FromBase64String(derivedKey);
 
         int checksum = Marvin.ComputeHash32(derivedKeyBytes, VersionTwoChecksumSeed, 0, derivedKeyBytes.Length);
