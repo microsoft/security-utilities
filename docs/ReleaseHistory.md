@@ -11,6 +11,9 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# 1.6.1 - 09/06/2024
+- BUG: `v1.6.0` missing the `ComputeCommonAnnotatedHash` API.
+
 # 1.6.0 - 08/09/2024
 - NEW: Add `ComputeCommonAnnotatedHash` to generate annotated fingerprints from arbitrary strings.
 - NEW: Provide `StandardCommonAnnotatedKeySizeInBytes` and `LongFormCommonAnnotatedKeySizeInBytes` constants (63 and 64, respectively).
