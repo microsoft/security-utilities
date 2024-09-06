@@ -17,7 +17,7 @@
   <PropertyGroup Condition=" $(TargetFramework) != 'net6.0'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <None Remove="stylecop.json" />
   </ItemGroup>

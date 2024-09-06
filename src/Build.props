@@ -59,6 +59,10 @@
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="$(MsBuildThisFileDirectory)../refs/win-x64/microsoft_security_utilities_core.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
