@@ -22,7 +22,7 @@ public static class IdentifiableSecrets
 
     public static readonly ulong VersionTwoChecksumSeed = ComputeHisV1ChecksumSeed("Default0");
 
-    public const string CommonAnnotatedKeyRegexPattern = "[A-Za-z0-9]{52}JQQJ9(9|D)[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
+    public const string CommonAnnotatedKeyRegexPattern = "[A-Za-z0-9]{52}JQQJ9(9|D|H)[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
 
     public static readonly Regex CommonAnnotatedKeyRegex = new(CommonAnnotatedKeyRegexPattern, RegexDefaults.DefaultOptionsCaseSensitive);
 
@@ -38,9 +38,13 @@ public static class IdentifiableSecrets
 
     public static uint LongFormCommonAnnotatedKeySize => 88;
 
-    public static string CommonAnnotatedKeySignature => "JQQJ99";
+    public static string CommonAnnotatedKeyCoreSignature = "JQQJ";
 
-    public static string CommonAnnotatedDerivedKeySignature => "JQQJ9D";
+    public static string CommonAnnotatedKeySignature => $"{CommonAnnotatedKeyCoreSignature}99";
+
+    public static string CommonAnnotatedDerivedKeySignature => $"{CommonAnnotatedKeyCoreSignature}9D";
+
+    public static string CommonAnnotatedHashedDataSignature => $"{CommonAnnotatedKeyCoreSignature}9H";
 
     public static bool IsBase62EncodingChar(this char ch)
     {
@@ -81,18 +85,26 @@ public static class IdentifiableSecrets
         Array.Copy(key, bytesToChecksum, bytesToChecksum.Length);
         
         int checksum = Marvin.ComputeHash32(bytesToChecksum, checksumSeed, 0, bytesToChecksum.Length);
+        byte[] computedChecksumBytes = BitConverter.GetBytes(checksum);
 
-        byte[] checksumBytes = BitConverter.GetBytes(checksum);
-        
-        for (int i = firstChecksumByteIndex; i < key.Length; i++)
+        byte[] encodedChecksumBytes = new byte[4];
+        Array.Copy(key, firstChecksumByteIndex, encodedChecksumBytes, 0, encodedChecksumBytes.Length);
+
+        if (encodedChecksumBytes[0] == computedChecksumBytes[0] &&
+            encodedChecksumBytes[1] == computedChecksumBytes[1] &&
+            encodedChecksumBytes[2] == computedChecksumBytes[2] &&
+            encodedChecksumBytes[3] == computedChecksumBytes[3])
         {
-            if (key[i] != checksumBytes[i - firstChecksumByteIndex])
-            {
-                return false;
-            }
+            return true;
         }
 
-        return true;
+        encodedChecksumBytes = computedChecksumBytes.ToBase62().FromBase62();
+
+        return encodedChecksumBytes[0] == computedChecksumBytes[0] &&
+               encodedChecksumBytes[1] == computedChecksumBytes[1] &&
+               encodedChecksumBytes[2] == computedChecksumBytes[2] &&
+               encodedChecksumBytes[3] == computedChecksumBytes[3];
+
     }
 
     public static bool TryValidateCommonAnnotatedKey(string key,
@@ -130,9 +142,16 @@ public static class IdentifiableSecrets
 
         byte[] checksumBytes = BitConverter.GetBytes(checksum);
 
+        string encodedFullChecksum = GetBase62EncodedChecksum(checksumBytes);
+
+        if (encodedFullChecksum.StartsWith(checksumText.Trim('=')))
+        {
+            return true;
+        }
+
         // A long-form has a full 4-byte checksum, while a standard form has only 3.
-        string encoded = Convert.ToBase64String(checksumBytes, 0, longForm ? 4 : 3);
-        return encoded == checksumText;
+        encodedFullChecksum = Convert.ToBase64String(checksumBytes, 0, longForm ? 4 : 3);
+        return encodedFullChecksum == checksumText;
     }
 
     /// <summary>
@@ -167,29 +186,33 @@ public static class IdentifiableSecrets
     }
 
     public static byte[] ComputeDerivedCommonAnnotatedKey(string derivationInput,
-                                                          byte[] commonAnnotatedSecret)
+                                                          byte[] commonAnnotatedSecret,
+                                                          bool longForm = false)
     {
         string keyText = Encoding.UTF8.GetString(commonAnnotatedSecret);
-        string derivedKey = ComputeDerivedCommonAnnotatedKey(derivationInput, keyText);
+        string derivedKey = ComputeDerivedCommonAnnotatedKey(derivationInput, keyText, longForm);
         return Convert.FromBase64String(derivedKey);
     }
 
     public static string ComputeDerivedCommonAnnotatedKey(string derivationInput,
-                                                          string commonAnnotatedSecret)
+                                                          string commonAnnotatedSecret,
+                                                          bool longForm = false)
     {
-        return ComputeCommonAnnotatedHash(derivationInput, commonAnnotatedSecret, 'D');
+        return ComputeCommonAnnotatedHash(derivationInput, commonAnnotatedSecret, longForm, 'D');
     }
 
     public static byte[] ComputeCommonAnnotatedHash(string textToHash,
-                                                    byte[] commonAnnotatedSecret)
+                                                    byte[] commonAnnotatedSecret,
+                                                    bool longForm = false)
     {
         string keyText = Encoding.UTF8.GetString(commonAnnotatedSecret);
-        string hash = ComputeCommonAnnotatedHash(textToHash, keyText, 'H');
+        string hash = ComputeCommonAnnotatedHash(textToHash, keyText, longForm, 'H');
         return Convert.FromBase64String(hash);
     }
 
     public static string ComputeCommonAnnotatedHash(string textToHash,
-                                                    string commonAnnotatedSecret,
+                                                    string commonAnnotatedSecret,                                                    
+                                                    bool longForm = false,
                                                     char hashedDataSignature = 'H')
     {
         if (hashedDataSignature != 'D' && hashedDataSignature != 'H')
@@ -202,23 +225,14 @@ public static class IdentifiableSecrets
             throw new ArgumentException("The provided key is not a valid common annotated security key.");
         }
 
-        using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(commonAnnotatedSecret));
-        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(textToHash));
-
-        byte[] derivedKeyBytes = new byte[40];
-        Array.Copy(hashBytes, derivedKeyBytes, derivedKeyBytes.Length);
-
-        // All data preceding the standard fixed signature comprises the random content.
-        string encodedRandom = derivedKeyBytes.ToBase62().Substring(0, CommonAnnotatedKey.StandardFixedSignatureOffset);
-
-        string standardSignature = "JQQJ9D";
-
-        string derivedKey = $"{encodedRandom}{standardSignature}{cask.DateText}{cask.PlatformReserved}{cask.ProviderReserved}{cask.ProviderFixedSignature}";
-        derivedKeyBytes = Convert.FromBase64String(derivedKey);
-
-        int checksum = Marvin.ComputeHash32(derivedKeyBytes, VersionTwoChecksumSeed, 0, derivedKeyBytes.Length);
-
-        return $"{derivedKey}{checksum.ToBase62().Substring(0, 4)}";
+        return ComputeCommonAnnotatedHash(textToHash,
+                                          commonAnnotatedSecret,
+                                          cask.ProviderFixedSignature,
+                                          cask.IsCustomerManaged,
+                                          Convert.FromBase64String(cask.PlatformReserved),
+                                          Convert.FromBase64String(cask.ProviderReserved),
+                                          longForm,
+                                          hashedDataSignature);
     }
 
     public static byte[] GenerateCommonAnnotatedKeyBytes(string base64EncodedSignature,
@@ -238,6 +252,36 @@ public static class IdentifiableSecrets
         return Convert.FromBase64String(key);
     }
 
+    public static string ComputeCommonAnnotatedHash(string textToHash,
+                                                    string secret,
+                                                    string base64EncodedSignature,
+                                                    bool customerManagedKey,
+                                                    byte[] platformReserved,
+                                                    byte[] providerReserved,
+                                                    bool longForm = false,
+                                                    char keyKindSignature = 'H')
+    {
+        if (keyKindSignature != 'D' && keyKindSignature != 'H')
+        {
+            throw new ArgumentException("The hashed data signature must be either 'D' (for derived keys) or 'H' (for arbitrary hashes).");
+        }
+
+        using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(secret));
+        byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(textToHash));
+
+        byte[] derivedKeyBytes = new byte[40];
+        Array.Copy(hashBytes, derivedKeyBytes, derivedKeyBytes.Length);
+
+        return GenerateCommonAnnotatedTestKey(derivedKeyBytes,
+                                              VersionTwoChecksumSeed,
+                                              base64EncodedSignature,
+                                              customerManagedKey,
+                                              platformReserved,
+                                              providerReserved,
+                                              longForm,
+                                              testChar: null,
+                                              keyKindSignature);
+    }
 
     public static string GenerateCommonAnnotatedKey(string base64EncodedSignature,
                                                     bool customerManagedKey,
@@ -246,31 +290,35 @@ public static class IdentifiableSecrets
                                                     bool longForm = false,
                                                     char? testChar = null)
     {
-        return GenerateCommonAnnotatedTestKey(VersionTwoChecksumSeed,
+        return GenerateCommonAnnotatedTestKey(randomBytes: null,
+                                              VersionTwoChecksumSeed,
                                               base64EncodedSignature,
                                               customerManagedKey,
                                               platformReserved,
                                               providerReserved,
                                               longForm,
-                                              testChar);
+                                              testChar,
+                                              keyKindSignature: '9');
     }
 
-    public static string GenerateCommonAnnotatedTestKey(ulong checksumSeed,
+    public static string GenerateCommonAnnotatedTestKey(byte[] randomBytes,
+                                                        ulong checksumSeed,
                                                         string base64EncodedSignature,
                                                         bool customerManagedKey,
                                                         byte[] platformReserved,
                                                         byte[] providerReserved,
-                                                        bool longForm = false,
-                                                        char? testChar = null)
+                                                        bool longForm,
+                                                        char? testChar,
+                                                        char keyKindSignature)
     {
-        const int platformReservedLength = 9; 
+        const int platformReservedLength = 9;
         const int providerReservedLength = 3;
 
         ValidateCommonAnnotatedKeySignature(base64EncodedSignature);
 
         if (platformReserved != null && platformReserved?.Length != platformReservedLength)
         {
-            throw new ArgumentOutOfRangeException(nameof(platformReserved), 
+            throw new ArgumentOutOfRangeException(nameof(platformReserved),
                                                   $"When provided, there must be {platformReservedLength} reserved bytes for platform metadata.");
         }
 
@@ -282,7 +330,7 @@ public static class IdentifiableSecrets
 
         if (platformReserved == null)
         {
-            platformReserved =  new byte[platformReservedLength];
+            platformReserved = new byte[platformReservedLength];
         }
 
         if (providerReserved == null)
@@ -290,121 +338,118 @@ public static class IdentifiableSecrets
             providerReserved = new byte[providerReservedLength];
         }
 
-        base64EncodedSignature = customerManagedKey 
+        base64EncodedSignature = customerManagedKey
                 ? base64EncodedSignature.ToUpperInvariant()
                 : base64EncodedSignature.ToLowerInvariant();
 
         string key = null;
 
-        while (true)
-        {
-            int keyLengthInBytes = 66;
-            byte[] keyBytes = new byte[keyLengthInBytes];
+        int keyLengthInBytes = 66;
+        byte[] keyBytes = new byte[keyLengthInBytes];
 
-            if (testChar == null)
+        if (testChar == null)
+        {
+            if (randomBytes == null)
             {
                 s_generator ??= RandomNumberGenerator.Create();
                 s_generator.GetBytes(keyBytes);
-
-                key = keyBytes.ToBase62();
-                
-                if (key.Length < 86)
-                {
-                    throw new InvalidOperationException($"The key length is less than 86 characters: {key}");
-                }
-                
-                key = key.Substring(0, 85);
-
-                // We use Q== as the suffix to keep the key format consistent with the usage in Rust.
-                // In C#, the base64 decoder can handle illegal base64 strings, but not in Rust.
-                key = $"{key}Q==";
             }
             else
             {
-                // We use Q== as the suffix to keep the key format consistent with the usage in Rust.
-                // In C#, the base64 decoder can handle illegal base64 strings, but not in Rust.
-                key = $"{new string(testChar!.Value, 85)}Q==";
+                Array.Copy(randomBytes, keyBytes, randomBytes.Length);
             }
 
-            try
+            key = keyBytes.ToBase62();
+
+            if (key.Length < 86)
             {
-                keyBytes = Convert.FromBase64String(key);
-            }
-            catch (FormatException)
-            {
-                throw new InvalidOperationException($"Key could not be decoded: {key}"); ;
+                throw new InvalidOperationException($"The key length is less than 86 characters: {key}");
             }
 
-            byte jBits = 'J' - 'A';
-            byte qBits = 'Q' - 'A';
+            key = key.Substring(0, 85);
 
-            int reserved = (jBits << 18) | (qBits << 12) | (qBits << 6) | jBits;
-            byte[] reservedBytes = BitConverter.GetBytes(reserved);
+            // We use Q== as the suffix to keep the key format consistent with the usage in Rust.
+            // In C#, the base64 decoder can handle illegal base64 strings, but not in Rust.
+            key = $"{key}Q==";
+        }
+        else
+        {
+            // We use Q== as the suffix to keep the key format consistent with the usage in Rust.
+            // In C#, the base64 decoder can handle illegal base64 strings, but not in Rust.
+            key = $"{new string(testChar!.Value, 85)}Q==";
+        }
 
-            keyBytes[keyBytes.Length - 25] = reservedBytes[2];
-            keyBytes[keyBytes.Length - 24] = reservedBytes[1];
-            keyBytes[keyBytes.Length - 23] = reservedBytes[0];
+        try
+        {
+            keyBytes = Convert.FromBase64String(key);
+        }
+        catch (FormatException)
+        {
+            throw new InvalidOperationException($"Key could not be decoded: {key}"); ;
+        }
 
-            // Simplistic timestamp computation.
-            byte yearsSince2024 = (byte)(DateTime.UtcNow.Year - 2024);
-            byte zeroIndexedMonth = (byte)(DateTime.UtcNow.Month - 1);
+        byte jBits = 'J' - 'A';
+        byte qBits = 'Q' - 'A';
 
-            int? metadata = (61 << 18) | (61 << 12) | (yearsSince2024 << 6) | zeroIndexedMonth;
-            byte[] metadataBytes = BitConverter.GetBytes(metadata.Value);
+        int reserved = (jBits << 18) | (qBits << 12) | (qBits << 6) | jBits;
+        byte[] reservedBytes = BitConverter.GetBytes(reserved);
 
-            keyBytes[keyBytes.Length - 22] = metadataBytes[2];
-            keyBytes[keyBytes.Length - 21] = metadataBytes[1];
-            keyBytes[keyBytes.Length - 20] = metadataBytes[0];
+        keyBytes[keyBytes.Length - 25] = reservedBytes[2];
+        keyBytes[keyBytes.Length - 24] = reservedBytes[1];
+        keyBytes[keyBytes.Length - 23] = reservedBytes[0];
 
-            keyBytes[keyBytes.Length - 19] = platformReserved[0];
-            keyBytes[keyBytes.Length - 18] = platformReserved[1];
-            keyBytes[keyBytes.Length - 17] = platformReserved[2];
-            keyBytes[keyBytes.Length - 16] = platformReserved[3];
-            keyBytes[keyBytes.Length - 15] = platformReserved[4];
-            keyBytes[keyBytes.Length - 14] = platformReserved[5];
-            keyBytes[keyBytes.Length - 13] = platformReserved[6];
-            keyBytes[keyBytes.Length - 12] = platformReserved[7];
-            keyBytes[keyBytes.Length - 11] = platformReserved[8];
+        // Simplistic timestamp computation.
+        byte yearsSince2024 = (byte)(DateTime.UtcNow.Year - 2024);
+        byte zeroIndexedMonth = (byte)(DateTime.UtcNow.Month - 1);
 
-            keyBytes[keyBytes.Length - 10] = providerReserved[0];
-            keyBytes[keyBytes.Length - 9] = providerReserved[1];
-            keyBytes[keyBytes.Length - 8] = providerReserved[2];
+        byte orgBits = 61; // Base64 encoding for '9'
+        byte keyKindBits = (byte)(keyKindSignature == '9' ? 61 : keyKindSignature - 'A');
 
-            int signatureOffset = keyBytes.Length - 7;
-            byte[] sigBytes = Convert.FromBase64String(base64EncodedSignature);
-            sigBytes.CopyTo(keyBytes, signatureOffset);
+        int? metadata = (orgBits << 18) | (keyKindBits << 12) | (yearsSince2024 << 6) | zeroIndexedMonth;
+        byte[] metadataBytes = BitConverter.GetBytes(metadata.Value);
 
-            int checksum = Marvin.ComputeHash32(keyBytes, checksumSeed, 0, keyBytes.Length - 4);
+        keyBytes[keyBytes.Length - 22] = metadataBytes[2];
+        keyBytes[keyBytes.Length - 21] = metadataBytes[1];
+        keyBytes[keyBytes.Length - 20] = metadataBytes[0];
 
-            byte[] checksumBytes = BitConverter.GetBytes(checksum);
+        keyBytes[keyBytes.Length - 19] = platformReserved[0];
+        keyBytes[keyBytes.Length - 18] = platformReserved[1];
+        keyBytes[keyBytes.Length - 17] = platformReserved[2];
+        keyBytes[keyBytes.Length - 16] = platformReserved[3];
+        keyBytes[keyBytes.Length - 15] = platformReserved[4];
+        keyBytes[keyBytes.Length - 14] = platformReserved[5];
+        keyBytes[keyBytes.Length - 13] = platformReserved[6];
+        keyBytes[keyBytes.Length - 12] = platformReserved[7];
+        keyBytes[keyBytes.Length - 11] = platformReserved[8];
 
-            checksumBytes = BitConverter.GetBytes(checksum);
+        keyBytes[keyBytes.Length - 10] = providerReserved[0];
+        keyBytes[keyBytes.Length - 9] = providerReserved[1];
+        keyBytes[keyBytes.Length - 8] = providerReserved[2];
 
-            keyBytes[keyBytes.Length - 4] = checksumBytes[0];
-            keyBytes[keyBytes.Length - 3] = checksumBytes[1];
-            keyBytes[keyBytes.Length - 2] = checksumBytes[2];
-            keyBytes[keyBytes.Length - 1] = checksumBytes[3];
+        int signatureOffset = keyBytes.Length - 7;
+        byte[] sigBytes = Convert.FromBase64String(base64EncodedSignature);
+        sigBytes.CopyTo(keyBytes, signatureOffset);
 
-            key = Convert.ToBase64String(keyBytes);
+        int checksum = Marvin.ComputeHash32(keyBytes, checksumSeed, 0, keyBytes.Length - 4);
 
-            if (!key.Contains("+") && !key.Contains("/"))
-            {
-                if (!longForm)
-                {
-                    key = key.Substring(0, key.Length - 4);
-                }
-                break;
-            }
-            else if (testChar != null)
-            {
-                // We could not produce a valid test key given the current signature,
-                // checksum seed, reserved bits and specified test character.
-                key = null;
-                break;
-            }
+        byte[] checksumBytes = BitConverter.GetBytes(checksum);
+        string checksumText = GetBase62EncodedChecksum(checksumBytes);
+
+        key = $"{Convert.ToBase64String(keyBytes).Substring(0, 80)}{checksumText}==";
+
+        if (!longForm)
+        {
+            key = key.Substring(0, key.Length - 4);
         }
 
         return key;
+    }
+
+    private static string GetBase62EncodedChecksum(byte[] checksumBytes)
+    {
+        string checksumText = checksumBytes.ToBase62();
+        checksumText = $"{checksumText}{new string('A', 6 - checksumText.Length)}";
+        return checksumText;
     }
 
     public static string ComputeDerivedIdentifiableKey(string textToHash,

@@ -84,7 +84,7 @@ namespace Microsoft.Security.Utilities
                                                                              new byte[3]);
 
             bool result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(validKey, validSignature);
-            result.Should().BeTrue(because: "a generated key should validate");
+            result.Should().BeTrue(because: $"the generated key {validKey} should validate");
 
             foreach (string arg in new[] { string.Empty, " ", null })
             {
@@ -267,10 +267,16 @@ namespace Microsoft.Security.Utilities
                         bool result = CommonAnnotatedKey.TryCreate(computedKey, out CommonAnnotatedKey caKey);
                         result.Should().BeTrue(because: $"the derived key '{computedKey}' should be a valid common annotated security key");
 
-                        caKey.IsDerivedKey.Should().BeTrue(because: $"the {label} key '{computedKey}' 'IsDerived' property should be correct");
+                        bool keyKindCorrect = derived ? caKey.IsDerivedKey : caKey.IsHashedDataKey;
+                        keyKindCorrect &= derived ? !caKey.IsHashedDataKey : !caKey.IsDerivedKey;
+
+                        keyKindCorrect.Should().BeTrue(because: $"the {label} key '{computedKey}' 'IsDerivedKey' and 'IsHashedDataKey' properties should be correct");
+
                         caKey.PlatformReserved.Should().Be(platformEncoded, because: "encoded platform reserved data should match");
                         caKey.ProviderReserved.Should().Be(providerEncoded, because: "encoded provider reserved data should match");
-                        caKey.StandardFixedSignature.Should().Be(IdentifiableSecrets.CommonAnnotatedDerivedKeySignature);
+
+                        string expectedSignature = derived ? IdentifiableSecrets.CommonAnnotatedDerivedKeySignature : IdentifiableSecrets.CommonAnnotatedHashedDataSignature;
+                        caKey.StandardFixedSignature.Should().Be(expectedSignature);
 
                         result = IdentifiableSecrets.CommonAnnotatedKeyRegex.IsMatch(computedKey);
                         result.Should().BeTrue(because: $"the {label} key '{computedKey}' should match the canonical format regex");
