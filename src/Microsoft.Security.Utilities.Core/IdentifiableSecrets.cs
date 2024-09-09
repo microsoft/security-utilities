@@ -34,9 +34,9 @@ public static class IdentifiableSecrets
 
     public static uint LongFormCommonAnnotatedKeySizeInBytes => 64;
 
-    public static uint StandardCommonAnnotatedKeySize => 84;
+    public static uint StandardEncodedCommonAnnotatedKeySize => 84;
 
-    public static uint LongFormCommonAnnotatedKeySize => 88;
+    public static uint LongFormEncodedCommonAnnotatedKeySize => 88;
 
     public static string CommonAnnotatedKeyCoreSignature = "JQQJ";
 
@@ -124,12 +124,12 @@ public static class IdentifiableSecrets
             return false;
         }
 
-        if (key.Length != StandardCommonAnnotatedKeySize && key.Length != LongFormCommonAnnotatedKeySize)
+        if (key.Length != StandardEncodedCommonAnnotatedKeySize && key.Length != LongFormEncodedCommonAnnotatedKeySize)
         {
             return false;
         }
 
-        bool longForm = key.Length == LongFormCommonAnnotatedKeySize;
+        bool longForm = key.Length == LongFormEncodedCommonAnnotatedKeySize;
 
         ulong checksumSeed = VersionTwoChecksumSeed;
 
@@ -448,7 +448,7 @@ public static class IdentifiableSecrets
     private static string GetBase62EncodedChecksum(byte[] checksumBytes)
     {
         string checksumText = checksumBytes.ToBase62();
-        checksumText = $"{checksumText}{new string('A', 6 - checksumText.Length)}";
+        checksumText = $"{checksumText}{new string('0', 6 - checksumText.Length)}";
         return checksumText;
     }
 
@@ -694,10 +694,29 @@ public static class IdentifiableSecrets
     {
         bytes = ConvertFromBase64String(key);
 
-        int expectedChecksum = BitConverter.ToInt32(bytes, bytes.Length - checksumSizeInBytes);
+        byte[] checksumBytes = new byte[4];
+        Array.Copy(bytes, bytes.Length - checksumSizeInBytes, checksumBytes, 0, checksumSizeInBytes);
+
+        int expectedChecksum = BitConverter.ToInt32(checksumBytes, 0);
         int actualChecksum = Marvin.ComputeHash32(bytes, checksumSeed, 0, bytes.Length - checksumSizeInBytes);
 
-        return actualChecksum == expectedChecksum;
+        if (actualChecksum== expectedChecksum)
+        {
+            return true;
+        }
+
+        if (key.Length != LongFormEncodedCommonAnnotatedKeySize &&
+            key.Length != StandardEncodedCommonAnnotatedKeySize)
+        {
+            return false;
+        }
+
+        int encodedChecksumLength = key.Length == LongFormEncodedCommonAnnotatedKeySize ? 8 : 4;
+        string encodedChecksum = key.Substring(key.Length - encodedChecksumLength).Trim('=');
+
+        checksumBytes = BitConverter.GetBytes(actualChecksum);
+
+        return encodedChecksum.StartsWith(checksumBytes.ToBase62());
     }
 
     /// <summary>
@@ -737,6 +756,15 @@ public static class IdentifiableSecrets
         if (!ValidateChecksum(key, checksumSeed, out byte[] bytes))
         {
             return false;
+        }
+
+        if (key.Length == LongFormEncodedCommonAnnotatedKeySize ||
+            key.Length == StandardEncodedCommonAnnotatedKeySize)
+        {
+            if (key.Substring(52, 5) == "JQQJ9")
+            {
+                return true;
+            }
         }
 
         // Compute the padding or 'spillover' into the final base64-encoded secret

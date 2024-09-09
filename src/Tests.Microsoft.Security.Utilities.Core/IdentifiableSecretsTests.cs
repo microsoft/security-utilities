@@ -50,9 +50,9 @@ namespace Microsoft.Security.Utilities
                 bool result = TryValidateCommonAnnotatedKeyHelper(validKey, validSignature, out string failedApi);
                 result.Should().BeTrue(because: $"'{validKey}' should validate using '{failedApi}'");
 
-                result = validKey.Length == IdentifiableSecrets.LongFormCommonAnnotatedKeySize
-                    ? validKey.Length == IdentifiableSecrets.LongFormCommonAnnotatedKeySize
-                    : validKey.Length == IdentifiableSecrets.StandardCommonAnnotatedKeySize;
+                result = validKey.Length == IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize
+                    ? validKey.Length == IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize
+                    : validKey.Length == IdentifiableSecrets.StandardEncodedCommonAnnotatedKeySize;
 
                 result.Should().BeTrue(because: $"'{validKey}' should have correct length with longForm == '{longForm}'");
             }
@@ -258,32 +258,39 @@ namespace Microsoft.Security.Utilities
 
                     foreach (bool derived in new[] { true, false })
                     {
-                        string computedKey = derived
-                            ? IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(textToHash, key)
-                            : IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash, key);
-                        
-                        string label = derived ? "derived" : "hashed";
+                        foreach (bool longForm in new[] { true, false })
+                        {
+                            string computedKey = derived
+                                ? IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(textToHash, key, longForm)
+                                : IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash, key, longForm);
 
-                        bool result = CommonAnnotatedKey.TryCreate(computedKey, out CommonAnnotatedKey caKey);
-                        result.Should().BeTrue(because: $"the derived key '{computedKey}' should be a valid common annotated security key");
+                            string label = derived ? "derived" : "hashed";
 
-                        bool keyKindCorrect = derived ? caKey.IsDerivedKey : caKey.IsHashedDataKey;
-                        keyKindCorrect &= derived ? !caKey.IsHashedDataKey : !caKey.IsDerivedKey;
+                            bool result = CommonAnnotatedKey.TryCreate(computedKey, out CommonAnnotatedKey caKey);
+                            result.Should().BeTrue(because: $"the derived key '{computedKey}' should be a valid common annotated security key");
 
-                        keyKindCorrect.Should().BeTrue(because: $"the {label} key '{computedKey}' 'IsDerivedKey' and 'IsHashedDataKey' properties should be correct");
+                            bool keyKindCorrect = derived ? caKey.IsDerivedKey : caKey.IsHashedDataKey;
+                            keyKindCorrect &= derived ? !caKey.IsHashedDataKey : !caKey.IsDerivedKey;
 
-                        caKey.PlatformReserved.Should().Be(platformEncoded, because: "encoded platform reserved data should match");
-                        caKey.ProviderReserved.Should().Be(providerEncoded, because: "encoded provider reserved data should match");
+                            keyKindCorrect.Should().BeTrue(because: $"the {label} key '{computedKey}' 'IsDerivedKey' and 'IsHashedDataKey' properties should be correct");
 
-                        string expectedSignature = derived ? IdentifiableSecrets.CommonAnnotatedDerivedKeySignature : IdentifiableSecrets.CommonAnnotatedHashedDataSignature;
-                        caKey.StandardFixedSignature.Should().Be(expectedSignature);
+                            caKey.PlatformReserved.Should().Be(platformEncoded, because: "encoded platform reserved data should match");
+                            caKey.ProviderReserved.Should().Be(providerEncoded, because: "encoded provider reserved data should match");
 
-                        result = IdentifiableSecrets.CommonAnnotatedKeyRegex.IsMatch(computedKey);
-                        result.Should().BeTrue(because: $"the {label} key '{computedKey}' should match the canonical format regex");
+                            string expectedSignature = derived ? IdentifiableSecrets.CommonAnnotatedDerivedKeySignature : IdentifiableSecrets.CommonAnnotatedHashedDataSignature;
+                            caKey.StandardFixedSignature.Should().Be(expectedSignature);
 
-                        DateTime utcNow = DateTime.UtcNow;
-                        caKey.CreationDate.Year.Should().Be(utcNow.Year, because: $"the {label} key creation year should be correct");
-                        caKey.CreationDate.Month.Should().Be(utcNow.Month, because: $"the {label} key creation month should be correct");
+                            result = IdentifiableSecrets.CommonAnnotatedKeyRegex.IsMatch(computedKey);
+                            result.Should().BeTrue(because: $"the {label} key '{computedKey}' should match the canonical format regex");
+
+                            DateTime utcNow = DateTime.UtcNow;
+                            caKey.CreationDate.Year.Should().Be(utcNow.Year, because: $"the {label} key creation year should be correct");
+                            caKey.CreationDate.Month.Should().Be(utcNow.Month, because: $"the {label} key creation month should be correct");
+
+                            int length = longForm ? 88 : 84;
+                            result = computedKey.Length == length;
+                            result.Should().BeTrue(because: $"the {label} key '{computedKey}' length should be {length} when 'longForm' == '{longForm}'");
+                        }
                     }
                 }
             }
@@ -450,20 +457,37 @@ namespace Microsoft.Security.Utilities
 
                             foreach (bool customerManaged in new[] { true, false })
                             {
-                                signature = customerManaged ? signature.ToUpperInvariant() : signature.ToLowerInvariant();
+                                foreach (bool longForm in new[] { true, false })
+                                {
+                                    signature = customerManaged ? signature.ToUpperInvariant() : signature.ToLowerInvariant();
 
-                                string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature,
-                                                                                            customerManaged,
-                                                                                            platformReserved,
-                                                                                            providerReserved);
+                                    string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature,
+                                                                                                customerManaged,
+                                                                                                platformReserved,
+                                                                                                providerReserved,
+                                                                                                longForm);
 
-                                bool result = IdentifiableSecrets.CommonAnnotatedKeyRegex.IsMatch(key);
-                                result.Should().BeTrue(because: $"the key '{key}' should match the common annotated key regex");
+                                    bool result = IdentifiableSecrets.CommonAnnotatedKeyRegex.IsMatch(key);
+                                    result.Should().BeTrue(because: $"the key '{key}' should match the common annotated key regex");
 
-                                result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, signature);
-                                result.Should().BeTrue(because: $"the key '{key}' should comprise an HIS v2-conformant pattern");
+                                    result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, signature);
+                                    result.Should().BeTrue(because: $"the key '{key}' should comprise an HIS v2-conformant pattern");
 
-                                keysGenerated++;
+                                    foreach (bool derived in new[] { true, false })
+                                    {
+                                        string textToHash = Guid.NewGuid().ToString("N").Substring(0, 32);
+                                        string computedKey = derived
+                                            ? IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(textToHash, key, longForm)
+                                            : IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash, key, longForm);
+
+                                        string label = derived ? "derived" : "hashed";
+
+                                        result = CommonAnnotatedKey.TryCreate(computedKey, out CommonAnnotatedKey caKey);
+                                        result.Should().BeTrue(because: $"the derived key '{computedKey}' should be a valid common annotated security key");
+                                    }
+
+                                    keysGenerated++;
+                                }
                             }
                         }
                         catch (Exception ex)

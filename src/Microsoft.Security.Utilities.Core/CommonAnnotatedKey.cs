@@ -18,13 +18,13 @@ namespace Microsoft.Security.Utilities
             ulong checksumSeed = IdentifiableSecrets.VersionTwoChecksumSeed;
             string base64EncodedSignature = key.Substring(76, 4);
 
-            if (key.Length != IdentifiableSecrets.StandardCommonAnnotatedKeySize &&
-                key.Length != IdentifiableSecrets.LongFormCommonAnnotatedKeySize)
+            if (key.Length != IdentifiableSecrets.StandardEncodedCommonAnnotatedKeySize &&
+                key.Length != IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize)
             {
                 return false;
             }
 
-            bool longForm = key.Length == IdentifiableSecrets.LongFormCommonAnnotatedKeySize;
+            bool longForm = key.Length == IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize;
 
             // This code path is intended to ensure that common annotated security keys are
             // highly backwards compatible with the older identifiable keys format. This
