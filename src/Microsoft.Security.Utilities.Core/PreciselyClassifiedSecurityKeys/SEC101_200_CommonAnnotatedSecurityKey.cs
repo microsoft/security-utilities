@@ -32,17 +32,22 @@ namespace Microsoft.Security.Utilities
                         break;
                     }
 
-                    string example;
+                    string example = null;
 
                     try
-                    { 
-                        example = IdentifiableSecrets.GenerateCommonAnnotatedTestKey(IdentifiableSecrets.VersionTwoChecksumSeed,
-                                                                                     "TEST",
-                                                                                     customerManagedKey: true,
-                                                                                     platformReserved: null,
-                                                                                     providerReserved: null,
-                                                                                     longForm,
-                                                                                     testChar);
+                    {
+                        foreach (char keyKindSignature in new[]{ '9', 'D', 'H' })
+                        {
+                            example = IdentifiableSecrets.GenerateCommonAnnotatedTestKey(randomBytes: null,
+                                                                                         IdentifiableSecrets.VersionTwoChecksumSeed,
+                                                                                         "TEST",
+                                                                                         customerManagedKey: true,
+                                                                                         platformReserved: null,
+                                                                                         providerReserved: null,
+                                                                                         longForm,
+                                                                                         testChar,
+                                                                                         keyKindSignature);
+                        }
                     }
                     catch (InvalidOperationException)
                     {

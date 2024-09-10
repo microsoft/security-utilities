@@ -11,8 +11,17 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# 1.6.0 - 08/09/2024
+# UNRELEASED
+- BRK: Rename `StandardCommonAnnotatedKeySize` to `StandardEncodedCommonAnnotatedKeySize` and `LongFormCommonAnnotatedKeySize` to `LongFormEncodedCommonAnnotatedKeySize` to distinguish these from const values for key lengths in bytes.
+- BUG: Correct `CommonAnnotatedKeyRegexPattern` to detect keys (as denoted by `H` in the platform signature) derived from hashing data with CASK keys or arbitrary secrets.
+- BUG: Fix issue in low-level `GenerateCommonAnnotatedTestKey` helper in which key kind signature was hard-coded for `D` (derived) for both derived and hashed keys (which should be denoted by `H`).
 - NEW: Add `ComputeCommonAnnotatedHash` to generate annotated fingerprints from arbitrary strings.
+- NEW: Add `CommonAnnotatedDerivedKeySignature` and `CommonAnnotatedHashedDataSignature` to denote these generated key variations.
+- NEW: Update key generation to use Base62 for all encoded checksums (including primary keys). As a result, all test keys (in which the randomized component is a common character) will be valid (because we no longer will generate special characters in the computed checksum).
+- NEW: Add `longForm` argument to `ComputeDerivedCommonAnnotatedKey` and `ComputeCommonAnnotatedHash` to support backwards-compatible, full 64-byte encoded forms of these keys.
+- NEW: Provide `ComputeDerivedCommonAnnotatedKey` and `ComputeCommonAnnotatedHash` overloads that accept an arbitrary secret (and which allow platform and provider data to be explicitly specified).
+
+# 1.6.0 - 08/09/2024
 - NEW: Provide `StandardCommonAnnotatedKeySizeInBytes` and `LongFormCommonAnnotatedKeySizeInBytes` constants (63 and 64, respectively).
 - NEW: `TryValidateCommonAnnotatedKey(byte[], string)` to facilitate working with keys as byte arrays.
 - NEW: `ComputeDerivedCommonAnnotatedKey(string, byte[])` to facilitate working with keys as byte arrays.

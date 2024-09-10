@@ -17,15 +17,14 @@ namespace Microsoft.Security.Utilities
             secret = null;
             ulong checksumSeed = IdentifiableSecrets.VersionTwoChecksumSeed;
             string base64EncodedSignature = key.Substring(76, 4);
-            bool isDerived = key[DerivedKeyCharacterOffset] == 'D';
 
-            if (key.Length != IdentifiableSecrets.StandardCommonAnnotatedKeySize &&
-                key.Length != IdentifiableSecrets.LongFormCommonAnnotatedKeySize)
+            if (key.Length != IdentifiableSecrets.StandardEncodedCommonAnnotatedKeySize &&
+                key.Length != IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize)
             {
                 return false;
             }
 
-            bool longForm = key.Length == IdentifiableSecrets.LongFormCommonAnnotatedKeySize;
+            bool longForm = key.Length == IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize;
 
             // This code path is intended to ensure that common annotated security keys are
             // highly backwards compatible with the older identifiable keys format. This
@@ -42,11 +41,15 @@ namespace Microsoft.Security.Utilities
                 int checksum = Marvin.ComputeHash32(keyBytes, checksumSeed, 0, keyBytes.Length - 4);
 
                 byte[] checksumBytes = BitConverter.GetBytes(checksum);
-                string encodedChecksum = isDerived ? checksum.ToBase62() : Convert.ToBase64String(checksumBytes);
+                string encodedChecksum = checksumBytes.ToBase62();
 
                 if (!encodedChecksum.StartsWith(partialEncodedChecksum))
                 {
-                    return false;
+                    encodedChecksum = Convert.ToBase64String(checksumBytes);
+                    if (!encodedChecksum.StartsWith(partialEncodedChecksum))
+                    {
+                        return false;
+                    }
                 }
 
                 keyBytes[keyBytes.Length - 4] = checksumBytes[0];
@@ -134,6 +137,10 @@ namespace Microsoft.Security.Utilities
         public const int ProviderFixedSignatureLength = 4;
 
         public const int ChecksumOffset = ProviderFixedSignatureOffset + ProviderFixedSignatureLength;
+
+        public bool IsCustomerManaged => ProviderFixedSignature.Equals(ProviderFixedSignature.ToUpperInvariant());
+
+        public bool IsHashedDataKey => this.base64Key[DerivedKeyCharacterOffset] == 'H';
 
         public bool IsDerivedKey => this.base64Key[DerivedKeyCharacterOffset] == 'D';
 
