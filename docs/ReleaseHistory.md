@@ -11,7 +11,7 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# UNRELEASED
+# 1.7.0 - 09/10/2024
 - BRK: Rename `StandardCommonAnnotatedKeySize` to `StandardEncodedCommonAnnotatedKeySize` and `LongFormCommonAnnotatedKeySize` to `LongFormEncodedCommonAnnotatedKeySize` to distinguish these from const values for key lengths in bytes.
 - BUG: Correct `CommonAnnotatedKeyRegexPattern` to detect keys (as denoted by `H` in the platform signature) derived from hashing data with CASK keys or arbitrary secrets.
 - BUG: Fix issue in low-level `GenerateCommonAnnotatedTestKey` helper in which key kind signature was hard-coded for `D` (derived) for both derived and hashed keys (which should be denoted by `H`).
