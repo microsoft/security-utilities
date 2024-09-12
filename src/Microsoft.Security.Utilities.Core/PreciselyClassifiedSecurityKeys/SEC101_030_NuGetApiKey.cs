@@ -11,7 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/030";
             Name = nameof(NuGetApiKey);
-            DetectionMetadata = DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy;
+            DetectionMetadata = DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy| DetectionMetadata.HighConfidence;
             Pattern = "(^|[^0-9a-z])(?<refine>oy2[a-p][0-9a-z]{15}[aq][0-9a-z]{11}[eu][bdfhjlnprtvxz357][a-p][0-9a-z]{11}[aeimquy4])([^aeimquy4]|$)";
             Signatures = new HashSet<string>(new[] { "oy2" });
         }

@@ -16,12 +16,11 @@ internal sealed class UrlCredentials : RegexPattern
 
         Pattern = @"https?:\/\/(?:[^:@]+):(?<refine>[^:@?]+)@";
 
-        DetectionMetadata = DetectionMetadata.None;
+        DetectionMetadata = DetectionMetadata.MediumConfidence;
 
         Signatures = new HashSet<string>(new[]
         {
-            "http",
-            "https",
+            "http"
         });
     }
 

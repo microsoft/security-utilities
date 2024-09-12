@@ -20,7 +20,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC000/003";
             Name = nameof(Unclassified32CharacterString);
-            DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat | DetectionMetadata.Unclassified;
+            DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.Unclassified | DetectionMetadata.LowConfidence;
             Pattern = $"^(?i)[a-z0-9.=\\-:[_@\\/*\\]+?]{{32}}$";
         }
 

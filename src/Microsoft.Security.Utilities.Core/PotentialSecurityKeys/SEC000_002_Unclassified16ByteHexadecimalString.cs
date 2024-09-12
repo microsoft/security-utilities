@@ -19,7 +19,7 @@ internal sealed class Unclassified16ByteHexadecimalString : RegexPattern
         Name = nameof(Unclassified16ByteHexadecimalString);
         Pattern = $@"^[{WellKnownRegexPatterns.Hexadecimal}]{{32}}$";
 
-        DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.Unclassified;
+        DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.Unclassified | DetectionMetadata.LowConfidence;
     }
 
     public override Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>("SEC000/001", "Unclassified64ByteBase64String");

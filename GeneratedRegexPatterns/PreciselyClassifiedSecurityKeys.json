@@ -324,7 +324,7 @@
     "Signatures": [
       "oy2"
     ],
-    "DetectionMetadata": "HighEntropy, FixedSignature"
+    "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence"
   },
   {
     "Pattern": "(?:[^2-7a-z]|^)(?<refine>[2-7a-z]{52})(?:[^2-7a-z]|$)",
@@ -352,7 +352,7 @@
     "Id": "SEC101/105",
     "Name": "AzureMessageLegacyCredentials",
     "Signatures": null,
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy, MediumConfidence"
   },
   {
     "Pattern": "(?:^|[^0-9a-f\\-])(?P<refine>dapi[0-9a-f\\-]{32,34})(?:[^0-9a-f\\-]|$)",
@@ -361,7 +361,7 @@
     "Signatures": [
       "dapi"
     ],
-    "DetectionMetadata": "HighEntropy"
+    "DetectionMetadata": "HighEntropy, HighConfidence"
   },
   {
     "Signatures": [
@@ -385,7 +385,7 @@
     "Signatures": [
       "npm_"
     ],
-    "DetectionMetadata": "HighEntropy, FixedSignature"
+    "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence"
   },
   {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<secret>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]|$)",
@@ -394,6 +394,6 @@
     "Signatures": [
       "ab85"
     ],
-    "DetectionMetadata": "HighEntropy, FixedSignature"
+    "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence"
   }
 ]
