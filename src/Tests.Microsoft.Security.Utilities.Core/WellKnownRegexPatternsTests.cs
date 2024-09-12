@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 using FluentAssertions;
@@ -24,6 +25,45 @@ namespace Microsoft.Security.Utilities
             "SEC101/127.UrlCredentials",
             "SEC101/109.AzureContainerRegistryLegacyKey"
         };
+
+        [TestMethod]
+        public void WellKnownRegexPatterns_EnsureAllPatternsExpressConfidence()
+        {
+            using var assertionScope = new AssertionScope();
+
+            var rulesets = new[]{
+                WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
+                WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys
+            };
+
+            var missingConfidence = new List<string>();
+
+            foreach (IEnumerable<RegexPattern> ruleset in rulesets)
+            {
+                foreach (RegexPattern pattern in ruleset)
+                {
+                    foreach (string example in pattern.GenerateTruePositiveExamples())
+                    {
+                        string moniker = pattern.GetMatchMoniker(example);
+
+                        if (pattern.DetectionMetadata.HasFlag(DetectionMetadata.LowConfidence) ||
+                        pattern.DetectionMetadata.HasFlag(DetectionMetadata.MediumConfidence) ||
+                        pattern.DetectionMetadata.HasFlag(DetectionMetadata.HighConfidence))
+                        {
+                            continue;
+                        }
+
+                        missingConfidence.Add(moniker);
+
+                        // We only require a single match to identify missing confidence,
+                        // which is expressed at the pattern level.
+                        break;
+                    }
+                }
+            }
+
+            missingConfidence.Should().HaveCount(0, because: $"{string.Join(", ", missingConfidence)} are missing an explicit confidence level");
+        }
 
         [TestMethod]
         public void WellKnownRegexPatterns_EnsureAllPatternsAreReferenced()

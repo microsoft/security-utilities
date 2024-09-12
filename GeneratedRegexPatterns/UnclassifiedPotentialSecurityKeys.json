@@ -18,7 +18,7 @@
       "http",
       "https"
     ],
-    "DetectionMetadata": "None"
+    "DetectionMetadata": "MediumConfidence"
   },
   {
     "Pattern": "(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?<refine>[0-9a-z\\/+%]{43,129}(?:=|%3d))",
@@ -45,34 +45,34 @@
     "Id": "SEC000/003",
     "Name": "Unclassified32CharacterString",
     "Signatures": null,
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy, Unclassified"
+    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
   },
   {
     "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=$",
     "Id": "SEC000/000",
     "Name": "Unclassified32ByteBase64String",
     "Signatures": null,
-    "DetectionMetadata": "HighEntropy, Unclassified"
+    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
   },
   {
     "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==$",
     "Id": "SEC000/001",
     "Name": "Unclassified64ByteBase64String",
     "Signatures": null,
-    "DetectionMetadata": "HighEntropy, Unclassified"
+    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
   },
   {
     "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{34}$",
     "Id": "SEC101/101",
     "Name": "AadClientAppLegacyCredentials",
     "Signatures": null,
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy"
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy, LowConfidence"
   },
   {
     "Pattern": "^[1234567890abcdef]{32}$",
     "Id": "SEC000/002",
     "Name": "Unclassified16ByteHexadecimalString",
     "Signatures": null,
-    "DetectionMetadata": "HighEntropy, Unclassified"
+    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
   }
 ]

@@ -18,7 +18,7 @@ public class AadClientAppLegacyCredentials34 : RegexPattern
     {
         Id = "SEC101/101";
         Name = AadClientAppLegacyCredentials;
-        DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat;
+        DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat | DetectionMetadata.LowConfidence;
         Pattern = $"^[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{34}}$";
     }
 

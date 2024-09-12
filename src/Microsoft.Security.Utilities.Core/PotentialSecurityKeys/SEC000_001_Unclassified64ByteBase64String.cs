@@ -21,7 +21,7 @@ internal sealed class Unclassified64ByteBase64String : RegexPattern
         Name = nameof(Unclassified64ByteBase64String);
         Pattern = $@"^[{WellKnownRegexPatterns.Base64}]{{86}}==$";
 
-        DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.Unclassified;
+        DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.Unclassified | DetectionMetadata.LowConfidence;
     }
 
     public override IEnumerable<string> GenerateTruePositiveExamples()
