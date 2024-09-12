@@ -15,6 +15,7 @@
 - BUG: Mark `SEC000/000.Unclassified32ByteBase64String`, `SEC000/001.Unclassified64ByteBase64String`, `SEC101/101.AadClientAppLegacyCredentials`, `SEC000/001.Unclassified64ByteBase64String` as `DetectionMetadata.LowConfidence`.
 - BUG: Mark `SEC101/109.AzureContainerRegistryLegacyKey` as `DetectionMetadata.MediumConfidence`.
 - BUG: Mark `SEC101/030.NuGetApiKey`, `SEC101/105.AzureMessageLegacyCredentials`, `SEC101/110.AzureDatabricksPat`,`SEC101/050.NpmAuthorKey`,`SEC101/565.SecretScanningSampleToken` as `DetectionMetadata.HighConfidence`.
+- BUG: Make round-tripping of common annotated security keys through base64 encoding/decoding more robust. We previously emitted illegal ending base64 characters (when appending base62 encoded checksums).
 - PRF: Enable scan pre-filtering by declaring `.servicebus` as `SEC101/105.AzureMessageLegacyCredentials` signature.
 
 # 1.7.0 - 09/10/2024

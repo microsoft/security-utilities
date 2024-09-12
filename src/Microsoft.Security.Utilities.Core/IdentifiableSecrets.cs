@@ -435,7 +435,7 @@ public static class IdentifiableSecrets
         byte[] checksumBytes = BitConverter.GetBytes(checksum);
         string checksumText = GetBase62EncodedChecksum(checksumBytes);
 
-        key = $"{Convert.ToBase64String(keyBytes).Substring(0, 80)}{checksumText}==";
+        key = $"{Convert.ToBase64String(keyBytes).Substring(0, 80)}{checksumText}";
 
         if (!longForm)
         {
@@ -445,10 +445,12 @@ public static class IdentifiableSecrets
         return key;
     }
 
-    private static string GetBase62EncodedChecksum(byte[] checksumBytes)
+    internal static string GetBase62EncodedChecksum(byte[] checksumBytes)
     {
         string checksumText = checksumBytes.ToBase62();
-        checksumText = $"{checksumText}{new string('0', 6 - checksumText.Length)}";
+        checksumText = $"{checksumText}{new string('0', 6 - checksumText.Length)}==";
+
+        checksumText = Convert.ToBase64String(Convert.FromBase64String(checksumText));
         return checksumText;
     }
 
@@ -714,9 +716,11 @@ public static class IdentifiableSecrets
         int encodedChecksumLength = key.Length == LongFormEncodedCommonAnnotatedKeySize ? 8 : 4;
         string encodedChecksum = key.Substring(key.Length - encodedChecksumLength).Trim('=');
 
-        checksumBytes = BitConverter.GetBytes(actualChecksum);
 
-        return encodedChecksum.StartsWith(checksumBytes.ToBase62());
+        checksumBytes = BitConverter.GetBytes(actualChecksum);
+        string computedEncodedChecksum = GetBase62EncodedChecksum(checksumBytes).Trim('=');
+
+        return computedEncodedChecksum.StartsWith(encodedChecksum);
     }
 
     /// <summary>
