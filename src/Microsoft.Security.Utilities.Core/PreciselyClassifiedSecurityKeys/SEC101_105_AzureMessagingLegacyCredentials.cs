@@ -11,9 +11,10 @@ namespace Microsoft.Security.Utilities
         public AzureMessageLegacyCredentials()
         {
             Id = "SEC101/105";
-            Name = nameof(AzureMessageLegacyCredentials);
+            Name = nameof(AzureMessageLegacyCredentials);         
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat | DetectionMetadata.MediumConfidence;
             Pattern = "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)";
+            Signatures = new HashSet<string>(new[] { ".servicebus" });
         }
 
         public override Tuple<string, string> GetMatchIdAndName(string match)

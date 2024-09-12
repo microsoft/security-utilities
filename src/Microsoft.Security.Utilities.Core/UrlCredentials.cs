@@ -20,8 +20,7 @@ internal sealed class UrlCredentials : RegexPattern
 
         Signatures = new HashSet<string>(new[]
         {
-            "http",
-            "https",
+            "http"
         });
     }
 
