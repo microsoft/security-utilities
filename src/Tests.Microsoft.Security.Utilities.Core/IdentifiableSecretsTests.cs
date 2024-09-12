@@ -9,6 +9,8 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
+using Base62;
+
 using FluentAssertions;
 using FluentAssertions.Execution;
 
@@ -31,6 +33,43 @@ namespace Microsoft.Security.Utilities
 
         private static string s_base62Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
+
+        [TestMethod]
+        public void IdentifiableSecrets_ComputeCommonAnnotatedHashFunctions()
+        {
+            int failed = 0;
+            int succeeded = 0;
+            int iterations = 1000;
+
+            for (int i = 0; i < iterations; i++)
+            {
+                foreach (bool longForm in new[] { true, false })
+                {
+                    string testKey = IdentifiableSecrets.GenerateCommonAnnotatedKey("TEST",
+                                                                                    customerManagedKey: true,
+                                                                                    new byte[9],
+                                                                                    new byte[3],
+                                                                                    longForm);
+
+                    byte[] testBytes = Convert.FromBase64String(testKey);
+                    string roundtripped = Convert.ToBase64String(testBytes);
+
+                    roundtripped.Should().Be(testKey);
+
+                    if (CommonAnnotatedKey.TryCreate(roundtripped, out CommonAnnotatedKey cask) &&
+                        IdentifiableSecrets.TryValidateCommonAnnotatedKey(roundtripped, "TEST"))
+                    {
+                        succeeded++;
+                    }
+                    else
+                    {
+                        failed++; ;
+                    }
+                }
+            }
+
+            failed.Should().Be(0);
+        }
 
 
         [TestMethod]

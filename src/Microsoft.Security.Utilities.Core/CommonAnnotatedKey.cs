@@ -71,13 +71,14 @@ namespace Microsoft.Security.Utilities
             return true;
         }
 
-        private byte[] bytes;
+        public byte[] Bytes { get; }
+
         private string base64Key;
 
         private CommonAnnotatedKey(byte[] bytes)
         {
-            this.bytes = bytes;
-            this.base64Key = Convert.ToBase64String(this.bytes);
+            this.Bytes = bytes;
+            this.base64Key = Convert.ToBase64String(this.Bytes);
         }
 
         /// <summary>
@@ -144,7 +145,7 @@ namespace Microsoft.Security.Utilities
 
         public bool IsDerivedKey => this.base64Key[DerivedKeyCharacterOffset] == 'D';
 
-        public bool IsLongFormKey => bytes.Length == 64;
+        public bool IsLongFormKey => Bytes.Length == 64;
 
         // 123456789012345678901234567890123456789012345678901234567890123456789012345678901234[5678]
         // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaJQQJ99ADccrrrrrtttttppppASIGixi1[xx==]
