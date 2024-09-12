@@ -73,6 +73,51 @@ namespace Microsoft.Security.Utilities
 
 
         [TestMethod]
+        public void IdentifiableSecrets_ComputeCommonAnnotatedHashByteArrayOverloadsShouldFunction()
+        {
+            using var assertionScope = new AssertionScope();
+
+            foreach (bool customerManagedKey in new[] { true, false })
+            {
+                foreach (bool longForm in new[] { true, false })
+                {
+                    byte[] commonAnnotatedSecret = Convert.FromBase64String(
+                        IdentifiableSecrets.GenerateCommonAnnotatedKey("TEST",
+                                                                       customerManagedKey,
+                                                                       new byte[9],
+                                                                       new byte[3],
+                                                                       longForm));
+
+                    string textToHash = "NonsensitiveData";
+
+                    byte[] keyBytes = IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash, commonAnnotatedSecret);
+                    string key = Convert.ToBase64String(keyBytes);
+
+                    bool result = CommonAnnotatedKey.TryCreate(key, out CommonAnnotatedKey caKey);
+                    result.Should().BeTrue(because: "the ComputeCommonAnnotatedHash return value should be a valid cask");
+
+                    result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, "TEST");
+                    result.Should().BeTrue(because: "the ComputeCommonAnnotatedHash return value should validate using 'IdentifiableSecrets.TryValidateCommonAnnotatedKey'");
+
+                    commonAnnotatedSecret = IdentifiableSecrets.GenerateCommonAnnotatedKeyBytes("TEST",
+                                                                                                customerManagedKey,
+                                                                                                new byte[9],
+                                                                                                new byte[3],
+                                                                                                longForm);
+
+                    keyBytes = IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash, commonAnnotatedSecret);
+                    key = Convert.ToBase64String(keyBytes);
+
+                    result = CommonAnnotatedKey.TryCreate(key, out caKey);
+                    result.Should().BeTrue(because: "the ComputeCommonAnnotatedHash return value should be a valid cask");
+
+                    result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, "TEST");
+                    result.Should().BeTrue(because: "the ComputeCommonAnnotatedHash return value should validate using 'IdentifiableSecrets.TryValidateCommonAnnotatedKey'");
+                }
+            }
+        }
+
+        [TestMethod]
         public void IdentifiableSecrets_TryValidateCommonAnnotatedKey_GenerateCommonAnnotatedKey_LongForm()
         {
             using var assertionScope = new AssertionScope();

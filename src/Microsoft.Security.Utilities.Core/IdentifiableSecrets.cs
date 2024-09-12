@@ -189,7 +189,7 @@ public static class IdentifiableSecrets
                                                           byte[] commonAnnotatedSecret,
                                                           bool longForm = false)
     {
-        string keyText = Encoding.UTF8.GetString(commonAnnotatedSecret);
+        string keyText = Convert.ToBase64String(commonAnnotatedSecret);
         string derivedKey = ComputeDerivedCommonAnnotatedKey(derivationInput, keyText, longForm);
         return Convert.FromBase64String(derivedKey);
     }
@@ -205,7 +205,7 @@ public static class IdentifiableSecrets
                                                     byte[] commonAnnotatedSecret,
                                                     bool longForm = false)
     {
-        string keyText = Encoding.UTF8.GetString(commonAnnotatedSecret);
+        string keyText = Convert.ToBase64String(commonAnnotatedSecret);
         string hash = ComputeCommonAnnotatedHash(textToHash, keyText, longForm, 'H');
         return Convert.FromBase64String(hash);
     }
