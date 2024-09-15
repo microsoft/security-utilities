@@ -3,7 +3,9 @@
     "Pattern": "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)",
     "Id": "SEC101/105",
     "Name": "AzureMessageLegacyCredentials",
-    "Signatures": null,
+    "Signatures": [
+      ".servicebus"
+    ],
     "DetectionMetadata": "ObsoleteFormat, HighEntropy, MediumConfidence"
   },
   {
@@ -22,8 +24,7 @@
     "Id": "SEC101/127",
     "Name": "UrlCredentials",
     "Signatures": [
-      "http",
-      "https"
+      "http"
     ],
     "DetectionMetadata": "MediumConfidence"
   },

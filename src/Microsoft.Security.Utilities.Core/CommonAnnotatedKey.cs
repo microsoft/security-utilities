@@ -15,6 +15,7 @@ namespace Microsoft.Security.Utilities
         public static bool TryCreate(string key, out CommonAnnotatedKey secret)
         {
             secret = null;
+            string identifiableKey = key;
             ulong checksumSeed = IdentifiableSecrets.VersionTwoChecksumSeed;
             string base64EncodedSignature = key.Substring(76, 4);
 
@@ -56,11 +57,11 @@ namespace Microsoft.Security.Utilities
                 keyBytes[keyBytes.Length - 3] = checksumBytes[1];
                 keyBytes[keyBytes.Length - 2] = checksumBytes[2];
                 keyBytes[keyBytes.Length - 1] = checksumBytes[3];
-                
-                key = Convert.ToBase64String(keyBytes);
+
+                identifiableKey = Convert.ToBase64String(keyBytes);
             }
 
-            if (!IdentifiableSecrets.TryValidateBase64Key(key, checksumSeed, base64EncodedSignature))
+            if (!IdentifiableSecrets.TryValidateBase64Key(identifiableKey, checksumSeed, base64EncodedSignature))
             {
                 return false;
             }
@@ -73,12 +74,20 @@ namespace Microsoft.Security.Utilities
 
         public byte[] Bytes { get; }
 
+        public byte[] ChecksumBytes { get; }
+
         private string base64Key;
 
         private CommonAnnotatedKey(byte[] bytes)
         {
             this.Bytes = bytes;
             this.base64Key = Convert.ToBase64String(this.Bytes);
+
+            int checksumBytesLength =
+                this.Bytes.Length == IdentifiableSecrets.LongFormCommonAnnotatedKeySizeInBytes ? 4 : 3;
+
+            this.ChecksumBytes = new byte[checksumBytesLength];
+            Array.Copy(this.Bytes, 60, this.ChecksumBytes, 0, checksumBytesLength);
         }
 
         /// <summary>
@@ -136,6 +145,8 @@ namespace Microsoft.Security.Utilities
         /// The encoded length of the provider fixed signature, e.g., 'AZEG'.
         /// </summary>
         public const int ProviderFixedSignatureLength = 4;
+
+        public const int ChecksumBytesIndex = 60;
 
         public const int ChecksumOffset = ProviderFixedSignatureOffset + ProviderFixedSignatureLength;
 

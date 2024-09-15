@@ -80,31 +80,34 @@ public static class IdentifiableSecrets
 
         ulong checksumSeed = VersionTwoChecksumSeed;
 
-        int firstChecksumByteIndex = 60;
+        int firstChecksumByteIndex = CommonAnnotatedKey.ChecksumBytesIndex;
         byte[] bytesToChecksum = new byte[firstChecksumByteIndex];
         Array.Copy(key, bytesToChecksum, bytesToChecksum.Length);
         
         int checksum = Marvin.ComputeHash32(bytesToChecksum, checksumSeed, 0, bytesToChecksum.Length);
         byte[] computedChecksumBytes = BitConverter.GetBytes(checksum);
 
-        byte[] encodedChecksumBytes = new byte[4];
-        Array.Copy(key, firstChecksumByteIndex, encodedChecksumBytes, 0, encodedChecksumBytes.Length);
+        int checksumLength = longForm ? 4 : 3;
+        byte[] encodedChecksumBytes = new byte[checksumLength];
+        Array.Copy(key, firstChecksumByteIndex, encodedChecksumBytes, 0, checksumLength);
 
         if (encodedChecksumBytes[0] == computedChecksumBytes[0] &&
             encodedChecksumBytes[1] == computedChecksumBytes[1] &&
-            encodedChecksumBytes[2] == computedChecksumBytes[2] &&
-            encodedChecksumBytes[3] == computedChecksumBytes[3])
+            encodedChecksumBytes[2] == computedChecksumBytes[2])
         {
-            return true;
+            return !longForm || encodedChecksumBytes[3] == computedChecksumBytes[3];
         }
 
-        encodedChecksumBytes = computedChecksumBytes.ToBase62().FromBase62();
+        byte[] base62EncodedBytes = GetBase62ChecksumBytes(computedChecksumBytes);
 
-        return encodedChecksumBytes[0] == computedChecksumBytes[0] &&
-               encodedChecksumBytes[1] == computedChecksumBytes[1] &&
-               encodedChecksumBytes[2] == computedChecksumBytes[2] &&
-               encodedChecksumBytes[3] == computedChecksumBytes[3];
+        if (encodedChecksumBytes[0] != base62EncodedBytes[0] ||
+            encodedChecksumBytes[1] != base62EncodedBytes[1] ||
+            encodedChecksumBytes[2] != base62EncodedBytes[2])
+        {
+            return false;
+        }
 
+        return !longForm || encodedChecksumBytes[3] == base62EncodedBytes[3];
     }
 
     public static bool TryValidateCommonAnnotatedKey(string key,
@@ -226,7 +229,7 @@ public static class IdentifiableSecrets
         }
 
         return ComputeCommonAnnotatedHash(textToHash,
-                                          commonAnnotatedSecret,
+                                          cask.Bytes,
                                           cask.ProviderFixedSignature,
                                           cask.IsCustomerManaged,
                                           Convert.FromBase64String(cask.PlatformReserved),
@@ -253,7 +256,7 @@ public static class IdentifiableSecrets
     }
 
     public static string ComputeCommonAnnotatedHash(string textToHash,
-                                                    string secret,
+                                                    byte[] secret,
                                                     string base64EncodedSignature,
                                                     bool customerManagedKey,
                                                     byte[] platformReserved,
@@ -266,7 +269,7 @@ public static class IdentifiableSecrets
             throw new ArgumentException("The hashed data signature must be either 'D' (for derived keys) or 'H' (for arbitrary hashes).");
         }
 
-        using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(secret));
+        using var hmac = new HMACSHA512(secret);
         byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(textToHash));
 
         byte[] derivedKeyBytes = new byte[40];
@@ -360,12 +363,6 @@ public static class IdentifiableSecrets
             }
 
             key = keyBytes.ToBase62();
-
-            if (key.Length < 86)
-            {
-                throw new InvalidOperationException($"The key length is less than 86 characters: {key}");
-            }
-
             key = key.Substring(0, 85);
 
             // We use Q== as the suffix to keep the key format consistent with the usage in Rust.
@@ -379,15 +376,7 @@ public static class IdentifiableSecrets
             key = $"{new string(testChar!.Value, 85)}Q==";
         }
 
-        try
-        {
-            keyBytes = Convert.FromBase64String(key);
-        }
-        catch (FormatException)
-        {
-            throw new InvalidOperationException($"Key could not be decoded: {key}"); ;
-        }
-
+        keyBytes = Convert.FromBase64String(key);
         byte jBits = 'J' - 'A';
         byte qBits = 'Q' - 'A';
 
@@ -437,6 +426,14 @@ public static class IdentifiableSecrets
 
         key = $"{Convert.ToBase64String(keyBytes).Substring(0, 80)}{checksumText}";
 
+#if DEBUG
+        string roundTripped = Convert.ToBase64String(Convert.FromBase64String(key));
+        if (!roundTripped.Equals(key))
+        {
+            throw new InvalidOperationException("Round-tripped key did not match.");
+        }
+#endif
+
         if (!longForm)
         {
             key = key.Substring(0, key.Length - 4);
@@ -447,11 +444,16 @@ public static class IdentifiableSecrets
 
     internal static string GetBase62EncodedChecksum(byte[] checksumBytes)
     {
+        checksumBytes = GetBase62ChecksumBytes(checksumBytes);
+        return Convert.ToBase64String(checksumBytes);
+    }
+
+    internal static byte[] GetBase62ChecksumBytes(byte[] checksumBytes)
+    {
         string checksumText = checksumBytes.ToBase62();
         checksumText = $"{checksumText}{new string('0', 6 - checksumText.Length)}==";
 
-        checksumText = Convert.ToBase64String(Convert.FromBase64String(checksumText));
-        return checksumText;
+        return Convert.FromBase64String(checksumText);
     }
 
     public static string ComputeDerivedIdentifiableKey(string textToHash,
@@ -643,7 +645,7 @@ public static class IdentifiableSecrets
             if (!IsBase62EncodingChar(ch))
             {
                 throw new ArgumentException(
-                    "Signature can only contain alphabetic or numeric values.");
+                    "Signature can only contain alphanumeric values.");
             }
         }
 
@@ -715,7 +717,6 @@ public static class IdentifiableSecrets
 
         int encodedChecksumLength = key.Length == LongFormEncodedCommonAnnotatedKeySize ? 8 : 4;
         string encodedChecksum = key.Substring(key.Length - encodedChecksumLength).Trim('=');
-
 
         checksumBytes = BitConverter.GetBytes(actualChecksum);
         string computedEncodedChecksum = GetBase62EncodedChecksum(checksumBytes).Trim('=');

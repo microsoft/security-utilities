@@ -15,8 +15,7 @@
     "Id": "SEC101/127",
     "Name": "UrlCredentials",
     "Signatures": [
-      "http",
-      "https"
+      "http"
     ],
     "DetectionMetadata": "MediumConfidence"
   },
