@@ -26,6 +26,7 @@ function Exit-WithFailureMessage($scriptName, $message) {
 }
 
 dotnet tool update --global nbgv --version 3.3.37
+$env:Path = "$env:Path;$env:USERPROFILE/.dotnet/tools"
 $tag = nbgv get-version --variable NugetPackageVersion
 
 if ($env:MsuiNugetPackageVersion) {
