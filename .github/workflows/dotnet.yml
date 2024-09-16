@@ -15,6 +15,10 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        # Nerdbank Git Versioning used by this project
+        # requires full clone (i.e. not the shallow default of GitHub Actions)
+        fetch-depth: 0
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
       with:
