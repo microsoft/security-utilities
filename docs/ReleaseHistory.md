@@ -12,6 +12,8 @@
 - FNS => False negative reduction in static analysis.
 
 # UNRELEASED
+
+# 1.8.0 - 09/16/2024
 - BUG: Mark `SEC000/000.Unclassified32ByteBase64String`, `SEC000/001.Unclassified64ByteBase64String`, `SEC101/101.AadClientAppLegacyCredentials`, `SEC000/001.Unclassified64ByteBase64String` as `DetectionMetadata.LowConfidence`.
 - BUG: Mark `SEC101/109.AzureContainerRegistryLegacyKey` as `DetectionMetadata.MediumConfidence`.
 - BUG: Mark `SEC101/030.NuGetApiKey`, `SEC101/105.AzureMessageLegacyCredentials`, `SEC101/110.AzureDatabricksPat`,`SEC101/050.NpmAuthorKey`,`SEC101/565.SecretScanningSampleToken` as `DetectionMetadata.HighConfidence`.
