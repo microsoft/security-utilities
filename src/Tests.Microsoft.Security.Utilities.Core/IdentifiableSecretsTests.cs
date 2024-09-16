@@ -3,13 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
-
-using Base62;
 
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -19,7 +17,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Security.Utilities
 {
-    [TestClass]
+    [TestClass, ExcludeFromCodeCoverage]
     public class IdentifiableSecretsTests
     {
         private static Random s_random;
@@ -32,45 +30,273 @@ namespace Microsoft.Security.Utilities
         }
 
         private static string s_base62Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        [TestMethod]
+        public void IdentifiableSecrets_GenerateCommonAnnotatedTestKey()
+        {
+            string signature = GetRandomSignature();
 
+            byte[] platformReserved = new byte[9];
+            byte[] providerReserved = new byte[3];
+
+            Action action = () => IdentifiableSecrets.GenerateCommonAnnotatedTestKey(new byte[64],
+                                                                                     ulong.MaxValue,
+                                                                                     signature,
+                                                                                     customerManagedKey: true,
+                                                                                     platformReserved,
+                                                                                     providerReserved,
+                                                                                     longForm: true,
+                                                                                     'x',
+                                                                                     '9');
+
+            action.Should().NotThrow<ArgumentException>(because: $"platform and provider byte counts are correct for GenerateCommonAnnotatedTestKey");
+
+            platformReserved = new byte[8];
+            action.Should().Throw<ArgumentException>(because: $"platform byte count must be 9 for GenerateCommonAnnotatedTestKey");
+
+            platformReserved = new byte[9];
+            providerReserved = new byte[2];
+            action.Should().Throw<ArgumentException>(because: $"provider byte count must be 9 for GenerateCommonAnnotatedTestKey");
+        }
 
         [TestMethod]
-        public void IdentifiableSecrets_ComputeCommonAnnotatedHashFunctions()
+        public void IdentifiableSecrets_ComputeDerivedIdentifiableKeyThrowsOnInvalidSecret()
         {
-            int failed = 0;
-            int succeeded = 0;
-            int iterations = 1000;
+            string signature = GetRandomSignature();
 
-            for (int i = 0; i < iterations; i++)
+            foreach (bool longForm in new[] { true, false })
             {
-                foreach (bool longForm in new[] { true, false })
+                string key = Convert.ToBase64String(new byte[64]);
+                Action action = () => IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey("NonsensitiveData",
+                                                                                           key,
+                                                                                           longForm);
+
+                action.Should().Throw<ArgumentException>(because: $"'{key}' is not a valid secret for ComputeDerivedCommonAnnotatedKey");
+             
+                key = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature, customerManagedKey: true, new byte[9], new byte[3], longForm);
+
+                action.Should().NotThrow<ArgumentException>(because: $"'{key}' is a valid secret for ComputeDerivedCommonAnnotatedKey");
+
+                int index = s_random.Next() % key.Length;
+                string updatedKey = $"{key.Substring(0, index)}X{key.Substring(index + 1)}";
+
+                if (updatedKey != key)
                 {
-                    string testKey = IdentifiableSecrets.GenerateCommonAnnotatedKey("TEST",
-                                                                                    customerManagedKey: true,
-                                                                                    new byte[9],
-                                                                                    new byte[3],
-                                                                                    longForm);
+                    key = updatedKey;
+                    action.Should().Throw<ArgumentException>(because: $"'{key}' is not a valid secret for ComputeDerivedCommonAnnotatedKey");
+                }
+            }
+        }
 
-                    byte[] testBytes = Convert.FromBase64String(testKey);
-                    string roundtripped = Convert.ToBase64String(testBytes);
+        [TestMethod]
+        public void IdentifiableSecrets_ComputeCommonAnnotatedHashRequiresCorrectIdentifiers()
+        {
+            using var assertionScope = new AssertionScope();
 
-                    roundtripped.Should().Be(testKey);
+            string signature = GetRandomSignature();
 
-                    if (CommonAnnotatedKey.TryCreate(roundtripped, out CommonAnnotatedKey cask) &&
-                        IdentifiableSecrets.TryValidateCommonAnnotatedKey(roundtripped, "TEST"))
+            for (int i = 0; i < CustomAlphabetEncoder.DefaultBase64Alphabet.Length; i++)
+            {
+                foreach (bool customerManagedKey in new[] { true, false })
+                {
+                    foreach (bool longForm in new[] { true, false })
                     {
-                        succeeded++;
-                    }
-                    else
-                    {
-                        failed++; ;
+                        char keyKindSignature = CustomAlphabetEncoder.DefaultBase64Alphabet[i];
+
+                        if (keyKindSignature == 'D' || keyKindSignature == 'H')
+                        {
+                            continue;
+                        }
+
+                        Action action = () => IdentifiableSecrets.ComputeCommonAnnotatedHash("NonsensitiveData",
+                                                                                             new byte[64],
+                                                                                             signature,
+                                                                                             customerManagedKey,
+                                                                                             new byte[9],
+                                                                                             new byte[3],
+                                                                                             longForm,
+                                                                                             keyKindSignature);
+
+                        action.Should().Throw<ArgumentException>(because: $"'{keyKindSignature}' should not be a valid ComputeCommonAnnotatedHash identifier");
+
+                        action = () => IdentifiableSecrets.ComputeCommonAnnotatedHash("NonsensitiveData",
+                                                                                      Convert.ToBase64String(new byte[64]),
+                                                                                      longForm, 
+                                                                                      keyKindSignature);
+
+                        action.Should().Throw<ArgumentException>(because: $"'{keyKindSignature}' should not be a valid ComputeCommonAnnotatedHash identifier");
                     }
                 }
             }
-
-            failed.Should().Be(0);
         }
 
+        [TestMethod]
+        public void IdentifiableSecrets_TryValidateCommonAnnotatedKeyInvalidLengths()
+        {
+            using var assertionScope = new AssertionScope();
+
+            string signature = GetRandomSignature();
+
+            bool result = IdentifiableSecrets.TryValidateCommonAnnotatedKey((byte[])null, signature);
+            result.Should().BeFalse(because: "null key should not validate in 'TryValidateCommonAnnotatedKey'");
+
+            for (int i = 0; i < 100; i++)
+            {
+                if (i == IdentifiableSecrets.StandardCommonAnnotatedKeySizeInBytes ||
+                    i == IdentifiableSecrets.LongFormCommonAnnotatedKeySizeInBytes)
+                {
+                    continue;
+                }
+
+                result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(new byte[i], signature);
+                result.Should().BeFalse(because: $"byte array of invalid length '{i} should not validate in 'TryValidateCommonAnnotatedKey'");
+            }
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_TryValidateCommonAnnotatedKeyBase64EncodedChecksums()
+        {
+            using var assertionScope = new AssertionScope();
+
+            for (int i = 0; i < 1; i++)
+            {
+                foreach (bool longForm in new[] { true, false })
+                {
+                    string signature = GetRandomSignature();
+                    string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature,
+                                                                                customerManagedKey: true,
+                                                                                new byte[9],
+                                                                                new byte[3],
+                                                                                longForm);
+
+                    byte[] keyBytes = Convert.FromBase64String(key);
+
+                    ulong checksumSeed = IdentifiableSecrets.VersionTwoChecksumSeed;
+
+                    int firstChecksumByteIndex = CommonAnnotatedKey.ChecksumBytesIndex;
+                    byte[] bytesToChecksum = new byte[firstChecksumByteIndex];
+                    Array.Copy(keyBytes, bytesToChecksum, bytesToChecksum.Length);
+
+                    int checksum = Marvin.ComputeHash32(bytesToChecksum, checksumSeed, 0, bytesToChecksum.Length);
+                    byte[] computedChecksumBytes = BitConverter.GetBytes(checksum);
+
+                    int checksumLength = longForm ? 4 : 3;
+                    Array.Copy(computedChecksumBytes, 0, keyBytes, CommonAnnotatedKey.ChecksumBytesIndex, checksumLength);
+
+                    bool result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, signature);
+                    result.Should().BeTrue(because: $"{key}' should validate using 'TryValidateCommonAnnotatedKey' with its original checksum");
+
+                    CommonAnnotatedKey.TryCreate(key, out CommonAnnotatedKey cask);
+                    cask.Should().NotBeNull(because: $"the '{key}' should be a valid cask");
+
+                    byte[] originalChecksum = new byte[cask.ChecksumBytes.Length];
+                    Array.Copy(keyBytes, CommonAnnotatedKey.ChecksumBytesIndex, originalChecksum, 0, originalChecksum.Length);
+
+                    for (int j = 0; j < cask.ChecksumBytes.Length; j++)
+                    {
+                        // Ensure that the we've restored the key entirely
+                        Array.Copy(originalChecksum, 0, keyBytes, CommonAnnotatedKey.ChecksumBytesIndex, originalChecksum.Length);
+                        result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, signature);
+                        result.Should().BeTrue(because: $"{key}' should validate using 'TryValidateCommonAnnotatedKey' with its original checksum");
+
+                        // Now munge a single byte of the checksum and ensure that the key no longer validates.
+                        keyBytes[CommonAnnotatedKey.ChecksumBytesIndex + i] = (byte)~keyBytes[CommonAnnotatedKey.ChecksumBytesIndex + i];
+
+                        // Having munged the checksum, the key should no longer validate.
+                        result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, signature);
+                        result.Should().BeFalse(because: $"{key}' should not validate using 'TryValidateCommonAnnotatedKey' when its checksum is altered");
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_TryValidateCommonAnnotatedKeyBase62EncodedChecksums()
+        {
+            using var assertionScope = new AssertionScope();
+
+            for (int i = 0; i < 1; i++)
+            {
+                foreach (bool longForm in new[] { true, false })
+                {
+                    string signature = GetRandomSignature();
+                    string key = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature,
+                                                                                customerManagedKey: true,
+                                                                                new byte[9],
+                                                                                new byte[3],
+                                                                                longForm);
+
+                    byte[] keyBytes = Convert.FromBase64String(key);
+                    bool result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, signature);
+                    result.Should().BeTrue(because: $"{key}' should validate using 'TryValidateCommonAnnotatedKey' with its original checksum");
+
+                    CommonAnnotatedKey.TryCreate(key, out CommonAnnotatedKey cask);
+                    cask.Should().NotBeNull(because: $"the '{key}' should be a valid cask");
+
+                    byte[] originalChecksum = new byte[cask.ChecksumBytes.Length];
+                    Array.Copy(keyBytes, CommonAnnotatedKey.ChecksumBytesIndex, originalChecksum, 0, originalChecksum.Length);
+
+                    for (int j = 0; j < cask.ChecksumBytes.Length; j++)
+                    {
+                        // Ensure that the we've restored the key entirely
+                        Array.Copy(originalChecksum, 0, keyBytes, CommonAnnotatedKey.ChecksumBytesIndex, originalChecksum.Length);
+                        result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, signature);
+                        result.Should().BeTrue(because: $"{key}' should validate using 'TryValidateCommonAnnotatedKey' with its original checksum");
+
+                        // Now munge a single byte of the checksum and ensure that the key no longer validates.
+                        keyBytes[CommonAnnotatedKey.ChecksumBytesIndex + i] = (byte)~keyBytes[CommonAnnotatedKey.ChecksumBytesIndex + i];
+
+                        // Having munged the checksum, the key should no longer validate.
+                        result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, signature);
+                        result.Should().BeFalse(because: $"{key}' should not validate using 'TryValidateCommonAnnotatedKey' when its checksum is altered");
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_ComputeCommonAnnotatedHashByteArrayOverloadsShouldFunction()
+        {
+            using var assertionScope = new AssertionScope();
+
+            foreach (bool customerManagedKey in new[] { true, false })
+            {
+                foreach (bool longForm in new[] { true, false })
+                {
+                    byte[] commonAnnotatedSecret = Convert.FromBase64String(
+                        IdentifiableSecrets.GenerateCommonAnnotatedKey("TEST",
+                                                                       customerManagedKey,
+                                                                       new byte[9],
+                                                                       new byte[3],
+                                                                       longForm));
+
+                    string textToHash = "NonsensitiveData";
+
+                    byte[] keyBytes = IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash, commonAnnotatedSecret);
+                    string key = Convert.ToBase64String(keyBytes);
+
+                    bool result = CommonAnnotatedKey.TryCreate(key, out CommonAnnotatedKey caKey);
+                    result.Should().BeTrue(because: "the ComputeCommonAnnotatedHash return value should be a valid cask");
+
+                    result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, "TEST");
+                    result.Should().BeTrue(because: "the ComputeCommonAnnotatedHash return value should validate using 'IdentifiableSecrets.TryValidateCommonAnnotatedKey'");
+
+                    commonAnnotatedSecret = IdentifiableSecrets.GenerateCommonAnnotatedKeyBytes("TEST",
+                                                                                                customerManagedKey,
+                                                                                                new byte[9],
+                                                                                                new byte[3],
+                                                                                                longForm);
+
+                    keyBytes = IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash, commonAnnotatedSecret);
+                    key = Convert.ToBase64String(keyBytes);
+
+                    result = CommonAnnotatedKey.TryCreate(key, out caKey);
+                    result.Should().BeTrue(because: "the ComputeCommonAnnotatedHash return value should be a valid cask");
+
+                    result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, "TEST");
+                    result.Should().BeTrue(because: "the ComputeCommonAnnotatedHash return value should validate using 'IdentifiableSecrets.TryValidateCommonAnnotatedKey'");
+                }
+            }
+        }
 
         [TestMethod]
         public void IdentifiableSecrets_TryValidateCommonAnnotatedKey_GenerateCommonAnnotatedKey_LongForm()
@@ -194,7 +420,7 @@ namespace Microsoft.Security.Utilities
         {
             using var assertionScope = new AssertionScope();
 
-            foreach (string invalidSignature in new[] { "AbAA", "aaaB", "1AAA" })
+            foreach (string invalidSignature in new[] { "AbAA", "aaaB", "1AAA", "A?AA" })
             {
                 var action = () => IdentifiableSecrets.ValidateCommonAnnotatedKeySignature(invalidSignature);
                 action.Should().Throw<ArgumentException>(because: $"the signature '{invalidSignature}' is invalid");
@@ -245,7 +471,7 @@ namespace Microsoft.Security.Utilities
             string textToHash = "NonsensitiveData";
 
             byte[] derivedKeyBytes = IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(textToHash,
-                                                                                            Encoding.UTF8.GetBytes(key));
+                                                                                          Convert.FromBase64String(key));
 
             string derivedKey = IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(textToHash, key);
 
@@ -263,11 +489,33 @@ namespace Microsoft.Security.Utilities
             string textToHash = "NonsensitiveData";
 
             byte[] computedHashBytes = IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash,
-                                                                                      Encoding.UTF8.GetBytes(key));
+                                                                                      Convert.FromBase64String(key));
 
             string computedHash = IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash, key);
 
             computedHash.Should().Be(Convert.ToBase64String(computedHashBytes), because: "the computed hash should match the byte array");
+        }
+
+        [TestMethod]
+        public void IdentifiableSecret_ComputeCommonAnnotatedHashFullOverload()
+        {
+            string key = IdentifiableSecrets.GenerateCommonAnnotatedKey("ABCD",
+                                                                        customerManagedKey: true,
+                                                                        new byte[9],
+                                                                        new byte[3]);
+
+            string textToHash = "NonsensitiveData";
+
+            byte[] secretBytes = Encoding.UTF8.GetBytes(textToHash);
+
+            IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash,
+                                                           secretBytes,
+                                                           "TEST",
+                                                           customerManagedKey: true,
+                                                           new byte[9], 
+                                                           new byte[3],
+                                                           longForm: false,
+                                                           keyKindSignature: 'D');
         }
 
         [TestMethod]
@@ -909,7 +1157,7 @@ namespace Microsoft.Security.Utilities
             return alphabet;
         }
 
-        private string GetReplacementCharacter(char ch)
+        private static string GetReplacementCharacter(char ch)
         {
             // Generate a replacement character that works for all possible
             // generated characters in secrets, whether or not they are encoded
@@ -920,6 +1168,20 @@ namespace Microsoft.Security.Utilities
             return Char.IsUpper(ch)
                 ? ch.ToString().ToLowerInvariant()
                 : ch.ToString().ToUpperInvariant();
+        }
+
+        private static string GetRandomSignature()
+        {
+            byte[] singleByte = new byte[1];
+            s_random.NextBytes(singleByte);
+
+            int character = (int)singleByte[0] %26;
+
+            s_random.NextBytes(singleByte);
+            bool isUpper = singleByte[0] % 2 == 0;
+            
+            string signature = $"{s_base62Alphabet[character]}{Guid.NewGuid().ToString("N").Substring(0, 3)}";
+            return isUpper ? signature.ToUpperInvariant() : signature.ToLowerInvariant();
         }
     }
 }

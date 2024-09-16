@@ -15,8 +15,7 @@
     "Id": "SEC101/127",
     "Name": "UrlCredentials",
     "Signatures": [
-      "http",
-      "https"
+      "http"
     ],
     "DetectionMetadata": "MediumConfidence"
   },
@@ -41,21 +40,21 @@
     "DetectionMetadata": "LowConfidence"
   },
   {
-    "Pattern": "^(?i)[a-z0-9.=\\-:[_@\\/*\\]+?]{32}$",
+    "Pattern": "(?i)[a-z0-9.=\\-:[_@\\/*\\]+?]{32}$",
     "Id": "SEC000/003",
     "Name": "Unclassified32CharacterString",
     "Signatures": null,
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
   },
   {
-    "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=$",
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=",
     "Id": "SEC000/000",
     "Name": "Unclassified32ByteBase64String",
     "Signatures": null,
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
   },
   {
-    "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==$",
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==",
     "Id": "SEC000/001",
     "Name": "Unclassified64ByteBase64String",
     "Signatures": null,
@@ -69,7 +68,7 @@
     "DetectionMetadata": "ObsoleteFormat, HighEntropy, LowConfidence"
   },
   {
-    "Pattern": "^[1234567890abcdef]{32}$",
+    "Pattern": "(^|[^1234567890abcdef])[1234567890abcdef]{32}([^1234567890abcdef]|$)",
     "Id": "SEC000/002",
     "Name": "Unclassified16ByteHexadecimalString",
     "Signatures": null,

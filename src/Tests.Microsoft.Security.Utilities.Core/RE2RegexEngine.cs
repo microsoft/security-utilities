@@ -2,14 +2,17 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.RE2.Managed;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities
 {
+    [ExcludeFromCodeCoverage]
     public class RE2RegexEngine : IRegexEngine
     {
         public static IRegexEngine Instance = new RE2RegexEngine();
