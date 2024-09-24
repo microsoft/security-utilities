@@ -12,6 +12,9 @@
 - FNS => False negative reduction in static analysis.
 
 # UNRELEASED
+- BUG: Fix unhandled exception raised by `CommonAnnotatedKey.TryCreate(string, out CommonAnnotatedKey)` when passed non-CASK secrets of length < 80.
+
+# 1.9.0 - 09/24/2024
 
 # 1.8.0 - 09/16/2024
 - BUG: Mark `SEC000/000.Unclassified32ByteBase64String`, `SEC000/001.Unclassified64ByteBase64String`, `SEC101/101.AadClientAppLegacyCredentials`, `SEC000/001.Unclassified64ByteBase64String` as `DetectionMetadata.LowConfidence`.

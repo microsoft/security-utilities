@@ -30,6 +30,32 @@ namespace Microsoft.Security.Utilities
         }
 
         private static string s_base62Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+        [TestMethod]
+        public void IdentifiableSecrets_IdentifiableSecrets_ComputeCommonAnnotatedHash()
+        {
+            foreach (bool longForm in new[] { true, false })
+            {
+                string signature = GetRandomSignature();
+
+                string cask = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature, customerManagedKey: true, null, null, longForm);
+                string legacySecret = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+
+                foreach (string secret in new[] { cask, legacySecret })
+                {
+                    string message = Guid.NewGuid().ToString();
+
+                    string hash = IdentifiableSecrets.ComputeCommonAnnotatedHash(message,
+                                                                                 Convert.FromBase64String(secret),
+                                                                                 signature,
+                                                                                 customerManagedKey: true,
+                                                                                 platformReserved: null,
+                                                                                 providerReserved: null,
+                                                                                 longForm);
+                }
+            }
+        }        
+
         [TestMethod]
         public void IdentifiableSecrets_GenerateCommonAnnotatedTestKey()
         {
