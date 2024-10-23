@@ -318,7 +318,7 @@
     "DetectionMetadata": "Identifiable"
   },
   {
-    "Pattern": "(^|[^0-9a-z])(?<refine>oy2[a-p][0-9a-z]{15}[aq][0-9a-z]{11}[eu][bdfhjlnprtvxz357][a-p][0-9a-z]{11}[aeimquy4])([^aeimquy4]|$)",
+    "Pattern": "(^|[^a-zA-Z0-9])(?<refine>oy2[a-z2-7]{43})([^a-zA-Z0-9]|$)",
     "Id": "SEC101/030",
     "Name": "NuGetApiKey",
     "Signatures": [
