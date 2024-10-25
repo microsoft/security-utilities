@@ -16,6 +16,20 @@ namespace Tests.Microsoft.Security.Utilities.Core
     public class IdentifiableScanTests
     {
         [TestMethod]
+        public void AdHoc_ScanTest()
+        {
+            using var assertionScope = new AssertionScope();
+
+            var masker = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
+                                              generateCorrelatingIds: false);
+
+            var key = "";
+
+            int found = masker.DetectSecrets(key).Count();
+            found.Should().Be(1);
+        }
+
+        [TestMethod]
         public void IdentifiableScan_IdentifiableKeys()
         {
             int iterations = 1000;
