@@ -6,7 +6,7 @@ using System.Linq;
 
 using FluentAssertions;
 using FluentAssertions.Execution;
-
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Security.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -15,6 +15,36 @@ namespace Tests.Microsoft.Security.Utilities.Core
     [TestClass, ExcludeFromCodeCoverage]
     public class IdentifiableScanTests
     {
+        [TestMethod]
+        public void CommonAnnotatedSecurityKey_PrefixOrSuffix_ScanTest()
+        {
+            using var assertionScope = new AssertionScope();
+
+            var cask = new CommonAnnotatedSecurityKey();
+            var examples = cask.GenerateTruePositiveExamples().ToList();
+
+            var masker = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
+                                              generateCorrelatingIds: false);
+
+            foreach (string example in examples)
+            {
+                var exampleWithPrefixOrSuffix = "https://" + example;
+
+                int found = masker.DetectSecrets(exampleWithPrefixOrSuffix).Count();
+                found.Should().Be(1);
+
+                exampleWithPrefixOrSuffix = example + "@azuredevops.com";
+
+                found = masker.DetectSecrets(exampleWithPrefixOrSuffix).Count();
+                found.Should().Be(1);
+
+                exampleWithPrefixOrSuffix = "https://" + example + "@azuredevops.com";
+
+                found = masker.DetectSecrets(exampleWithPrefixOrSuffix).Count();
+                found.Should().Be(1);
+            }
+        }
+
         [TestMethod]
         public void IdentifiableScan_IdentifiableKeys()
         {

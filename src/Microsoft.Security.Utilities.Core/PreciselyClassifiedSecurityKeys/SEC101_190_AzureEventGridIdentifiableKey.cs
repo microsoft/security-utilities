@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    public class AzureEventGridIdentifiableKey : Azure32ByteIdentifiableKey
+    public class AzureEventGridIdentifiableKey : CommonAnnotatedSecurityKey
     {
         public AzureEventGridIdentifiableKey()
         {
@@ -14,7 +14,5 @@ namespace Microsoft.Security.Utilities
         }
 
         public override ISet<string> Signatures => IdentifiableMetadata.AzureEventGridSignature.ToSet();
-
-        public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableSecrets.VersionTwoChecksumSeed };
     }
 }
