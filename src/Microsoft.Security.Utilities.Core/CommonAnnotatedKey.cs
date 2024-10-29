@@ -17,13 +17,14 @@ namespace Microsoft.Security.Utilities
             secret = null;
             string identifiableKey = key;
             ulong checksumSeed = IdentifiableSecrets.VersionTwoChecksumSeed;
-            string base64EncodedSignature = key.Substring(76, 4);
 
             if (key.Length != IdentifiableSecrets.StandardEncodedCommonAnnotatedKeySize &&
                 key.Length != IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize)
             {
                 return false;
             }
+
+            string base64EncodedSignature = key.Substring(76, 4);
 
             bool longForm = key.Length == IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize;
 
