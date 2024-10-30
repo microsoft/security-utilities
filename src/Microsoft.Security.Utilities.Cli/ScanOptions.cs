@@ -10,9 +10,14 @@ namespace Microsoft.Security.Utilities.Cli
         [Option(
             'i',
             "input",
-            Required = true,
             HelpText = "A path to a file to scan for identifiable secrets.")]
         public string Input { get; set; }
+
+        [Option(
+            's',
+            "string-input",
+            HelpText = "A path to a file to scan for identifiable secrets.")]
+        public string StringInput  { get; set; }
 
         [Option(
             "recurse",
