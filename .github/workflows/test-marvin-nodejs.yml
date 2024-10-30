@@ -1,4 +1,4 @@
-name: Test Marvin (NodeJS)
+name: Test Marvin (Node)
 on:
   push:
     branches: [main]
