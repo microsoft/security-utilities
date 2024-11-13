@@ -13,6 +13,8 @@
 
 # UNRELEASED
 - BUG: Fix unhandled exception raised by `CommonAnnotatedKey.TryCreate(string, out CommonAnnotatedKey)` when passed non-CASK secrets of length < 80.
+- BUG: Update `AzureEventGridIdentifiableKey` rule id to `SEC101/199` to be synced with source of the rule.
+- BUG: Update `NuGetApiKey` rule id to `SEC101/031` to be synced with source of the rule.
 
 # 1.9.0 - 09/24/2024
 
@@ -22,8 +24,6 @@
 - BUG: Mark `SEC101/030.NuGetApiKey`, `SEC101/105.AzureMessageLegacyCredentials`, `SEC101/110.AzureDatabricksPat`,`SEC101/050.NpmAuthorKey`,`SEC101/565.SecretScanningSampleToken` as `DetectionMetadata.HighConfidence`.
 - BUG: Make round-tripping of common annotated security keys through base64 encoding/decoding more robust. We previously emitted illegal ending base64 characters (when appending base62 encoded checksums).
 - BUG: Correct `IdentifiableSecrets` `ComputeDerivedCommonAnnotatedKey` and `ComputeCommonAnnotatedHash` helpers to preserve all randomized byte input entropy by encoding and decoding this data as base64.
-- BUG: Update `AzureEventGridIdentifiableKey` rule id to `SEC101/199` to be synced with source of the rule.
-- BUG: Update `NuGetApiKey` rule id to `SEC101/031` to be synced with source of the rule.
 - NEW: Add `CommonAnnotatedKey` `ChecksumBytes` and `ChecksumBytesIndex` convenience methods for retrieving key checksum data.
 - PRF: Enable scan pre-filtering by declaring `.servicebus` as `SEC101/105.AzureMessageLegacyCredentials` signature.
 
