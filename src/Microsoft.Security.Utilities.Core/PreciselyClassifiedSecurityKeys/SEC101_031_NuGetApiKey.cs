@@ -9,7 +9,7 @@ namespace Microsoft.Security.Utilities
     {
         public NuGetApiKey()
         {
-            Id = "SEC101/030";
+            Id = "SEC101/031";
             Name = nameof(NuGetApiKey);
             DetectionMetadata = DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy| DetectionMetadata.HighConfidence;
             Pattern = "(^|[^0-9a-z])(?<refine>oy2[a-p][0-9a-z]{15}[aq][0-9a-z]{11}[eu][bdfhjlnprtvxz357][a-p][0-9a-z]{11}[aeimquy4])([^aeimquy4]|$)";

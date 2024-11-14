@@ -13,6 +13,8 @@
 
 # UNRELEASED
 - BUG: Fix unhandled exception raised by `CommonAnnotatedKey.TryCreate(string, out CommonAnnotatedKey)` when passed non-CASK secrets of length < 80.
+- BUG: Update `AzureEventGridIdentifiableKey` rule id to `SEC101/199` to be synced with source of the rule.
+- BUG: Update `NuGetApiKey` rule id to `SEC101/031` to be synced with source of the rule.
 
 # 1.9.0 - 09/24/2024
 
