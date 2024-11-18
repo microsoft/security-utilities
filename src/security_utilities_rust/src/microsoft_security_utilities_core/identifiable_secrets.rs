@@ -5,7 +5,6 @@
 #![allow(dead_code)]
 #![allow(unused_assignments)]
 
-use base_62;
 use base64::{engine::general_purpose, Engine as _};
 use chrono::Datelike;
 use core::panic;
@@ -238,7 +237,7 @@ pub fn generate_common_annotated_test_key(
             let mut rng = rand::thread_rng();
             rng.try_fill_bytes(&mut key_bytes).expect("Failed to generate random bytes.");
 
-            key  = base_62::encode(&key_bytes);
+            key  = general_purpose::STANDARD.encode(&key_bytes);
 
             if key.len() < 86 {
                 return Err(format!("The key length is less than 86 characters: {}", key));
