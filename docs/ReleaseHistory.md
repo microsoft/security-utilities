@@ -11,7 +11,8 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# UNRELEASED
+# 1.9.1 - 11/18/2024
+- DEP: Removed dependency of the `base-62` crate in the Rust codebase, since it depended on the `failure` crate which has a known [vulnerability](https://github.com/advisories/GHSA-jq66-xh47-j9f3).
 - BUG: Fix unhandled exception raised by `CommonAnnotatedKey.TryCreate(string, out CommonAnnotatedKey)` when passed non-CASK secrets of length < 80.
 - BUG: Update `AzureEventGridIdentifiableKey` rule id to `SEC101/199` to be synced with source of the rule.
 - BUG: Update `NuGetApiKey` rule id to `SEC101/031` to be synced with source of the rule.
