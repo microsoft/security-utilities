@@ -28,7 +28,7 @@ public class SecretMasker : ISecretMasker, IDisposable
 
     internal static Version RetrieveVersion()
     {
-        var version = new Version(ThisAssembly.AssemblyFileVersion);
+        var version = new Version("1.9.2");
         return new Version(version.Major, version.Minor, version.Build);
     }
 
@@ -66,7 +66,7 @@ public class SecretMasker : ISecretMasker, IDisposable
     // masking will N - 1 of this property value.
     public static int MinimumSecretLengthCeiling { get; set; }
 
-    private SecretMasker(SecretMasker copy)
+    protected SecretMasker(SecretMasker copy)
     {
         // Read section.
         try
@@ -351,6 +351,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
 
         if (RegexPatterns.Count == 0 &&
+            m_encodedSecretLiterals.Count == 0 &&
             m_explicitlyAddedSecretLiterals.Count == 0)
         {
             yield break;
@@ -396,7 +397,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    internal SecretMasker Clone()
+    public virtual SecretMasker Clone()
     {
         return new SecretMasker(this);
     }
@@ -416,6 +417,67 @@ public class SecretMasker : ISecretMasker, IDisposable
         {
             AddRegex(regexPattern);
         } 
+    }
+
+    internal void RemovePatternsThatDoNotMeetLengthLimits()
+    {
+        var filteredValueSecrets = new HashSet<SecretLiteral>();
+        var filteredRegexSecrets = new HashSet<RegexPattern>();
+
+        try
+        {
+            m_lock.EnterReadLock();
+
+            foreach (var secret in m_encodedSecretLiterals)
+            {
+                if (secret.m_value.Length < MinimumSecretLength)
+                {
+                    filteredValueSecrets.Add(secret);
+                }
+            }
+
+            foreach (var secret in RegexPatterns)
+            {
+                if (secret.Pattern.Length < MinimumSecretLength)
+                {
+                    filteredRegexSecrets.Add(secret);
+                }
+            }
+        }
+        finally
+        {
+            if (m_lock.IsReadLockHeld)
+            {
+                m_lock.ExitReadLock();
+            }
+        }
+
+        try
+        {
+            m_lock.EnterWriteLock();
+
+            foreach (var secret in filteredValueSecrets)
+            {
+                m_encodedSecretLiterals.Remove(secret);
+            }
+
+            foreach (var secret in filteredRegexSecrets)
+            {
+                RegexPatterns.Remove(secret);
+            }
+
+            foreach (var secret in filteredValueSecrets)
+            {
+                m_explicitlyAddedSecretLiterals.Remove(secret);
+            }
+        }
+        finally
+        {
+            if (m_lock.IsWriteLockHeld)
+            {
+                m_lock.ExitWriteLock();
+            }
+        }
     }
 
     private readonly bool m_generateCorrelatingIds;

@@ -30,13 +30,8 @@ namespace Microsoft.Security.Utilities
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
-            while (true)
-            {
-                string key =
-                    IdentifiableSecrets.GenerateStandardBase64Key(IdentifiableMetadata.AzureCacheForRedisChecksumSeed,
-                                                                  32,
-                                                                  IdentifiableMetadata.AzureCacheForRedisSignature);
-
+            foreach (string key in base.GenerateTruePositiveExamples())
+            { 
                 if (key.Contains("/") || key.Contains("+"))
                 {
                     continue;
