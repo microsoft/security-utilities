@@ -11,6 +11,14 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# UNRELEASED
+- NEW: Provider `SecretMasker.RemovePatternsThatDoNotMeetLengthLimits` helper to remove patterns that do not meet length limits.
+- BUG: Mark `SecretMasker(SecretMasker)` copy contructor as protected to make it callable by derived classes.
+- BUG: Mark `SecretMasker.Clone` as public virtual, to make it overridable by derived classes.
+- BUG: Update `SEC101/127.UrlCredentials` visibility to public to make it independently creatable.
+- BUG: Update `SEC101/154.AzureCacheForRedisIdentifiableKey` test example production to call base class (which generates test keys consisting of repeated characters in the randomized component).
+- FNS: Update `SEC101/127` regex to detect ftp(s) credentials.
+
 # 1.9.1 - 11/18/2024
 - DEP: Removed dependency of the `base-62` crate in the Rust codebase, since it depended on the `failure` crate which has a known [vulnerability](https://github.com/advisories/GHSA-jq66-xh47-j9f3).
 - BUG: Fix unhandled exception raised by `CommonAnnotatedKey.TryCreate(string, out CommonAnnotatedKey)` when passed non-CASK secrets of length < 80.

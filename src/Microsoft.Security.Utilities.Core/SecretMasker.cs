@@ -28,7 +28,7 @@ public class SecretMasker : ISecretMasker, IDisposable
 
     internal static Version RetrieveVersion()
     {
-        var version = new Version("1.9.2");
+        var version = new Version(ThisAssembly.AssemblyFileVersion);
         return new Version(version.Major, version.Minor, version.Build);
     }
 
@@ -71,7 +71,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         // Read section.
         try
         {
-            copy.m_lock.EnterReadLock();
+            copy.SyncObject.EnterReadLock();
             MinimumSecretLength = copy.MinimumSecretLength;
             DefaultRegexRedactionToken = copy.DefaultRegexRedactionToken;
             DefaultLiteralRedactionToken = copy.DefaultLiteralRedactionToken;
@@ -82,9 +82,9 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
         finally
         {
-            if (copy.m_lock.IsReadLockHeld)
+            if (copy.SyncObject.IsReadLockHeld)
             {
-                copy.m_lock.ExitReadLock();
+                copy.SyncObject.ExitReadLock();
             }
         }
     }
@@ -111,14 +111,14 @@ public class SecretMasker : ISecretMasker, IDisposable
         // Write section.
         try
         {
-            m_lock.EnterWriteLock();
+            SyncObject.EnterWriteLock();
             _ = RegexPatterns.Add(regexSecret);
         }
         finally
         {
-            if (m_lock.IsWriteLockHeld)
+            if (SyncObject.IsWriteLockHeld)
             {
-                m_lock.ExitWriteLock();
+                SyncObject.ExitWriteLock();
             }
         }
     }
@@ -231,7 +231,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         LiteralEncoder[] literalEncoders;
         try
         {
-            m_lock.EnterReadLock();
+            SyncObject.EnterReadLock();
 
             // Test whether already added.
             if (m_explicitlyAddedSecretLiterals.Contains(secretLiterals[0]))
@@ -244,9 +244,9 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
         finally
         {
-            if (m_lock.IsReadLockHeld)
+            if (SyncObject.IsReadLockHeld)
             {
-                m_lock.ExitReadLock();
+                SyncObject.ExitReadLock();
             }
         }
 
@@ -263,7 +263,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         // Write section.
         try
         {
-            m_lock.EnterWriteLock();
+            SyncObject.EnterWriteLock();
 
             // Add the values.
             _ = m_explicitlyAddedSecretLiterals.Add(secretLiterals[0]);
@@ -274,9 +274,9 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
         finally
         {
-            if (m_lock.IsWriteLockHeld)
+            if (SyncObject.IsWriteLockHeld)
             {
-                m_lock.ExitWriteLock();
+                SyncObject.ExitWriteLock();
             }
         }
     }
@@ -291,7 +291,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         // Read section.
         try
         {
-            m_lock.EnterReadLock();
+            SyncObject.EnterReadLock();
 
             if (m_literalEncoders.Contains(encoder))
             {
@@ -303,9 +303,9 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
         finally
         {
-            if (m_lock.IsReadLockHeld)
+            if (SyncObject.IsReadLockHeld)
             {
-                m_lock.ExitReadLock();
+                SyncObject.ExitReadLock();
             }
         }
 
@@ -323,7 +323,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         // Write section.
         try
         {
-            m_lock.EnterWriteLock();
+            SyncObject.EnterWriteLock();
 
             // Add the encoder.
             _ = m_literalEncoders.Add(encoder);
@@ -336,9 +336,9 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
         finally
         {
-            if (m_lock.IsWriteLockHeld)
+            if (SyncObject.IsWriteLockHeld)
             {
-                m_lock.ExitWriteLock();
+                SyncObject.ExitWriteLock();
             }
         }
     }
@@ -360,7 +360,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         // Read section.
         try
         {
-            m_lock.EnterReadLock();
+            SyncObject.EnterReadLock();
             var stopwatch = Stopwatch.StartNew();
 
             // Get indexes and lengths of all substrings that will be replaced.
@@ -384,9 +384,9 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
         finally
         {
-            if (m_lock.IsReadLockHeld)
+            if (SyncObject.IsReadLockHeld)
             {
-                m_lock.ExitReadLock();
+                SyncObject.ExitReadLock();
             }
         }
     }
@@ -406,7 +406,7 @@ public class SecretMasker : ISecretMasker, IDisposable
     {
         if (disposing && !m_disposed)
         {
-            m_lock.Dispose();
+            SyncObject.Dispose();
             m_disposed = true;
         }
     }
@@ -419,14 +419,14 @@ public class SecretMasker : ISecretMasker, IDisposable
         } 
     }
 
-    internal void RemovePatternsThatDoNotMeetLengthLimits()
+    public void RemovePatternsThatDoNotMeetLengthLimits()
     {
         var filteredValueSecrets = new HashSet<SecretLiteral>();
         var filteredRegexSecrets = new HashSet<RegexPattern>();
 
         try
         {
-            m_lock.EnterReadLock();
+            SyncObject.EnterReadLock();
 
             foreach (var secret in m_encodedSecretLiterals)
             {
@@ -446,15 +446,15 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
         finally
         {
-            if (m_lock.IsReadLockHeld)
+            if (SyncObject.IsReadLockHeld)
             {
-                m_lock.ExitReadLock();
+                SyncObject.ExitReadLock();
             }
         }
 
         try
         {
-            m_lock.EnterWriteLock();
+            SyncObject.EnterWriteLock();
 
             foreach (var secret in filteredValueSecrets)
             {
@@ -473,9 +473,9 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
         finally
         {
-            if (m_lock.IsWriteLockHeld)
+            if (SyncObject.IsWriteLockHeld)
             {
-                m_lock.ExitWriteLock();
+                SyncObject.ExitWriteLock();
             }
         }
     }
@@ -484,7 +484,7 @@ public class SecretMasker : ISecretMasker, IDisposable
     private readonly HashSet<LiteralEncoder> m_literalEncoders;
     private readonly HashSet<SecretLiteral> m_encodedSecretLiterals;
     private readonly HashSet<SecretLiteral> m_explicitlyAddedSecretLiterals;
-    private readonly ReaderWriterLockSlim m_lock = new(LockRecursionPolicy.NoRecursion);
+    protected readonly ReaderWriterLockSlim SyncObject = new (LockRecursionPolicy.NoRecursion);
 
     private bool m_disposed;
 }

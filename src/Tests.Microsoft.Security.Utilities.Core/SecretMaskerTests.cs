@@ -696,9 +696,10 @@ public class SecretMaskerTests
 
         Assert.AreEqual("a***h", result);
     }
-    /*
+
+    
     [TestMethod]
-    public void SecretMasker_RemoveShortSecrets()
+    public void SecretMasker_RemovePatternsThatDoNotMeetLengthLimits()
     {
         using var secretMasker = new SecretMasker() { MinimumSecretLength = 3 };
         secretMasker.AddValue("efg");
@@ -710,7 +711,7 @@ public class SecretMaskerTests
         Assert.AreEqual("a***h", result);
 
         secretMasker.MinimumSecretLength = 4;
-        secretMasker.RemoveShortSecretsFromDictionary();
+        secretMasker.RemovePatternsThatDoNotMeetLengthLimits();
 
         var result2 = secretMasker.MaskSecrets(input);
 
@@ -718,9 +719,9 @@ public class SecretMaskerTests
     }
 
     [TestMethod]
-    public void SecretMasker_RemoveShortSecretsBoundaryValues()
+    public void SecretMasker_RemovePatternsThatDoNotMeetLengthLimitsBoundaryValues()
     {
-        using var secretMasker = new SecretMasker(0);
+        using var secretMasker = new SecretMasker();
         secretMasker.AddValue("bc");
         secretMasker.AddValue("defg");
         secretMasker.AddValue("h12");
@@ -731,7 +732,7 @@ public class SecretMaskerTests
         Assert.AreEqual("a***3", result);
 
         secretMasker.MinimumSecretLength = 3;
-        secretMasker.RemoveShortSecretsFromDictionary();
+        secretMasker.RemovePatternsThatDoNotMeetLengthLimits();
 
         var result2 = secretMasker.MaskSecrets(input);
 
@@ -741,13 +742,16 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_RemoveShortRegexes()
     {
-        using var secretMasker = new SecretMasker(0);
-        secretMasker.AddRegex("bc");
-        secretMasker.AddRegex("defg");
-        secretMasker.AddRegex("h12");
+        string id = nameof(id);
+        string name = nameof(name);
+
+        using var secretMasker = new SecretMasker();
+        secretMasker.AddRegex(new RegexPattern(id, name, 0, "bc"));
+        secretMasker.AddRegex(new RegexPattern(id, name, 0, "defg"));
+        secretMasker.AddRegex(new RegexPattern(id, name, 0, "h12"));
 
         secretMasker.MinimumSecretLength = 3;
-        secretMasker.RemoveShortSecretsFromDictionary();
+        secretMasker.RemovePatternsThatDoNotMeetLengthLimits();
 
         var input = "abcdefgh123";
         var result = secretMasker.MaskSecrets(input);
@@ -758,7 +762,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_RemoveEncodedSecrets()
     {
-        using var secretMasker = new SecretMasker(0);
+        using var secretMasker = new SecretMasker();
         secretMasker.AddValue("1");
         secretMasker.AddValue("2");
         secretMasker.AddValue("3");
@@ -767,14 +771,13 @@ public class SecretMaskerTests
         secretMasker.AddLiteralEncoder(new LiteralEncoder(x => x.Replace("3", "6789")));
 
         secretMasker.MinimumSecretLength = 3;
-        secretMasker.RemoveShortSecretsFromDictionary();
+        secretMasker.RemovePatternsThatDoNotMeetLengthLimits();
 
         var input = "123456789";
         var result = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual("***45***", result);
-    }
-    */
+    }    
 
     [TestMethod]
     public void SecretMasker_NotAddShortEncodedSecrets()
