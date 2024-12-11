@@ -17,6 +17,7 @@
 - BUG: Mark `SecretMasker.Clone` as public virtual, to make it overridable by derived classes.
 - BUG: Update `SEC101/127.UrlCredentials` visibility to public to make it independently creatable.
 - BUG: Update `SEC101/154.AzureCacheForRedisIdentifiableKey` test example production to call base class (which generates test keys consisting of repeated characters in the randomized component).
+- BUG: Short-circuit `SecretMasker.DetectSecret(string)` operation if there are no configured regexes, encoded, or explicitly added secret literals.
 - FNS: Update `SEC101/127` regex to detect ftp(s) credentials.
 
 # 1.9.1 - 11/18/2024

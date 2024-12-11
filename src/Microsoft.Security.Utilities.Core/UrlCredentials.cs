@@ -36,7 +36,9 @@ public sealed class UrlCredentials : RegexPattern
         return new[]
         {
             $"http://{Guid.NewGuid()}:{Guid.NewGuid()}@example.com/",
-            $"https://user:pass@example.com"
+            $"https://user:pass@example.com",
+            $"ftp://{Guid.NewGuid()}:{Guid.NewGuid()}@example.com/",
+            $"ftps://user:pass@example.com"
         };
     }
 }
