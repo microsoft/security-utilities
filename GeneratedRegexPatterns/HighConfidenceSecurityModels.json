@@ -1,6 +1,6 @@
 [
   {
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])(?P<secret>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ9(?:9|D|H)[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{16}[A-Za-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{7}(?:[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{2}==)?)",
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<secret>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ9(?:9|D|H)[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{16}[A-Za-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{7}(?:[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{2}==)?)",
     "Id": "SEC101/200",
     "Name": "CommonAnnotatedSecurityKey",
     "Signatures": [
@@ -319,7 +319,7 @@
   },
   {
     "Pattern": "(^|[^a-zA-Z0-9])(?<refine>oy2[a-z2-7]{43})([^a-zA-Z0-9]|$)",
-    "Id": "SEC101/030",
+    "Id": "SEC101/031",
     "Name": "NuGetApiKey",
     "Signatures": [
       "oy2"
@@ -346,7 +346,7 @@
     "RegexNormalizedSignature": "AZEG",
     "KeyLength": 32,
     "EncodeForUrl": false,
-    "Id": "SEC101/190",
+    "Id": "SEC101/199",
     "Name": "AzureEventGridIdentifiableKey",
     "DetectionMetadata": "Identifiable"
   },

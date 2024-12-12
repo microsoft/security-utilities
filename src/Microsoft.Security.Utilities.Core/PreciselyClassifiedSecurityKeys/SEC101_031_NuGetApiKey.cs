@@ -9,7 +9,7 @@ namespace Microsoft.Security.Utilities
     {
         public NuGetApiKey()
         {
-            Id = "SEC101/030";
+            Id = "SEC101/031";
             Name = nameof(NuGetApiKey);
             DetectionMetadata = DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy| DetectionMetadata.HighConfidence;
 

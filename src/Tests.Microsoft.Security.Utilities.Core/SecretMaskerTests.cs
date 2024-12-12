@@ -20,7 +20,7 @@ public class SecretMaskerTests
     public void SecretMasker_Version()
     {
         Version version = SecretMasker.Version;
-        version.ToString().Should().Be("1.9.0");
+        version.ToString().Should().Be("1.9.1");
     }
 
     [TestMethod]

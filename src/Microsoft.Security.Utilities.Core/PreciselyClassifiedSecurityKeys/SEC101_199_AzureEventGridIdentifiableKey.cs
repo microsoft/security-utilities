@@ -9,7 +9,7 @@ namespace Microsoft.Security.Utilities
     {
         public AzureEventGridIdentifiableKey()
         {
-            Id = "SEC101/190";
+            Id = "SEC101/199";
             Name = nameof(AzureEventGridIdentifiableKey);
         }
 

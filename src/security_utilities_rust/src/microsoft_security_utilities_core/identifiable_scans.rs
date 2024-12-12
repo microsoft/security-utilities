@@ -529,7 +529,7 @@ impl ScanOptions {
 
         clone.defs.push(
             ScanDefinition::new(
-                "SEC101/190",
+                "SEC101/199",
                 b"AZEG",
                 b'A',
                 37,
