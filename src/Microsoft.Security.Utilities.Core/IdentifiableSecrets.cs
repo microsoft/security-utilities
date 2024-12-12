@@ -373,7 +373,7 @@ public static class IdentifiableSecrets
         // An allocation time before 2024 or after 2085 is outside of the possible range a base62 character can express.
         if (allocationTime.Year < 2024 || allocationTime.Year > 2085)
         {
-            throw new ArgumentOutOfRangeException(nameof(allocationTime), "The allocation time year must between 2024 and 2085, inclusive.");
+            throw new ArgumentOutOfRangeException(nameof(allocationTime), "The allocation year must be between 2024 and 2085, inclusive.");
         }
 
         base64EncodedSignature = customerManagedKey
