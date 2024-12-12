@@ -369,9 +369,11 @@ public static class IdentifiableSecrets
             throw new ArgumentException(nameof(allocationTime), "The allocation time must be in UTC.");
         }
 
-        if (allocationTime.Year < 2024)
+        // 2085 is 61 years after 2024. A base62 character is used to express the year (A = 2024 up to 9 = 2085).
+        // An allocation time before 2024 or after 2085 is outside of the possible range a base62 character can express.
+        if (allocationTime.Year < 2024 || allocationTime.Year > 2085)
         {
-            throw new ArgumentOutOfRangeException(nameof(allocationTime), "The allocation time year must be 2024 or later.");
+            throw new ArgumentOutOfRangeException(nameof(allocationTime), "The allocation time year must between 2024 and 2085, inclusive.");
         }
 
         base64EncodedSignature = customerManagedKey
