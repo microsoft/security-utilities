@@ -12,7 +12,6 @@
 - FNS => False negative reduction in static analysis.
 
 # UNRELEASED
-- NEW: Provider `SecretMasker.RemovePatternsThatDoNotMeetLengthLimits` helper to remove patterns that do not meet length limits.
 - BUG: Mark `SecretMasker(SecretMasker)` copy contructor as protected to make it callable by derived classes.
 - BUG: Mark `SecretMasker.Clone` as public virtual, to make it overridable by derived classes.
 - BUG: Update `SEC101/127.UrlCredentials` visibility to public to make it independently creatable.
