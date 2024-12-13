@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Security.Utilities
 {
@@ -17,9 +19,22 @@ namespace Microsoft.Security.Utilities
 
             // This is the ApiKeyV4 format implemented here:
             // https://github.com/NuGet/NuGetGallery/blob/main/src/NuGetGallery.Services/Authentication/ApiKeyV4.cs
-            Pattern = "(?i)(^|[^a-z0-9])oy2[a-z2-7]{43}([^a-z0-9]|$)";
+            Pattern = "(?i)(^|[^a-z0-9])(?<refine>oy2[a-z2-7]{43})([^a-z0-9]|$)";
 
-            Signatures = new HashSet<string>(new[] { "oy2" });
+            Signatures = new HashSet<string>(new[] { "oy2", "OY2" });
+        }
+
+        public override Tuple<string, string> GetMatchIdAndName(string match)
+        {
+            if (match.Any(char.IsLower) && match.Any(char.IsUpper))
+            {
+                // The API key is not all uppercase, which is non-standard but accepted by the service.
+                // Nullify the match if there is a mix of upper and lowercase to improve redaction.
+                // A match with a mix of case is more likely to be base64 than a real API key.
+                return null;
+            }
+
+            return base.GetMatchIdAndName(match);
         }
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
@@ -31,10 +46,16 @@ namespace Microsoft.Security.Utilities
             yield return $"oy2{WellKnownRegexPatterns.GenerateString(Base32, 43)}";
 
             // uppercase API key, which is non-standard but accepted by the service
-            yield return $"oy2{WellKnownRegexPatterns.GenerateString(Base32, 43).ToUpperInvariant()}";
+            yield return $"OY2{WellKnownRegexPatterns.GenerateString(Base32, 43).ToUpperInvariant()}";
 
             // repeat a single base32 character 43 times, for an obviously contrived example
             yield return $"oy2{new string(WellKnownRegexPatterns.GenerateString(Base32, 1)[0], 43)}";
+        }
+
+        public override IEnumerable<string> GenerateFalsePositiveExamples()
+        {
+            // mixed case, excluded by GetMatchIdAndName
+            yield return $"oy2{WellKnownRegexPatterns.GenerateString(Base32, 10)}{WellKnownRegexPatterns.GenerateString(Base32, 33).ToUpperInvariant()}";
         }
     }
 }

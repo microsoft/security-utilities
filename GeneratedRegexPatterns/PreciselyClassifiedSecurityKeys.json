@@ -318,11 +318,12 @@
     "DetectionMetadata": "Identifiable"
   },
   {
-    "Pattern": "(?i)(^|[^a-z0-9])oy2[a-z2-7]{43}([^a-z0-9]|$)",
+    "Pattern": "(?i)(^|[^a-z0-9])(?<refine>oy2[a-z2-7]{43})([^a-z0-9]|$)",
     "Id": "SEC101/031",
     "Name": "NuGetApiKey",
     "Signatures": [
-      "oy2"
+      "oy2",
+      "OY2"
     ],
     "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence"
   },
