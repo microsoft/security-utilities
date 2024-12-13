@@ -54,7 +54,116 @@ namespace Microsoft.Security.Utilities
                                                                                  longForm);
                 }
             }
-        }        
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_GenerateCommonAnnotatedTestKey_WithCustomAllocationTime()
+        {
+            string signature = GetRandomSignature();
+
+            DateTime allocationTime = new DateTime(2033, 7, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            string key = IdentifiableSecrets.GenerateCommonAnnotatedTestKey(new byte[64],
+                                                                            ulong.MaxValue,
+                                                                            signature,
+                                                                            customerManagedKey: true,
+                                                                            platformReserved: new byte[9],
+                                                                            providerReserved: new byte[3],
+                                                                            longForm: true,
+                                                                            'x',
+                                                                            '9',
+                                                                            allocationTime);
+
+            // Allocation year = 2033. 'A' is 2024, 'B' is 2025, ... 'J' is 2033.
+            // Allocation month = 7 (July). 'A' is January, 'B' is February, ... 'G' is July.
+            key.Substring(58, 2).Should().Be("JG");
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_GenerateCommonAnnotatedTestKey_WithMaxAllocationTime()
+        {
+            string signature = GetRandomSignature();
+
+            DateTime allocationTime = new DateTime(2085, 12, 31, 23, 59, 59, 999, DateTimeKind.Utc);
+
+            string key = IdentifiableSecrets.GenerateCommonAnnotatedTestKey(new byte[64],
+                                                                            ulong.MaxValue,
+                                                                            signature,
+                                                                            customerManagedKey: true,
+                                                                            platformReserved: new byte[9],
+                                                                            providerReserved: new byte[3],
+                                                                            longForm: true,
+                                                                            'x',
+                                                                            '9',
+                                                                            allocationTime);
+
+            // Allocation year = 2085. 'A' is 2024, 'B' is 2025, ... '9' is 2085.
+            // Allocation month = 12 (December). 'A' is January, 'B' is February, ... 'L' is December.
+            key.Substring(58, 2).Should().Be("9L");
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_GenerateCommonAnnotatedTestKey_RejectsNonUtcAllocationTime()
+        {
+            string signature = GetRandomSignature();
+
+            DateTime allocationTime = new DateTime(2033, 7, 1, 0, 0, 0, DateTimeKind.Unspecified);
+
+            Action action = () => IdentifiableSecrets.GenerateCommonAnnotatedTestKey(new byte[64],
+                                                                                     ulong.MaxValue,
+                                                                                     signature,
+                                                                                     customerManagedKey: true,
+                                                                                     platformReserved: new byte[9],
+                                                                                     providerReserved: new byte[3],
+                                                                                     longForm: true,
+                                                                                     'x',
+                                                                                     '9',
+                                                                                     allocationTime);
+
+            action.Should().Throw<ArgumentException>(because: $"caller is responsible for providing a UTC allocation time, if a specific allocation time is provided");
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_GenerateCommonAnnotatedTestKey_RejectsAllocationTimesBefore2024()
+        {
+            string signature = GetRandomSignature();
+
+            DateTime allocationTime = new DateTime(2023, 7, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            Action action = () => IdentifiableSecrets.GenerateCommonAnnotatedTestKey(new byte[64],
+                                                                                     ulong.MaxValue,
+                                                                                     signature,
+                                                                                     customerManagedKey: true,
+                                                                                     platformReserved: new byte[9],
+                                                                                     providerReserved: new byte[3],
+                                                                                     longForm: true,
+                                                                                     'x',
+                                                                                     '9',
+                                                                                     allocationTime);
+
+            action.Should().Throw<ArgumentOutOfRangeException>(because: $"this code was not deployed before 2024 meaning allocation must happen in 2024 or later");
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_GenerateCommonAnnotatedTestKey_RejectsAllocationTimesAfter2085()
+        {
+            string signature = GetRandomSignature();
+
+            DateTime allocationTime = new DateTime(2086, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            Action action = () => IdentifiableSecrets.GenerateCommonAnnotatedTestKey(new byte[64],
+                                                                                     ulong.MaxValue,
+                                                                                     signature,
+                                                                                     customerManagedKey: true,
+                                                                                     platformReserved: new byte[9],
+                                                                                     providerReserved: new byte[3],
+                                                                                     longForm: true,
+                                                                                     'x',
+                                                                                     '9',
+                                                                                     allocationTime);
+
+            action.Should().Throw<ArgumentOutOfRangeException>(because: $"an allocation time after year 2085 is not supported due to base62 out of range");
+        }
 
         [TestMethod]
         public void IdentifiableSecrets_GenerateCommonAnnotatedTestKey()

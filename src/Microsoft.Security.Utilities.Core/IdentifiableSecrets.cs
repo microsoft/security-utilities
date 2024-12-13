@@ -314,6 +314,29 @@ public static class IdentifiableSecrets
                                                         char? testChar,
                                                         char keyKindSignature)
     {
+        return GenerateCommonAnnotatedTestKey(randomBytes,
+                                              checksumSeed,
+                                              base64EncodedSignature,
+                                              customerManagedKey,
+                                              platformReserved,
+                                              providerReserved,
+                                              longForm,
+                                              testChar,
+                                              keyKindSignature,
+                                              DateTime.UtcNow);
+    }
+
+    public static string GenerateCommonAnnotatedTestKey(byte[] randomBytes,
+                                                        ulong checksumSeed,
+                                                        string base64EncodedSignature,
+                                                        bool customerManagedKey,
+                                                        byte[] platformReserved,
+                                                        byte[] providerReserved,
+                                                        bool longForm,
+                                                        char? testChar,
+                                                        char keyKindSignature,
+                                                        DateTime allocationTime)
+    {
         const int platformReservedLength = 9;
         const int providerReservedLength = 3;
 
@@ -339,6 +362,18 @@ public static class IdentifiableSecrets
         if (providerReserved == null)
         {
             providerReserved = new byte[providerReservedLength];
+        }
+
+        if (allocationTime.Kind != DateTimeKind.Utc)
+        {
+            throw new ArgumentException(nameof(allocationTime), "The allocation time must be in UTC.");
+        }
+
+        // 2085 is 61 years after 2024. A base62 character is used to express the year (A = 2024 up to 9 = 2085).
+        // An allocation time before 2024 or after 2085 is outside of the possible range a base62 character can express.
+        if (allocationTime.Year < 2024 || allocationTime.Year > 2085)
+        {
+            throw new ArgumentOutOfRangeException(nameof(allocationTime), "The allocation year must be between 2024 and 2085, inclusive.");
         }
 
         base64EncodedSignature = customerManagedKey
@@ -388,8 +423,8 @@ public static class IdentifiableSecrets
         keyBytes[keyBytes.Length - 23] = reservedBytes[0];
 
         // Simplistic timestamp computation.
-        byte yearsSince2024 = (byte)(DateTime.UtcNow.Year - 2024);
-        byte zeroIndexedMonth = (byte)(DateTime.UtcNow.Month - 1);
+        byte yearsSince2024 = (byte)(allocationTime.Year - 2024);
+        byte zeroIndexedMonth = (byte)(allocationTime.Month - 1);
 
         byte orgBits = 61; // Base64 encoding for '9'
         byte keyKindBits = (byte)(keyKindSignature == '9' ? 61 : keyKindSignature - 'A');

@@ -12,6 +12,7 @@
 - FNS => False negative reduction in static analysis.
 
 # UNRELEASED
+- BUG: Merge multiple calls to `DateTime.UtcNow` in `GenerateCommonAnnotatedKey`, forcing year and month to agree. Add overload to provide an arbitrary allocation time, with bound checks (year 2024 to 2085).
 - BUG: Mark `SecretMasker(SecretMasker)` copy contructor as protected to make it callable by derived classes.
 - BUG: Mark `SecretMasker.Clone` as public virtual, to make it overridable by derived classes.
 - BUG: Update `SEC101/127.UrlCredentials` visibility to public to make it independently creatable.
