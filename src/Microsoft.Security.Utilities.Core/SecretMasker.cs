@@ -46,9 +46,9 @@ public class SecretMasker : ISecretMasker, IDisposable
 
         m_generateCorrelatingIds = generateCorrelatingIds;
 
-        m_explicitlyAddedSecretLiterals = new HashSet<SecretLiteral>();
-        m_encodedSecretLiterals = new HashSet<SecretLiteral>();
-        m_literalEncoders = new HashSet<LiteralEncoder>();
+        ExplicitlyAddedSecretLiterals = new HashSet<SecretLiteral>();
+        EncodedSecretLiterals = new HashSet<SecretLiteral>();
+        LiteralEncoders = new HashSet<LiteralEncoder>();
 
         _regexEngine = regexEngine ??= CachedDotNetRegex.Instance;
 
@@ -66,25 +66,25 @@ public class SecretMasker : ISecretMasker, IDisposable
     // masking will N - 1 of this property value.
     public static int MinimumSecretLengthCeiling { get; set; }
 
-    private SecretMasker(SecretMasker copy)
+    protected SecretMasker(SecretMasker copy)
     {
         // Read section.
         try
         {
-            copy.m_lock.EnterReadLock();
+            copy.SyncObject.EnterReadLock();
             MinimumSecretLength = copy.MinimumSecretLength;
             DefaultRegexRedactionToken = copy.DefaultRegexRedactionToken;
             DefaultLiteralRedactionToken = copy.DefaultLiteralRedactionToken;
             RegexPatterns = new HashSet<RegexPattern>(copy.RegexPatterns);
-            m_literalEncoders = new HashSet<LiteralEncoder>(copy.m_literalEncoders);
-            m_encodedSecretLiterals = new HashSet<SecretLiteral>(copy.m_encodedSecretLiterals);
-            m_explicitlyAddedSecretLiterals = new HashSet<SecretLiteral>(copy.m_explicitlyAddedSecretLiterals);
+            LiteralEncoders = new HashSet<LiteralEncoder>(copy.LiteralEncoders);
+            EncodedSecretLiterals = new HashSet<SecretLiteral>(copy.EncodedSecretLiterals);
+            ExplicitlyAddedSecretLiterals = new HashSet<SecretLiteral>(copy.ExplicitlyAddedSecretLiterals);
         }
         finally
         {
-            if (copy.m_lock.IsReadLockHeld)
+            if (copy.SyncObject.IsReadLockHeld)
             {
-                copy.m_lock.ExitReadLock();
+                copy.SyncObject.ExitReadLock();
             }
         }
     }
@@ -111,14 +111,14 @@ public class SecretMasker : ISecretMasker, IDisposable
         // Write section.
         try
         {
-            m_lock.EnterWriteLock();
+            SyncObject.EnterWriteLock();
             _ = RegexPatterns.Add(regexSecret);
         }
         finally
         {
-            if (m_lock.IsWriteLockHeld)
+            if (SyncObject.IsWriteLockHeld)
             {
-                m_lock.ExitWriteLock();
+                SyncObject.ExitWriteLock();
             }
         }
     }
@@ -231,22 +231,22 @@ public class SecretMasker : ISecretMasker, IDisposable
         LiteralEncoder[] literalEncoders;
         try
         {
-            m_lock.EnterReadLock();
+            SyncObject.EnterReadLock();
 
             // Test whether already added.
-            if (m_explicitlyAddedSecretLiterals.Contains(secretLiterals[0]))
+            if (ExplicitlyAddedSecretLiterals.Contains(secretLiterals[0]))
             {
                 return;
             }
 
             // Read the value encoders.
-            literalEncoders = m_literalEncoders.ToArray();
+            literalEncoders = LiteralEncoders.ToArray();
         }
         finally
         {
-            if (m_lock.IsReadLockHeld)
+            if (SyncObject.IsReadLockHeld)
             {
-                m_lock.ExitReadLock();
+                SyncObject.ExitReadLock();
             }
         }
 
@@ -263,20 +263,20 @@ public class SecretMasker : ISecretMasker, IDisposable
         // Write section.
         try
         {
-            m_lock.EnterWriteLock();
+            SyncObject.EnterWriteLock();
 
             // Add the values.
-            _ = m_explicitlyAddedSecretLiterals.Add(secretLiterals[0]);
+            _ = ExplicitlyAddedSecretLiterals.Add(secretLiterals[0]);
             foreach (SecretLiteral secretLiteral in secretLiterals)
             {
-                _ = m_encodedSecretLiterals.Add(secretLiteral);
+                _ = EncodedSecretLiterals.Add(secretLiteral);
             }
         }
         finally
         {
-            if (m_lock.IsWriteLockHeld)
+            if (SyncObject.IsWriteLockHeld)
             {
-                m_lock.ExitWriteLock();
+                SyncObject.ExitWriteLock();
             }
         }
     }
@@ -291,21 +291,21 @@ public class SecretMasker : ISecretMasker, IDisposable
         // Read section.
         try
         {
-            m_lock.EnterReadLock();
+            SyncObject.EnterReadLock();
 
-            if (m_literalEncoders.Contains(encoder))
+            if (LiteralEncoders.Contains(encoder))
             {
                 return;
             }
 
             // Read the original value secrets.
-            originalSecrets = m_explicitlyAddedSecretLiterals.ToArray();
+            originalSecrets = ExplicitlyAddedSecretLiterals.ToArray();
         }
         finally
         {
-            if (m_lock.IsReadLockHeld)
+            if (SyncObject.IsReadLockHeld)
             {
-                m_lock.ExitReadLock();
+                SyncObject.ExitReadLock();
             }
         }
 
@@ -323,22 +323,22 @@ public class SecretMasker : ISecretMasker, IDisposable
         // Write section.
         try
         {
-            m_lock.EnterWriteLock();
+            SyncObject.EnterWriteLock();
 
             // Add the encoder.
-            _ = m_literalEncoders.Add(encoder);
+            _ = LiteralEncoders.Add(encoder);
 
             // Add the values.
             foreach (SecretLiteral encodedSecret in encodedSecrets)
             {
-                _ = m_encodedSecretLiterals.Add(encodedSecret);
+                _ = EncodedSecretLiterals.Add(encodedSecret);
             }
         }
         finally
         {
-            if (m_lock.IsWriteLockHeld)
+            if (SyncObject.IsWriteLockHeld)
             {
-                m_lock.ExitWriteLock();
+                SyncObject.ExitWriteLock();
             }
         }
     }
@@ -351,7 +351,8 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
 
         if (RegexPatterns.Count == 0 &&
-            m_explicitlyAddedSecretLiterals.Count == 0)
+            EncodedSecretLiterals.Count == 0 &&
+            ExplicitlyAddedSecretLiterals.Count == 0)
         {
             yield break;
         }
@@ -359,7 +360,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         // Read section.
         try
         {
-            m_lock.EnterReadLock();
+            SyncObject.EnterReadLock();
             var stopwatch = Stopwatch.StartNew();
 
             // Get indexes and lengths of all substrings that will be replaced.
@@ -371,7 +372,7 @@ public class SecretMasker : ISecretMasker, IDisposable
                 }
             }
 
-            foreach (SecretLiteral secretLiteral in m_encodedSecretLiterals)
+            foreach (SecretLiteral secretLiteral in EncodedSecretLiterals)
             {
                 foreach (var detection in secretLiteral.GetDetections(input, DefaultLiteralRedactionToken))
                 {
@@ -383,9 +384,9 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
         finally
         {
-            if (m_lock.IsReadLockHeld)
+            if (SyncObject.IsReadLockHeld)
             {
-                m_lock.ExitReadLock();
+                SyncObject.ExitReadLock();
             }
         }
     }
@@ -396,7 +397,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    internal SecretMasker Clone()
+    public virtual SecretMasker Clone()
     {
         return new SecretMasker(this);
     }
@@ -405,7 +406,7 @@ public class SecretMasker : ISecretMasker, IDisposable
     {
         if (disposing && !m_disposed)
         {
-            m_lock.Dispose();
+            SyncObject.Dispose();
             m_disposed = true;
         }
     }
@@ -418,11 +419,13 @@ public class SecretMasker : ISecretMasker, IDisposable
         } 
     }
 
+   
+
     private readonly bool m_generateCorrelatingIds;
-    private readonly HashSet<LiteralEncoder> m_literalEncoders;
-    private readonly HashSet<SecretLiteral> m_encodedSecretLiterals;
-    private readonly HashSet<SecretLiteral> m_explicitlyAddedSecretLiterals;
-    private readonly ReaderWriterLockSlim m_lock = new(LockRecursionPolicy.NoRecursion);
+    protected readonly HashSet<LiteralEncoder> LiteralEncoders;
+    protected readonly HashSet<SecretLiteral> EncodedSecretLiterals;
+    protected readonly HashSet<SecretLiteral> ExplicitlyAddedSecretLiterals;
+    protected readonly ReaderWriterLockSlim SyncObject = new (LockRecursionPolicy.NoRecursion);
 
     private bool m_disposed;
 }

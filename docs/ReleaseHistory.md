@@ -13,6 +13,12 @@
 
 # UNRELEASED
 - BUG: Merge multiple calls to `DateTime.UtcNow` in `GenerateCommonAnnotatedKey`, forcing year and month to agree. Add overload to provide an arbitrary allocation time, with bound checks (year 2024 to 2085).
+- BUG: Mark `SecretMasker(SecretMasker)` copy contructor as protected to make it callable by derived classes.
+- BUG: Mark `SecretMasker.Clone` as public virtual, to make it overridable by derived classes.
+- BUG: Update `SEC101/127.UrlCredentials` visibility to public to make it independently creatable.
+- BUG: Update `SEC101/154.AzureCacheForRedisIdentifiableKey` test example production to call base class (which generates test keys consisting of repeated characters in the randomized component).
+- BUG: Short-circuit `SecretMasker.DetectSecret(string)` operation if there are no configured regexes, encoded, or explicitly added secret literals.
+- FNS: Update `SEC101/127` regex to detect ftp(s) credentials.
 
 # 1.9.1 - 11/18/2024
 - DEP: Removed dependency of the `base-62` crate in the Rust codebase, since it depended on the `failure` crate which has a known [vulnerability](https://github.com/advisories/GHSA-jq66-xh47-j9f3).

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities;
 
-internal sealed class UrlCredentials : RegexPattern
+public sealed class UrlCredentials : RegexPattern
 {
     public UrlCredentials()
     {
@@ -14,14 +14,20 @@ internal sealed class UrlCredentials : RegexPattern
 
         Name = nameof(UrlCredentials);
 
-        Pattern = @"https?:\/\/(?:[^:@]+):(?<refine>[^:@?]+)@";
+        Pattern = @"(ftps?|https?):\/\/(?:[^:@]+):(?<refine>[^:@?]+)@";
 
         DetectionMetadata = DetectionMetadata.MediumConfidence;
 
         Signatures = new HashSet<string>(new[]
         {
+            "ftp",
             "http"
         });
+    }
+
+    public override Tuple<string, string> GetMatchIdAndName(string match)
+    {
+        return base.GetMatchIdAndName(match);
     }
 
     public override IEnumerable<string> GenerateTruePositiveExamples()
@@ -30,7 +36,9 @@ internal sealed class UrlCredentials : RegexPattern
         return new[]
         {
             $"http://{Guid.NewGuid()}:{Guid.NewGuid()}@example.com/",
-            $"https://user:pass@example.com"
+            $"https://user:pass@example.com",
+            $"ftp://{Guid.NewGuid()}:{Guid.NewGuid()}@example.com/",
+            $"ftps://user:pass@example.com"
         };
     }
 }
