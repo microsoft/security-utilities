@@ -17,7 +17,7 @@ namespace Microsoft.Security.Utilities
 
             // This is the ApiKeyV4 format implemented here:
             // https://github.com/NuGet/NuGetGallery/blob/main/src/NuGetGallery.Services/Authentication/ApiKeyV4.cs
-            Pattern = "(^|[^a-zA-Z0-9])(?<refine>oy2[a-z2-7]{43})([^a-zA-Z0-9]|$)";
+            Pattern = "(?i)(^|[^a-z0-9])oy2[a-z2-7]{43}([^a-z0-9]|$)";
 
             Signatures = new HashSet<string>(new[] { "oy2" });
         }
@@ -29,6 +29,9 @@ namespace Microsoft.Security.Utilities
 
             // matches the newer, PRNG-based entropy source
             yield return $"oy2{WellKnownRegexPatterns.GenerateString(Base32, 43)}";
+
+            // uppercase API key, which is non-standard but accepted by the service
+            yield return $"oy2{WellKnownRegexPatterns.GenerateString(Base32, 43).ToUpperInvariant()}";
 
             // repeat a single base32 character 43 times, for an obviously contrived example
             yield return $"oy2{new string(WellKnownRegexPatterns.GenerateString(Base32, 1)[0], 43)}";
