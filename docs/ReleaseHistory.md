@@ -18,6 +18,7 @@
 - BUG: Update `SEC101/127.UrlCredentials` visibility to public to make it independently creatable.
 - BUG: Update `SEC101/154.AzureCacheForRedisIdentifiableKey` test example production to call base class (which generates test keys consisting of repeated characters in the randomized component).
 - BUG: Short-circuit `SecretMasker.DetectSecret(string)` operation if there are no configured regexes, encoded, or explicitly added secret literals.
+- FPS: Update `SEC101/127` regex to not fire on use of colon within URL path component.
 - FNS: Update `SEC101/127` regex to detect ftp(s) credentials.
 
 # 1.9.1 - 11/18/2024

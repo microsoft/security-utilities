@@ -28,8 +28,7 @@ public class SecretMasker : ISecretMasker, IDisposable
 
     internal static Version RetrieveVersion()
     {
-        //var version = new Version(ThisAssembly.AssemblyFileVersion);
-        var version = new Version("1.9.2");
+        var version = new Version(ThisAssembly.AssemblyFileVersion);
         return new Version(version.Major, version.Minor, version.Build);
     }
 
@@ -57,7 +56,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         DefaultLiteralRedactionToken = defaultLiteralRedactionToken ?? SecretLiteral.FallbackRedactionToken;
     }
 
-    public SecretMasker()
+    private SecretMasker()
         : this(new HashSet<RegexPattern>())
     {
     }
