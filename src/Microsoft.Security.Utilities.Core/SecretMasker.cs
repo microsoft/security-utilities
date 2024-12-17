@@ -32,6 +32,10 @@ public class SecretMasker : ISecretMasker, IDisposable
         return new Version(version.Major, version.Minor, version.Build);
     }
 
+    public SecretMasker() : this (default, default, default, default, default)
+    {
+    }
+
     public SecretMasker(IEnumerable<RegexPattern>? regexSecrets,
                         bool generateCorrelatingIds = false,
                         IRegexEngine? regexEngine = default,
@@ -54,11 +58,6 @@ public class SecretMasker : ISecretMasker, IDisposable
 
         DefaultRegexRedactionToken = defaultRegexRedactionToken ?? RegexPattern.FallbackRedactionToken;
         DefaultLiteralRedactionToken = defaultLiteralRedactionToken ?? SecretLiteral.FallbackRedactionToken;
-    }
-
-    private SecretMasker()
-        : this(new HashSet<RegexPattern>())
-    {
     }
 
     // We don't permit secrets great than 5 characters in length to be
