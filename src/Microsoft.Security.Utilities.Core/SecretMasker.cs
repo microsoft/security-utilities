@@ -28,7 +28,8 @@ public class SecretMasker : ISecretMasker, IDisposable
 
     internal static Version RetrieveVersion()
     {
-        var version = new Version(ThisAssembly.AssemblyFileVersion);
+        //var version = new Version(ThisAssembly.AssemblyFileVersion);
+        var version = new Version("1.9.2");
         return new Version(version.Major, version.Minor, version.Build);
     }
 
@@ -413,19 +414,19 @@ public class SecretMasker : ISecretMasker, IDisposable
 
     public void AddPatterns(IEnumerable<RegexPattern> regexPatterns)
     {
-        foreach(var regexPattern in regexPatterns)
+        foreach (var regexPattern in regexPatterns)
         {
             AddRegex(regexPattern);
-        } 
+        }
     }
 
-   
 
     private readonly bool m_generateCorrelatingIds;
-    protected readonly HashSet<LiteralEncoder> LiteralEncoders;
-    protected readonly HashSet<SecretLiteral> EncodedSecretLiterals;
-    protected readonly HashSet<SecretLiteral> ExplicitlyAddedSecretLiterals;
-    protected readonly ReaderWriterLockSlim SyncObject = new (LockRecursionPolicy.NoRecursion);
+    public HashSet<LiteralEncoder> LiteralEncoders { get; }
+    public HashSet<SecretLiteral> EncodedSecretLiterals { get; }
+    public HashSet<SecretLiteral> ExplicitlyAddedSecretLiterals { get; }
+
+    public ReaderWriterLockSlim SyncObject = new (LockRecursionPolicy.NoRecursion);
 
     private bool m_disposed;
 }
