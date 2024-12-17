@@ -14,7 +14,7 @@ public sealed class UrlCredentials : RegexPattern
 
         Name = nameof(UrlCredentials);
 
-        Pattern = @"(ftps?|https?):\/\/(?:[^:@]+):(?<refine>[^:@?]+)@";
+        Pattern = @"(ftps?|https?):\/\/(?<refine>[^:@\/]+:[^:@?\/]+)@";
 
         DetectionMetadata = DetectionMetadata.MediumConfidence;
 
@@ -38,7 +38,18 @@ public sealed class UrlCredentials : RegexPattern
             $"http://{Guid.NewGuid()}:{Guid.NewGuid()}@example.com/",
             $"https://user:pass@example.com",
             $"ftp://{Guid.NewGuid()}:{Guid.NewGuid()}@example.com/",
-            $"ftps://user:pass@example.com"
+            $"ftps://user:pass@example.com",
+            $"http://{Guid.NewGuid()}:{Guid.NewGuid()}@example.com/embedded:colon",
+            $"ftp://{Guid.NewGuid()}:{Guid.NewGuid()}@example.com/embedded:colon",
+        };
+    }
+
+    public override IEnumerable<string> GenerateFalsePositiveExamples()
+    {
+        return new[]
+        {
+            $"http://example.com/embedded:colon",
+            $"ftp://@example.com/embedded:colon",
         };
     }
 }

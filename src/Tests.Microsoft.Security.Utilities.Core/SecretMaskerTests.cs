@@ -251,7 +251,7 @@ public class SecretMaskerTests
     {
         using var secretMasker = InitializeTestMasker();
         string input = "https://user:pass@example.com";
-        string expected = "https://user:+++@example.com";
+        string expected = "https://+++@example.com";
 
         string actual = secretMasker.MaskSecrets(input);
         Assert.AreEqual(expected, actual);
@@ -265,7 +265,7 @@ public class SecretMaskerTests
         using var secretMasker = InitializeTestMasker();
 
         string input = @"https://user:pass4';.!&*()=,$-+~@example.com";
-        string expected = "https://user:+++@example.com";
+        string expected = "https://+++@example.com";
         string actual = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual(expected, actual);
@@ -277,7 +277,7 @@ public class SecretMaskerTests
     {
         using var secretMasker = InitializeTestMasker();
         string input = @"https://username123:password@example.com";
-        string expected = "https://username123:+++@example.com";
+        string expected = "https://+++@example.com";
         string actual = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual(expected, actual);
@@ -289,7 +289,7 @@ public class SecretMaskerTests
     {
         using var secretMasker = InitializeTestMasker();
         string input = @"https://username_loooooooooooooooooooooooooooooooooooooooooong:password_looooooooooooooooooooooooooooooooooooooooooooooooong@example.com";
-        string expected = "https://username_loooooooooooooooooooooooooooooooooooooooooong:+++@example.com";
+        string expected = "https://+++@example.com";
         string actual = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual(expected, actual);
@@ -301,7 +301,7 @@ public class SecretMaskerTests
     {
         using var secretMasker = InitializeTestMasker();
         string input = @"https://username%10%A3%F6:password123@example.com";
-        string expected = "https://username%10%A3%F6:+++@example.com";
+        string expected = "https://+++@example.com";
         string actual = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual(expected, actual);
@@ -313,7 +313,7 @@ public class SecretMaskerTests
     {
         using var secretMasker = InitializeTestMasker();
         string input = @"https://username%AZP2510%AZP25A3%AZP25F6:password123@example.com";
-        string expected = "https://username%AZP2510%AZP25A3%AZP25F6:+++@example.com";
+        string expected = "https://+++@example.com";
         string actual = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual(expected, actual);

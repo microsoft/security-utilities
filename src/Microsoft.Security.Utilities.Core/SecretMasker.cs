@@ -32,6 +32,10 @@ public class SecretMasker : ISecretMasker, IDisposable
         return new Version(version.Major, version.Minor, version.Build);
     }
 
+    public SecretMasker() : this (default, default, default, default, default)
+    {
+    }
+
     public SecretMasker(IEnumerable<RegexPattern>? regexSecrets,
                         bool generateCorrelatingIds = false,
                         IRegexEngine? regexEngine = default,
@@ -54,11 +58,6 @@ public class SecretMasker : ISecretMasker, IDisposable
 
         DefaultRegexRedactionToken = defaultRegexRedactionToken ?? RegexPattern.FallbackRedactionToken;
         DefaultLiteralRedactionToken = defaultLiteralRedactionToken ?? SecretLiteral.FallbackRedactionToken;
-    }
-
-    public SecretMasker()
-        : this(new HashSet<RegexPattern>())
-    {
     }
 
     // We don't permit secrets great than 5 characters in length to be
@@ -413,19 +412,19 @@ public class SecretMasker : ISecretMasker, IDisposable
 
     public void AddPatterns(IEnumerable<RegexPattern> regexPatterns)
     {
-        foreach(var regexPattern in regexPatterns)
+        foreach (var regexPattern in regexPatterns)
         {
             AddRegex(regexPattern);
-        } 
+        }
     }
 
-   
 
     private readonly bool m_generateCorrelatingIds;
-    protected readonly HashSet<LiteralEncoder> LiteralEncoders;
-    protected readonly HashSet<SecretLiteral> EncodedSecretLiterals;
-    protected readonly HashSet<SecretLiteral> ExplicitlyAddedSecretLiterals;
-    protected readonly ReaderWriterLockSlim SyncObject = new (LockRecursionPolicy.NoRecursion);
+    public HashSet<LiteralEncoder> LiteralEncoders { get; }
+    public HashSet<SecretLiteral> EncodedSecretLiterals { get; }
+    public HashSet<SecretLiteral> ExplicitlyAddedSecretLiterals { get; }
+
+    public ReaderWriterLockSlim SyncObject = new (LockRecursionPolicy.NoRecursion);
 
     private bool m_disposed;
 }
