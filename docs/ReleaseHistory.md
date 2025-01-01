@@ -11,11 +11,10 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# UNRELEASED
+# 1.10.0 - 01/01/2025
 - BRK: Update `SEC101/127.UrlCredentials` match refinement to include both the account name and password. This is a breaking change as the correlating id will differ.
 - BUG: Merge multiple calls to `DateTime.UtcNow` in `GenerateCommonAnnotatedKey`, forcing year and month to agree. Add overload to provide an arbitrary allocation time, with bound checks (year 2024 to 2085).
 - BUG: Mark `SecretMasker(SecretMasker)` copy contructor as protected to make it callable by derived classes.
-
 - BUG: Mark `SecretMasker.Clone` as public virtual, to make it overridable by derived classes.
 - BUG: Update `SEC101/127.UrlCredentials` visibility to public to make it independently creatable.
 - BUG: Mark `SecretMasker.LiteralEncoders`, `SecretMasker.EncodedSecretLiterals` and `SecretMasker.ExplicitlyAddedSecretLiterals` as public.
@@ -29,8 +28,6 @@
 - BUG: Fix unhandled exception raised by `CommonAnnotatedKey.TryCreate(string, out CommonAnnotatedKey)` when passed non-CASK secrets of length < 80.
 - BUG: Update `AzureEventGridIdentifiableKey` rule id to `SEC101/199` to be synced with source of the rule.
 - BUG: Update `NuGetApiKey` rule id to `SEC101/031` to be synced with source of the rule.
-
-# 1.9.0 - 09/24/2024
 
 # 1.8.0 - 09/16/2024
 - BUG: Mark `SEC000/000.Unclassified32ByteBase64String`, `SEC000/001.Unclassified64ByteBase64String`, `SEC101/101.AadClientAppLegacyCredentials`, `SEC000/001.Unclassified64ByteBase64String` as `DetectionMetadata.LowConfidence`.
