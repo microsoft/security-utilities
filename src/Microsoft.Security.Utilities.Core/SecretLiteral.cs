@@ -14,7 +14,7 @@ public class SecretLiteral
 
     public SecretLiteral(string value)
     {
-        m_value = value ?? throw new ArgumentNullException(nameof(value));
+        Value = value ?? throw new ArgumentNullException(nameof(value));
     }
 
     public override bool Equals(object? obj)
@@ -24,10 +24,10 @@ public class SecretLiteral
         {
             return false;
         }
-        return string.Equals(m_value, item.m_value, StringComparison.Ordinal);
+        return string.Equals(Value, item.Value, StringComparison.Ordinal);
     }
 
-    public override int GetHashCode() => m_value.GetHashCode();
+    public override int GetHashCode() => Value.GetHashCode();
 
     public IEnumerable<Detection> GetDetections(string input, string redactionToken)
     {
@@ -36,20 +36,20 @@ public class SecretLiteral
             redactionToken = FallbackRedactionToken;
         }
 
-        if (!string.IsNullOrEmpty(input) && !string.IsNullOrEmpty(m_value))
+        if (!string.IsNullOrEmpty(input) && !string.IsNullOrEmpty(Value))
         {
             int startIndex = 0;
             while (startIndex > -1 &&
                    startIndex < input.Length &&
-                   input.Length - startIndex >= m_value.Length) // remaining substring longer than secret value
+                   input.Length - startIndex >= Value.Length) // remaining substring longer than secret value
             {
-                startIndex = input.IndexOf(m_value, startIndex, StringComparison.Ordinal);
+                startIndex = input.IndexOf(Value, startIndex, StringComparison.Ordinal);
                 if (startIndex > -1)
                 {
                     yield return new Detection(id: null,
                                                name: null,
                                                start: startIndex,
-                                               length: m_value.Length,
+                                               length: Value.Length,
                                                metadata: 0,
                                                rotationPeriod: default,
                                                crossCompanyCorrelatingId: null,
@@ -60,5 +60,5 @@ public class SecretLiteral
         }
     }
 
-    internal readonly string m_value;
+    public string Value { get; private set; }
 }

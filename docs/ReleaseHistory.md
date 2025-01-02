@@ -11,6 +11,10 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# 1.11.0 - 01/02/2025
+- NEW: Expose `SecretLiteral.Value` as public data.
+- FPS: Update `SEC101/127.UrlCredentials` regex to require a word break before the `ftp` or `http` schema rendering.
+
 # 1.10.0 - 01/01/2025
 - BRK: Update `SEC101/127.UrlCredentials` match refinement to include both the account name and password. This is a breaking change as the correlating id will differ.
 - BUG: Merge multiple calls to `DateTime.UtcNow` in `GenerateCommonAnnotatedKey`, forcing year and month to agree. Add overload to provide an arbitrary allocation time, with bound checks (year 2024 to 2085).
