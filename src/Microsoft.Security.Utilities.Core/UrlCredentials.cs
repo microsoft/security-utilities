@@ -14,7 +14,7 @@ public sealed class UrlCredentials : RegexPattern
 
         Name = nameof(UrlCredentials);
 
-        Pattern = @"(ftps?|https?):\/\/(?<refine>[^:@\/]+:[^:@?\/]+)@";
+        Pattern = @"($|\b)(ftps?|https?):\/\/(?<refine>[^:@\/]+:[^:@?\/]+)@";
 
         DetectionMetadata = DetectionMetadata.MediumConfidence;
 
@@ -50,6 +50,8 @@ public sealed class UrlCredentials : RegexPattern
         {
             $"http://example.com/embedded:colon",
             $"ftp://@example.com/embedded:colon",
+            $"prefixedftp://@example.com/embedded:colon",
+            $"prefixedhttps://@example.com/embedded:colon",
         };
     }
 }

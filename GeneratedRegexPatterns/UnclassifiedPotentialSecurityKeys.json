@@ -11,7 +11,7 @@
     "DetectionMetadata": "HighEntropy, MediumConfidence"
   },
   {
-    "Pattern": "(ftps?|https?):\\/\\/(?<refine>[^:@\\/]+:[^:@?\\/]+)@",
+    "Pattern": "($|\\b)(ftps?|https?):\\/\\/(?<refine>[^:@\\/]+:[^:@?\\/]+)@",
     "Id": "SEC101/127",
     "Name": "UrlCredentials",
     "Signatures": [

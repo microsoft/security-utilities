@@ -312,7 +312,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         var encodedSecrets = new List<SecretLiteral>();
         foreach (SecretLiteral originalSecret in originalSecrets)
         {
-            string encodedValue = encoder(originalSecret.m_value);
+            string encodedValue = encoder(originalSecret.Value);
             if (!string.IsNullOrEmpty(encodedValue) && encodedValue.Length >= MinimumSecretLength)
             {
                 encodedSecrets.Add(new SecretLiteral(encodedValue));
