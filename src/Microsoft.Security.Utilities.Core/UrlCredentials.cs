@@ -50,6 +50,8 @@ public sealed class UrlCredentials : RegexPattern
         {
             $"http://example.com/embedded:colon",
             $"ftp://@example.com/embedded:colon",
+            $"prefixedftp://@example.com/embedded:colon",
+            $"prefixedhttps://@example.com/embedded:colon",
         };
     }
 }
