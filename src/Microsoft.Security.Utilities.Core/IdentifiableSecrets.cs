@@ -42,9 +42,9 @@ public static class IdentifiableSecrets
 
     public static string CommonAnnotatedKeySignature => $"{CommonAnnotatedKeyCoreSignature}99";
 
-    public static string CommonAnnotatedDerivedKeySignature => $"{CommonAnnotatedKeyCoreSignature}9D";
+    internal static string CommonAnnotatedDerivedKeySignature => $"{CommonAnnotatedKeyCoreSignature}9D";
 
-    public static string CommonAnnotatedHashedDataSignature => $"{CommonAnnotatedKeyCoreSignature}9H";
+    internal static string CommonAnnotatedHashedDataSignature => $"{CommonAnnotatedKeyCoreSignature}9H";
 
     public static bool IsBase62EncodingChar(this char ch)
     {
@@ -188,7 +188,7 @@ public static class IdentifiableSecrets
         return result;
     }
 
-    public static byte[] ComputeDerivedCommonAnnotatedKey(string derivationInput,
+    internal static byte[] ComputeDerivedCommonAnnotatedKey(string derivationInput,
                                                           byte[] commonAnnotatedSecret,
                                                           bool longForm = false)
     {
@@ -197,14 +197,14 @@ public static class IdentifiableSecrets
         return Convert.FromBase64String(derivedKey);
     }
 
-    public static string ComputeDerivedCommonAnnotatedKey(string derivationInput,
+    internal static string ComputeDerivedCommonAnnotatedKey(string derivationInput,
                                                           string commonAnnotatedSecret,
                                                           bool longForm = false)
     {
         return ComputeCommonAnnotatedHash(derivationInput, commonAnnotatedSecret, longForm, 'D');
     }
 
-    public static byte[] ComputeCommonAnnotatedHash(string textToHash,
+    internal static byte[] ComputeCommonAnnotatedHash(string textToHash,
                                                     byte[] commonAnnotatedSecret,
                                                     bool longForm = false)
     {
@@ -213,7 +213,7 @@ public static class IdentifiableSecrets
         return Convert.FromBase64String(hash);
     }
 
-    public static string ComputeCommonAnnotatedHash(string textToHash,
+    internal static string ComputeCommonAnnotatedHash(string textToHash,
                                                     string commonAnnotatedSecret,                                                    
                                                     bool longForm = false,
                                                     char hashedDataSignature = 'H')
@@ -255,7 +255,7 @@ public static class IdentifiableSecrets
         return Convert.FromBase64String(key);
     }
 
-    public static string ComputeCommonAnnotatedHash(string textToHash,
+    internal static string ComputeCommonAnnotatedHash(string textToHash,
                                                     byte[] secret,
                                                     string base64EncodedSignature,
                                                     bool customerManagedKey,
@@ -491,7 +491,7 @@ public static class IdentifiableSecrets
         return Convert.FromBase64String(checksumText);
     }
 
-    public static string ComputeDerivedIdentifiableKey(string textToHash,
+    internal static string ComputeDerivedIdentifiableKey(string textToHash,
                                                        string identifiableHashSecret,
                                                        ulong primaryChecksumSeed,
                                                        ulong? derivedChecksumSeed = null,

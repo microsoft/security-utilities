@@ -11,6 +11,13 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# UNRELEASED
+- BRK: Derived keys and hashed data are no longer supported. The following API are removed:
+  - `IdentifiableSecrets.CommonAnnotatedDerivedKeySignature`
+  - `IdentifiableSecrets.CommonAnnotatedHashedDataSignature`
+  - `IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey`
+  - `IdentifiableSecrets.ComputeCommonAnnotatedHash`
+
 # 1.11.0 - 01/02/2025
 - NEW: Expose `SecretLiteral.Value` as public data.
 - FPS: Update `SEC101/127.UrlCredentials` regex to require a word break before the `ftp` or `http` schema rendering.
