@@ -11,11 +11,12 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# UNRELEASED
+# 1.12.0 - 01/06/2025
 - BRK: Derived keys and hashed data are no longer supported. The following API are removed:
   - `IdentifiableSecrets.CommonAnnotatedDerivedKeySignature`
   - `IdentifiableSecrets.CommonAnnotatedHashedDataSignature`
   - `IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey`
+  - `IdentifiableSecrets.ComputeDerivedIdentifiableKey`
   - `IdentifiableSecrets.ComputeCommonAnnotatedHash`
 
 # 1.11.0 - 01/02/2025
