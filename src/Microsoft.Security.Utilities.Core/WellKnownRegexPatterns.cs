@@ -179,8 +179,8 @@ public static class WellKnownRegexPatterns
     public const string PrefixUrlSafeBase64 = $"({Start}|[^{RegexEncodedUrlSafeBase64}])";
     public const string SuffixUrlSafeBase64 = $"([^{RegexEncodedUrlSafeBase64}]|{End})";
 
-    public const string PrefixUrlUnreserved = $"({Start}|[^{RegexEncodedUrlUnreserved}+/=])";
-    public const string SuffixUrlUnreserved = $"([^{RegexEncodedUrlUnreserved}+/=]|{End})";
+    public const string PrefixUrlUnreserved = $"({Start}|[^{RegexEncodedUrlUnreserved}+/])";
+    public const string SuffixUrlUnreserved = $"([^{RegexEncodedUrlUnreserved}+/]|{End})";
     public const string PrefixBase62 = $"({Start}|[^{Base62}])";
     public const string SuffixBase62 = $"([^{Base62}]|{End})";
     public const string PrefixAllBase64 = @$"({Start}|[^{Base64}_\-])";
