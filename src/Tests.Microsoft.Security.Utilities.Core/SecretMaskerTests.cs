@@ -152,14 +152,14 @@ public class SecretMaskerTests
     private void ValidateSecurityModelsMasking(IEnumerable<RegexPattern> patterns, IRegexEngine engine, bool lowEntropyModels)
 
     {
+        using var assertionScope = new AssertionScope();
+
         // These tests generate randomized values. It may be useful to
         // bump up the # of iterations on an ad hoc basis to flush
         // out non-deterministic failures (typically based on the
         // characters chosen from the secret alphabet for the pattern).
         for (int i = 0; i < 1; i++)
         {
-            using var scope = new AssertionScope();
-
             foreach (IRegexEngine regexEngine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
             {
                 foreach (bool generateCrossCompanyCorrelatingIds in new[] { true, false })
@@ -175,13 +175,18 @@ public class SecretMaskerTests
 
                         foreach (string testExample in pattern.GenerateTruePositiveExamples())
                         {
-                            string secretValue = testExample;
+                            var detection = secretMasker.DetectSecrets(testExample).FirstOrDefault();
+                            bool result = detection != null;
+                            result.Should().BeTrue(because: $"'{testExample}' should contain a secret detected by at least one rule");
+
+                            string secretValue = testExample.Substring(detection.Start, detection.Length);
+
                             string moniker = pattern.GetMatchMoniker(secretValue);
 
                             // 1. All generated test patterns should be detected by the masker.
-                            string redacted = secretMasker.MaskSecrets(secretValue);
-                            bool result = redacted.Equals(secretValue);
-                            result.Should().BeFalse(because: $"'{secretValue}' for '{moniker}' should be redacted from scan text.");
+                            string redacted = secretMasker.MaskSecrets(testExample);
+                            result = redacted.Equals(testExample);
+                            result.Should().BeFalse(because: $"'{secretValue}' for '{moniker}' should be redacted from scan text");
 
                             // TODO: the generated examples don't distinguish the secret from surrounding context,
                             // for rules such as our connection string detecting logic. We need a future change to
@@ -196,7 +201,7 @@ public class SecretMaskerTests
                                 ? $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(secretValue)}" 
                                 : RegexPattern.FallbackRedactionToken;
 
-                            redacted.Should().Be(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds}");
+                            redacted.Should().Contain(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds}");
                         }
 
                         foreach(string testExample in pattern.GenerateFalsePositiveExamples())
@@ -207,7 +212,7 @@ public class SecretMaskerTests
                             //  not result in a mask operation.
                             string redacted = secretMasker.MaskSecrets(secretValue);
                             bool result = redacted.Equals(secretValue);
-                            result.Should().BeTrue(because: $"'{secretValue}' for '{pattern.Id}.{pattern.Name}' should not be redacted from scan text.");
+                            result.Should().BeTrue(because: $"'{secretValue}' for '{pattern.Id}.{pattern.Name}' should not be redacted from scan text");
                         }
                     }
                 }

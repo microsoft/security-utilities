@@ -11,6 +11,10 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# 1.13.0 - UNRELEASED
+- FNS: Eliminate false negatives resulting from incorrectly specifying `=` as a delimiting character in the core 'identifiable' rules. This broke simple patterns such as `myKey=an_actual_key`.
+- FNS: Eliminate false negatives resulting from improper use of the `-` character in regexes (where it was interpreted as a range operator not a literal).,
+
 # 1.12.0 - 01/06/2025
 - BRK: Derived keys and hashed data are no longer supported. The following API are removed:
   - `IdentifiableSecrets.CommonAnnotatedDerivedKeySignature`

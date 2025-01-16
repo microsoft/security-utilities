@@ -168,13 +168,13 @@ public static class WellKnownRegexPatterns
     public const string Alpha = $"{Lowercase}{Uppercase}";
     public const string Base62 = $"{Alpha}{Digit}";
     public const string Base64 = $"{Base62}+/";
-    public const string UrlSafeBase64 = $"{Base62}-_";
-    public const string UrlUnreserved = $"{Base62}-_~.";
+    public const string UrlSafeBase64 = $"{Base62}_-";
+    public const string UrlUnreserved = $"{Base62}_~.-";
 
     private const string End = "$";
     private const string Start = "^";
 
-    public const string RegexEncodedUrlSafeBase64 = @$"{Base62}\-_";
+    public const string RegexEncodedUrlSafeBase64 = @$"{Base62}\_-";
     public const string RegexEncodedUrlUnreserved = @$"{RegexEncodedUrlSafeBase64}~.";
     public const string PrefixUrlSafeBase64 = $"({Start}|[^{RegexEncodedUrlSafeBase64}])";
     public const string SuffixUrlSafeBase64 = $"([^{RegexEncodedUrlSafeBase64}]|{End})";
@@ -183,8 +183,8 @@ public static class WellKnownRegexPatterns
     public const string SuffixUrlUnreserved = $"([^{RegexEncodedUrlUnreserved}+/=]|{End})";
     public const string PrefixBase62 = $"({Start}|[^{Base62}])";
     public const string SuffixBase62 = $"([^{Base62}]|{End})";
-    public const string PrefixAllBase64 = $"({Start}|[^{Base64}-_=])";
-    public const string SuffixAllBase64 = $"([^{Base64}-_=]|{End})";
+    public const string PrefixAllBase64 = $"({Start}|[^{Base64}_-])";
+    public const string SuffixAllBase64 = $"([^{Base64}_=-]|{End})";
     public const string PrefixHexadecimal = $"({Start}|[^{Hexadecimal}])";
     public const string SuffixHexadecimal = $"([^{Hexadecimal}]|{End})";
 }

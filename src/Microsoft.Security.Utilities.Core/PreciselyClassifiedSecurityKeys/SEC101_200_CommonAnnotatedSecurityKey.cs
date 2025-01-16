@@ -25,24 +25,45 @@ namespace Microsoft.Security.Utilities
                 {
                     char testChar = CustomAlphabetEncoder.DefaultBase62Alphabet[i];
 
-                    string example = null;
+                    string key = null;
 
                     foreach (char keyKindSignature in new[] { '9', 'D', 'H' })
                     {
-                        example = IdentifiableSecrets.GenerateCommonAnnotatedTestKey(randomBytes: null,
-                                                                                     IdentifiableSecrets.VersionTwoChecksumSeed,
-                                                                                     "TEST",
-                                                                                     customerManagedKey: true,
-                                                                                     platformReserved: null,
-                                                                                     providerReserved: null,
-                                                                                     longForm,
-                                                                                     testChar,
-                                                                                     keyKindSignature);
+                        key = IdentifiableSecrets.GenerateCommonAnnotatedTestKey(randomBytes: null,
+                                                                                 IdentifiableSecrets.VersionTwoChecksumSeed,
+                                                                                 "TEST",
+                                                                                 customerManagedKey: true,
+                                                                                 platformReserved: null,
+                                                                                 providerReserved: null,
+                                                                                 longForm,
+                                                                                 testChar,
+                                                                                 keyKindSignature);
                     }
 
-                    yield return example;
+                    yield return key;
+
+
+                    foreach (string prefix in s_nonInvalidatingPrefixes)
+                    {
+                        yield return $"{prefix}{key}";
+                    }
+
+                    foreach (string suffix in s_nonInvalidatingSuffixes)
+                    {
+                        yield return $"{key}{suffix}";
+                    }
                 }
             }
         }
+
+        private static readonly string[] s_nonInvalidatingPrefixes = new[]
+        {
+            "=",
+        };
+
+        private static readonly string[] s_nonInvalidatingSuffixes = new[]
+        {
+            ";",
+        };
     }
 }
