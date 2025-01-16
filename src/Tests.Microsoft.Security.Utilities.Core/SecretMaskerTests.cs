@@ -152,14 +152,14 @@ public class SecretMaskerTests
     private void ValidateSecurityModelsMasking(IEnumerable<RegexPattern> patterns, IRegexEngine engine, bool lowEntropyModels)
 
     {
-        using var assertionScope = new AssertionScope();
-
         // These tests generate randomized values. It may be useful to
         // bump up the # of iterations on an ad hoc basis to flush
         // out non-deterministic failures (typically based on the
         // characters chosen from the secret alphabet for the pattern).
         for (int i = 0; i < 1; i++)
         {
+            using var assertionScope = new AssertionScope();
+
             foreach (IRegexEngine regexEngine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
             {
                 foreach (bool generateCrossCompanyCorrelatingIds in new[] { true, false })
