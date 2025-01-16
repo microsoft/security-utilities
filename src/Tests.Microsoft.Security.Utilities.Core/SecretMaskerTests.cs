@@ -159,7 +159,6 @@ public class SecretMaskerTests
         for (int i = 0; i < 1; i++)
         {
             using var assertionScope = new AssertionScope();
-
             foreach (IRegexEngine regexEngine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
             {
                 foreach (bool generateCrossCompanyCorrelatingIds in new[] { true, false })
@@ -179,14 +178,14 @@ public class SecretMaskerTests
                             bool result = detection != null;
                             result.Should().BeTrue(because: $"'{testExample}' should contain a secret detected by at least one rule");
 
-                            string secretValue = testExample.Substring(detection.Start, detection.Length);
+                            string standaloneSecret = testExample.Substring(detection.Start, detection.Length);
 
-                            string moniker = pattern.GetMatchMoniker(secretValue);
+                            string moniker = pattern.GetMatchMoniker(standaloneSecret);
 
                             // 1. All generated test patterns should be detected by the masker.
                             string redacted = secretMasker.MaskSecrets(testExample);
                             result = redacted.Equals(testExample);
-                            result.Should().BeFalse(because: $"'{secretValue}' for '{moniker}' should be redacted from scan text");
+                            result.Should().BeFalse(because: $"'{standaloneSecret}' for '{moniker}' should be redacted from scan text");
 
                             // TODO: the generated examples don't distinguish the secret from surrounding context,
                             // for rules such as our connection string detecting logic. We need a future change to
@@ -198,7 +197,7 @@ public class SecretMaskerTests
                             }
 
                             string expectedRedactedValue = generateCrossCompanyCorrelatingIds
-                                ? $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(secretValue)}" 
+                                ? $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(standaloneSecret)}" 
                                 : RegexPattern.FallbackRedactionToken;
 
                             redacted.Should().Contain(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds}");
