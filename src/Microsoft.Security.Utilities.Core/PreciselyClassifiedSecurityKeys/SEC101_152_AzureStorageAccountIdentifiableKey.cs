@@ -34,7 +34,7 @@ namespace Microsoft.Security.Utilities
             // specifically, it looks for a key embedded in a connection string. We have had
             // misses previously due to mismanaging delimiters around the identifiable key
             // rules, so we will obtain the legacy rule patterns, replace their secret with
-            // and identifiable one, and ensure this rule continues to function against a very
+            // an identifiable one, and ensure this rule continues to function against a very
             // typical expression of this credential kind.
             foreach (string example in legacyStorageAccountKey.GenerateTruePositiveExamples())
             {
