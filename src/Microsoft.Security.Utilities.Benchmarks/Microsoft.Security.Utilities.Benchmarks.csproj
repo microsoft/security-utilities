@@ -12,8 +12,8 @@
   <Import Project="$(MsBuildThisFileDirectory)..\Build.props" />
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
-    <PackageReference Include="RE2.Managed" Version="4.5.7" />
+    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="RE2.Managed" />
   </ItemGroup>
 
   <ItemGroup>

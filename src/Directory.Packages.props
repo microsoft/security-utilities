@@ -1,0 +1,31 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="CommandLineParser" Version="2.9.1" />
+    <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="6.15.0" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="RE2.Managed" Version="4.5.7" />
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.1.118" />
+    <PackageVersion Include="System.Buffers" Version="4.5.1" />
+    <PackageVersion Include="System.Text.Json" Version="8.0.5" />
+  </ItemGroup>
+  <ItemGroup Label="Lifted Transitive Dependencies">
+    <!-- None yet. :) -->
+  </ItemGroup>
+  <ItemGroup Label="Global Build-Only Dependencies">
+    <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+    <GlobalPackageReference Include="Nerdbank.GitVersioning"  Version="3.6.133" />
+  </ItemGroup>
+  <ItemGroup Label="Test-Only Dependencies" Condition="$(MSBuildProjectName.StartsWith('Tests.'))">
+    <PackageVersion Include="FluentAssertions" Version="5.10.3" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.4.0-preview-20220707-01" />
+    <PackageVersion Include="MSTest.TestFramework" Version="2.2.7" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="2.2.7" />
+  </ItemGroup>
+  <ItemGroup Label="Benchmark-Only Dependencies" Condition="$(MSBuildProjectName.EndsWith('.Benchmarks'))">
+    <PackageVersion Include="BenchmarkDotNet" Version="0.13.12" />
+  </ItemGroup>
+</Project>
