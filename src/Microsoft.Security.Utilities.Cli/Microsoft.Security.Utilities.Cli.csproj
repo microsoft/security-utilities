@@ -7,8 +7,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <Import Project="$(MsBuildThisFileDirectory)..\Build.props" />
-
   <ItemGroup>
     <PackageReference Include="CommandLineParser" />
     <PackageReference Include="Newtonsoft.Json" />
