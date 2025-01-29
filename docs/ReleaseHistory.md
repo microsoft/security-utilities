@@ -11,6 +11,13 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# 1.13.0 - UNRELEASED
+- BUG: `IdentifiableSecrets.TryValidateCommonAnnotatedKey(byte[], string)` did not validate signature argument to be be exactly 4 characters long, beginning with a letter, entirely alphanumeric, and either entirely uppercase or entirely lowercase. 
+- BUG: `IdentifiableSecrets.TryValidateCommonAnnotatedKey` (all overloads)  did not check that the key had the given signature and would return true for any valid key.
+- BUG: `IdentifiableSecrets.(Try)ValidateBase64Key`, when given a backwards-compatible `CommonAnnotatedKey`, also did not check that the key had the given signature.
+- BUG: `IdentifiableSecrets.(Try)ValidateBase64Key` failed on .NET 8 with `System.NotSupportedException: The specified pattern with RegexOptions.NonBacktracking could result in an automata as large as 'NNNN' nodes, which is larger than the configured limit of '1000'.`
+- PRF: `IdentifiableSecrets.(Try)ValidateBase64Key` is much faster now as it no longer generates nor uses regular expressions.
+
 # 1.12.0 - 01/06/2025
 - BRK: Derived keys and hashed data are no longer supported. The following API are removed:
   - `IdentifiableSecrets.CommonAnnotatedDerivedKeySignature`
