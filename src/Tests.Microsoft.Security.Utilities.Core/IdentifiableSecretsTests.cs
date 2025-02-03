@@ -337,9 +337,9 @@ namespace Microsoft.Security.Utilities
                     result.Should().BeTrue(because: $"{key}' should validate using 'TryValidateCommonAnnotatedKey' with its original checksum");
 
                     string differentSignature = GetRandomSignature();
-                    differentSignature.Should().NotBe(signature, because: "it is random.");
+                    differentSignature.Should().NotBe(signature, because: "it is random");
                     result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, differentSignature);
-                    result.Should().BeFalse(because: $"'{key}' has signature '{signature}', not '{differentSignature}'.");
+                    result.Should().BeFalse(because: $"'{key}' has signature '{signature}', not '{differentSignature}'");
 
                     CommonAnnotatedKey.TryCreate(key, out CommonAnnotatedKey cask);
                     cask.Should().NotBeNull(because: $"the '{key}' should be a valid cask");
@@ -473,7 +473,7 @@ namespace Microsoft.Security.Utilities
 
                 string differentSignature = "WXYZ";
                 result = TryValidateCommonAnnotatedKeyHelper(validKey, differentSignature);
-                result.Should().BeFalse(because: $"'{validKey}' has signature '{validSignature}', not '{differentSignature}'.");
+                result.Should().BeFalse(because: $"'{validKey}' has signature '{validSignature}', not '{differentSignature}'");
 
                 result = validKey.Length == IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize
                     ? validKey.Length == IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize
@@ -1041,7 +1041,7 @@ namespace Microsoft.Security.Utilities
             result.Should().Be(false, because: "validation of standard base64 key with encodeForUrl=true should fail");
 
             result = IdentifiableSecrets.TryValidateBase64Key(secretBase64Url, seed, signature, encodeForUrl: false);
-            result.Should().Be(false, because: "validation of base64url key with econdeForUrl=false should fail");
+            result.Should().Be(false, because: "validation of base64url key with encodeForUrl=false should fail");
         }
 
         [TestMethod]
