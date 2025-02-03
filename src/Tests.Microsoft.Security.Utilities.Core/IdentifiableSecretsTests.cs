@@ -211,14 +211,28 @@ namespace Microsoft.Security.Utilities
 
                 action.Should().NotThrow<ArgumentException>(because: $"'{key}' is a valid secret for ComputeDerivedCommonAnnotatedKey");
 
-                int index = s_random.Next() % key.Length;
-                string updatedKey = $"{key.Substring(0, index)}X{key.Substring(index + 1)}";
+                // Replace a random non-padding char with a different char. Note
+                // that replacing a padding char will make the key invalid
+                // base64 which is a different error case tested elsewhere.
+                int index = s_random.Next() % key.TrimEnd('=').Length;
+                char replacement = key[index] == 'X' ? 'Y' : 'X';
+                key = $"{key.Substring(0, index)}{replacement}{key.Substring(index + 1)}";
+                action.Should().Throw<ArgumentException>(because: $"'{key}' is not a valid secret for ComputeDerivedCommonAnnotatedKey");
+            }
+        }
 
-                if (updatedKey != key)
-                {
-                    key = updatedKey;
-                    action.Should().Throw<ArgumentException>(because: $"'{key}' is not a valid secret for ComputeDerivedCommonAnnotatedKey");
-                }
+        [TestMethod]
+        public void IdentifiableSecrets_ComputeDerivedIdentifiableKeyThrowsOnInvalidBase64()
+        {
+            string[] invalidBase64 = [
+                new string('?', (int)IdentifiableSecrets.StandardEncodedCommonAnnotatedKeySize),
+                new string('A', (int)IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize - 2) + "=X",
+            ];
+
+            foreach (string secret in invalidBase64)
+            {
+                Action action = () => IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey("NonsensitiveData", secret);
+                action.Should().Throw<FormatException>(because: $"'{secret}' is not a valid base64 encoded string");
             }
         }
 

@@ -1,0 +1,5 @@
+<!--
+  This folder is a test of consuming our package like a customer would.
+  Therefore it does not consume central package versions. 
+-->
+<Project />
