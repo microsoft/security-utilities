@@ -539,7 +539,7 @@ namespace Microsoft.Security.Utilities
             result.Should().BeTrue(because: "a generated key should validate");
 
             result = TryValidateCommonAnnotatedKeyHelper(validKey, base64EncodedSignature: "aBcD");
-            result.Should().BeFalse(because: "although the signature comparison is case-insentitive, the signature argument must have consistent case.");
+            result.Should().BeFalse(because: "although the signature comparison is case-insentitive, the signature argument must have consistent case");
 
             foreach (string signature in new[] { "Z", "YY", "XXX", "WWWWW", "1AAA" })
             {
