@@ -128,6 +128,9 @@ public static class WellKnownRegexPatterns
     {
         alphabet = alphabet ?? throw new ArgumentNullException(nameof(alphabet));
 
+        // Normalized escaped hyphens.
+        alphabet = alphabet.Replace(@"\-", "-");
+
         s_stringBuilder ??= new StringBuilder();
 
         s_stringBuilder.Length = 0;
@@ -175,7 +178,7 @@ public static class WellKnownRegexPatterns
     private const string Start = "^";
 
     public const string RegexEncodedUrlSafeBase64 = @$"{Base62}_\-";
-    public const string RegexEncodedUrlUnreserved = @$"{RegexEncodedUrlSafeBase64}~.";
+    public const string RegexEncodedUrlUnreserved = @$"~.{RegexEncodedUrlSafeBase64}";
     public const string PrefixUrlSafeBase64 = $"({Start}|[^{RegexEncodedUrlSafeBase64}])";
     public const string SuffixUrlSafeBase64 = $"([^{RegexEncodedUrlSafeBase64}]|{End})";
 
