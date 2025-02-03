@@ -39,7 +39,7 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
             return null;
         }
 
-        string signature = match.Substring(76, 4);
+        string signature = match.Substring(CommonAnnotatedKey.ProviderFixedSignatureOffset, CommonAnnotatedKey.ProviderFixedSignatureLength);
 
         return signature switch
         {

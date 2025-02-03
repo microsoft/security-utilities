@@ -76,6 +76,21 @@ public static class IdentifiableSecrets
             return false;
         }
 
+        try
+        {
+            ValidateCommonAnnotatedKeySignature(base64EncodedSignature);
+        }
+        catch (ArgumentException)
+        {
+            return false;
+        }
+
+        string signature = GetBase64EncodedSignature(key);
+        if (!string.Equals(signature, base64EncodedSignature, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
         bool longForm = key.Length == LongFormCommonAnnotatedKeySizeInBytes;
 
         ulong checksumSeed = VersionTwoChecksumSeed;
@@ -110,10 +125,24 @@ public static class IdentifiableSecrets
         return !longForm || encodedChecksumBytes[3] == base62EncodedBytes[3];
     }
 
+    private static string GetBase64EncodedSignature(byte[] key)
+    {
+        Debug.Assert(CommonAnnotatedKey.ProviderFixedSignatureOffset % 4 == 0);
+        Debug.Assert(CommonAnnotatedKey.ProviderFixedSignatureLength % 4 == 0);
+        const int signatureByteOffset = CommonAnnotatedKey.ProviderFixedSignatureOffset / 4 * 3;
+        const int signatureByteLength = CommonAnnotatedKey.ProviderFixedSignatureLength / 4 * 3;
+        return Convert.ToBase64String(key, signatureByteOffset, signatureByteLength);
+    }
+
     public static bool TryValidateCommonAnnotatedKey(string key,
                                                      string base64EncodedSignature)
     {
         if (string.IsNullOrWhiteSpace(key))
+        {
+            return false;
+        }
+
+        if (key.Length != StandardEncodedCommonAnnotatedKeySize && key.Length != LongFormEncodedCommonAnnotatedKeySize)
         {
             return false;
         }
@@ -127,7 +156,8 @@ public static class IdentifiableSecrets
             return false;
         }
 
-        if (key.Length != StandardEncodedCommonAnnotatedKeySize && key.Length != LongFormEncodedCommonAnnotatedKeySize)
+        string signature = key.Substring(CommonAnnotatedKey.ProviderFixedSignatureOffset, CommonAnnotatedKey.ProviderFixedSignatureLength);
+        if (!string.Equals(signature, base64EncodedSignature, StringComparison.OrdinalIgnoreCase))
         {
             return false;
         }
@@ -727,7 +757,9 @@ public static class IdentifiableSecrets
         }
     }
 
-    private const int checksumSizeInBytes = sizeof(uint);
+    // The checksum is 32 bits / 4 bytes, which takes 6 base64 characters to encode.
+    private const int checksumSizeInBytes = 4;
+    private const int lengthOfEncodedChecksum = 6;
 
     public static bool ValidateChecksum(string key, ulong checksumSeed, out byte[] bytes)
     {
@@ -793,137 +825,47 @@ public static class IdentifiableSecrets
     {
         ValidateBase64EncodedSignature(base64EncodedSignature, encodeForUrl);
 
-        if (!ValidateChecksum(key, checksumSeed, out byte[] bytes))
+        if (!ValidateChecksum(key, checksumSeed, out _))
         {
             return false;
         }
 
-        if (key.Length == LongFormEncodedCommonAnnotatedKeySize ||
-            key.Length == StandardEncodedCommonAnnotatedKeySize)
-        {
-            if (key.Substring(52, 5) == "JQQJ9")
-            {
-                return true;
-            }
-        }
-
-        // Compute the padding or 'spillover' into the final base64-encoded secret
-        // for the random portion of the token, which is our data array minus
-        // the bytes allocated for the checksum (4) and fixed signature (3). Every
-        // base64-encoded character comprises 6 bits and so we can compute the 
-        // underlying bytes for this data by the following computation:
-        int signatureSizeInBytes = base64EncodedSignature.Length * 6 / 8;
-        int padding = ComputeSpilloverBitsIntoFinalEncodedCharacter(bytes.Length - signatureSizeInBytes - checksumSizeInBytes);
-
-        // Moving in the other direction, we can compute the encoded length of the checksum
-        // calculating the # of bits for the checksum, and diving this value by 6 to 
-        // determine the # of base64-encoded characters. Strictly speaking, for a 4-byte value,
-        // the Ceiling computation isn't required, as there will be no remainder for this
-        // value (4 * 8 / 6).
-        int lengthOfEncodedChecksum = (int)Math.Ceiling(checksumSizeInBytes * 8 / 6D);
-
-        string equalsSigns = string.Empty;
-#if NETCOREAPP3_1_OR_GREATER
-        int equalsSignIndex = key.IndexOf('=', StringComparison.Ordinal);
-#else
-        int equalsSignIndex = key.IndexOf('=');
-#endif
-        int prefixLength = key.Length - lengthOfEncodedChecksum - base64EncodedSignature.Length;
-        string pattern = string.Empty;
-
-        if (equalsSignIndex > -1)
-        {
-            equalsSigns = key.Substring(equalsSignIndex);
-            prefixLength = equalsSignIndex - lengthOfEncodedChecksum - base64EncodedSignature.Length;
-        }
-
-        string trimmedKey = key.Trim('=');
-        int signatureOffset = trimmedKey.Length - lengthOfEncodedChecksum - base64EncodedSignature.Length;
-        if (base64EncodedSignature != trimmedKey.Substring(signatureOffset, base64EncodedSignature.Length))
+        if (HasIncorrectSpecialCharacters(key, encodeForUrl))
         {
             return false;
         }
 
-        char lastChar = trimmedKey[trimmedKey.Length - 1];
-        char firstChar = trimmedKey[trimmedKey.Length - lengthOfEncodedChecksum];
+        int padding = CountPaddingCharacters(key);
+        int signatureOffset = key.Length - padding - lengthOfEncodedChecksum - base64EncodedSignature.Length;
+        return base64EncodedSignature == key.Substring(signatureOffset, base64EncodedSignature.Length);
+    }
 
-        string specialChars = encodeForUrl ? "\\-_" : "\\/+";
-        string secretAlphabet = $"[a-zA-Z0-9{specialChars}]";
+    private static readonly char[] s_specialCharsForBase64Url = ['-', '_'];
+    private static readonly char[] s_specialCharsForBase64Standard = ['+', '/'];
 
-        // We need to escape characters in the signature that are special in regex.
-#if NETCOREAPP3_1_OR_GREATER
-        base64EncodedSignature = base64EncodedSignature.Replace("+", "\\+", StringComparison.Ordinal);
-#else
-        base64EncodedSignature = base64EncodedSignature.Replace("+", "\\+");
-#endif
+    private static bool HasIncorrectSpecialCharacters(string key, bool encodeForUrl)
+    {
+        char[] incorrectSpecialChars = encodeForUrl ? s_specialCharsForBase64Standard : s_specialCharsForBase64Url;
+        return key.IndexOfAny(incorrectSpecialChars) >= 0;
+    }
 
-        string checksumPrefix = string.Empty;
-        string checksumSuffix = string.Empty;
+    private static int CountPaddingCharacters(string s)
+    {
+        int padding = 0;
 
-        switch (padding)
+        for (int i = s.Length - 1; i >= 0; i--)
         {
-            case 2:
+            if (s[i] == '=')
             {
-                // When we are required to right-shift the fixed signatures by two
-                // bits, the first encoded character of the checksum will have its
-                // first two bits set to zero, limiting encoded chars to A-P.
-                checksumPrefix = "[A-P]";
-
-                // The following condition should always be true, since we 
-                // have already verified the checksum earlier in this routine.
-                // We explode all conditions in this check in order to
-                // 'convince' VS code coverage these conditions are 
-                // exhaustively covered.
-                Debug.Assert(firstChar == 'A' || firstChar == 'B' ||
-                             firstChar == 'C' || firstChar == 'D' ||
-                             firstChar == 'E' || firstChar == 'F' ||
-                             firstChar == 'G' || firstChar == 'H' ||
-                             firstChar == 'I' || firstChar == 'J' ||
-                             firstChar == 'K' || firstChar == 'L' ||
-                             firstChar == 'M' || firstChar == 'N' ||
-                             firstChar == 'O' || firstChar == 'P', $"Unexpected first character '{firstChar}.");
-                break;
+                padding++;
             }
-
-            case 4:
+            else
             {
-                // When we are required to right-shift the fixed signatures by four
-                // bits, the first encoded character of the checksum will have its
-                // first four bits set to zero, limiting encoded chars to A-D.
-                checksumPrefix = "[A-D]";
-
-                // The following condition should always be true, since we 
-                // have already verified the checksum earlier in this routine.
-                Debug.Assert(firstChar == 'A' || firstChar == 'B' ||
-                             firstChar == 'C' || firstChar == 'D', $"Unexpected first character '{firstChar}.");
-                break;
-            }
-
-            default:
-            {
-                // In this case, we have a perfect alignment between our decoded
-                // signature and checksum and their encoded representation. As
-                // a result, two bits of the final checksum byte will spill into
-                // the final encoded character, followed by four zeros of padding.
-                // This limits the possible values for the final checksum character
-                // to one of A, Q, g & w.
-                checksumSuffix = "[AQgw]";
-
-                // The following condition should always be true, since we 
-                // have already verified the checksum earlier in this routine.
-                Debug.Assert(lastChar == 'A' || lastChar == 'Q' ||
-                             lastChar == 'g' || lastChar == 'w', $"Unexpected last character '{lastChar}.");
                 break;
             }
         }
 
-        // Example patterns, URL-friendly encoding:
-        //   [a-zA-Z0-9\-_]{22}XXXX[A-D][a-zA-Z0-9\-_]{5}
-        //   [a-zA-Z0-9\-_]{25}XXXX[A-P][a-zA-Z0-9\\-_]{5}
-        //   [a-zA-Z0-9\-_]{24}XXXX[a-zA-Z0-9\-_]{5}[AQgw]
-
-        pattern = $"{secretAlphabet}{{{prefixLength}}}{base64EncodedSignature}{checksumPrefix}{secretAlphabet}{{5}}{checksumSuffix}{equalsSigns}";
-        return CachedDotNetRegex.Instance.Matches(key, pattern).Any();
+        return padding;
     }
 
     private static int ComputeSpilloverBitsIntoFinalEncodedCharacter(int countOfBytes)
