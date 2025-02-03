@@ -42,7 +42,6 @@ namespace Microsoft.Security.Utilities
 
                     yield return key;
 
-
                     foreach (string prefix in s_nonInvalidatingPrefixes)
                     {
                         yield return $"{prefix}{key}";
