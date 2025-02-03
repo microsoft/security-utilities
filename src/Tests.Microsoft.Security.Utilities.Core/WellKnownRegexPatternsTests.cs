@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Contexts;
 
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -45,7 +46,13 @@ namespace Microsoft.Security.Utilities
                 {
                     foreach (string example in pattern.GenerateTruePositiveExamples())
                     {
-                        string moniker = pattern.GetMatchMoniker(example);
+                        string standaloneSecret =
+                            CachedDotNetRegex.Instance.Matches(example,
+                                                               pattern.Pattern,
+                                                               captureGroup: "refine").First().Value;
+
+
+                        string moniker = pattern.GetMatchMoniker(standaloneSecret);
 
                         if (pattern.DetectionMetadata.HasFlag(DetectionMetadata.LowConfidence) ||
                             pattern.DetectionMetadata.HasFlag(DetectionMetadata.MediumConfidence) ||
@@ -85,7 +92,12 @@ namespace Microsoft.Security.Utilities
                 {
                     foreach (string example in pattern.GenerateTruePositiveExamples())
                     {
-                        string moniker = pattern.GetMatchMoniker(example);
+                        string standaloneSecret =
+                            CachedDotNetRegex.Instance.Matches(example, 
+                                                               pattern.Pattern, 
+                                                               captureGroup: "refine").First().Value;
+
+                        string moniker = pattern.GetMatchMoniker(standaloneSecret);
 
                         if (pattern.DetectionMetadata.HasFlag(DetectionMetadata.LowConfidence) ||
                             (pattern.Signatures != null && pattern.Signatures.Any()))
@@ -123,7 +135,12 @@ namespace Microsoft.Security.Utilities
                 {
                     foreach (string example in pattern.GenerateTruePositiveExamples())
                     {
-                        wellKnownMonikers.Add(pattern.GetMatchMoniker(example));
+                        string standaloneSecret =
+                            CachedDotNetRegex.Instance.Matches(example,
+                                                               pattern.Pattern,
+                                                               captureGroup: "refine").First().Value;
+
+                        wellKnownMonikers.Add(pattern.GetMatchMoniker(standaloneSecret));
                     }
                 }
             }
@@ -143,7 +160,12 @@ namespace Microsoft.Security.Utilities
 
                 foreach (string example in pattern.GenerateTruePositiveExamples())
                 {
-                    string moniker = pattern.GetMatchMoniker(example);
+                    string standaloneSecret =
+                        CachedDotNetRegex.Instance.Matches(example,
+                                                           pattern.Pattern,
+                                                           captureGroup: "refine").First().Value;
+
+                    string moniker = pattern.GetMatchMoniker(standaloneSecret);
                     if (!wellKnownMonikers.Contains(moniker))
                     {
                         unrecognizedMonikers.Add(moniker);

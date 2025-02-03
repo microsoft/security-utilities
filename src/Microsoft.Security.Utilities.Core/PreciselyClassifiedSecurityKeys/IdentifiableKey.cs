@@ -53,14 +53,36 @@ namespace Microsoft.Security.Utilities
                     string encoded = new string(alphabet[i], encodedLength);
                     Array.Copy(Convert.FromBase64String(encoded), bytes, KeyLength);
 
-                    yield return
+                    string key =
                         IdentifiableSecrets.GenerateBase64KeyHelper(checksumSeed,
                                                                     keyLengthInBytes: KeyLength,
                                                                     Signatures!.First(),
                                                                     EncodeForUrl,
                                                                     bytes);
+
+                    yield return key;
+
+                    foreach (string prefix in s_nonInvalidatingPrefixes)
+                    {
+                        yield return $"{prefix}{key}";
+                    }
+
+                    foreach (string suffix in s_nonInvalidatingSuffixes)
+                    {
+                        yield return $"{key}{suffix}";
+                    }
                 }
             }
         }
+
+        private static readonly string[] s_nonInvalidatingPrefixes = new[]
+        {
+            "=",
+        };
+
+        private static readonly string[] s_nonInvalidatingSuffixes = new[]
+        {
+            ";",
+        };
     }
 }
