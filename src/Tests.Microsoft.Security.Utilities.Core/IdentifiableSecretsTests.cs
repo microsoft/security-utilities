@@ -1028,8 +1028,8 @@ namespace Microsoft.Security.Utilities
             bool result;
             ulong seed = 42;
             string signature = "TEST";
-            string secretBase64Std = "83Tv3p0dtmc/cw7eEVxcC7lh6ZM+MgPG3TESTLBLKt4=";
-            string secretBase64Url = "83Tv3p0dtmc_cw7eEVxcC7lh6ZM-MgPG3TESTLBLKt4=";
+            string secretBase64Std = $"83Tv3p0dtmc/cw7eEVxcC7lh6ZM+MgPG3{signature}LBLKt4=";
+            string secretBase64Url = $"83Tv3p0dtmc_cw7eEVxcC7lh6ZM-MgPG3{signature}LBLKt4=";
 
             result = IdentifiableSecrets.TryValidateBase64Key(secretBase64Std, seed, signature, encodeForUrl: false);
             result.Should().Be(true, because: "validation of standard base64 key with encodeForUrl=false should succeed");
