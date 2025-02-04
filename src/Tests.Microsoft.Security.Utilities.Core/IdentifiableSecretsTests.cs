@@ -15,6 +15,8 @@ using FluentAssertions.Execution;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+#pragma warning disable SYSLIB0023  // 'RNGCryptoServiceProvider' is obsolete.
+
 namespace Microsoft.Security.Utilities
 {
     [TestClass, ExcludeFromCodeCoverage]
@@ -334,6 +336,11 @@ namespace Microsoft.Security.Utilities
                     bool result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, signature);
                     result.Should().BeTrue(because: $"{key}' should validate using 'TryValidateCommonAnnotatedKey' with its original checksum");
 
+                    string differentSignature = GetRandomSignature();
+                    differentSignature.Should().NotBe(signature, because: "it is random");
+                    result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, differentSignature);
+                    result.Should().BeFalse(because: $"'{key}' has signature '{signature}', not '{differentSignature}'");
+
                     CommonAnnotatedKey.TryCreate(key, out CommonAnnotatedKey cask);
                     cask.Should().NotBeNull(because: $"the '{key}' should be a valid cask");
 
@@ -461,8 +468,12 @@ namespace Microsoft.Security.Utilities
                                                                                  new byte[3],
                                                                                  longForm: true);
 
-                bool result = TryValidateCommonAnnotatedKeyHelper(validKey, validSignature, out string failedApi);
-                result.Should().BeTrue(because: $"'{validKey}' should validate using '{failedApi}'");
+                bool result = TryValidateCommonAnnotatedKeyHelper(validKey, validSignature);
+                result.Should().BeTrue(because: $"'{validKey}' should validate.");
+
+                string differentSignature = "WXYZ";
+                result = TryValidateCommonAnnotatedKeyHelper(validKey, differentSignature);
+                result.Should().BeFalse(because: $"'{validKey}' has signature '{validSignature}', not '{differentSignature}'");
 
                 result = validKey.Length == IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize
                     ? validKey.Length == IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize
@@ -472,18 +483,21 @@ namespace Microsoft.Security.Utilities
             }
         }
 
-        private bool TryValidateCommonAnnotatedKeyHelper(string key, string base64EncodedSignature, out string failedApi)
+        private bool TryValidateCommonAnnotatedKeyHelper(string key, string base64EncodedSignature)
         {
-            failedApi = "TryValidateCommonAnnotatedKey(string, string)";
-            if (!IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, base64EncodedSignature)) 
-            { 
-                return false; 
-            }
-
-            failedApi = "TryValidateCommonAnnotatedKey(byte[], string)";
             byte[] keyBytes = Convert.FromBase64String(key);
+            bool resultFromString = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, base64EncodedSignature);
+            bool resultFromBytes = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, base64EncodedSignature);
+        
+            resultFromBytes.Should().Be(resultFromString, because: 
+                $"""
+                TryValidate(string, string) and TryValidate(byte[], string) should be equivalent,
+                but returned different results for key='{key}', signature='{base64EncodedSignature}':
+                  * TryValidate(string, string) -> {resultFromString}
+                  * TryValidate(byte[], string) -> {resultFromBytes}{Environment.NewLine}
+                """);
 
-            return IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, base64EncodedSignature);
+            return resultFromString;
         }
 
         [TestMethod]
@@ -521,8 +535,11 @@ namespace Microsoft.Security.Utilities
                                                                              new byte[9],
                                                                              new byte[3]);
 
-            bool result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(validKey, validSignature);
+            bool result = TryValidateCommonAnnotatedKeyHelper(validKey, validSignature);
             result.Should().BeTrue(because: "a generated key should validate");
+
+            result = TryValidateCommonAnnotatedKeyHelper(validKey, base64EncodedSignature: "aBcD");
+            result.Should().BeFalse(because: "although the signature comparison is case-insentitive, the signature argument must have consistent case");
 
             foreach (string signature in new[] { "Z", "YY", "XXX", "WWWWW", "1AAA" })
             {
@@ -537,7 +554,7 @@ namespace Microsoft.Security.Utilities
 
                     action.Should().Throw<ArgumentException>(because: $"the signature '{signature}' is not valid");
 
-                    result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key: validKey, base64EncodedSignature: signature);
+                    result = TryValidateCommonAnnotatedKeyHelper(key: validKey, base64EncodedSignature: signature);
                     result.Should().BeFalse(because: $"'{signature}' is not a valid signature argument");
                 }
             }
@@ -1002,6 +1019,29 @@ namespace Microsoft.Security.Utilities
                                                                 base64EncodedSignature: "this signature is too long",
                                                                 encodeForUrl));
             }
+        }
+
+        [TestMethod]
+        public void IdentifiableSecrets_TryValidateBase64Key_ChecksAlphabet()
+        {
+            using var scope = new AssertionScope();
+            bool result;
+            ulong seed = 42;
+            string signature = "TEST";
+            string secretBase64Std = "83Tv3p0dtmc/cw7eEVxcC7lh6ZM+MgPG3TESTLBLKt4=";
+            string secretBase64Url = "83Tv3p0dtmc_cw7eEVxcC7lh6ZM-MgPG3TESTLBLKt4=";
+
+            result = IdentifiableSecrets.TryValidateBase64Key(secretBase64Std, seed, signature, encodeForUrl: false);
+            result.Should().Be(true, because: "validation of standard base64 key with encodeForUrl=false should succeed");
+
+            result = IdentifiableSecrets.TryValidateBase64Key(secretBase64Url, seed, signature, encodeForUrl: true);
+            result.Should().Be(true, because: "validation of base64url key with encodeForUrl=true should succeed");
+
+            result = IdentifiableSecrets.TryValidateBase64Key(secretBase64Std, seed, signature, encodeForUrl: true);
+            result.Should().Be(false, because: "validation of standard base64 key with encodeForUrl=true should fail");
+
+            result = IdentifiableSecrets.TryValidateBase64Key(secretBase64Url, seed, signature, encodeForUrl: false);
+            result.Should().Be(false, because: "validation of base64url key with encodeForUrl=false should fail");
         }
 
         [TestMethod]

@@ -8,6 +8,8 @@ using System.Text;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+#pragma warning disable SYSLIB0023  // 'RNGCryptoServiceProvider' is obsolete.
+
 namespace Microsoft.Security.Utilities
 {
     [TestClass, ExcludeFromCodeCoverage]
