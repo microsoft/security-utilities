@@ -812,7 +812,7 @@ namespace Microsoft.Security.Utilities
                     continue;
                 }
 
-                foreach (string securityKey in pattern.GenerateTruePositiveExamples())
+                foreach (string example in pattern.GenerateTruePositiveExamples())
                 {
                     IIdentifiableKey identifiablePattern = pattern as IIdentifiableKey;
                     if (identifiablePattern == null) { continue; }
@@ -823,14 +823,19 @@ namespace Microsoft.Security.Utilities
                     {
                         foreach (string signature in identifiablePattern.Signatures)
                         {
-                            if (IdentifiableSecrets.TryValidateBase64Key(securityKey, checksumSeed, signature, identifiablePattern.EncodeForUrl))
+                            string standaloneSecret =
+                                CachedDotNetRegex.Instance.Matches(example,
+                                                                   pattern.Pattern,
+                                                                   captureGroup: "refine").First().Value;
+
+                            if (IdentifiableSecrets.TryValidateBase64Key(standaloneSecret, checksumSeed, signature, identifiablePattern.EncodeForUrl))
                             {
                                 matched = true;
                                 string textToSign = $"{Guid.NewGuid()}";
 
                                 foreach (ulong derivedChecksumSeed in new[] { checksumSeed, ~checksumSeed })
                                 {
-                                    string derivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(textToSign, securityKey, checksumSeed, derivedChecksumSeed, identifiablePattern.EncodeForUrl);
+                                    string derivedKey = IdentifiableSecrets.ComputeDerivedIdentifiableKey(textToSign, standaloneSecret, checksumSeed, derivedChecksumSeed, identifiablePattern.EncodeForUrl);
                                     bool isValid = IdentifiableSecrets.TryValidateBase64Key(derivedKey, derivedChecksumSeed, signature);
                                     isValid.Should().BeTrue(because: $"the '{pattern.Name} derived key '{derivedKey}' should validate");
 

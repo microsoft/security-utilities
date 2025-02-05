@@ -11,7 +11,9 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# 1.13.0 - UNRELEASED
+# 1.13.0 - 02/05/2025
+- FNS: Eliminate false negatives resulting from incorrectly specifying `=` as a delimiting character in the core 'identifiable' rules. This broke simple patterns such as `myKey=an_actual_key`.
+- FNS: Eliminate false negatives resulting from improper use of the `-` character in regexes (where it was interpreted as a range operator not a literal).,
 - BUG: `IdentifiableSecrets.TryValidateCommonAnnotatedKey(byte[], string)` did not validate signature argument to be be exactly 4 characters long, beginning with a letter, entirely alphanumeric, and either entirely uppercase or entirely lowercase. 
 - BUG: `IdentifiableSecrets.TryValidateCommonAnnotatedKey` (all overloads)  did not check that the key had the given signature and would return true for any valid key.
 - BUG: `IdentifiableSecrets.(Try)ValidateBase64Key`, when given a backwards-compatible `CommonAnnotatedKey`, did not check that the key had the given signature.

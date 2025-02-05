@@ -30,79 +30,96 @@ namespace Microsoft.Security.Utilities
         [TestMethod]
         public void WellKnownRegexPatterns_EnsureAllPatternsExpressConfidence()
         {
-            using var assertionScope = new AssertionScope();
-
-            var rulesets = new[]{
-                WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
-                WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys
-            };
-
-            var missingConfidence = new List<string>();
-
-            foreach (IEnumerable<RegexPattern> ruleset in rulesets)
+            for (int i = 0; i < 1000; i++)
             {
-                foreach (RegexPattern pattern in ruleset)
+                using var assertionScope = new AssertionScope();
+
+                var rulesets = new[] {
+                    WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
+                    WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys
+                };
+
+                var missingConfidence = new List<string>();
+
+                foreach (IEnumerable<RegexPattern> ruleset in rulesets)
                 {
-                    foreach (string example in pattern.GenerateTruePositiveExamples())
+                    foreach (RegexPattern pattern in ruleset)
                     {
-                        string moniker = pattern.GetMatchMoniker(example);
-
-                        if (pattern.DetectionMetadata.HasFlag(DetectionMetadata.LowConfidence) ||
-                            pattern.DetectionMetadata.HasFlag(DetectionMetadata.MediumConfidence) ||
-                            pattern.DetectionMetadata.HasFlag(DetectionMetadata.HighConfidence))
+                        foreach (string example in pattern.GenerateTruePositiveExamples())
                         {
-                            continue;
+                            string standaloneSecret =
+                                CachedDotNetRegex.Instance.Matches(example,
+                                                                   pattern.Pattern,
+                                                                   captureGroup: "refine").First().Value;
+
+
+                            string moniker = pattern.GetMatchMoniker(standaloneSecret);
+
+                            if (pattern.DetectionMetadata.HasFlag(DetectionMetadata.LowConfidence) ||
+                                pattern.DetectionMetadata.HasFlag(DetectionMetadata.MediumConfidence) ||
+                                pattern.DetectionMetadata.HasFlag(DetectionMetadata.HighConfidence))
+                            {
+                                continue;
+                            }
+
+                            missingConfidence.Add(moniker);
+
+                            // We only require a single match to identify missing confidence,
+                            // which is expressed at the pattern level.
+                            break;
                         }
-
-                        missingConfidence.Add(moniker);
-
-                        // We only require a single match to identify missing confidence,
-                        // which is expressed at the pattern level.
-                        break;
                     }
                 }
-            }
 
-            missingConfidence.Should().HaveCount(0, because: $"{string.Join(", ", missingConfidence)} are missing an explicit confidence level");
+                missingConfidence.Should().HaveCount(0, because: $"{string.Join(", ", missingConfidence)} are missing an explicit confidence level");
+            }
         }
 
 
         [TestMethod]
         public void WellKnownRegexPatterns_EnsureAllMediumConfidenceOrBetterPatternsDefineSignatures()
         {
-            using var assertionScope = new AssertionScope();
-
-            var rulesets = new[]{
-                WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
-                WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys
-            };
-
-            var missingSignatures = new List<string>();
-
-            foreach (IEnumerable<RegexPattern> ruleset in rulesets)
+            for (int i = 0; i < 1000; i++)
             {
-                foreach (RegexPattern pattern in ruleset)
+                using var assertionScope = new AssertionScope();
+
+                var rulesets = new[] {
+                    WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
+                    WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys
+                };
+
+                var missingSignatures = new List<string>();
+
+                foreach (IEnumerable<RegexPattern> ruleset in rulesets)
                 {
-                    foreach (string example in pattern.GenerateTruePositiveExamples())
+                    foreach (RegexPattern pattern in ruleset)
                     {
-                        string moniker = pattern.GetMatchMoniker(example);
-
-                        if (pattern.DetectionMetadata.HasFlag(DetectionMetadata.LowConfidence) ||
-                            (pattern.Signatures != null && pattern.Signatures.Any()))
+                        foreach (string example in pattern.GenerateTruePositiveExamples())
                         {
-                            continue;
+                            string standaloneSecret =
+                                CachedDotNetRegex.Instance.Matches(example,
+                                                                   pattern.Pattern,
+                                                                   captureGroup: "refine").First().Value;
+
+                            string moniker = pattern.GetMatchMoniker(standaloneSecret);
+
+                            if (pattern.DetectionMetadata.HasFlag(DetectionMetadata.LowConfidence) ||
+                                (pattern.Signatures != null && pattern.Signatures.Any()))
+                            {
+                                continue;
+                            }
+
+                            missingSignatures.Add(moniker);
+
+                            // We only require a single match to identify missing confidence,
+                            // which is expressed at the pattern level.
+                            break;
                         }
-
-                        missingSignatures.Add(moniker);
-
-                        // We only require a single match to identify missing confidence,
-                        // which is expressed at the pattern level.
-                        break;
                     }
                 }
-            }
 
-            missingSignatures.Should().HaveCount(0, because: $"{string.Join(", ", missingSignatures)} are medium or high confidence patterns that should declare one or more signatures for pre-filtering");
+                missingSignatures.Should().HaveCount(0, because: $"{string.Join(", ", missingSignatures)} are medium or high confidence patterns that should declare one or more signatures for pre-filtering");
+            }
         }
 
         [TestMethod]
@@ -123,7 +140,12 @@ namespace Microsoft.Security.Utilities
                 {
                     foreach (string example in pattern.GenerateTruePositiveExamples())
                     {
-                        wellKnownMonikers.Add(pattern.GetMatchMoniker(example));
+                        string standaloneSecret =
+                            CachedDotNetRegex.Instance.Matches(example,
+                                                               pattern.Pattern,
+                                                               captureGroup: "refine").First().Value;
+
+                        wellKnownMonikers.Add(pattern.GetMatchMoniker(standaloneSecret));
                     }
                 }
             }
@@ -143,7 +165,12 @@ namespace Microsoft.Security.Utilities
 
                 foreach (string example in pattern.GenerateTruePositiveExamples())
                 {
-                    string moniker = pattern.GetMatchMoniker(example);
+                    string standaloneSecret =
+                        CachedDotNetRegex.Instance.Matches(example,
+                                                           pattern.Pattern,
+                                                           captureGroup: "refine").First().Value;
+
+                    string moniker = pattern.GetMatchMoniker(standaloneSecret);
                     if (!wellKnownMonikers.Contains(moniker))
                     {
                         unrecognizedMonikers.Add(moniker);

@@ -31,7 +31,7 @@
     "DetectionMetadata": "HighEntropy, MediumConfidence"
   },
   {
-    "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_~.+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_~.+/=]|$)",
+    "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+/=]|$)",
     "Id": "SEC101/061",
     "Name": "OAuth2BearerToken",
     "Signatures": [
@@ -48,21 +48,21 @@
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
   },
   {
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=",
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=",
     "Id": "SEC000/000",
     "Name": "Unclassified32ByteBase64String",
     "Signatures": null,
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
   },
   {
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/-_=])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==",
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==",
     "Id": "SEC000/001",
     "Name": "Unclassified64ByteBase64String",
     "Signatures": null,
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
   },
   {
-    "Pattern": "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\\-_~.]{34}$",
+    "Pattern": "^[~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{34}$",
     "Id": "SEC101/101",
     "Name": "AadClientAppLegacyCredentials",
     "Signatures": null,
