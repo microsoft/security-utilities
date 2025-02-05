@@ -24,7 +24,7 @@ namespace Microsoft.Security.Utilities
                 return false;
             }
 
-            string base64EncodedSignature = key.Substring(76, 4);
+            string base64EncodedSignature = key.Substring(ProviderFixedSignatureOffset, ProviderFixedSignatureLength);
 
             bool longForm = key.Length == IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize;
 
