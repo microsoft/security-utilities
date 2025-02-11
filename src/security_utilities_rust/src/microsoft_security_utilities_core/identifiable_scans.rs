@@ -739,7 +739,7 @@ impl ScanOptions {
         let match_bytes = |data: &[u8]| -> usize {
             /*
              * Checks are equivalent to this regex:
-             * [A-Za-z0-9]{52}JQQJ99[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?
+             * [A-Za-z0-9]{52}JQQJ9(9|D|H)[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?
              */
             if data.len() < HIS2_UTF8_SHORT_LEN {
                 return 0;
@@ -751,7 +751,11 @@ impl ScanOptions {
                 }
             }
 
-            if &data[52..58] != b"JQQJ99" {
+            if &data[52..57] != b"JQQJ9" {
+                return 0;
+            }
+
+            if data[57] != b'9' && data[57] != b'D' && data[57] != b'H' {
                 return 0;
             }
 

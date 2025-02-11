@@ -87,10 +87,10 @@ public class IdentifiableScan : ISecretMasker, IDisposable
             "+AEh",
             "+ARm",
             "+ACR",
-            "+AIoT",
+            "AIoT",
             "APIM",
             "AZEG",
-            "JQQJ",
+            "JQQJ9",
         });
 
     public IdentifiableScan(IEnumerable<RegexPattern> regexPatterns, bool generateCorrelatingIds, IRegexEngine regexEngine = null)

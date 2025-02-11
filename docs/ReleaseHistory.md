@@ -11,6 +11,10 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# UNRELEASED
+- PRF: `IdentifiableScan` did not use high-performance rust scanner for `SEC101/178: Microsoft Azure IoT identifiable key` and `SEC101/200: Microsoft common annotated security key (HIS v2)`.
+- BUG: `SecretMasker` considered non-alphanumeric delimiter preceding secret to be part of the match for `SEC101/200: Microsoft common annotated security key (HIS v2)`. This yielded an incorrect correlation ID for the detection.
+
 # 1.13.0 - 02/05/2025
 - FNS: Eliminate false negatives resulting from incorrectly specifying `=` as a delimiting character in the core 'identifiable' rules. This broke simple patterns such as `myKey=an_actual_key`.
 - FNS: Eliminate false negatives resulting from improper use of the `-` character in regexes (where it was interpreted as a range operator not a literal).,
