@@ -92,6 +92,11 @@ public static class WellKnownRegexPatterns
         new AzureEventGridIdentifiableKey(),
     };
 
+    public static IEnumerable<RegexPattern> ClassifiedNonSensitiveValues { get; } = new RegexPattern[]
+    {
+        new GuidValue(),
+    };
+
     public static IEnumerable<RegexPattern> HighConfidenceThirdPartySecurityModels { get; } = new List<RegexPattern>
     {
         new NpmAuthorKey(),
