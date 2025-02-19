@@ -129,7 +129,8 @@ namespace Microsoft.Security.Utilities
 
             var rulesets = new[]{
                 WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
-                WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys
+                WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
+                WellKnownRegexPatterns.ClassifiedNonSensitiveValues,
             };
 
             HashSet<string> wellKnownMonikers = new HashSet<string>();
