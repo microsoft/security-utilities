@@ -8,7 +8,7 @@ namespace Microsoft.Security.Utilities
     {
         public Ip6()
         {
-            Id = "DAT101/001";
+            Id = "DAT101/002";
             Name = nameof(Ip6);
             Pattern = @"(?i)^([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$";
         }
