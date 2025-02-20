@@ -39,7 +39,7 @@ public class SecretMaskerTests
     }
 
     [TestMethod]
-    public void SecretMasker_ClassifiedNonSensitiveValues_Detections()
+    public void SecretMasker_DataClassification_Detections()
     {
         ValidateSecurityModelsDetections(WellKnownRegexPatterns.DataClassification,
                                          preciseClassifications: false);
