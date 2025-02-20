@@ -48,7 +48,7 @@ public class RegexPatternTests
     {
         // Arrange
         var secret1 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc");
-        var secret2 = new RegexPattern($"{Guid.NewGuid()}", Name, DetectionMetadata.Identifiable, "abc");
+        var secret2 = new RegexPattern($"{System.Guid.NewGuid()}", Name, DetectionMetadata.Identifiable, "abc");
 
         // Act
         var result = secret1.Equals(secret2);
@@ -62,7 +62,7 @@ public class RegexPatternTests
     {
         // Arrange
         var secret1 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc");
-        var secret2 = new RegexPattern(Id, $"{Guid.NewGuid()}", DetectionMetadata.Identifiable, "abc");
+        var secret2 = new RegexPattern(Id, $"{System.Guid.NewGuid()}", DetectionMetadata.Identifiable, "abc");
 
         // Act
         var result = secret1.Equals(secret2);
@@ -244,7 +244,7 @@ public class RegexPatternTests
     {
         // Arrange
         var secret1 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc");
-        var secret2 = new RegexPattern($"{Guid.NewGuid()}", Name, DetectionMetadata.Identifiable, "abc");
+        var secret2 = new RegexPattern($"{System.Guid.NewGuid()}", Name, DetectionMetadata.Identifiable, "abc");
         var set = new HashSet<RegexPattern>(new[] { secret1 });
 
         // Act
@@ -259,7 +259,7 @@ public class RegexPatternTests
     {
         // Arrange
         var secret1 = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "abc");
-        var secret2 = new RegexPattern(Id, $"{Guid.NewGuid()}", DetectionMetadata.Identifiable, "abc");
+        var secret2 = new RegexPattern(Id, $"{System.Guid.NewGuid()}", DetectionMetadata.Identifiable, "abc");
         var set = new HashSet<RegexPattern>(new[] { secret1 });
 
         // Act

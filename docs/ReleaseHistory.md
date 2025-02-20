@@ -12,12 +12,11 @@
 - FNS => False negative reduction in static analysis.
 
 # UNRELEASED
-- NEW: Introduce new `DAT101` detection series which help users classify likely-non-secret values into more specific data types (e.g. IP addresses, GUIDs, timeouts, etc.).
-- RUL: Add `DAT101/000.FormalGuid` detection.
-- RUL: Add `DAT101/001.Ip4` detection.
-- RUL: Add `DAT101/002.Ip6` detection.
-- RUL: Add `DAT101/003.Integer` detection.
-- RUL: Add `DAT101/004.Float` detection.
+- RUL: Add `DAT101/000.Guid` detection as part of a new DAT101 detection series which helps classify non-sensitive data .
+- RUL: Add `DAT101/001.IPv4` non-sensitive data classification.
+- RUL: Add `DAT101/002.IPv6` non-sensitive data classification.
+- RUL: Add `DAT101/003.Integer` non-sensitive data classification.
+- RUL: Add `DAT101/004.Float` non-sensitive data classification.
 
 # 1.13.0 - 02/05/2025
 - FNS: Eliminate false negatives resulting from incorrectly specifying `=` as a delimiting character in the core 'identifiable' rules. This broke simple patterns such as `myKey=an_actual_key`.

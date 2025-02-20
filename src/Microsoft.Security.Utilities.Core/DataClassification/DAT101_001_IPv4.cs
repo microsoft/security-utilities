@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    public class Ip4 : RegexPattern
+    public class IPv4 : RegexPattern
     {
-        public Ip4()
+        public IPv4()
         {
             Id = "DAT101/001";
-            Name = nameof(Ip4);
+            Name = nameof(IPv4);
             Pattern = @"^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$";
         }
 
@@ -21,8 +21,8 @@ namespace Microsoft.Security.Utilities
 
         public override IEnumerable<string> GenerateFalsePositiveExamples()
         {
-            yield return "999.0.0.1";
-            yield return "010.0.0.1";
+            // First octet is illegal (> 255).
+            yield return "256.0.0.1";
         }
     }
 }

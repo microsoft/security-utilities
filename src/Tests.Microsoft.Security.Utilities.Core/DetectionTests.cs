@@ -16,10 +16,10 @@ namespace Tests.Microsoft.Security.Utilities
         [TestMethod]
         public void Detection_ConstructorValuesSet()
         {
-            string id = $"{Guid.NewGuid()}";
-            string name = $"{Guid.NewGuid()}";
-            string crossCompanyCorrelatingId = $"{Guid.NewGuid()}";
-            string redactionToken = $"{Guid.NewGuid()}";
+            string id = $"{System.Guid.NewGuid()}";
+            string name = $"{System.Guid.NewGuid()}";
+            string crossCompanyCorrelatingId = $"{System.Guid.NewGuid()}";
+            string redactionToken = $"{System.Guid.NewGuid()}";
 
             var metadata = (DetectionMetadata)0B_11111;
             int start = Math.Max(1, (int)DateTime.UtcNow.Ticks % 99);
@@ -67,10 +67,10 @@ namespace Tests.Microsoft.Security.Utilities
         [TestMethod]
         public void Detection_PropertyValuesSet()
         {
-            string id = $"{Guid.NewGuid()}";
-            string name = $"{Guid.NewGuid()}";
-            string sha256Hash = $"{Guid.NewGuid()}";
-            string redactionToken = $"{Guid.NewGuid()}";
+            string id = $"{System.Guid.NewGuid()}";
+            string name = $"{System.Guid.NewGuid()}";
+            string sha256Hash = $"{System.Guid.NewGuid()}";
+            string redactionToken = $"{System.Guid.NewGuid()}";
 
             var metadata = (DetectionMetadata)0B_11111;
             int start = Math.Max(1, (int)DateTime.UtcNow.Ticks % 99);
@@ -126,10 +126,10 @@ namespace Tests.Microsoft.Security.Utilities
         [TestMethod]
         public void Detection_UniqueHashCodesGeneratedWhenPropertiesChange()
         {
-            string id = $"{Guid.NewGuid()}";
-            string name = $"{Guid.NewGuid()}";
-            string sha256Hash = $"{Guid.NewGuid()}";
-            string redactionToken = $"{Guid.NewGuid()}";
+            string id = $"{System.Guid.NewGuid()}";
+            string name = $"{System.Guid.NewGuid()}";
+            string sha256Hash = $"{System.Guid.NewGuid()}";
+            string redactionToken = $"{System.Guid.NewGuid()}";
 
             var metadata = (DetectionMetadata)0B_11111;
             int start = Math.Max(1, (int)DateTime.UtcNow.Ticks % 99);
@@ -202,7 +202,7 @@ namespace Tests.Microsoft.Security.Utilities
             var previousDetection = new Detection(currentDetection);
             Assert.AreEqual(currentDetection, previousDetection);
 
-            currentDetection.Id = $"{Guid.NewGuid()}"; ;
+            currentDetection.Id = $"{System.Guid.NewGuid()}"; ;
             Assert.AreNotEqual(currentDetection, previousDetection);
 
             previousDetection = new Detection(currentDetection);
@@ -232,7 +232,7 @@ namespace Tests.Microsoft.Security.Utilities
             previousDetection = new Detection(currentDetection);
             Assert.AreEqual(currentDetection, previousDetection);
 
-            currentDetection.RedactionToken = $"{Guid.NewGuid()}"; ;
+            currentDetection.RedactionToken = $"{System.Guid.NewGuid()}"; ;
             Assert.AreNotEqual(currentDetection, previousDetection);
 
             previousDetection = new Detection(currentDetection);

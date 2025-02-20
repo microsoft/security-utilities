@@ -94,9 +94,9 @@ public static class WellKnownRegexPatterns
 
     public static IEnumerable<RegexPattern> DataClassification { get; } = new RegexPattern[]
     {
-        new FormalGuid(),
-        new Ip4(),
-        new Ip6(),
+        new Guid(),
+        new IPv4(),
+        new IPv6(),
         new Integer(),
         new Float(),
     };
