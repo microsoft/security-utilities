@@ -94,11 +94,11 @@ public static class WellKnownRegexPatterns
 
     public static IEnumerable<RegexPattern> DataClassification { get; } = new RegexPattern[]
     {
-        new Guid(),
         new IPv4(),
         new IPv6(),
-        new Integer(),
+        new Guid(),
         new Float(),
+        new Integer(),
     };
 
     public static IEnumerable<RegexPattern> HighConfidenceThirdPartySecurityModels { get; } = new List<RegexPattern>
