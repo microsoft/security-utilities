@@ -24,7 +24,7 @@ namespace Microsoft.Security.Utilities
                 string signature = "APIM";
 
                 string caskSecret = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature, customerManagedKey: true, null, null, longForm);
-                string legacySecret = Convert.ToBase64String(System.Guid.NewGuid().ToByteArray()).Trim('=');
+                string legacySecret = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Trim('=');
 
                 foreach (string secret in new[] { caskSecret, legacySecret })
                 {
