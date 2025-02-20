@@ -31,7 +31,7 @@ public class SecretMaskerTests
     }
 
     // "https://github.com/microsoft/security-utilities/issues/95")
-    // [TestMethod]
+    //[TestMethod]
     public void SecretMasker_UnclassifiedPotentialSecurityKeys_Detections()
     {
         ValidateSecurityModelsDetections(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
