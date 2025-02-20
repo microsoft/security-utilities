@@ -23,6 +23,9 @@ namespace Microsoft.Security.Utilities
         public override IEnumerable<string> GenerateFalsePositiveExamples()
         {
             yield return "0.0";
+
+            // Formatted numbers are not supported.
+            yield return "1,000";
         }
     }
 }

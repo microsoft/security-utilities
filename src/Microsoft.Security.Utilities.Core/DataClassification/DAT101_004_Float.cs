@@ -27,6 +27,9 @@ namespace Microsoft.Security.Utilities
         {
             yield return "12";
             yield return "-1";
+
+            // Localized numbers are not supported.
+            yield return "1,0";
         }
     }
 }
