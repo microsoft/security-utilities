@@ -97,6 +97,8 @@ public static class WellKnownRegexPatterns
         new FormalGuid(),
         new Ip4(),
         new Ip6(),
+        new Integer(),
+        new Float(),
     };
 
     public static IEnumerable<RegexPattern> HighConfidenceThirdPartySecurityModels { get; } = new List<RegexPattern>

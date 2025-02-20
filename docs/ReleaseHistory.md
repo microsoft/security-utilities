@@ -16,6 +16,8 @@
 - RUL: Add `DAT101/000.FormalGuid` detection.
 - RUL: Add `DAT101/001.Ip4` detection.
 - RUL: Add `DAT101/002.Ip6` detection.
+- RUL: Add `DAT101/003.Integer` detection.
+- RUL: Add `DAT101/004.Float` detection.
 
 # 1.13.0 - 02/05/2025
 - FNS: Eliminate false negatives resulting from incorrectly specifying `=` as a delimiting character in the core 'identifiable' rules. This broke simple patterns such as `myKey=an_actual_key`.
