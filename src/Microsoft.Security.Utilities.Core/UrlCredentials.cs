@@ -35,12 +35,12 @@ public sealed class UrlCredentials : RegexPattern
         // https://tools.ietf.org/html/rfc3986#section-3.2)
         return new[]
         {
-            $"http://{System.Guid.NewGuid()}:{System.Guid.NewGuid()}@example.com/",
+            $"http://{Guid.NewGuid()}:{Guid.NewGuid()}@example.com/",
             $"https://user:pass@example.com",
-            $"ftp://{System.Guid.NewGuid()}:{System.Guid.NewGuid()}@example.com/",
+            $"ftp://{Guid.NewGuid()}:{Guid.NewGuid()}@example.com/",
             $"ftps://user:pass@example.com",
-            $"http://{System.Guid.NewGuid()}:{System.Guid.NewGuid()}@example.com/embedded:colon",
-            $"ftp://{System.Guid.NewGuid()}:{System.Guid.NewGuid()}@example.com/embedded:colon",
+            $"http://{Guid.NewGuid()}:{Guid.NewGuid()}@example.com/embedded:colon",
+            $"ftp://{Guid.NewGuid()}:{Guid.NewGuid()}@example.com/embedded:colon",
         };
     }
 

@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    public class Guid : RegexPattern
+    public class GuidValue : RegexPattern
     {
-        public Guid()
+        public GuidValue()
         {
             Id = "DAT101/000";
-            Name = nameof(Guid);
+            Name = nameof(GuidValue);
             Pattern = @"(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$";
         }
 

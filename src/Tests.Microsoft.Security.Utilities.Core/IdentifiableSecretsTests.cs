@@ -41,11 +41,11 @@ namespace Microsoft.Security.Utilities
                 string signature = GetRandomSignature();
 
                 string cask = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature, customerManagedKey: true, null, null, longForm);
-                string legacySecret = Convert.ToBase64String(System.Guid.NewGuid().ToByteArray());
+                string legacySecret = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
 
                 foreach (string secret in new[] { cask, legacySecret })
                 {
-                    string message = System.Guid.NewGuid().ToString();
+                    string message = Guid.NewGuid().ToString();
 
                     string hash = IdentifiableSecrets.ComputeCommonAnnotatedHash(message,
                                                                                  Convert.FromBase64String(secret),
@@ -831,7 +831,7 @@ namespace Microsoft.Security.Utilities
                             if (IdentifiableSecrets.TryValidateBase64Key(standaloneSecret, checksumSeed, signature, identifiablePattern.EncodeForUrl))
                             {
                                 matched = true;
-                                string textToSign = $"{System.Guid.NewGuid()}";
+                                string textToSign = $"{Guid.NewGuid()}";
 
                                 foreach (ulong derivedChecksumSeed in new[] { checksumSeed, ~checksumSeed })
                                 {
@@ -866,7 +866,7 @@ namespace Microsoft.Security.Utilities
 
                     for (byte k = 0; k < iterations; k++)
                     {
-                        string signature = System.Guid.NewGuid().ToString("N").Substring(0, 4);
+                        string signature = Guid.NewGuid().ToString("N").Substring(0, 4);
                         signature = $"{alphabet[(int)keysGenerated % alphabet.Length]}{signature.Substring(1)}";
                         signatures.Add(signature);
                     }
@@ -933,7 +933,7 @@ namespace Microsoft.Security.Utilities
 
                                     foreach (bool derived in new[] { true, false })
                                     {
-                                        string textToHash = System.Guid.NewGuid().ToString("N").Substring(0, 32);
+                                        string textToHash = Guid.NewGuid().ToString("N").Substring(0, 32);
                                         string computedKey = derived
                                             ? IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey(textToHash, key, longForm)
                                             : IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash, key, longForm);
@@ -1374,7 +1374,7 @@ namespace Microsoft.Security.Utilities
             s_random.NextBytes(singleByte);
             bool isUpper = singleByte[0] % 2 == 0;
             
-            string signature = $"{s_base62Alphabet[character]}{System.Guid.NewGuid().ToString("N").Substring(0, 3)}";
+            string signature = $"{s_base62Alphabet[character]}{Guid.NewGuid().ToString("N").Substring(0, 3)}";
             return isUpper ? signature.ToUpperInvariant() : signature.ToLowerInvariant();
         }
     }
