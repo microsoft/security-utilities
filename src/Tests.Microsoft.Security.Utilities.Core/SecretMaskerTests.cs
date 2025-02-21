@@ -38,6 +38,13 @@ public class SecretMaskerTests
                                          preciseClassifications: false);
     }
 
+    [TestMethod]
+    public void SecretMasker_DataClassification_Detections()
+    {
+        ValidateSecurityModelsDetections(WellKnownRegexPatterns.DataClassification,
+                                         preciseClassifications: false);
+    }
+
     private void ValidateSecurityModelsDetections(IEnumerable<RegexPattern> patterns, bool preciseClassifications)
     {
         // These tests generate randomized values. It may be useful to
