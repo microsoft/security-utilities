@@ -9,7 +9,7 @@ namespace Microsoft.Security.Utilities
     {
         public GuidValue()
         {
-            Id = "DAT101/000";
+            Id = "DAT101/001";
             Name = nameof(GuidValue);
             Pattern = @"(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$";
         }
