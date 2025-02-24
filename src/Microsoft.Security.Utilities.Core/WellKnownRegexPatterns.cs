@@ -57,7 +57,8 @@ public static class WellKnownRegexPatterns
         new Unclassified32ByteBase64String(),
         new Unclassified64ByteBase64String(),
         new AadClientAppLegacyCredentials34(),      // SEC101/101
-        new Unclassified16ByteHexadecimalString(),         
+        new Pkcs12CertificatePrivateKeyBundle(),
+        new Unclassified16ByteHexadecimalString(),
     };
 
     public static IEnumerable<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } = new RegexPattern[]
@@ -99,7 +100,6 @@ public static class WellKnownRegexPatterns
         new Float(),
         new Integer(),
         new GuidValue(),
-        new Pkcs12Certificate(),
     };
 
     public static IEnumerable<RegexPattern> HighConfidenceThirdPartySecurityModels { get; } = new List<RegexPattern>

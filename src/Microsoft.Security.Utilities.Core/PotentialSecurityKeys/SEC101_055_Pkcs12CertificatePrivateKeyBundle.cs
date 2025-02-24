@@ -5,14 +5,16 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
+#nullable enable
+
 namespace Microsoft.Security.Utilities
 {
-    public class Pkcs12Certificate : RegexPattern
+    public class Pkcs12CertificatePrivateKeyBundle : RegexPattern
     {
-        public Pkcs12Certificate()
+        public Pkcs12CertificatePrivateKeyBundle()
         {
-            Id = "DAT101/006";
-            Name = nameof(Pkcs12Certificate);
+            Id = "SEC101/055";
+            Name = nameof(Pkcs12CertificatePrivateKeyBundle);
             Pattern = @"MI[I-L][0-9a-zA-Z\/+]{2}[AQgw]IBAzCC";
         }
 

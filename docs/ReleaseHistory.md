@@ -12,13 +12,12 @@
 - FNS => False negative reduction in static analysis.
 
 # UNRELEASED
-- RUL: Add `DAT101/001.GuidValue` detection as part of a new DAT101 detection series which helps classify data.
-- RUL: Add `DAT101/002.IPv4`.
-- RUL: Add `DAT101/003.IPv6`.
-- RUL: Add `DAT101/004.Integer`.
-- RUL: Add `DAT101/005.Float`.
-- RUL: Add `DAT101/006.Double`.
-- RUL: Add `DAT101/007.Pkcs12Certificate`.
+- RUL: Add `DAT101/001.GuidValue` detection as part of a new DAT101 detection series which helps classify non-sensitive data.
+- RUL: Add `DAT101/002.IPv4` non-sensitive data classification.
+- RUL: Add `DAT101/003.IPv6` non-sensitive data classification.
+- RUL: Add `DAT101/004.Integer` non-sensitive data classification.
+- RUL: Add `DAT101/005.Float` non-sensitive data classification.
+- RUL: Add `SEC101/055.Pkcs12CertificatePrivateKeyBundle` detection. This is currently solely regex based and does not yet guarantee fully-formed PKCS #12.
 
 # 1.13.0 - 02/05/2025
 - FNS: Eliminate false negatives resulting from incorrectly specifying `=` as a delimiting character in the core 'identifiable' rules. This broke simple patterns such as `myKey=an_actual_key`.
