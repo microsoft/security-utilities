@@ -12,8 +12,7 @@
 - FNS => False negative reduction in static analysis.
 
 # UNRELEASED
-- RUL: Add `DAT101/000.GuidValue` detection as part of a new DAT101 detection series which helps classify non-sensitive data .
-- RUL: Add `DAT101/001.UuidValue` non-sensitive data classification.
+- RUL: Add `DAT101/001.GuidValue` detection as part of a new DAT101 detection series which helps classify non-sensitive data.
 - RUL: Add `DAT101/002.IPv4` non-sensitive data classification.
 - RUL: Add `DAT101/003.IPv6` non-sensitive data classification.
 - RUL: Add `DAT101/004.Integer` non-sensitive data classification.
