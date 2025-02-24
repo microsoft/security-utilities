@@ -16,6 +16,7 @@ namespace Microsoft.Security.Utilities
             Id = "SEC101/055";
             Name = nameof(Pkcs12CertificatePrivateKeyBundle);
             Pattern = @"MI[I-L][0-9a-zA-Z\/+]{2}[AQgw]IBAzCC";
+            Signatures = new[] { "IBAzCC" }.ToSet();
         }
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
