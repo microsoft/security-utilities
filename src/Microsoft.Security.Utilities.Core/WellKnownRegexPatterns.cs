@@ -99,6 +99,7 @@ public static class WellKnownRegexPatterns
         new Float(),
         new Integer(),
         new GuidValue(),
+        new Pkcs12Certificate(),
     };
 
     public static IEnumerable<RegexPattern> HighConfidenceThirdPartySecurityModels { get; } = new List<RegexPattern>
