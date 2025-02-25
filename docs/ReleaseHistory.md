@@ -17,6 +17,8 @@
 - RUL: Add `DAT101/003.IPv6` non-sensitive data classification.
 - RUL: Add `DAT101/004.Integer` non-sensitive data classification.
 - RUL: Add `DAT101/005.Float` non-sensitive data classification.
+- BRK: .NET 6.0 and 7.0 are no longer supported as they have reached end-of-life. Use a [supported version version of .NET](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core).
+- BRK: .NET Framework 4.5.1 through 4.6.0 are no longer supported. Use a version of .NET Framework version that supports [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0): NET 4.6.1 or greater with .NET 4.7.2 or greater strongly recommended. Note that there are no supported versions of Windows that have a version of .NET Framework that would be affected by this change at runtime, but build changes may be required.
 
 # 1.13.0 - 02/05/2025
 - FNS: Eliminate false negatives resulting from incorrectly specifying `=` as a delimiting character in the core 'identifiable' rules. This broke simple patterns such as `myKey=an_actual_key`.

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-	  <TargetFrameworks>net451;net462;net6.0</TargetFrameworks>
+	  <TargetFrameworks>net8.0;net461</TargetFrameworks>
 	  <EnableNETAnalyzers>false</EnableNETAnalyzers>
   </PropertyGroup>
 
