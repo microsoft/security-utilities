@@ -11,6 +11,30 @@ namespace Microsoft.Security.Utilities
 {
     public class Pkcs12CertificatePrivateKeyBundle : RegexPattern
     {
+        // _truePositiveExamples is used during testing, including a stress test where this code absent caching
+        // is would case the stress test (n=1000) to take 10+ minutes to run due the expensive nature of generating
+        // private keys and certificates. We use Lazy here since during non-test execution we do not want to incur
+        // the cost of generating these examples.
+        private static Lazy<List<string>> _truePositiveExamples = new Lazy<List<string>>(() => {
+            var examples = new List<string>();
+#if NET6_0_OR_GREATER
+            foreach (string? password in new string?[] { Guid.NewGuid().ToString(), null })
+            {
+                foreach (int keyLength in new int[] { 1024, 2048, 4096 })
+                {
+                    examples.Add(GenerateTestPkcs12(keyLength, password));
+                }
+            }
+
+            // Example showing regex will matchh in the middle of the string (i.e. unanchored).
+            examples.Add($"some padding data {GenerateTestPkcs12(2048, null)} more padding data");
+
+            // Example showing incomplete data will match.
+            examples.Add(GenerateTestPkcs12(2048, null).Substring(0, 20));
+#endif
+            return examples;
+        });
+
         public Pkcs12CertificatePrivateKeyBundle()
         {
             Id = "SEC101/055";
@@ -23,23 +47,7 @@ namespace Microsoft.Security.Utilities
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
-#if NET6_0_OR_GREATER
-            foreach (string? password in new string?[] { Guid.NewGuid().ToString(), null })
-            {
-                foreach (int keyLength in new int[] { 1024, 2048, 4096 })
-                {
-                    yield return GenerateTestPkcs12(keyLength, password);
-                }
-            }
-
-            // Example showing regex will matchh in the middle of the string (i.e. unanchored).
-            yield return $"some padding data {GenerateTestPkcs12(2048, null)} more padding data";
-
-            // Example showing incomplete data will match.
-            yield return GenerateTestPkcs12(2048, null).Substring(0, 20);
-#else
-            return [];
-#endif
+            return _truePositiveExamples.Value;
         }
 
 #if NET6_0_OR_GREATER
