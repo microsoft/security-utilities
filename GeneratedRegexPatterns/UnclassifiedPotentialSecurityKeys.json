@@ -69,6 +69,15 @@
     "DetectionMetadata": "ObsoleteFormat, HighEntropy, LowConfidence"
   },
   {
+    "Pattern": "MI[I-L][0-9a-zA-Z\\/+]{2}[AQgw]IBAzCC",
+    "Id": "SEC101/055",
+    "Name": "Pkcs12CertificatePrivateKeyBundle",
+    "Signatures": [
+      "IBAzCC"
+    ],
+    "DetectionMetadata": "MediumConfidence"
+  },
+  {
     "Pattern": "(^|[^1234567890abcdef])[1234567890abcdef]{32}([^1234567890abcdef]|$)",
     "Id": "SEC000/002",
     "Name": "Unclassified16ByteHexadecimalString",
