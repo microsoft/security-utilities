@@ -11,7 +11,7 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# UNRELEASED
+# 1.14.0 - 02/25/2025
 - RUL: Add `DAT101/001.GuidValue` detection as part of a new DAT101 detection series which helps classify non-sensitive data.
 - RUL: Add `DAT101/002.IPv4` non-sensitive data classification.
 - RUL: Add `DAT101/003.IPv6` non-sensitive data classification.
