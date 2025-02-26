@@ -38,5 +38,14 @@
       "ret="
     ],
     "DetectionMetadata": "HighEntropy, MediumConfidence"
+  },
+  {
+    "Pattern": "MI[I-L][0-9a-zA-Z\\/+]{2}[AQgw]IBAzCC",
+    "Id": "SEC101/055",
+    "Name": "Pkcs12CertificatePrivateKeyBundle",
+    "Signatures": [
+      "IBAzCC"
+    ],
+    "DetectionMetadata": "MediumConfidence"
   }
 ]
