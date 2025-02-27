@@ -3,10 +3,7 @@
     "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+/=]|$)",
     "Id": "SEC101/061",
     "Name": "OAuth2BearerToken",
-    "Signatures": [
-      "sig=",
-      "ret="
-    ],
+    "Signatures": null,
     "DetectionMetadata": "LowConfidence"
   },
   {
