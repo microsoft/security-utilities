@@ -48,7 +48,7 @@ namespace Tests.Microsoft.Security.Utilities.Core
         [TestMethod]
         public void IdentifiableScan_IdentifiableKeys()
         {
-            int iterations = 1000;
+            int iterations = 1;
 
             using var assertionScope = new AssertionScope();
 

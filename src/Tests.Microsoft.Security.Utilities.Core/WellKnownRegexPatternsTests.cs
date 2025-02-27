@@ -5,10 +5,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-
+using System.Text.RegularExpressions;
 using FluentAssertions;
 using FluentAssertions.Execution;
-
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Security.Utilities
@@ -188,6 +187,34 @@ namespace Microsoft.Security.Utilities
                 }
 
                 false.Should().BeTrue(because: $"'{unrecognizedMoniker}' should be referenced by a WellKnownPatterns ruleset");
+            }
+        }
+
+        [TestMethod]
+        public void WellKnownRegexPatterns_EnsureAllPatternsHaveCorrectCaptureGroups()
+        {
+            using var assertionScope = new AssertionScope();
+
+            var rulesets = new[]{
+                WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
+                WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
+                WellKnownRegexPatterns.DataClassification,
+            };
+
+            foreach (IEnumerable<RegexPattern> ruleset in rulesets)
+            {
+                foreach (RegexPattern pattern in ruleset)
+                {
+                    Regex regex = CachedDotNetRegex.GetOrCreateRegex(pattern.Pattern, RegexOptions.ExplicitCapture);
+                    var groupNames = regex.GetGroupNames().Where(g => !int.TryParse(g, out _)).ToArray();
+                    if (groupNames.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    groupNames.Length.Should().Be(1, because: $"Pattern '{pattern.GetType().Name}' should not have more than one capture group");
+                    groupNames[0].Should().Be("refine", because: $"Pattern '{pattern.GetType().Name}' capture group should be named 'refine'");
+                }
             }
         }
     }

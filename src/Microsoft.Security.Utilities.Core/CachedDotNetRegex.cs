@@ -19,25 +19,19 @@ namespace Microsoft.Security.Utilities
 
         internal static TimeSpan DefaultTimeout = TimeSpan.FromMilliseconds(int.MaxValue - 1);
 
-        static CachedDotNetRegex()
-        {
-            RegexCache = new ConcurrentDictionary<Tuple<string, RegexOptions>, Regex>();
-        }
-
         private CachedDotNetRegex()
         {
         }
 
-        internal static ConcurrentDictionary<Tuple<string, RegexOptions>, Regex> RegexCache { get; }
+        internal static ConcurrentDictionary<(string Pattern, RegexOptions Options), Regex> RegexCache { get; } = new();
 
         public static Regex GetOrCreateRegex(string pattern, RegexOptions options)
         {
-            pattern = NormalizeGroupsPattern(pattern);
-            var key = Tuple.Create(pattern, options);
+            var key = (pattern, options);
 #if NET7_0_OR_GREATER
-            return RegexCache.GetOrAdd(key, _ => new Regex(pattern, options | RegexOptions.Compiled | RegexOptions.NonBacktracking));
+            return RegexCache.GetOrAdd(key, key => new Regex(key.Pattern, key.Options | RegexOptions.Compiled | RegexOptions.NonBacktracking));
 #else
-            return RegexCache.GetOrAdd(key, _ => new Regex(pattern, options | RegexOptions.Compiled));
+            return RegexCache.GetOrAdd(key, key => new Regex(key.Pattern, key.Options | RegexOptions.Compiled));
 #endif
         }
 
@@ -91,16 +85,6 @@ namespace Microsoft.Security.Utilities
             }
 
             return matches.Count > 0;
-        }
-
-        internal static string NormalizeGroupsPattern(string pattern)
-        {
-            if (pattern.IndexOf("?P<") != -1)
-            {
-                return pattern.Replace("?P<", "?<");
-            }
-
-            return pattern;
         }
 
         internal static UniversalMatch ToFlex(Match match, string captureGroup = null)
