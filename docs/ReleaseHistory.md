@@ -23,6 +23,7 @@
       - `SEC101/565.SecretScanningSampleToken`
 - BRK: `CachedDotNetRegexEngine`will no longer accept `(?P<name>)` syntax. This is only relevant if it is used with patterns other than those distributed with this library.
 - BUG: `SEC101/200.CommonAnnotatedSecurityKey` and `SEC101/565.SecretScanningSampleToken` considered non-alphanumeric delimiter preceding secret to be part of the match.
+- BUG  `SEC101/061.LooseOAuth2BearerToken` had incorrect signatures, causing no matches to be found unless the input happened to also contain `sig=` or `ret=`.
 
 # 1.14.0 - 02/25/2025
 - RUL: Add `DAT101/001.GuidValue` detection as part of a new DAT101 detection series which helps classify non-sensitive data.

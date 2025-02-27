@@ -30,12 +30,13 @@ public class SecretMaskerTests
                                          preciseClassifications: false);
     }
 
-    // "https://github.com/microsoft/security-utilities/issues/95")
-    //[TestMethod]
+    [TestMethod]
     public void SecretMasker_UnclassifiedPotentialSecurityKeys_Detections()
     {
+        // TODO: allowMultipleFindings due to https://github.com/microsoft/security-utilities/issues/95
         ValidateSecurityModelsDetections(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
-                                         preciseClassifications: false);
+                                         preciseClassifications: false,
+                                         allowAdditionalFindings: true);
     }
 
     [TestMethod]
@@ -45,7 +46,7 @@ public class SecretMaskerTests
                                          preciseClassifications: false);
     }
 
-    private void ValidateSecurityModelsDetections(IEnumerable<RegexPattern> patterns, bool preciseClassifications)
+    private void ValidateSecurityModelsDetections(IEnumerable<RegexPattern> patterns, bool preciseClassifications, bool allowAdditionalFindings = false)
     {
         // These tests generate randomized values. It may be useful to
         // bump up the # of iterations on an ad hoc basis to flush
@@ -84,13 +85,17 @@ public class SecretMaskerTests
                             string moniker = pattern.GetMatchMoniker(standaloneSecret);
 
                             // 1. All generated test patterns should be detected by the masker.
-                            var detections = secretMasker.DetectSecrets(context);
-                            result = detections.Count() == 1;
-                            // TODO duplication in analysis has snuck in.
-                            // https://github.com/microsoft/security-utilities/issues/95
-                            //result.Should().BeTrue(because: $"'{context}' should result in a single '{moniker}' finding");
+                            var detections = secretMasker.DetectSecrets(context).ToList();
+                            if (allowAdditionalFindings)
+                            {
+                                // TODO duplication in analysis has snuck in.
+                                // https://github.com/microsoft/security-utilities/issues/95
+                                detections = detections.Where(d => d.Moniker == moniker && context.Substring(d.Start, d.Length) == standaloneSecret).ToList();
+                            }
 
-                            Detection detection = detections.First();
+                            detections.Count.Should().Be(1, because: $"'{context}' should result in a single '{moniker}' finding");
+
+                            Detection detection = detections[0];
                             detection.Moniker.Should().Be(moniker);
 
                             // 2. All identifiable or high confidence findings should be marked as high entropy.
