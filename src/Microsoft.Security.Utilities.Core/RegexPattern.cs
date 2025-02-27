@@ -347,15 +347,5 @@ public class RegexPattern
     /// provide regex processing.</remarks>
     public DetectionMetadata DetectionMetadata { get; protected set; }
 
-    internal static string NormalizeGroupsPattern(string pattern)
-    {
-        if (pattern.IndexOf("?P<") != -1)
-        {
-            return pattern.Replace("?P<", "?<");
-        }
-
-        return pattern;
-    }
-
     public bool ShouldSerializeRotationPeriod() => false;
 }

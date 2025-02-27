@@ -1,6 +1,6 @@
 [
   {
-    "Pattern": "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)",
+    "Pattern": "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)",
     "Id": "SEC101/105",
     "Name": "AzureMessageLegacyCredentials",
     "Signatures": [

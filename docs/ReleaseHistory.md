@@ -11,6 +11,12 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# UNRELEASED
+- BRK: Regular expression syntax has been standardized in JSON to conform to how the overwhelming majority of patterns were already defined.
+  - `refine` is used now used throughout as the name of the capture group used to isolate an actual find from the full expression that also matches delimiting characters. `secret` was previously used in some instances.
+  - `?<name>` is now used throughout for named captures. '?P<name>' was previously used in some instances. This may require replacing '?<' with '?P<' if using a regex engine that only accepts the '?P<name>' syntax.
+- BRK: `CachedDotNetRegexEngine`will no longer accept `(?P<name>)` syntax. This is only relevant if it is used with patterns other than those distributed with this library.
+- BUG: `SEC101/200.CommonAnnotatedSecurityKey` considered non-alphanumeric delimiter preceding secret to be part of the match.
 # 1.14.0 - 02/25/2025
 - RUL: Add `DAT101/001.GuidValue` detection as part of a new DAT101 detection series which helps classify non-sensitive data.
 - RUL: Add `DAT101/002.IPv4` non-sensitive data classification.
