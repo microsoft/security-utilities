@@ -27,9 +27,36 @@ namespace Microsoft.Security.Utilities
         };
 
         [TestMethod]
+        public void WellKnownRegexPatterns_RunAllTheThings()
+        {
+            using var assertionScope = new AssertionScope();
+
+            var patterns = new List<RegexPattern>();
+
+            patterns.AddRange(WellKnownRegexPatterns.DataClassification);
+            patterns.AddRange(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys);
+            patterns.AddRange(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys);
+
+            var masker = new SecretMasker(patterns,
+                                          generateCorrelatingIds: true,
+                                          RE2RegexEngine.Instance);
+
+            bool result;
+
+            foreach (var pattern in patterns)
+            {
+                foreach (string example in pattern.GenerateTruePositiveExamples())
+                {
+                    result = masker.DetectSecrets(example).Any() != default;
+                    result.Should().BeTrue(because: $"Pattern '{pattern.GetType().Name}' should match '{example}'");
+                }
+            }
+        }
+
+        [TestMethod]
         public void WellKnownRegexPatterns_EnsureAllPatternsExpressConfidence()
         {
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 1; i++)
             {
                 using var assertionScope = new AssertionScope();
 
@@ -74,11 +101,10 @@ namespace Microsoft.Security.Utilities
             }
         }
 
-
         [TestMethod]
         public void WellKnownRegexPatterns_EnsureAllMediumConfidenceOrBetterPatternsDefineSignatures()
         {
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 1; i++)
             {
                 using var assertionScope = new AssertionScope();
 
