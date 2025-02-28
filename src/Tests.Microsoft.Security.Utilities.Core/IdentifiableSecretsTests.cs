@@ -234,7 +234,7 @@ namespace Microsoft.Security.Utilities
             foreach (string secret in invalidBase64)
             {
                 Action action = () => IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey("NonsensitiveData", secret);
-                action.Should().Throw<FormatException>(because: $"'{secret}' is not a valid base64 encoded string");
+                action.Should().Throw<ArgumentException>(because: $"'{secret}' is not a valid base64 encoded string");
             }
         }
 

@@ -28,47 +28,55 @@ namespace Microsoft.Security.Utilities
 
             bool longForm = key.Length == IdentifiableSecrets.LongFormEncodedCommonAnnotatedKeySize;
 
-            // This code path is intended to ensure that common annotated security keys are
-            // highly backwards compatible with the older identifiable keys format. This
-            // should only entail providing the missing compute checksum byte of the key if
-            // it is absent. The validation performed below is a fairly expensive operation.
-            if (!longForm)
+            try
             {
-                string partialEncodedChecksum = key.Substring(key.Length - 4);
 
-                byte[] incomingKeyBytes = Convert.FromBase64String(key);
-                byte[] keyBytes = new byte[64];
-                Array.Copy(incomingKeyBytes, keyBytes, incomingKeyBytes.Length);
-
-                int checksum = Marvin.ComputeHash32(keyBytes, checksumSeed, 0, keyBytes.Length - 4);
-
-                byte[] checksumBytes = BitConverter.GetBytes(checksum);
-                string encodedChecksum = checksumBytes.ToBase62();
-
-                if (!encodedChecksum.StartsWith(partialEncodedChecksum))
+                // This code path is intended to ensure that common annotated security keys are
+                // highly backwards compatible with the older identifiable keys format. This
+                // should only entail providing the missing compute checksum byte of the key if
+                // it is absent. The validation performed below is a fairly expensive operation.
+                if (!longForm)
                 {
-                    encodedChecksum = Convert.ToBase64String(checksumBytes);
+                    string partialEncodedChecksum = key.Substring(key.Length - 4);
+
+                    byte[] incomingKeyBytes = Convert.FromBase64String(key);
+                    byte[] keyBytes = new byte[64];
+                    Array.Copy(incomingKeyBytes, keyBytes, incomingKeyBytes.Length);
+
+                    int checksum = Marvin.ComputeHash32(keyBytes, checksumSeed, 0, keyBytes.Length - 4);
+
+                    byte[] checksumBytes = BitConverter.GetBytes(checksum);
+                    string encodedChecksum = checksumBytes.ToBase62();
+
                     if (!encodedChecksum.StartsWith(partialEncodedChecksum))
                     {
-                        return false;
+                        encodedChecksum = Convert.ToBase64String(checksumBytes);
+                        if (!encodedChecksum.StartsWith(partialEncodedChecksum))
+                        {
+                            return false;
+                        }
                     }
+
+                    keyBytes[keyBytes.Length - 4] = checksumBytes[0];
+                    keyBytes[keyBytes.Length - 3] = checksumBytes[1];
+                    keyBytes[keyBytes.Length - 2] = checksumBytes[2];
+                    keyBytes[keyBytes.Length - 1] = checksumBytes[3];
+
+                    identifiableKey = Convert.ToBase64String(keyBytes);
                 }
 
-                keyBytes[keyBytes.Length - 4] = checksumBytes[0];
-                keyBytes[keyBytes.Length - 3] = checksumBytes[1];
-                keyBytes[keyBytes.Length - 2] = checksumBytes[2];
-                keyBytes[keyBytes.Length - 1] = checksumBytes[3];
+                if (!IdentifiableSecrets.TryValidateBase64Key(identifiableKey, checksumSeed, base64EncodedSignature))
+                {
+                    return false;
+                }
 
-                identifiableKey = Convert.ToBase64String(keyBytes);
+                byte[] bytes = Convert.FromBase64String(key);
+                secret = new CommonAnnotatedKey(bytes);
             }
-
-            if (!IdentifiableSecrets.TryValidateBase64Key(identifiableKey, checksumSeed, base64EncodedSignature))
+            catch (FormatException)
             {
                 return false;
             }
-
-            byte[] bytes = Convert.FromBase64String(key);
-            secret = new CommonAnnotatedKey(bytes);
 
             return true;
         }
