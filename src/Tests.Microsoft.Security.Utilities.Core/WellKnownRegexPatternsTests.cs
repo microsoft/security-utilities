@@ -27,7 +27,7 @@ namespace Microsoft.Security.Utilities
         };
 
         [TestMethod]
-        public void WellKnownRegexPatterns_RunAllTheThings()
+        public void WellKnownRegexPatterns_GetMatchMonikerHardenedForOutOfOrderExecution()
         {
             using var assertionScope = new AssertionScope();
 
@@ -41,14 +41,32 @@ namespace Microsoft.Security.Utilities
                                           generateCorrelatingIds: true,
                                           RE2RegexEngine.Instance);
 
-            bool result;
-
             foreach (var pattern in patterns)
             {
                 foreach (string example in pattern.GenerateTruePositiveExamples())
                 {
-                    result = masker.DetectSecrets(example).Any() != default;
+                    // It is not obvious, but this is a test to ensure this call
+                    // does not raise exceptions. This API calls into 
+                    // 'GetMatchIdAndName' which itself may return null, indicating
+                    // that post-processing has determined that the pattern is not
+                    // a match. Because we are in the context of producing positive
+                    // test cases, this means that the test pattern contains data
+                    // that itself will be removed on the preliminary match operation.
+                    // We will therefore call this code agains to ensure that it
+                    // is no longer null post-detection.
+                    string moniker = pattern.GetMatchMoniker(example);
+
+                    var detection = masker.DetectSecrets(example).FirstOrDefault((d) => d.Id == pattern.Id);
+                    
+                    bool result = detection != default;
                     result.Should().BeTrue(because: $"Pattern '{pattern.GetType().Name}' should match '{example}'");
+
+                    if (moniker == null)
+                    {
+                        string matched = example.Substring(detection.Start, detection.End - detection.Start);
+                        moniker = pattern.GetMatchMoniker(matched);
+                        moniker.Should().NotBeNull(because: $"'{matched}' should produce a non-null moniker for {pattern.GetType().Name}' test data");
+                    }
                 }
             }
         }

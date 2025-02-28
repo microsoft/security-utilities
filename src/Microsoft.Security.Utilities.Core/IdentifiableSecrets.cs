@@ -765,6 +765,11 @@ public static class IdentifiableSecrets
     {
         bytes = ConvertFromBase64String(key);
 
+        if (bytes == null)
+        {
+            return false;
+        }
+
         byte[] checksumBytes = new byte[4];
         Array.Copy(bytes, bytes.Length - checksumSizeInBytes, checksumBytes, 0, checksumSizeInBytes);
 
@@ -995,7 +1000,18 @@ public static class IdentifiableSecrets
     {
         text = TransformToStandardEncoding(text);
         text += RetrievePaddingForBase64EncodedText(text);
-        return Convert.FromBase64String(text);
+        byte[] result;
+
+        try
+        {
+            result = Convert.FromBase64String(text);
+        }
+        catch
+        {
+            return null;
+        }
+
+        return result;
     }
 
     private static string ConvertToBase64String(byte[] data, bool encodeForUrl)
