@@ -23,6 +23,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{9E550F5A-FA6C-4D19-B137-9AFA79E1F317}"
 	ProjectSection(SolutionItems) = preProject
 		..\.github\workflows\dotnet-format.yml = ..\.github\workflows\dotnet-format.yml
+		..\.github\workflows\dotnet.yml = ..\.github\workflows\dotnet.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Security.Utilities.Cli", "Microsoft.Security.Utilities.Cli\Microsoft.Security.Utilities.Cli.csproj", "{435A69E1-DE63-4B02-95D4-EE73CA4A5DC2}"

@@ -34,7 +34,7 @@ if ($env:MsuiNugetPackageVersion) {
     $tag = $env:MsuiNugetPackageVersion
 }
 
-dotnet pack src\Microsoft.Security.Utilities.Packages.sln -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg /p:Version=$tag -o "$RepoRoot\bld\nupkg\AnyCPU_$Configuration"
+dotnet pack src\Microsoft.Security.Utilities.Packages.sln -c $Configuration -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg /p:Version=$tag -o "$RepoRoot\bld\nupkg\AnyCPU_$Configuration"
 if ($LASTEXITCODE -ne 0) {
     Exit-WithFailureMessage $ScriptName "Pack of Microsoft.Security.Utilities.Packages.sln failed."
 }

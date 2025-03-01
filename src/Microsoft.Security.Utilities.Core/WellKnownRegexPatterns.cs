@@ -200,4 +200,20 @@ public static class WellKnownRegexPatterns
     public const string SuffixAllBase64 = @$"([^{Base64}_=\-]|{End})";
     public const string PrefixHexadecimal = $"({Start}|[^{Hexadecimal}])";
     public const string SuffixHexadecimal = $"([^{Hexadecimal}]|{End})";
+
+    internal static readonly string[] AllPrefixes = [
+        PrefixUrlSafeBase64,
+        PrefixUrlUnreserved,
+        PrefixBase62,
+        PrefixAllBase64,
+        PrefixHexadecimal,
+    ];
+
+    internal static readonly string[] AllSuffixes = [
+        SuffixUrlSafeBase64,
+        SuffixUrlUnreserved,
+        SuffixBase62,
+        SuffixAllBase64,
+        SuffixHexadecimal,
+    ];
 }

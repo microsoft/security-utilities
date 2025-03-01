@@ -22,8 +22,17 @@
       - `SEC101/200.CommonAnnotatedSecurityKey`
       - `SEC101/565.SecretScanningSampleToken`
 - BRK: `CachedDotNetRegexEngine`will no longer accept `(?P<name>)` syntax. This is only relevant if it is used with patterns other than those distributed with this library.
+- BRK: `IdentifiableScan` no longer supports stream input. The following API are removed. Use `IdentifiableScan.DetectSecrets(string)`.
+  -  `IdentifiableScan.DetectSecrets(Stream)`
+  -  `IdentifiableScan.Start`
+  -  `IdentifiableScan.Scan`
+  -  `IdentifiableScan.PossibleMatches`
+  -  `IdentifiableScan.GetPossibleMatchRange`
+  -  `IdentifiableScan.CheckPossibleMatchRange`
 - BUG: `SEC101/200.CommonAnnotatedSecurityKey` and `SEC101/565.SecretScanningSampleToken` considered non-alphanumeric delimiter preceding secret to be part of the match.
 - BUG  `SEC101/061.LooseOAuth2BearerToken` had incorrect signatures, causing no matches to be found unless the input happened to also contain `sig=` or `ret=`.
+- PRF: `IdentifiableScan` did not use high-performance scanning techniques for `SEC101/178.AzureIotHubIdentifiableKey` and `SEC101/200.CommonAnnotatedSecurityKey`. A bug triggered fallback to slower scanning due to incorrect signatures being used.
+- PRF: `IdentifiableScan` now implements high-performance scanning techniques in managed code. The performance has been found to be significantly better than the prior implementation via rust interop. This also reduces the size of the NuGet package size by a factor of 34 from 6.8 MB to 200 KB and adds support for non x86/x64 CPUs and non-Windows OSes.
 
 # 1.14.0 - 02/25/2025
 - RUL: Add `DAT101/001.GuidValue` detection as part of a new DAT101 detection series which helps classify non-sensitive data.
