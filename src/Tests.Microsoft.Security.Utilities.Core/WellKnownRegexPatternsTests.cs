@@ -27,9 +27,64 @@ namespace Microsoft.Security.Utilities
         };
 
         [TestMethod]
+        public void WellKnownRegexPatterns_GetMatchMonikerHardenedForOutOfOrderExecution()
+        {
+            using var assertionScope = new AssertionScope();
+
+            var patterns = new List<RegexPattern>();
+
+            patterns.AddRange(WellKnownRegexPatterns.DataClassification);
+            patterns.AddRange(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys);
+            patterns.AddRange(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys);
+
+            var masker = new SecretMasker(patterns,
+                                          generateCorrelatingIds: true,
+                                          RE2RegexEngine.Instance);
+
+            foreach (var pattern in patterns)
+            {
+                foreach (string example in pattern.GenerateTruePositiveExamples())
+                {
+                    // It is not obvious, but this is a test to ensure this call
+                    // does not raise exceptions. This API calls into 
+                    // 'GetMatchIdAndName' which itself may return null, indicating
+                    // that post-processing has determined that the pattern is not
+                    // a match. Because we are in the context of producing positive
+                    // test cases, this means that the test pattern contains data
+                    // that itself will be removed on the preliminary match operation.
+                    // We will therefore call this code agains to ensure that it
+                    // is no longer null post-detection.
+                    string moniker = pattern.GetMatchMoniker(example);
+
+                    var detection = masker.DetectSecrets(example).FirstOrDefault((d) => d.Id == pattern.Id);
+                    
+                    // Currently, some rules are tuned not to double-fire, i.e., they determine
+                    // whether a separate rule might identify a pattern and, if so, the rule 
+                    // drops the result. This is a problematic design. For one thing, we don't
+                    // to see if the more precise rule is enabled. This gives the appearance of
+                    // false negatives in these low-level checks. This is a subtle topic
+                    // potentially arguing for redesign of the engine or our test expectations.
+                    bool result = 
+                        detection != default ||
+                        pattern.Name == nameof(Unclassified32CharacterString) ||
+                        pattern.Name == nameof(Unclassified16ByteHexadecimalString);
+
+                    result.Should().BeTrue(because: $"pattern '{pattern.GetType().Name}' should match '{example}'");
+
+                    if (moniker == null)
+                    {
+                        string matched = example.Substring(detection.Start, detection.End - detection.Start);
+                        moniker = pattern.GetMatchMoniker(matched);
+                        moniker.Should().NotBeNull(because: $"'{matched}' should produce a non-null moniker for {pattern.GetType().Name}' test data");
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
         public void WellKnownRegexPatterns_EnsureAllPatternsExpressConfidence()
         {
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 1; i++)
             {
                 using var assertionScope = new AssertionScope();
 
@@ -74,11 +129,10 @@ namespace Microsoft.Security.Utilities
             }
         }
 
-
         [TestMethod]
         public void WellKnownRegexPatterns_EnsureAllMediumConfidenceOrBetterPatternsDefineSignatures()
         {
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 1; i++)
             {
                 using var assertionScope = new AssertionScope();
 

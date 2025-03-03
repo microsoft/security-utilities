@@ -12,6 +12,18 @@
 - FNS => False negative reduction in static analysis.
 
 # UNRELEASED
+
+- BRK: `IdentifiableScan` no longer supports stream input. The following API are removed. Use `IdentifiableScan.DetectSecrets(string)`.
+  -  `IdentifiableScan.DetectSecrets(Stream)`
+  -  `IdentifiableScan.Start`
+  -  `IdentifiableScan.Scan`
+  -  `IdentifiableScan.PossibleMatches`
+  -  `IdentifiableScan.GetPossibleMatchRange`
+  -  `IdentifiableScan.CheckPossibleMatchRange`
+- PRF: `IdentifiableScan` did not use high-performance scanning techniques for `SEC101/178.AzureIotHubIdentifiableKey` and `SEC101/200.CommonAnnotatedSecurityKey`. A bug triggered fallback to slower scanning due to incorrect signatures being used.
+- PRF: `IdentifiableScan` now implements high-performance scanning techniques in managed code. The performance has been found to be significantly better than the prior implementation via rust interop. This also reduces the size of the NuGet package size by a factor of 34 from 6.8 MB to 200 KB and adds support for non x86/x64 CPUs and non-Windows OSes.
+
+# 1.15.0 - 03/03/2025
 - BRK: Regular expression syntax has been standardized in JSON to conform to how the overwhelming majority of patterns were already defined.
   - `refine` is used now used throughout as the name of the capture group used to isolate an actual find from the full expression that also matches delimiting characters. `secret` was previously used in some instances.
   - `?<name>` is now used throughout for named captures. '?P<name>' was previously used in some instances. This may require replacing '?<' with '?P<' if using a regex engine that only accepts the '?P<name>' syntax.
@@ -22,18 +34,13 @@
       - `SEC101/200.CommonAnnotatedSecurityKey`
       - `SEC101/565.SecretScanningSampleToken`
 - BRK: `CachedDotNetRegexEngine`will no longer accept `(?P<name>)` syntax. This is only relevant if it is used with patterns other than those distributed with this library.
-- BRK: `IdentifiableScan` no longer supports stream input. The following API are removed. Use `IdentifiableScan.DetectSecrets(string)`.
-  -  `IdentifiableScan.DetectSecrets(Stream)`
-  -  `IdentifiableScan.Start`
-  -  `IdentifiableScan.Scan`
-  -  `IdentifiableScan.PossibleMatches`
-  -  `IdentifiableScan.GetPossibleMatchRange`
-  -  `IdentifiableScan.CheckPossibleMatchRange`
+- BRK: `IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey` now exclusively throws `System.ArgumentException` for invalid key inputs (no longer raising `System.FormatException: The input is not a valid Base-46 string` for invalid data).
 - BUG: `SEC101/200.CommonAnnotatedSecurityKey` and `SEC101/565.SecretScanningSampleToken` considered non-alphanumeric delimiter preceding secret to be part of the match.
 - BUG  `SEC101/061.LooseOAuth2BearerToken` had incorrect signatures, causing no matches to be found unless the input happened to also contain `sig=` or `ret=`.
-- PRF: `IdentifiableScan` did not use high-performance scanning techniques for `SEC101/178.AzureIotHubIdentifiableKey` and `SEC101/200.CommonAnnotatedSecurityKey`. A bug triggered fallback to slower scanning due to incorrect signatures being used.
-- PRF: `IdentifiableScan` now implements high-performance scanning techniques in managed code. The performance has been found to be significantly better than the prior implementation via rust interop. This also reduces the size of the NuGet package size by a factor of 34 from 6.8 MB to 200 KB and adds support for non x86/x64 CPUs and non-Windows OSes.
-
+- BUG: Resolve `System.FormatException: The input is not a valid Base-46 string` errors calling `IdentifiableSecrets.ValidateChecksum` with invalid base64. The API now returns `false` in this case.
+- BUG: Resolve 'System.NullReferenceException` on calling `RegexPattern.GetMatchMoniker` when its internal call to `GetMatchIdAndName` return null. A null return from `GetMatchIdAndName` is an expected value that indicates post-processing has determined there is no actual match.
+- BUG: Resolve `System.FormatException: The input is not a valid Base-46 string` errors calling `SEC101/102.AdoPat.GetMatchIdAndName` with invalid base64. The API now returns null in this case (the standard behavior when post-processing does not detect a match).
+ 
 # 1.14.0 - 02/25/2025
 - RUL: Add `DAT101/001.GuidValue` detection as part of a new DAT101 detection series which helps classify non-sensitive data.
 - RUL: Add `DAT101/002.IPv4` non-sensitive data classification.
@@ -122,7 +129,7 @@
 - RUL: Add `SEC101/061.LooseOAuth2BearerToken` detection.
 - DEP: Added support for net451 in `Microsoft.Security.Utilities.Core` for backward compatibility.
 - BRK: Remove `SEC101/109.AzureContainerRegistryLegacyKey` as it is too anonymous for standalone secret detection.
-- BUG: Resolve `System.ArgumentOutOfRangeException: Index was out of range` and `System.FormatException: The input is not a valid Base-46 string` errors when calling `IdentifiableSecrets.GenerateCommonAnnotatedTestKey(ulong, string, bool, byte[], byte[], bool, char?)`. These exceptions originated in multithreading issues in `Base62.EncodingExtensions.ToBase62(this string)`.
+- BUG: Resolve `System.ArgumentOutOfRangeException: Index was out of range` and `System.FormatException: The input is not a valid Base-46 string` errors calling `IdentifiableSecrets.GenerateCommonAnnotatedTestKey(ulong, string, bool, byte[], byte[], bool, char?)`. These exceptions originated in multithreading issues in `Base62.EncodingExtensions.ToBase62(this string)`.
 - BUG: Fix the logic in `CommonAnnotatedSecurityKey.GenerateTruePositiveExamples()` to handle invalid test key characters, and to properly break out of the testing loop.
 - FNS: Added `SEC101/200.CommonAnnotatedSecurityKey` to `WellKnownPatterns.HighConfidenceMicrosoftSecurityModels`.
 - NEW: Add `DetectionMetadata.LowConfidence` and `Detection.MediumConfidence` designations.

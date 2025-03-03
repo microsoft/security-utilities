@@ -293,7 +293,14 @@ public class RegexPattern
 #endif
     }
 
-    public virtual string GetMatchMoniker(string match) => $"{GetMatchIdAndName(match)!.Item1}.{GetMatchIdAndName(match)!.Item2}";
+    public virtual string? GetMatchMoniker(string match)
+    {
+        Tuple<string, string>? matchIdAndName = GetMatchIdAndName(match);
+
+        return matchIdAndName != null
+            ? $"{matchIdAndName!.Item1}.{matchIdAndName!.Item2}"
+            : null;
+    }
 
     public virtual Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>(Id, Name);
 
