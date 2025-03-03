@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.Security.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Tests.Microsoft.Security.Utilities.Core;
@@ -124,5 +125,21 @@ public class HighPerformanceScannerTests
         List<HighPerformanceDetection> detections = scanner.Scan(input);
 
         detections.Should().BeEmpty();
+    }
+
+    [TestMethod]
+    public void CompiledHighPerformancePattern_SharesRegexesOptimally()
+    {
+        // These two patterns differ only by signature.
+        var pattern = CompiledHighPerformancePattern.ForSignature(IdentifiableMetadata.AzureIotSignature);
+        var pattern2 = CompiledHighPerformancePattern.ForSignature(IdentifiableMetadata.AzureEventGridSignature);
+
+        // This is a valid version of both of patterns except the signature is
+        // all newlines. If the scoped regex doesn't match this, it has not been
+        // configured optimally using 'RegexOptions.SingleLine'.
+        string input = new string('A', 33) + new string('\n', 4) + new string('A', 6) + '=';
+
+        pattern.ScopedRegex.Should().BeSameAs(pattern2.ScopedRegex, because: "these patterns differ only by signature and can share a scoped regex");
+        pattern.ScopedRegex.IsMatch(input).Should().BeTrue(because: "the shared scoped regex should skip signature chars, even newlines");
     }
 }

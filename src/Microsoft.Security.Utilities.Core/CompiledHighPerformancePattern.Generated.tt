@@ -55,7 +55,7 @@ private string GenerateCode()
             sb.AppendLine("*/");
             sb.AppendLine("namespace Microsoft.Security.Utilities;");
             sb.AppendLine("partial class CompiledHighPerformancePattern {");
-            sb.AppendLine("    private static partial CompiledHighPerformancePattern[] GetPatterns() => [];");
+            sb.AppendLine("    private static readonly System.Collections.Generic.Dictionary<string, CompiledHighPerformancePattern> s_patternsBySignature;");
             sb.AppendLine("}");
             return sb.ToString();
         } catch (Exception ex2) {

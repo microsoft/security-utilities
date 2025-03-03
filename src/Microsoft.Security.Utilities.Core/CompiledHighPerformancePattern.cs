@@ -21,8 +21,7 @@ namespace Microsoft.Security.Utilities;
 /// </remarks>
 internal sealed partial class CompiledHighPerformancePattern
 {
-    private static readonly Dictionary<string, CompiledHighPerformancePattern> s_patterns = GetPatterns().ToDictionary(p => p.Signature);
-    private static partial CompiledHighPerformancePattern[] GetPatterns(); // Defined in generated code.
+
 
     /// <summary>
     /// The signature that identifies this pattern. This data must be found in
@@ -82,7 +81,7 @@ internal sealed partial class CompiledHighPerformancePattern
     /// </summary>
     public static CompiledHighPerformancePattern? ForSignature(string signature)
     {
-        return s_patterns.TryGetValue(signature, out CompiledHighPerformancePattern? pattern) ? pattern : null;
+        return s_patternsBySignature.TryGetValue(signature, out CompiledHighPerformancePattern? pattern) ? pattern : null;
     }
 
     /// <summary>
@@ -179,6 +178,8 @@ internal sealed partial class CompiledHighPerformancePattern
         var sb = new StringBuilder();
         sb.AppendLine(
             """
+            using System.Collections.Generic;
+            using System.Linq;
             using System.Text.RegularExpressions;
 
             namespace Microsoft.Security.Utilities;
@@ -207,7 +208,7 @@ internal sealed partial class CompiledHighPerformancePattern
                 }
 
                 // Generate the consturctor call the pattern.
-                string code = $"""new("{pattern.Signature}", {pattern.SignaturePrefixLength}, {pattern.MinMatchLength}, {pattern.MaxMatchLength}, Regex{id}())""";
+                string code = $"""new("{pattern.Signature}", {pattern.SignaturePrefixLength}, {pattern.MinMatchLength}, {pattern.MaxMatchLength}, Regex{id})""";
 
                 // Also call the constructor now to catch bad inputs during code generation.
                 new CompiledHighPerformancePattern(
@@ -237,7 +238,20 @@ internal sealed partial class CompiledHighPerformancePattern
             }
         }
 
-        sb.AppendLine("""    private static partial CompiledHighPerformancePattern[] GetPatterns() => [""");
+        foreach (KeyValuePair<string, int> regex in regexes.OrderBy(p => p.Value))
+        {
+            sb.AppendLine($""""    /*lang=regex*/ private const string RawRegex{regex.Value} = """{regex.Key}""";"""");
+        }
+
+        sb.AppendLine();
+
+        foreach (int id in regexes.Values.OrderBy(v => v))
+        {
+            sb.AppendLine($"""    private static readonly Regex Regex{id} = GetRegex{id}();""");
+        }
+
+        sb.AppendLine();
+        sb.AppendLine("""    private static readonly CompiledHighPerformancePattern[] s_patterns = [""");
 
         foreach (string pattern in patterns.Values.OrderBy(v => v))
         {
@@ -246,25 +260,20 @@ internal sealed partial class CompiledHighPerformancePattern
 
         sb.AppendLine("""    ];""");
         sb.AppendLine();
-
-        foreach (KeyValuePair<string, int> regex in regexes.OrderBy(p => p.Value))
-        {
-            sb.AppendLine($""""    /*lang=regex*/ private const string RawRegex{regex.Value} = """{regex.Key}""";"""");
-        }
-
+        sb.AppendLine("""    private static readonly Dictionary<string, CompiledHighPerformancePattern> s_patternsBySignature = s_patterns.ToDictionary(p => p.Signature);""");
         sb.AppendLine();
         sb.AppendLine("#if NET8_0_OR_GREATER");
 
         foreach (int id in regexes.Values.OrderBy(v => v))
         {
-            sb.AppendLine($"""    [GeneratedRegex(RawRegex{id}, Options)] private static partial Regex Regex{id}();""");
+            sb.AppendLine($"""    [GeneratedRegex(RawRegex{id}, Options)] private static partial Regex GetRegex{id}();""");
         }
 
         sb.AppendLine("#else");
 
         foreach (int id in regexes.Values.OrderBy(v => v))
         {
-            sb.AppendLine($"""    private static Regex Regex{id}() => new(RawRegex{id}, Options);""");
+            sb.AppendLine($"""    private static Regex GetRegex{id}() => new(RawRegex{id}, Options);""");
         }
 
         sb.AppendLine("#endif");
