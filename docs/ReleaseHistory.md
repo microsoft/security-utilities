@@ -22,9 +22,13 @@
       - `SEC101/200.CommonAnnotatedSecurityKey`
       - `SEC101/565.SecretScanningSampleToken`
 - BRK: `CachedDotNetRegexEngine`will no longer accept `(?P<name>)` syntax. This is only relevant if it is used with patterns other than those distributed with this library.
+- BRK: `IdentifiableSecrets.ComputeDerivedCommonAnnotatedKey` now exclusively throws `System.ArgumentException` for invalid key inputs (no longer raising `System.FormatException: The input is not a valid Base-46 string` for invalid data).
 - BUG: `SEC101/200.CommonAnnotatedSecurityKey` and `SEC101/565.SecretScanningSampleToken` considered non-alphanumeric delimiter preceding secret to be part of the match.
 - BUG  `SEC101/061.LooseOAuth2BearerToken` had incorrect signatures, causing no matches to be found unless the input happened to also contain `sig=` or `ret=`.
-
+- BUG: Resolve `System.FormatException: The input is not a valid Base-46 string` errors calling `IdentifiableSecrets.ValidateChecksum` with invalid base64. The API now returns `false` in this case.
+- BUG: Resolve 'System.NullReferenceException` on calling `RegexPattern.GetMatchMoniker` when its internal call to `GetMatchIdAndName` return null. A null return from `GetMatchIdAndName` is an expected value that indicates post-processing has determined there is no actual match.
+- BUG: Resolve `System.FormatException: The input is not a valid Base-46 string` errors calling `SEC101/102.AdoPat.GetMatchIdAndName` with invalid base64. The API now returns null in this case (the standard behavior when post-processing does not detect a match).
+ 
 # 1.14.0 - 02/25/2025
 - RUL: Add `DAT101/001.GuidValue` detection as part of a new DAT101 detection series which helps classify non-sensitive data.
 - RUL: Add `DAT101/002.IPv4` non-sensitive data classification.
@@ -113,7 +117,7 @@
 - RUL: Add `SEC101/061.LooseOAuth2BearerToken` detection.
 - DEP: Added support for net451 in `Microsoft.Security.Utilities.Core` for backward compatibility.
 - BRK: Remove `SEC101/109.AzureContainerRegistryLegacyKey` as it is too anonymous for standalone secret detection.
-- BUG: Resolve `System.ArgumentOutOfRangeException: Index was out of range` and `System.FormatException: The input is not a valid Base-46 string` errors when calling `IdentifiableSecrets.GenerateCommonAnnotatedTestKey(ulong, string, bool, byte[], byte[], bool, char?)`. These exceptions originated in multithreading issues in `Base62.EncodingExtensions.ToBase62(this string)`.
+- BUG: Resolve `System.ArgumentOutOfRangeException: Index was out of range` and `System.FormatException: The input is not a valid Base-46 string` errors calling `IdentifiableSecrets.GenerateCommonAnnotatedTestKey(ulong, string, bool, byte[], byte[], bool, char?)`. These exceptions originated in multithreading issues in `Base62.EncodingExtensions.ToBase62(this string)`.
 - BUG: Fix the logic in `CommonAnnotatedSecurityKey.GenerateTruePositiveExamples()` to handle invalid test key characters, and to properly break out of the testing loop.
 - FNS: Added `SEC101/200.CommonAnnotatedSecurityKey` to `WellKnownPatterns.HighConfidenceMicrosoftSecurityModels`.
 - NEW: Add `DetectionMetadata.LowConfidence` and `Detection.MediumConfidence` designations.

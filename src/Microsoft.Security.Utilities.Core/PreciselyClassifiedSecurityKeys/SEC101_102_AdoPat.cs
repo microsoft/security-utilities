@@ -36,7 +36,16 @@ namespace Microsoft.Security.Utilities
         /// <returns>True if checksum is valid.</returns>
         private static bool IsChecksumValid(string input, uint magicNumber)
         {
-            byte[] inputBytes = ConvertFromBase32(input);
+            byte[] inputBytes;
+
+            try
+            {
+                inputBytes = ConvertFromBase32(input);
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
 
             // Extract out the bytes which are not the checksum
             byte[] tokenBytes = new byte[28];

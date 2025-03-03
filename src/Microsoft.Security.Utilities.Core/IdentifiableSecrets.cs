@@ -763,7 +763,15 @@ public static class IdentifiableSecrets
 
     public static bool ValidateChecksum(string key, ulong checksumSeed, out byte[] bytes)
     {
-        bytes = ConvertFromBase64String(key);
+        try
+        {
+            bytes = ConvertFromBase64String(key);
+        }
+        catch (FormatException)
+        {
+            bytes = null;
+            return false;
+        }
 
         byte[] checksumBytes = new byte[4];
         Array.Copy(bytes, bytes.Length - checksumSizeInBytes, checksumBytes, 0, checksumSizeInBytes);
@@ -995,7 +1003,11 @@ public static class IdentifiableSecrets
     {
         text = TransformToStandardEncoding(text);
         text += RetrievePaddingForBase64EncodedText(text);
-        return Convert.FromBase64String(text);
+        byte[] result;
+
+        result = Convert.FromBase64String(text);
+
+        return result;
     }
 
     private static string ConvertToBase64String(byte[] data, bool encodeForUrl)
