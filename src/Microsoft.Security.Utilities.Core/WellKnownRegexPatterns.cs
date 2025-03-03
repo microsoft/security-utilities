@@ -84,7 +84,7 @@ public static class WellKnownRegexPatterns
         new AzureCacheForRedisIdentifiableKey(),
         new AzureContainerRegistryIdentifiableKey(),
         new NuGetApiKey(),
-        new AdoLegacyPat(),                               // SEC101/102
+        new AdoLegacyPat(),                         // SEC101/102
         new AzureCosmosDBLegacyCredentials(),       // SEC101/104
         new AzureStorageAccountLegacyCredentials(), // SEC101/106
         new AzureMessageLegacyCredentials(),
