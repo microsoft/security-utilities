@@ -7,13 +7,6 @@
     "DetectionMetadata": "LowConfidence"
   },
   {
-    "Pattern": "(?i)[a-z0-9.=\\-:[_@\\/*\\]+?]{32}$",
-    "Id": "SEC000/003",
-    "Name": "Unclassified32CharacterString",
-    "Signatures": null,
-    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
-  },
-  {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=",
     "Id": "SEC000/000",
     "Name": "Unclassified32ByteBase64String",

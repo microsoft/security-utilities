@@ -330,7 +330,7 @@
   {
     "Pattern": "(?:[^2-7a-z]|^)(?<refine>[2-7a-z]{52})(?:[^2-7a-z]|$)",
     "Id": "SEC101/102",
-    "Name": "AdoPat",
+    "Name": "AdoLegacyPat",
     "Signatures": null,
     "DetectionMetadata": "HighEntropy, EmbeddedChecksum"
   },

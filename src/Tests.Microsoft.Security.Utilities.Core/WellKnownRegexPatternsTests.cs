@@ -104,7 +104,7 @@ namespace Microsoft.Security.Utilities
                     // is no longer null post-detection.
                     string moniker = pattern.GetMatchMoniker(example);
 
-                    var detection = masker.DetectSecrets(example).FirstOrDefault((d) => d.Id == pattern.Id);
+                    var detection = masker.DetectSecrets(example).FirstOrDefault();
 
                     bool result = detection != default;
                     result.Should().BeTrue(because: $"pattern '{pattern.GetType().Name}' should match '{example}'");
