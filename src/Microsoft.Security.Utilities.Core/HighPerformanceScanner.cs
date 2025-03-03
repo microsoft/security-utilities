@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,7 +63,7 @@ internal sealed class HighPerformanceScanner
         int index = 0;
         do
         {
-            CompiledHighPerformancePattern pattern = FindNextSignature(input, ref index);
+            CompiledHighPerformancePattern? pattern = FindNextSignature(input, ref index);
             if (pattern == null)
             {
                 break;
@@ -134,7 +136,7 @@ internal sealed class HighPerformanceScanner
     /// The performance of this method is highly sensitive to the version of
     /// .NET that is used.
     /// </summary>
-    private CompiledHighPerformancePattern FindNextSignature(StringInput input, ref int index)
+    private CompiledHighPerformancePattern? FindNextSignature(StringInput input, ref int index)
     {
 #if NET9_0_OR_GREATER
         // .NET 9: This API is *highly* optimized when searching for small ASCII
@@ -147,7 +149,7 @@ internal sealed class HighPerformanceScanner
             return null;
         }
         index += offset;
-        CompiledHighPerformancePattern pattern = GetPatternForSignature(input, index);
+        CompiledHighPerformancePattern? pattern = GetPatternForSignature(input, index);
         return pattern;
 #else
         while (true)
@@ -173,7 +175,7 @@ internal sealed class HighPerformanceScanner
             }
 #endif
 
-            CompiledHighPerformancePattern pattern = GetPatternForSignature(input, index);
+            CompiledHighPerformancePattern? pattern = GetPatternForSignature(input, index);
             if (pattern == null)
             {
                 index++;
@@ -191,7 +193,7 @@ internal sealed class HighPerformanceScanner
     /// packing 3 and 4 ASCII characters into integers and looking them up in
     /// a dictionary indexed by packed signatures.
     /// </summary>
-    private CompiledHighPerformancePattern GetPatternForSignature(StringInput input, int index)
+    private CompiledHighPerformancePattern? GetPatternForSignature(StringInput input, int index)
     {
         if ((input.Length - index) < 4)
         {
@@ -219,7 +221,7 @@ internal sealed class HighPerformanceScanner
         int shortPackedSignature = s0 | (s1 << 8) | (s2 << 16);
         int longPackedSignature = shortPackedSignature | (s3 << 24);
 
-        if (!_patternsByPackedSignature.TryGetValue(longPackedSignature, out CompiledHighPerformancePattern pattern)
+        if (!_patternsByPackedSignature.TryGetValue(longPackedSignature, out CompiledHighPerformancePattern? pattern)
             && !_patternsByPackedSignature.TryGetValue(shortPackedSignature, out pattern))
         {
             return null;

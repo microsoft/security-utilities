@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,9 +80,9 @@ internal sealed partial class CompiledHighPerformancePattern
     /// <summary>
     /// Gets the pre-computed pattern for the given signature or null if there is none.
     /// </summary>
-    public static CompiledHighPerformancePattern ForSignature(string signature)
+    public static CompiledHighPerformancePattern? ForSignature(string signature)
     {
-        return s_patterns.TryGetValue(signature, out CompiledHighPerformancePattern pattern) ? pattern : null;
+        return s_patterns.TryGetValue(signature, out CompiledHighPerformancePattern? pattern) ? pattern : null;
     }
 
     /// <summary>
@@ -215,7 +217,7 @@ internal sealed partial class CompiledHighPerformancePattern
                     pattern.MaxMatchLength,
                     new Regex(pattern.ScopedRegex, Options));
 
-                if (patterns.TryGetValue(pattern.Signature, out string existingCode))
+                if (patterns.TryGetValue(pattern.Signature, out string? existingCode))
                 {
                     if (code != existingCode)
                     {
