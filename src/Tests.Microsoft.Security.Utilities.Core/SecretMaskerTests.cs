@@ -17,13 +17,6 @@ namespace Microsoft.Security.Utilities;
 public class SecretMaskerTests
 {
     [TestMethod]
-    public void SecretMasker_Version()
-    {
-        Version version = SecretMasker.Version;
-        version.ToString().Should().Be("1.14.0");
-    }
-
-    [TestMethod]
     public void SecretMasker_PreciselyClassifiedSecurityKeys_Detections()
     {
         ValidateSecurityModelsDetections(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,

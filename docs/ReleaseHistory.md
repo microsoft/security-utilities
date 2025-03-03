@@ -11,7 +11,7 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# UNRELEASED
+# 1.15.0 - 03/03/2025
 - BRK: Regular expression syntax has been standardized in JSON to conform to how the overwhelming majority of patterns were already defined.
   - `refine` is used now used throughout as the name of the capture group used to isolate an actual find from the full expression that also matches delimiting characters. `secret` was previously used in some instances.
   - `?<name>` is now used throughout for named captures. '?P<name>' was previously used in some instances. This may require replacing '?<' with '?P<' if using a regex engine that only accepts the '?P<name>' syntax.
