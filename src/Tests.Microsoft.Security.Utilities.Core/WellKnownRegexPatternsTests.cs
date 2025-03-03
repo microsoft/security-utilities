@@ -27,6 +27,54 @@ namespace Microsoft.Security.Utilities
         };
 
         [TestMethod]
+        public void WellKnownRegexPatterns_AllRuleIdsAndNamesAreUnique()
+        {            
+            using var assertionScope = new AssertionScope();
+
+            var patterns = GetAllPatterns();
+
+            HashSet<string> ruleIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            HashSet<string> ruleNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            bool result;
+            foreach (RegexPattern pattern in patterns)
+            {
+                result = ruleIds.Contains(pattern.Id);
+                result.Should().BeFalse(because: $"Pattern '{pattern.GetType().Name}' should not share its Id with another rule: '{pattern.Id}'");
+
+                result = ruleNames.Contains(pattern.Name);
+                result.Should().BeFalse(because: $"Pattern '{pattern.GetType().Name}' should not share its Name with another rule: '{pattern.Name}'");
+            }
+        }
+
+        [TestMethod]
+        public void WellKnownRegexPatterns_MonikerRuleIdsAndNamesMatchDeclared()
+        {
+            using var assertionScope = new AssertionScope();
+
+            var patterns = GetAllPatterns();
+
+            foreach (RegexPattern pattern in patterns)
+            {
+                foreach (string example in pattern.GenerateTruePositiveExamples())
+                {
+                    var detection = pattern.GetDetections(example, generateCrossCompanyCorrelatingIds: false).FirstOrDefault();
+                    Assert.AreNotEqual(default, detection);
+
+                    string preciseMatch = example.Substring(detection.Start, detection.Length);
+
+                    var idAndName = pattern.GetMatchIdAndName(preciseMatch);
+
+                    Assert.AreEqual(pattern.Id, idAndName.Item1,
+                                    $"Pattern '{pattern.GetType().Name}' id did not match 'GetMatchIdAndName' result");
+
+                    Assert.AreEqual(pattern.Name, idAndName.Item2,
+                                    $"Pattern '{pattern.GetType().Name}' name did not match 'GetMatchIdAndName' result");
+                }
+            }
+        }
+
+        [TestMethod]
         public void WellKnownRegexPatterns_GetMatchMonikerHardenedForOutOfOrderExecution()
         {
             using var assertionScope = new AssertionScope();
@@ -41,7 +89,7 @@ namespace Microsoft.Security.Utilities
                                           generateCorrelatingIds: true,
                                           RE2RegexEngine.Instance);
 
-            foreach (var pattern in patterns)
+            foreach (RegexPattern pattern in patterns)
             {
                 foreach (string example in pattern.GenerateTruePositiveExamples())
                 {
@@ -57,26 +105,13 @@ namespace Microsoft.Security.Utilities
                     string moniker = pattern.GetMatchMoniker(example);
 
                     var detection = masker.DetectSecrets(example).FirstOrDefault((d) => d.Id == pattern.Id);
-                    
-                    // Currently, some rules are tuned not to double-fire, i.e., they determine
-                    // whether a separate rule might identify a pattern and, if so, the rule 
-                    // drops the result. This is a problematic design. For one thing, we don't
-                    // to see if the more precise rule is enabled. This gives the appearance of
-                    // false negatives in these low-level checks. This is a subtle topic
-                    // potentially arguing for redesign of the engine or our test expectations.
-                    bool result = 
-                        detection != default ||
-                        pattern.Name == nameof(Unclassified32CharacterString) ||
-                        pattern.Name == nameof(Unclassified16ByteHexadecimalString);
 
+                    bool result = detection != default;
                     result.Should().BeTrue(because: $"pattern '{pattern.GetType().Name}' should match '{example}'");
 
-                    if (moniker == null)
-                    {
-                        string matched = example.Substring(detection.Start, detection.End - detection.Start);
-                        moniker = pattern.GetMatchMoniker(matched);
-                        moniker.Should().NotBeNull(because: $"'{matched}' should produce a non-null moniker for {pattern.GetType().Name}' test data");
-                    }
+                    string matched = example.Substring(detection.Start, detection.End - detection.Start);
+                    moniker = pattern.GetMatchMoniker(matched);
+                    moniker.Should().NotBeNull(because: $"'{matched}' should produce a non-null moniker for {pattern.GetType().Name}' test data");
                 }
             }
         }
@@ -270,6 +305,17 @@ namespace Microsoft.Security.Utilities
                     groupNames[0].Should().Be("refine", because: $"Pattern '{pattern.GetType().Name}' capture group should be named 'refine'");
                 }
             }
+        }
+
+        private static List<RegexPattern> GetAllPatterns()
+        {
+            var patterns = new List<RegexPattern>();
+
+            patterns.AddRange(WellKnownRegexPatterns.DataClassification);
+            patterns.AddRange(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys);
+            patterns.AddRange(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys);
+
+            return patterns;
         }
     }
 }

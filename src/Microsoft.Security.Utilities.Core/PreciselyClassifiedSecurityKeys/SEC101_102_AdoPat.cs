@@ -5,14 +5,14 @@ using System;
 
 namespace Microsoft.Security.Utilities
 {
-    public class AdoPat : RegexPattern
+    public class AdoLegacyPat : RegexPattern
     {
         private static readonly byte[] EmptyByteArray = new byte[0];
 
-        public AdoPat() 
+        public AdoLegacyPat() 
         {
             Id = "SEC101/102";
-            Name = nameof(AdoPat);
+            Name = nameof(AdoLegacyPat);
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.EmbeddedChecksum;
             Pattern = "(?:[^2-7a-z]|^)(?<refine>[2-7a-z]{52})(?:[^2-7a-z]|$)";
         }
@@ -42,7 +42,7 @@ namespace Microsoft.Security.Utilities
             {
                 inputBytes = ConvertFromBase32(input);
             }
-            catch (FormatException)
+            catch (ArgumentException)
             {
                 return false;
             }

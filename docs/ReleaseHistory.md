@@ -11,6 +11,12 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# 1.16.0 - 03/03/2025
+- BRK: Eliminate `SEC000/101.Unclassified32CharacterString` as noisy and not useful.
+- BRK: Rename `SEC101/102.AdoPat` friendly name to `AdoLegacyPat`.
+- BUG: Correct `SEC000/002.Unclassified16ByteHexadecimalString` id and rule name  on calling `GetMatchIdAndName` (where `SEC000/001.Unclassified64ByteBase64String` was returned incorrectly before).
+- BUG: Resolve `System.FormatException: The input is not a valid Base-46 string` errors calling `SEC101/102.AdoPat.GetMatchIdAndName` by swallowing correct exception kind `ArgumentException` in `IsChecksumValid` helper.
+
 # 1.15.0 - 03/03/2025
 - BRK: Regular expression syntax has been standardized in JSON to conform to how the overwhelming majority of patterns were already defined.
   - `refine` is used now used throughout as the name of the capture group used to isolate an actual find from the full expression that also matches delimiting characters. `secret` was previously used in some instances.
