@@ -50,13 +50,7 @@
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="$(MsBuildThisFileDirectory)../refs/win-x64/microsoft_security_utilities_core.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="$(MsBuildThisFileDirectory)../refs/win-x64/microsoft_security_utilities_core.pdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DefineConstants>$(DefineConstants);HIGH_PERFORMANCE_CODEGEN</DefineConstants>
+  </PropertyGroup>
 </Project>

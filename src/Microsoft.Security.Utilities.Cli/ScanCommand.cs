@@ -49,21 +49,19 @@ namespace Microsoft.Security.Utilities.Cli
 
             foreach (string path in Directory.GetFiles(directory, fileSpecifier, searchOption))
             {
-                using (var file = File.OpenRead(path))
+                string file = File.ReadAllText(path);
+                bool foundAtLeastOne = false;
+
+                foreach (var detection in scan.DetectSecrets(file))
                 {
-                    bool foundAtLeastOne = false;
+                    foundAtLeastOne = true;
+                    Console.WriteLine("Found {0} ('{1}') at position {2}", detection.Id, detection.RedactionToken, detection.Start + detection.Length);
+                }
 
-                    foreach (var detection in scan.DetectSecrets(file))
-                    {
-                        foundAtLeastOne = true;
-                        Console.WriteLine("Found {0} ('{1}') at position {2}", detection.Id, detection.RedactionToken, detection.Start + detection.Length);
-                    }
-
-                    if (!foundAtLeastOne)
-                    {
-                        Console.WriteLine($"None found: {path}");
-                        continue;
-                    }
+                if (!foundAtLeastOne)
+                {
+                    Console.WriteLine($"None found: {path}");
+                    continue;
                 }
             }
 

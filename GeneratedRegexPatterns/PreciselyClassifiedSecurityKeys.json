@@ -4,7 +4,7 @@
     "Id": "SEC101/200",
     "Name": "CommonAnnotatedSecurityKey",
     "Signatures": [
-      "JQQJ9"
+      "JQQJ"
     ],
     "DetectionMetadata": "Identifiable"
   },

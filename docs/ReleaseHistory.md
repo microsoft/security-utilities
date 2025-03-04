@@ -11,6 +11,18 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# UNRELEASED
+
+- BRK: `IdentifiableScan` no longer supports stream input. The following API are removed. Use `IdentifiableScan.DetectSecrets(string)`.
+  -  `IdentifiableScan.DetectSecrets(Stream)`
+  -  `IdentifiableScan.Start`
+  -  `IdentifiableScan.Scan`
+  -  `IdentifiableScan.PossibleMatches`
+  -  `IdentifiableScan.GetPossibleMatchRange`
+  -  `IdentifiableScan.CheckPossibleMatchRange`
+- PRF: `IdentifiableScan` did not use high-performance scanning techniques for `SEC101/178.AzureIotHubIdentifiableKey` and `SEC101/200.CommonAnnotatedSecurityKey`. A bug triggered fallback to slower scanning due to incorrect signatures being used.
+- PRF: `IdentifiableScan` now implements high-performance scanning techniques in managed code. The performance has been found to be significantly better than the prior implementation via rust interop. This also reduces the size of the NuGet package size by a factor of 34 from 6.8 MB to 200 KB and adds support for non x86/x64 CPUs and non-Windows OSes.
+
 # 1.16.0 - 03/04/2025
 - BRK: Eliminate `SEC000/101.Unclassified32CharacterString` as noisy and not useful.
 - BRK: Rename `SEC101/102.AdoPat` friendly name to `AdoLegacyPat`.

@@ -8,36 +8,34 @@ set ARG=%1
 if /i "%ARG%" == "-NoTest" set NO_TEST=1
 if not "%ARG%" == "" shift & goto :parse_args
 
-set STEP=Building security_utilities_rust_ffi for x64
+set STEP=Building security_utilities_rust for x64
 echo %STEP%...
-pushd .\src\security_utilities_rust_ffi\
+pushd .\src\security_utilities_rust\
 call cargo build --release --target x86_64-pc-windows-msvc
 if %ERRORLEVEL% neq 0 goto :exit
 popd
 
-set STEP=Building security_utilities_rust_ffi for x86
+set STEP=Building security_utilities_rust for x86
 echo %STEP%...
-pushd .\src\security_utilities_rust_ffi\
+pushd .\src\security_utilities_rust\
 call cargo build --release --target i686-pc-windows-msvc 
 if %ERRORLEVEL% neq 0 goto :exit
 popd
 
-set STEP=Deploying security_utilities_rust_ffi
-echo %STEP%...
-xcopy /y .\src\security_utilities_rust_ffi\target\x86_64-pc-windows-msvc\release\microsoft_security_utilities_core.dll .\refs\win-x64\
-if %ERRORLEVEL% neq 0 goto :exit
-xcopy /y .\src\security_utilities_rust_ffi\target\x86_64-pc-windows-msvc\release\microsoft_security_utilities_core.pdb .\refs\win-x64\
-if %ERRORLEVEL% neq 0 goto :exit
-xcopy /y .\src\security_utilities_rust_ffi\target\i686-pc-windows-msvc\release\microsoft_security_utilities_core.dll .\refs\win-x86\
-if %ERRORLEVEL% neq 0 goto :exit
-xcopy /y .\src\security_utilities_rust_ffi\target\i686-pc-windows-msvc\release\microsoft_security_utilities_core.pdb .\refs\win-x86\
-if %ERRORLEVEL% neq 0 goto :exit
-
-set STEP=Testing security_utilities_rust
+set STEP=Testing security_utilities_rust for x64
 if %NO_TEST% neq 1 (
   echo %STEP%...
   pushd .\src\security_utilities_rust\
-  call cargo test --release 
+  call cargo test --release --target x86_64-pc-windows-msvc
+  if %ERRORLEVEL% neq 0 goto :exit
+  popd
+)
+
+set STEP=Testing security_utilities_rust for x86
+if %NO_TEST% neq 1 (
+  echo %STEP%...
+  pushd .\src\security_utilities_rust\
+  call cargo test --release --target i686-pc-windows-msvc
   if %ERRORLEVEL% neq 0 goto :exit
   popd
 )

@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Security.Utilities
 {
@@ -24,5 +25,15 @@ namespace Microsoft.Security.Utilities
         }
 
         override public uint KeyLength => 39;
+
+#if HIGH_PERFORMANCE_CODEGEN
+        private protected override IEnumerable<HighPerformancePattern> HighPerformancePatterns => [
+            new(Signature,
+                MakeHighPerformancePattern(Pattern, Signature),
+                signaturePrefixLength: 42,
+                minMatchLength:52,
+                maxMatchLength: 52)
+        ];
+#endif
     }
 }

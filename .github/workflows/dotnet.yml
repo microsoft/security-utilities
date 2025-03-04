@@ -6,11 +6,12 @@ on:
   pull_request:
     branches: [ "main" ]
 
-env:
-  CARGO_TERM_COLOR: always
-
 jobs:
   build:
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
     name: Test .NET
     runs-on: windows-latest
     steps:
@@ -22,6 +23,13 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.100'
+        dotnet-version: |
+          8.0.x
+          9.0.x
+
+    - name: Show dotnet info
+      run: dotnet --info
+
     - name: Build
-      run: ./BuildAndTest.cmd
+      run: ./BuildAndTest.cmd -Configuration ${{matrix.configuration}}
+
