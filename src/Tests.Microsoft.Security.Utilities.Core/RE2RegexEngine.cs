@@ -3,8 +3,8 @@
 
 using Microsoft.RE2.Managed;
 
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities
@@ -40,7 +40,7 @@ namespace Microsoft.Security.Utilities
                     foreach (Dictionary<string, FlexMatch> match in matches)
                     {
                         FlexMatch flexMatch = match["0"];
-                        if (match.TryGetValue("refine", out FlexMatch refineMatch))
+                        if (match.TryGetValue(captureGroup, out FlexMatch refineMatch))
                         {
                             flexMatch = refineMatch;
                         }

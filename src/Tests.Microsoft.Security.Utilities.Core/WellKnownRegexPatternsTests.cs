@@ -33,17 +33,19 @@ namespace Microsoft.Security.Utilities
 
             var patterns = GetAllPatterns();
 
-            HashSet<string> ruleIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            HashSet<string> ruleNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            HashSet<string> ruleIdsObserved = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            HashSet<string> ruleNamesObserved = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            bool result;
             foreach (RegexPattern pattern in patterns)
             {
-                result = ruleIds.Contains(pattern.Id);
+                bool result = ruleIdsObserved.Contains(pattern.Id);
                 result.Should().BeFalse(because: $"Pattern '{pattern.GetType().Name}' should not share its Id with another rule: '{pattern.Id}'");
 
-                result = ruleNames.Contains(pattern.Name);
+                result = ruleNamesObserved.Contains(pattern.Name);
                 result.Should().BeFalse(because: $"Pattern '{pattern.GetType().Name}' should not share its Name with another rule: '{pattern.Name}'");
+
+                ruleIdsObserved.Add(pattern.Id);
+                ruleNamesObserved.Add(pattern.Name);
             }
         }
 
