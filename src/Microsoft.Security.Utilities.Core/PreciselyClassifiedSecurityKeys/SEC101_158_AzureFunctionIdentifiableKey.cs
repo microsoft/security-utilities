@@ -12,6 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/158";
             Name = nameof(AzureFunctionIdentifiableKey);
+            Signatures = IdentifiableMetadata.AzureFunctionSignature.ToSet();
         }
 
         public override bool EncodeForUrl => true;
@@ -32,5 +33,15 @@ namespace Microsoft.Security.Utilities
         }
 
         override public uint KeyLength => 40;
+
+#if HIGH_PERFORMANCE_CODEGEN
+        private protected override IEnumerable<HighPerformancePattern> HighPerformancePatterns => [
+            new(Signature,
+                MakeHighPerformancePattern(Pattern, Signature),
+                signaturePrefixLength: 44,
+                minMatchLength: 56,
+                maxMatchLength: 56
+        )];
+#endif
     }
 }

@@ -6,7 +6,6 @@ using System.Linq;
 
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Security.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -66,10 +65,16 @@ namespace Tests.Microsoft.Security.Utilities.Core
                     {
                         foreach (string signature in identifiable.Signatures!)
                         {
-                            string key = IdentifiableSecrets.GenerateBase64KeyHelper(seed,
-                                                                                     identifiable.KeyLength,
-                                                                                     signature,
-                                                                                     identifiable.EncodeForUrl);
+                            // Special case: Azure Search identifiable keys must be base62 encoded.
+                            bool isBase62 = signature == IdentifiableMetadata.AzureSearchSignature;
+                            string key;
+                            do
+                            {
+                                key = IdentifiableSecrets.GenerateBase64KeyHelper(seed,
+                                                                                  identifiable.KeyLength,
+                                                                                  signature,
+                                                                                  identifiable.EncodeForUrl);
+                            } while (isBase62 && key.IndexOfAny(['-', '_', '/', '+']) >= 0);
 
                             string moniker = pattern.GetMatchMoniker(key);
                             moniker.Should().NotBeNull(because: $"{pattern.Name} should produce a moniker using '{key}'");

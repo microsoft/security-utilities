@@ -5,11 +5,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities
 {
-    public abstract class IdentifiableKey : RegexPattern, IIdentifiableKey
+    public abstract class IdentifiableKey : RegexPattern, IIdentifiableKey, IHighPerformanceScannableKey
     {
         public IdentifiableKey()
         {
@@ -17,13 +19,21 @@ namespace Microsoft.Security.Utilities
             DetectionMetadata = DetectionMetadata.Identifiable;
         }
 
-        public string RegexNormalizedSignature => Signatures!.First().Replace("+", "\\+");
+        // Identifiable key patterns must have exactly one signature.
+        internal string Signature => Signatures!.Single();
+
+        public string RegexNormalizedSignature => Regex.Escape(Signature);
 
         public virtual uint KeyLength => 32;
 
         public virtual bool EncodeForUrl => false;
 
         public abstract IEnumerable<ulong> ChecksumSeeds { get; }
+
+#if HIGH_PERFORMANCE_CODEGEN
+        IEnumerable<HighPerformancePattern> IHighPerformanceScannableKey.HighPerformancePatterns => HighPerformancePatterns;
+        private protected abstract IEnumerable<HighPerformancePattern> HighPerformancePatterns { get; }
+#endif
 
         public override Tuple<string, string>? GetMatchIdAndName(string match)
         {
