@@ -207,7 +207,7 @@ internal sealed partial class CompiledHighPerformancePattern
                     regexes[pattern.ScopedRegex] = id;
                 }
 
-                // Generate the consturctor call the pattern.
+                // Generate the call to the pattern constructor.
                 string code = $"""new("{pattern.Signature}", {pattern.SignaturePrefixLength}, {pattern.MinMatchLength}, {pattern.MaxMatchLength}, Regex{id})""";
 
                 // Also call the constructor now to catch bad inputs during code generation.
