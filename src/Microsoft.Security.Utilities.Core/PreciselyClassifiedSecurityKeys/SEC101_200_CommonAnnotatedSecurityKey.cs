@@ -3,19 +3,33 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Security.Utilities
 {
-    public class CommonAnnotatedSecurityKey : RegexPattern
+    public class CommonAnnotatedSecurityKey : RegexPattern, IHighPerformanceScannableKey
     {
+        // NOTE: Use 4 character signature for high-performance scanner compatibility.
+        private const string Signature = "JQQJ";
+
         public CommonAnnotatedSecurityKey()
         {
             Id = "SEC101/200";
             Name = nameof(CommonAnnotatedSecurityKey);
             DetectionMetadata = DetectionMetadata.Identifiable;
-            Pattern = $"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{52}}JQQJ9(?:9|D|H)[{WellKnownRegexPatterns.Base62}][A-L][{WellKnownRegexPatterns.Base62}]{{16}}[A-Za-z][{WellKnownRegexPatterns.Base62}]{{7}}(?:[{WellKnownRegexPatterns.Base62}]{{2}}==)?)";
-            Signatures = "JQQJ9".ToSet();
+            Pattern = $"{WellKnownRegexPatterns.PrefixBase62}(?<refine>[{WellKnownRegexPatterns.Base62}]{{52}}JQQJ9(?:9|D|H)[{WellKnownRegexPatterns.Base62}][A-L][{WellKnownRegexPatterns.Base62}]{{16}}[A-Za-z][{WellKnownRegexPatterns.Base62}]{{7}}(?:[{WellKnownRegexPatterns.Base62}]{{2}}==)?)";
+            Signatures =  Signature.ToSet(); 
         }
+
+#if HIGH_PERFORMANCE_CODEGEN
+        IEnumerable<HighPerformancePattern> IHighPerformanceScannableKey.HighPerformancePatterns => [
+            new(Signature,
+                MakeHighPerformancePattern(Pattern, Signature),
+                signaturePrefixLength: 52,
+                minMatchLength: 84,
+                maxMatchLength: 88),
+        ];
+#endif
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {

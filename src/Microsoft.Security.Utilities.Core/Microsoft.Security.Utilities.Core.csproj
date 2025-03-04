@@ -2,25 +2,13 @@
 
   <PropertyGroup>
     <IsPackable>true</IsPackable>
-    <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
+    <!-- netstandard2.0 must be first here or T4 will break -->
+    <TargetFrameworks>netstandard2.0;net8.0;net9.0</TargetFrameworks>
     <EnableNETAnalyzers>false</EnableNETAnalyzers>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RootNamespace>Microsoft.Security.Utilities.Core</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <None Remove="stylecop.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include="stylecop.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Buffers" />
-    <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="../../docs/ReleaseHistory.md" Pack="true" PackagePath="ReleaseHistory.md">
@@ -29,10 +17,19 @@
   </ItemGroup>
 
   <ItemGroup>
-	<None Include="..\..\refs\win-x64\*.dll" Pack="true" PackagePath="runtimes\win-x64\native" />
-	<None Include="..\..\refs\win-x64\*.pdb" Pack="true" PackagePath="runtimes\win-x64\native" />
-	<None Include="..\..\refs\win-x86\*.dll" Pack="true" PackagePath="runtimes\win-x86\native" />
-	<None Include="..\..\refs\win-x86\*.pdb" Pack="true" PackagePath="runtimes\win-x86\native" />
+    <None Update="CompiledHighPerformancePattern.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CompiledHighPerformancePattern.Generated.cs</LastGenOutput>
+    </None>
+    <Compile Update="CompiledHighPerformancePattern.Generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CompiledHighPerformancePattern.Generated.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
 </Project>
