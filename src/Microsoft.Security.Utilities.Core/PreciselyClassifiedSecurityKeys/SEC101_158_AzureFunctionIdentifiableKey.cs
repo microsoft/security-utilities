@@ -12,6 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/158";
             Name = nameof(AzureFunctionIdentifiableKey);
+            Signatures = IdentifiableMetadata.AzureFunctionSignature.ToSet();
         }
 
         public override bool EncodeForUrl => true;
@@ -27,10 +28,20 @@ namespace Microsoft.Security.Utilities
 
         public override string Pattern
         {
-            get => @$"{WellKnownRegexPatterns.PrefixUrlSafeBase64}(?<refine>[{WellKnownRegexPatterns.RegexEncodedUrlSafeBase64}]{{44}}{Signatures!.First()}[{WellKnownRegexPatterns.RegexEncodedUrlSafeBase64}]{{5}}[AQgw]==){WellKnownRegexPatterns.SuffixUrlSafeBase64}";
+            get => @$"{WellKnownRegexPatterns.PrefixUrlSafeBase64}(?P<refine>[{WellKnownRegexPatterns.RegexEncodedUrlSafeBase64}]{{44}}{Signatures!.First()}[{WellKnownRegexPatterns.RegexEncodedUrlSafeBase64}]{{5}}[AQgw]==){WellKnownRegexPatterns.SuffixUrlSafeBase64}";
             protected set => base.Pattern = value;
         }
 
         override public uint KeyLength => 40;
+
+#if HIGH_PERFORMANCE_CODEGEN
+        private protected override IEnumerable<HighPerformancePattern> HighPerformancePatterns => [
+            new(Signature,
+                MakeHighPerformancePattern(Pattern, Signature),
+                signaturePrefixLength: 44,
+                minMatchLength: 56,
+                maxMatchLength: 56
+        )];
+#endif
     }
 }

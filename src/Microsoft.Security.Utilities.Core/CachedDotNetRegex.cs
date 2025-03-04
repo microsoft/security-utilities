@@ -29,10 +29,15 @@ namespace Microsoft.Security.Utilities
         {
             var key = (pattern, options);
 #if NET7_0_OR_GREATER
-            return RegexCache.GetOrAdd(key, key => new Regex(key.Pattern, key.Options | RegexOptions.Compiled | RegexOptions.NonBacktracking));
+            return RegexCache.GetOrAdd(key, key => new Regex(NormalizeGroupsPattern(key.Pattern), key.Options | RegexOptions.Compiled | RegexOptions.NonBacktracking));
 #else
-            return RegexCache.GetOrAdd(key, key => new Regex(key.Pattern, key.Options | RegexOptions.Compiled));
+            return RegexCache.GetOrAdd(key, key => new Regex(NormalizeGroupsPattern(key.Pattern), key.Options | RegexOptions.Compiled));
 #endif
+        }
+
+        internal static string NormalizeGroupsPattern(string pattern)
+        {
+            return pattern.Replace("?P<", "?<");
         }
 
         public bool IsMatch(string input, string pattern, RegexOptions options = RegexDefaults.DefaultOptionsCaseSensitive, TimeSpan timeout = default, string captureGroup = null)

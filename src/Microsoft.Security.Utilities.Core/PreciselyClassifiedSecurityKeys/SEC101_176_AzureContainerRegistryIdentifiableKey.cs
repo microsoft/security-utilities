@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Security.Utilities
 {
@@ -19,10 +20,20 @@ namespace Microsoft.Security.Utilities
 
         public override string Pattern
         {
-            get => @$"{WellKnownRegexPatterns.PrefixAllBase64}(?<refine>[{WellKnownRegexPatterns.Base64}]{{42}}{RegexNormalizedSignature}[A-D][{WellKnownRegexPatterns.Base64}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}";
+            get => @$"{WellKnownRegexPatterns.PrefixAllBase64}(?P<refine>[{WellKnownRegexPatterns.Base64}]{{42}}{RegexNormalizedSignature}[A-D][{WellKnownRegexPatterns.Base64}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}";
             protected set => base.Pattern = value;
         }
 
         override public uint KeyLength => 39;
+
+#if HIGH_PERFORMANCE_CODEGEN
+        private protected override IEnumerable<HighPerformancePattern> HighPerformancePatterns => [
+            new(Signature,
+                MakeHighPerformancePattern(Pattern, Signature),
+                signaturePrefixLength: 42,
+                minMatchLength:52,
+                maxMatchLength: 52)
+        ];
+#endif
     }
 }

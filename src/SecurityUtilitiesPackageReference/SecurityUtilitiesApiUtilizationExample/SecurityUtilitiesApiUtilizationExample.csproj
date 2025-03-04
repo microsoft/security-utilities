@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-	  <TargetFrameworks>net8.0;net461</TargetFrameworks>
-	  <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <TargetFrameworks>net8.0;net9.0;net472</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0;net9.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

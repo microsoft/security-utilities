@@ -15,7 +15,7 @@ internal sealed class Azure64ByteIdentifiableKeys : RegexPattern
     public Azure64ByteIdentifiableKeys()
     {
         Pattern = $@"{WellKnownRegexPatterns.PrefixAllBase64}" +
-                  $@"(?<refine>[{WellKnownRegexPatterns.Base64}]{{76}}(APIM|ACDb|\+(ABa|AMC|ASt))[{WellKnownRegexPatterns.Base64}]{{5}}[AQgw]==)" +
+                  $@"(?P<refine>[{WellKnownRegexPatterns.Base64}]{{76}}(APIM|ACDb|\+(ABa|AMC|ASt))[{WellKnownRegexPatterns.Base64}]{{5}}[AQgw]==)" +
                   $@"{WellKnownRegexPatterns.SuffixAllBase64}";
 
         RotationPeriod = TimeSpan.FromDays(365 * 2);

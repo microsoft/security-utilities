@@ -355,4 +355,52 @@ public class RegexPattern
     public DetectionMetadata DetectionMetadata { get; protected set; }
 
     public bool ShouldSerializeRotationPeriod() => false;
+
+#if HIGH_PERFORMANCE_CODEGEN
+    // TODO: Refactor to eliminate string manipulation: https://github.com/microsoft/security-utilities/issues/151
+    /// <summary>
+    /// Converts a standard pattern to one that can be used with <see cref="HighPerformanceScanner"/>.
+    ///
+    /// - Delimiting prefixes and suffixes are stripped.
+    /// - Refine capture group is removed. 
+    /// - Signature is replaced with a wildcard of the same length so that the pattern can be shared.
+    /// - Uppercase, lowercase, and digit character classes are simplified to ranges.
+    /// - The pattern is anchored to the start of the input.
+    /// <returns>
+    private protected static string MakeHighPerformancePattern(string pattern, string signature)
+    {
+        string regexNormalizedSignature = Regex.Escape(signature);
+
+        foreach (var prefix in WellKnownRegexPatterns.AllPrefixes)
+        {
+            if (pattern.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                pattern = pattern.Substring(prefix.Length);
+                break;
+            }
+        }
+
+        foreach (var suffix in WellKnownRegexPatterns.AllSuffixes)
+        {
+            if (pattern.EndsWith(suffix, StringComparison.Ordinal))
+            {
+                pattern = pattern.Substring(0, pattern.Length - suffix.Length);
+                break;
+            }
+        }
+
+        const string refineStart = "(?<refine>";
+        if (pattern.StartsWith(refineStart))
+        {
+            pattern = pattern.Substring(refineStart.Length, pattern.Length - refineStart.Length - 1);
+        }
+
+        pattern = pattern.Replace(WellKnownRegexPatterns.Uppercase, "A-Z");
+        pattern = pattern.Replace(WellKnownRegexPatterns.Lowercase, "a-z");
+        pattern = pattern.Replace(WellKnownRegexPatterns.Digit, "0-9");
+        pattern = pattern.Replace(regexNormalizedSignature, $".{{{signature.Length}}}");
+
+        return "^" + pattern;
+    }
+#endif
 }

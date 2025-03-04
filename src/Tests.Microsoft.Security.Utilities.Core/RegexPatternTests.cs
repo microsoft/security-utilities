@@ -383,7 +383,7 @@ public class RegexPatternTests
     public void RegexPatterns_GetDetections_Returns_RefinedDetection()
     {
         // Arrange
-        var secret = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "a(?<refine>b)c");
+        var secret = new RegexPattern(Id, Name, DetectionMetadata.Identifiable, "a(?P<refine>b)c");
         var input = "abc";
         var match = "b";
 

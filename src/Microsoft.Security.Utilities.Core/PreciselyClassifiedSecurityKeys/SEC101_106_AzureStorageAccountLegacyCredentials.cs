@@ -14,7 +14,7 @@ namespace Microsoft.Security.Utilities
             Id = "SEC101/106";
             Name = nameof(AzureStorageAccountLegacyCredentials);
             DetectionMetadata = DetectionMetadata.HighEntropy;
-            Pattern = "(?i)(?:AccountName|StorageName|StorageAccount)\\s*=.+(?:Account|Storage)Key\\s*=\\s*(?<refine>[0-9a-z\\\\\\/+]{86}==)(?:[^=]|$)";
+            Pattern = "(?i)(?:AccountName|StorageName|StorageAccount)\\s*=.+(?:Account|Storage)Key\\s*=\\s*(?P<refine>[0-9a-z\\\\\\/+]{86}==)(?:[^=]|$)";
         }
 
         public override Tuple<string, string> GetMatchIdAndName(string match)

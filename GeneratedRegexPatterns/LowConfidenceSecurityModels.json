@@ -1,17 +1,10 @@
 [
   {
-    "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+/=]|$)",
+    "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?P<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+/=]|$)",
     "Id": "SEC101/061",
     "Name": "OAuth2BearerToken",
     "Signatures": null,
     "DetectionMetadata": "LowConfidence"
-  },
-  {
-    "Pattern": "(?i)[a-z0-9.=\\-:[_@\\/*\\]+?]{32}$",
-    "Id": "SEC000/003",
-    "Name": "Unclassified32CharacterString",
-    "Signatures": null,
-    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
   },
   {
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=",

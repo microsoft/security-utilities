@@ -14,7 +14,7 @@ namespace Microsoft.Security.Utilities
             DetectionMetadata = DetectionMetadata.LowConfidence;
 
             // https://datatracker.ietf.org/doc/html/rfc6750#section-2.1
-            Pattern = @$"(?i)authorization:(\s|%20)bearer(\s|%20)(?<refine>[0-9a-z][{WellKnownRegexPatterns.UrlUnreserved}+\/=]*)([^{WellKnownRegexPatterns.UrlUnreserved}+/=]|$)";
+            Pattern = @$"(?i)authorization:(\s|%20)bearer(\s|%20)(?P<refine>[0-9a-z][{WellKnownRegexPatterns.UrlUnreserved}+\/=]*)([^{WellKnownRegexPatterns.UrlUnreserved}+/=]|$)";
         }
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
