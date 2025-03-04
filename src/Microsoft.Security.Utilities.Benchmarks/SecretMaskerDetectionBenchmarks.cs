@@ -12,16 +12,16 @@ namespace Microsoft.Security.Utilities.Benchmarks
         // hit less concentrated in the profiling.
         private const int SecretPrefixSize = 100 * 1024;
 
-        private readonly List<string> _randomExamples;
-        private readonly List<string> _nonRandomExamples;
+        protected List<string> RandomExamples { get; }
+        protected List<string> NonRandomExamples { get; }
 
         // Use a fixed seed to ensure different runs use the same data.
         private readonly Random rng = new Random(Seed: 42);
 
         protected SecretMaskerDetectionBenchmarks()
         {
-            _randomExamples = GenerateExamples(random: true);
-            _nonRandomExamples = GenerateExamples(random: false);
+            RandomExamples = GenerateExamples(random: true);
+            NonRandomExamples = GenerateExamples(random: false);
         }
 
         private string GeneratePrefix(int size, bool random)
@@ -81,7 +81,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
             var masker = new IdentifiableScan(RegexPatterns,
                                               GenerateCorrelatingIds);
 
-            ScanTestExamples(masker, _randomExamples);
+            ScanTestExamples(masker, RandomExamples);
         }
 
         [Benchmark]
@@ -90,7 +90,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
             var masker = new IdentifiableScan(RegexPatterns,
                                               GenerateCorrelatingIds);
 
-            ScanTestExamples(masker, _nonRandomExamples);
+            ScanTestExamples(masker, NonRandomExamples);
         }
 
         [Benchmark]
@@ -100,7 +100,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
                                           GenerateCorrelatingIds,
                                           CachedDotNetRegex.Instance);
 
-            ScanTestExamples(masker, _randomExamples);
+            ScanTestExamples(masker, RandomExamples);
         }
 
         [Benchmark]
@@ -110,7 +110,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
                                           GenerateCorrelatingIds,
                                           CachedDotNetRegex.Instance);
 
-            ScanTestExamples(masker, _nonRandomExamples);
+            ScanTestExamples(masker, NonRandomExamples);
         }
 
         [Benchmark]
@@ -120,7 +120,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
                                           GenerateCorrelatingIds,
                                           RE2RegexEngine.Instance);
 
-            ScanTestExamples(masker, _randomExamples);
+            ScanTestExamples(masker, RandomExamples);
         }
 
         [Benchmark]
@@ -130,7 +130,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
                                           GenerateCorrelatingIds,
                                           RE2RegexEngine.Instance);
 
-            ScanTestExamples(masker, _nonRandomExamples);
+            ScanTestExamples(masker, NonRandomExamples);
         }
 
         private void ScanTestExamples(ISecretMasker masker, List<string> examples)
