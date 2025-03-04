@@ -81,9 +81,13 @@ namespace Microsoft.Security.Utilities
 
             var patterns = new List<RegexPattern>();
 
+            /*
             patterns.AddRange(WellKnownRegexPatterns.DataClassification);
             patterns.AddRange(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys);
             patterns.AddRange(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys);
+            */
+
+            patterns.Add(new AzureFunctionIdentifiableKey());
 
             var masker = new SecretMasker(patterns,
                                           generateCorrelatingIds: true,
@@ -303,6 +307,10 @@ namespace Microsoft.Security.Utilities
 
                     groupNames.Length.Should().Be(1, because: $"Pattern '{pattern.GetType().Name}' should not have more than one capture group");
                     groupNames[0].Should().Be("refine", because: $"Pattern '{pattern.GetType().Name}' capture group should be named 'refine'");
+
+                    pattern.Pattern.Should()
+                        .Contain("(?P<refine>", 
+                                 because: $"Pattern '{pattern.GetType().Name}' should contain an RE2-compatible '(?P<refine>...)' named capture group");
                 }
             }
         }

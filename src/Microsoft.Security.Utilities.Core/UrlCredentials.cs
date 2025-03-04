@@ -14,7 +14,7 @@ public sealed class UrlCredentials : RegexPattern
 
         Name = nameof(UrlCredentials);
 
-        Pattern = @"($|\b)(ftps?|https?):\/\/(?<refine>[^:@\/]+:[^:@?\/]+)@";
+        Pattern = @"($|\b)(ftps?|https?):\/\/(?P<refine>[^:@\/]+:[^:@?\/]+)@";
 
         DetectionMetadata = DetectionMetadata.MediumConfidence;
 

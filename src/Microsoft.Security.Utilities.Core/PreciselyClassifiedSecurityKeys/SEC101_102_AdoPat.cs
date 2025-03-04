@@ -14,7 +14,7 @@ namespace Microsoft.Security.Utilities
             Id = "SEC101/102";
             Name = nameof(AdoLegacyPat);
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.EmbeddedChecksum;
-            Pattern = "(?:[^2-7a-z]|^)(?<refine>[2-7a-z]{52})(?:[^2-7a-z]|$)";
+            Pattern = "(?:[^2-7a-z]|^)(?P<refine>[2-7a-z]{52})(?:[^2-7a-z]|$)";
         }
 
         public override Tuple<string, string> GetMatchIdAndName(string match)

@@ -12,7 +12,7 @@ namespace Microsoft.Security.Utilities
             Id = "SEC101/156";
             Name = "AadClientAppIdentifiableCredentials";
             DetectionMetadata = DetectionMetadata.Identifiable;
-            Pattern = $"{WellKnownRegexPatterns.PrefixUrlUnreserved}(?<refine>[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{3}}(7|8)Q~[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{31,34}}){WellKnownRegexPatterns.SuffixUrlUnreserved}";
+            Pattern = $"{WellKnownRegexPatterns.PrefixUrlUnreserved}(?P<refine>[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{3}}(7|8)Q~[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{31,34}}){WellKnownRegexPatterns.SuffixUrlUnreserved}";
             Signatures = new HashSet<string>(new[] { "8Q~", "7Q~" });
         }
 

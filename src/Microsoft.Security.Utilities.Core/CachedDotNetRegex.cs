@@ -27,12 +27,24 @@ namespace Microsoft.Security.Utilities
 
         public static Regex GetOrCreateRegex(string pattern, RegexOptions options)
         {
+            pattern = NormalizeGroupsPattern(pattern);
+
             var key = (pattern, options);
 #if NET7_0_OR_GREATER
             return RegexCache.GetOrAdd(key, key => new Regex(key.Pattern, key.Options | RegexOptions.Compiled | RegexOptions.NonBacktracking));
 #else
             return RegexCache.GetOrAdd(key, key => new Regex(key.Pattern, key.Options | RegexOptions.Compiled));
 #endif
+        }
+
+        internal static string NormalizeGroupsPattern(string pattern)
+        {
+            if (pattern.IndexOf("?P<") != -1)
+            {
+                return pattern.Replace("?P<", "?<");
+            }
+
+            return pattern;
         }
 
         public bool IsMatch(string input, string pattern, RegexOptions options = RegexDefaults.DefaultOptionsCaseSensitive, TimeSpan timeout = default, string captureGroup = null)

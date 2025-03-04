@@ -22,7 +22,7 @@ namespace Microsoft.Security.Utilities
 
         public override string Pattern
         {
-            get => @$"{WellKnownRegexPatterns.PrefixAllBase64}(?<refine>[{WellKnownRegexPatterns.Base62}]{{42}}{Signatures!.First()}[A-D][{WellKnownRegexPatterns.Base62}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}";
+            get => @$"{WellKnownRegexPatterns.PrefixAllBase64}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{42}}{Signatures!.First()}[A-D][{WellKnownRegexPatterns.Base62}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}";
             protected set => base.Pattern = value;
         }
 
