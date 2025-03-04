@@ -54,15 +54,12 @@ internal sealed partial class CompiledHighPerformancePattern
     /// not run on the entire input but only on a substring determined by <see
     /// cref="SignaturePrefixLength"/> and <see cref="MaxMatchLength"/>.
     ///
-    /// Example: Let S be a signature character, X be a character--xpected to
-    /// match before the signature, Y be a character expected to match after the
-    /// signature, and Z be an optional character at the end of the signature.
-    ///
     /// The regex must also be anchored to the beginning of the input.
     ///
     /// The regex may assume that the signature is present at the expected
     /// location. This can allow regexes to be shared that would differ only by
-    /// signature. </remarks
+    /// signature.
+    /// </remarks>
     public Regex ScopedRegex { get; }
 
     /// <summary>
@@ -120,10 +117,10 @@ internal sealed partial class CompiledHighPerformancePattern
 
 
     public CompiledHighPerformancePattern(string signature,
-                                           int signaturePrefixLength,
-                                           int minMatchLength,
-                                           int maxMatchLength,
-                                           Regex scopedRegex)
+                                          int signaturePrefixLength,
+                                          int minMatchLength,
+                                          int maxMatchLength,
+                                          Regex scopedRegex)
     {
 #if HIGH_PERFORMANCE_CODEGEN // This validation happens at compile time and needn't be repeated at runtime.
         if (!scopedRegex.ToString().StartsWith("^"))
