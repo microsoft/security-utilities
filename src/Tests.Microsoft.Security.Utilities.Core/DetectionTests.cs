@@ -208,13 +208,13 @@ namespace Tests.Microsoft.Security.Utilities
             previousDetection = new Detection(currentDetection);
             Assert.AreEqual(currentDetection, previousDetection);
 
-            currentDetection.Start = Math.Max(1, (int)DateTime.UtcNow.Ticks % 99);
+            currentDetection.Start++;
             Assert.AreNotEqual(currentDetection, previousDetection);
 
             previousDetection = new Detection(currentDetection);
             Assert.AreEqual(currentDetection, previousDetection);
 
-            currentDetection.Length = Math.Max(1, (int)DateTime.UtcNow.Ticks % 99);
+            currentDetection.Length++;
             Assert.AreNotEqual(currentDetection, previousDetection);
 
             previousDetection = new Detection(currentDetection);
@@ -226,7 +226,7 @@ namespace Tests.Microsoft.Security.Utilities
             previousDetection = new Detection(currentDetection);
             Assert.AreEqual(currentDetection, previousDetection);
 
-            currentDetection.RotationPeriod = TimeSpan.FromSeconds(DateTime.UtcNow.Second);
+            currentDetection.RotationPeriod = TimeSpan.FromSeconds(currentDetection.RotationPeriod.TotalSeconds + 1);
             Assert.AreNotEqual(currentDetection, previousDetection);
 
             previousDetection = new Detection(currentDetection);
