@@ -81,13 +81,7 @@ namespace Microsoft.Security.Utilities
         {
             using var assertionScope = new AssertionScope();
 
-            var patterns = new List<RegexPattern>();
-            
-            patterns.AddRange(WellKnownRegexPatterns.DataClassification);
-            patterns.AddRange(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys);
-            patterns.AddRange(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys);            
-
-            patterns.Add(new AzureFunctionIdentifiableKey());
+            var patterns = GetAllPatterns()
 
             var masker = new SecretMasker(patterns,
                                           generateCorrelatingIds: true,
