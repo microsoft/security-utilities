@@ -11,8 +11,9 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# UNRELEASED
-
+# 1.16.0 - 03/05/2025
+- BRK: Eliminate `SEC000/101.Unclassified32CharacterString` as noisy and not useful.
+- BRK: Rename `SEC101/102.AdoPat` friendly name to `AdoLegacyPat`.
 - BRK: `IdentifiableScan` no longer supports stream input. The following API are removed. Use `IdentifiableScan.DetectSecrets(string)`.
   -  `IdentifiableScan.DetectSecrets(Stream)`
   -  `IdentifiableScan.Start`
@@ -22,6 +23,9 @@
   -  `IdentifiableScan.CheckPossibleMatchRange`
 - PRF: `IdentifiableScan` did not use high-performance scanning techniques for `SEC101/178.AzureIotHubIdentifiableKey` and `SEC101/200.CommonAnnotatedSecurityKey`. A bug triggered fallback to slower scanning due to incorrect signatures being used.
 - PRF: `IdentifiableScan` now implements high-performance scanning techniques in managed code. The performance has been found to be significantly better than the prior implementation via rust interop. This also reduces the size of the NuGet package size by a factor of 34 from 6.8 MB to 200 KB and adds support for non x86/x64 CPUs and non-Windows OSes.
+- BUG: Correct `SEC000/002.Unclassified16ByteHexadecimalString` id and rule name  on calling `GetMatchIdAndName` (where `SEC000/001.Unclassified64ByteBase64String` was returned incorrectly before).
+- BUG: Resolve `System.FormatException: The input is not a valid Base-46 string` errors calling `SEC101/102.AdoPat.GetMatchIdAndName` by swallowing correct exception kind `ArgumentException` in `IsChecksumValid` helper.
+- BUG: `?P<name>` is now used throughout for named captures as this is required currently for RE2 compatibility.
 
 # 1.15.0 - 03/03/2025
 - BRK: Regular expression syntax has been standardized in JSON to conform to how the overwhelming majority of patterns were already defined.

@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Security.Utilities.Core\Microsoft.Security.Utilities.Core.csproj" />
+    <ProjectReference Include="..\Tests.Microsoft.Security.Utilities.Core\Tests.Microsoft.Security.Utilities.Core.csproj" />
   </ItemGroup>
   
 </Project>

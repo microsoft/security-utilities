@@ -22,7 +22,7 @@ internal sealed class Unclassified16ByteHexadecimalString : RegexPattern
         DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.Unclassified | DetectionMetadata.LowConfidence;
     }
 
-    public override Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>("SEC000/001", "Unclassified64ByteBase64String");
+    public override Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>("SEC000/002", nameof(Unclassified16ByteHexadecimalString));
 
     public override IEnumerable<string> GenerateTruePositiveExamples()
     {

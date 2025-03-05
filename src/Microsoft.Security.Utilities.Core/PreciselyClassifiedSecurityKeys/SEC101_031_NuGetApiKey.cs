@@ -19,7 +19,7 @@ namespace Microsoft.Security.Utilities
 
             // This is the ApiKeyV4 format implemented here:
             // https://github.com/NuGet/NuGetGallery/blob/main/src/NuGetGallery.Services/Authentication/ApiKeyV4.cs
-            Pattern = "(?i)(^|[^a-z0-9])(?<refine>oy2[a-z2-7]{43})([^a-z0-9]|$)";
+            Pattern = "(?i)(^|[^a-z0-9])(?P<refine>oy2[a-z2-7]{43})([^a-z0-9]|$)";
 
             Signatures = new HashSet<string>(new[] { "oy2", "OY2" });
         }

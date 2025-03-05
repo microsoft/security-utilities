@@ -389,7 +389,7 @@ public class RegexPattern
             }
         }
 
-        const string refineStart = "(?<refine>";
+        const string refineStart = "(?P<refine>";
         if (pattern.StartsWith(refineStart))
         {
             pattern = pattern.Substring(refineStart.Length, pattern.Length - refineStart.Length - 1);
