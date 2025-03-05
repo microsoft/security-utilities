@@ -81,7 +81,7 @@ namespace Microsoft.Security.Utilities
         {
             using var assertionScope = new AssertionScope();
 
-            var patterns = GetAllPatterns()
+            var patterns = GetAllPatterns();
 
             var masker = new SecretMasker(patterns,
                                           generateCorrelatingIds: true,
