@@ -35,7 +35,11 @@ namespace Microsoft.Security.Utilities
             }
             else
             {
-                if (Regex2.Matches(pattern, input, out List<Dictionary<string, FlexMatch>> matches, 256L * 1024L * 1024L))
+                // This value is to set a limit on memory used for its (deterministic) DFA caching.
+                // When a specific regex evaluation exceeds this limit, the regex engine will
+                // fall back to a non-deterministic approach with some unmeasured perf impact.
+                int maxMemoryInBytes = 256 * 1024 * 1024; // 256MB
+                if (Regex2.Matches(pattern, input, out List<Dictionary<string, FlexMatch>> matches, maxMemoryInBytes))
                 {
                     foreach (Dictionary<string, FlexMatch> match in matches)
                     {
