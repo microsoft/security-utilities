@@ -18,7 +18,7 @@ namespace Microsoft.Security.Utilities
 #else
         public const RegexOptions RegexOptionsDefaults = RegexOptions.ExplicitCapture | RegexOptions.Compiled | RegexOptions.CultureInvariant;
 #endif
-        public IEnumerable<UniversalMatch> Matches(string input, string pattern, RegexOptions options = RegexOptionsDefaults, TimeSpan timeout = default, string? captureGroup = null)
+        public IEnumerable<UniversalMatch> Matches(string input, string pattern, RegexOptions options = RegexOptionsDefaults, TimeSpan timeout = default, string captureGroup = null)
         {
             if (captureGroup == null)
             {
