@@ -25,7 +25,7 @@
 - PRF: `IdentifiableScan` now implements high-performance scanning techniques in managed code. The performance has been found to be significantly better than the prior implementation via rust interop. This also reduces the size of the NuGet package size by a factor of 34 from 6.8 MB to 200 KB and adds support for non x86/x64 CPUs and non-Windows OSes.
 - BUG: Correct `SEC000/002.Unclassified16ByteHexadecimalString` id and rule name  on calling `GetMatchIdAndName` (where `SEC000/001.Unclassified64ByteBase64String` was returned incorrectly before).
 - BUG: Resolve `System.FormatException: The input is not a valid Base-46 string` errors calling `SEC101/102.AdoPat.GetMatchIdAndName` by swallowing correct exception kind `ArgumentException` in `IsChecksumValid` helper.
-- BUG: `?P<name>` is now used throughout for named captures as this is required currently for RE2 compatibility. This reverts a clean-up in this area (that broke RE2) in 1.15.0.
+- BUG: `?P<name>` is now used throughout for named captures as this is required currently for RE2 compatibility.
 
 # 1.15.0 - 03/03/2025
 - BRK: Regular expression syntax has been standardized in JSON to conform to how the overwhelming majority of patterns were already defined.
