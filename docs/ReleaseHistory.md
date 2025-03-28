@@ -11,7 +11,10 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# 1.16.0 - 03/05/2025
+# UNRELEASED
+- NEW: Sort properties by name in GeneratedRegexPatterns/*.json.
+
+# 1.16.0 - 03/05/2025/
 - BRK: Eliminate `SEC000/101.Unclassified32CharacterString` as noisy and not useful.
 - BRK: Rename `SEC101/102.AdoPat` friendly name to `AdoLegacyPat`.
 - BRK: `IdentifiableScan` no longer supports stream input. The following API are removed. Use `IdentifiableScan.DetectSecrets(string)`.

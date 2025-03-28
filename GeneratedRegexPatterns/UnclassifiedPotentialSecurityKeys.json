@@ -1,77 +1,77 @@
 [
   {
-    "Pattern": "(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{23,}\\.e[0-9A-Za-z-_=]{23,}\\.[0-9A-Za-z-_=]{24,}(?:[^0-9A-Za-z-_]|$)",
+    "DetectionMetadata": "HighEntropy, MediumConfidence",
     "Id": "SEC101/528",
     "Name": "GenericJwt",
+    "Pattern": "(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{23,}\\.e[0-9A-Za-z-_=]{23,}\\.[0-9A-Za-z-_=]{24,}(?:[^0-9A-Za-z-_]|$)",
     "Signatures": [
       "eyJ",
       "eyAi",
       "ewog"
-    ],
-    "DetectionMetadata": "HighEntropy, MediumConfidence"
+    ]
   },
   {
-    "Pattern": "($|\\b)(ftps?|https?):\\/\\/(?P<refine>[^:@\\/]+:[^:@?\\/]+)@",
+    "DetectionMetadata": "MediumConfidence",
     "Id": "SEC101/127",
     "Name": "UrlCredentials",
+    "Pattern": "($|\\b)(ftps?|https?):\\/\\/(?P<refine>[^:@\\/]+:[^:@?\\/]+)@",
     "Signatures": [
       "ftp",
       "http"
-    ],
-    "DetectionMetadata": "MediumConfidence"
+    ]
   },
   {
-    "Pattern": "(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?P<refine>[0-9a-z\\/+%]{43,129}(?:=|%3d))",
+    "DetectionMetadata": "HighEntropy, MediumConfidence",
     "Id": "SEC101/060",
     "Name": "LooseSasSecret",
+    "Pattern": "(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?P<refine>[0-9a-z\\/+%]{43,129}(?:=|%3d))",
     "Signatures": [
       "sig=",
       "ret="
-    ],
-    "DetectionMetadata": "HighEntropy, MediumConfidence"
+    ]
   },
   {
-    "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?P<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+/=]|$)",
+    "DetectionMetadata": "LowConfidence",
     "Id": "SEC101/061",
     "Name": "OAuth2BearerToken",
-    "Signatures": null,
-    "DetectionMetadata": "LowConfidence"
+    "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?P<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+/=]|$)",
+    "Signatures": null
   },
   {
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=",
+    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Id": "SEC000/000",
     "Name": "Unclassified32ByteBase64String",
-    "Signatures": null,
-    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=",
+    "Signatures": null
   },
   {
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==",
+    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Id": "SEC000/001",
     "Name": "Unclassified64ByteBase64String",
-    "Signatures": null,
-    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==",
+    "Signatures": null
   },
   {
-    "Pattern": "^[~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{34}$",
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy, LowConfidence",
     "Id": "SEC101/101",
     "Name": "AadClientAppLegacyCredentials",
-    "Signatures": null,
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy, LowConfidence"
+    "Pattern": "^[~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{34}$",
+    "Signatures": null
   },
   {
-    "Pattern": "MI[I-L][0-9a-zA-Z\\/+]{2}[AQgw]IBAzCC",
+    "DetectionMetadata": "MediumConfidence",
     "Id": "SEC101/055",
     "Name": "Pkcs12CertificatePrivateKeyBundle",
+    "Pattern": "MI[I-L][0-9a-zA-Z\\/+]{2}[AQgw]IBAzCC",
     "Signatures": [
       "IBAzCC"
-    ],
-    "DetectionMetadata": "MediumConfidence"
+    ]
   },
   {
-    "Pattern": "(^|[^1234567890abcdef])[1234567890abcdef]{32}([^1234567890abcdef]|$)",
+    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Id": "SEC000/002",
     "Name": "Unclassified16ByteHexadecimalString",
-    "Signatures": null,
-    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
+    "Pattern": "(^|[^1234567890abcdef])[1234567890abcdef]{32}([^1234567890abcdef]|$)",
+    "Signatures": null
   }
 ]

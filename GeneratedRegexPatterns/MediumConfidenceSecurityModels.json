@@ -1,51 +1,51 @@
 [
   {
-    "Pattern": "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)",
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy, MediumConfidence",
     "Id": "SEC101/105",
     "Name": "AzureMessageLegacyCredentials",
+    "Pattern": "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)",
     "Signatures": [
       ".servicebus"
-    ],
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy, MediumConfidence"
+    ]
   },
   {
-    "Pattern": "(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{23,}\\.e[0-9A-Za-z-_=]{23,}\\.[0-9A-Za-z-_=]{24,}(?:[^0-9A-Za-z-_]|$)",
+    "DetectionMetadata": "HighEntropy, MediumConfidence",
     "Id": "SEC101/528",
     "Name": "GenericJwt",
+    "Pattern": "(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{23,}\\.e[0-9A-Za-z-_=]{23,}\\.[0-9A-Za-z-_=]{24,}(?:[^0-9A-Za-z-_]|$)",
     "Signatures": [
       "eyJ",
       "eyAi",
       "ewog"
-    ],
-    "DetectionMetadata": "HighEntropy, MediumConfidence"
+    ]
   },
   {
-    "Pattern": "($|\\b)(ftps?|https?):\\/\\/(?P<refine>[^:@\\/]+:[^:@?\\/]+)@",
+    "DetectionMetadata": "MediumConfidence",
     "Id": "SEC101/127",
     "Name": "UrlCredentials",
+    "Pattern": "($|\\b)(ftps?|https?):\\/\\/(?P<refine>[^:@\\/]+:[^:@?\\/]+)@",
     "Signatures": [
       "ftp",
       "http"
-    ],
-    "DetectionMetadata": "MediumConfidence"
+    ]
   },
   {
-    "Pattern": "(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?P<refine>[0-9a-z\\/+%]{43,129}(?:=|%3d))",
+    "DetectionMetadata": "HighEntropy, MediumConfidence",
     "Id": "SEC101/060",
     "Name": "LooseSasSecret",
+    "Pattern": "(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?P<refine>[0-9a-z\\/+%]{43,129}(?:=|%3d))",
     "Signatures": [
       "sig=",
       "ret="
-    ],
-    "DetectionMetadata": "HighEntropy, MediumConfidence"
+    ]
   },
   {
-    "Pattern": "MI[I-L][0-9a-zA-Z\\/+]{2}[AQgw]IBAzCC",
+    "DetectionMetadata": "MediumConfidence",
     "Id": "SEC101/055",
     "Name": "Pkcs12CertificatePrivateKeyBundle",
+    "Pattern": "MI[I-L][0-9a-zA-Z\\/+]{2}[AQgw]IBAzCC",
     "Signatures": [
       "IBAzCC"
-    ],
-    "DetectionMetadata": "MediumConfidence"
+    ]
   }
 ]
