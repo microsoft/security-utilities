@@ -11,8 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/167";
             Name = nameof(AzureSearchIdentifiableAdminKey);
+            ChecksumSeeds = new[] { IdentifiableMetadata.AzureSearchAdminKeyChecksumSeed };
         }
-
-        public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureSearchAdminKeyChecksumSeed };
     }
 }

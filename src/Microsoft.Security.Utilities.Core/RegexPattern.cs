@@ -304,7 +304,7 @@ public class RegexPattern
 
     public virtual Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>(Id, Name);
 
-    public virtual string Pattern { get; protected set; }
+    public string Pattern { get; protected set; }
 
 #if NET7_0_OR_GREATER
     protected const RegexOptions DefaultRegexOptions = RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.NonBacktracking;
@@ -322,7 +322,7 @@ public class RegexPattern
     /// </summary>
     public string Name { get; protected set; }
 
-    public TimeSpan RotationPeriod { get; set; }
+    public TimeSpan RotationPeriod { get; protected set; }
 
     /// <summary>
     /// Gets or sets one or more regular expression options.
@@ -342,7 +342,7 @@ public class RegexPattern
     /// performance as these calls are typically much faster than
     /// equivalent regular expressions.
     /// </remarks>
-    public virtual ISet<string>? Signatures { get; protected set; }
+    public ISet<string>? Signatures { get; protected set; }
 
     private readonly Func<string[]>? m_sampleGenerator;
 

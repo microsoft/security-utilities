@@ -30,7 +30,6 @@
     "KeyLength": 40,
     "Name": "AzureFunctionIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{44}AzFu[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]|$)",
-    "RegexNormalizedSignature": "AzFu",
     "Signatures": [
       "AzFu"
     ]
@@ -45,7 +44,6 @@
     "KeyLength": 39,
     "Name": "AzureSearchIdentifiableQueryKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "AzSe",
     "Signatures": [
       "AzSe"
     ]
@@ -60,7 +58,6 @@
     "KeyLength": 39,
     "Name": "AzureSearchIdentifiableAdminKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "AzSe",
     "Signatures": [
       "AzSe"
     ]
@@ -77,7 +74,6 @@
     "KeyLength": 32,
     "Name": "AzureRelayIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+ARm[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "\\+ARm",
     "Signatures": [
       "+ARm"
     ]
@@ -94,7 +90,6 @@
     "KeyLength": 32,
     "Name": "AzureEventHubIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+AEh[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "\\+AEh",
     "Signatures": [
       "+AEh"
     ]
@@ -111,7 +106,6 @@
     "KeyLength": 32,
     "Name": "AzureServiceBusIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+ASb[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "\\+ASb",
     "Signatures": [
       "+ASb"
     ]
@@ -126,7 +120,6 @@
     "KeyLength": 32,
     "Name": "AzureIotHubIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AIoT[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "AIoT",
     "Signatures": [
       "AIoT"
     ]
@@ -141,7 +134,6 @@
     "KeyLength": 32,
     "Name": "AzureIotDeviceIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AIoT[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "AIoT",
     "Signatures": [
       "AIoT"
     ]
@@ -156,7 +148,6 @@
     "KeyLength": 32,
     "Name": "AzureIotDeviceProvisioningIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AIoT[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "AIoT",
     "Signatures": [
       "AIoT"
     ]
@@ -171,7 +162,6 @@
     "KeyLength": 64,
     "Name": "AzureStorageAccountIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}\\+ASt[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "\\+ASt",
     "Signatures": [
       "+ASt"
     ]
@@ -192,7 +182,6 @@
     "KeyLength": 64,
     "Name": "AzureCosmosDBIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}ACDb[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "ACDb",
     "Signatures": [
       "ACDb"
     ]
@@ -207,7 +196,6 @@
     "KeyLength": 64,
     "Name": "AzureBatchIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}\\+ABa[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "\\+ABa",
     "Signatures": [
       "+ABa"
     ]
@@ -222,7 +210,6 @@
     "KeyLength": 64,
     "Name": "AzureMLWebServiceClassicIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}\\+AMC[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "\\+AMC",
     "Signatures": [
       "+AMC"
     ]
@@ -237,7 +224,6 @@
     "KeyLength": 64,
     "Name": "AzureApimIdentifiableDirectManagementKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "APIM",
     "Signatures": [
       "APIM"
     ]
@@ -252,7 +238,6 @@
     "KeyLength": 64,
     "Name": "AzureApimIdentifiableSubscriptionKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "APIM",
     "Signatures": [
       "APIM"
     ]
@@ -267,7 +252,6 @@
     "KeyLength": 64,
     "Name": "AzureApimIdentifiableGatewayKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "APIM",
     "Signatures": [
       "APIM"
     ]
@@ -282,7 +266,6 @@
     "KeyLength": 64,
     "Name": "AzureApimIdentifiableRepositoryKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "APIM",
     "Signatures": [
       "APIM"
     ]
@@ -297,7 +280,6 @@
     "KeyLength": 32,
     "Name": "AzureCacheForRedisIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AzCa[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "AzCa",
     "Signatures": [
       "AzCa"
     ]
@@ -312,7 +294,6 @@
     "KeyLength": 39,
     "Name": "AzureContainerRegistryIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{42}\\+ACR[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "\\+ACR",
     "Signatures": [
       "+ACR"
     ]
@@ -346,7 +327,6 @@
     "KeyLength": 32,
     "Name": "AzureEventGridIdentifiableKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AZEG[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
-    "RegexNormalizedSignature": "AZEG",
     "Signatures": [
       "AZEG"
     ]

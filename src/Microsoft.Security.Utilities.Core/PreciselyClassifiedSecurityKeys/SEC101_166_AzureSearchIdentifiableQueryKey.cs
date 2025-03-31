@@ -2,29 +2,21 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities
 {
     public class AzureSearchIdentifiableQueryKey : IdentifiableKey
     {
-        public AzureSearchIdentifiableQueryKey()
+        public AzureSearchIdentifiableQueryKey() : base(IdentifiableMetadata.AzureSearchSignature)
         {
             Id = "SEC101/166";
             Name = nameof(AzureSearchIdentifiableQueryKey);
+            ChecksumSeeds = new[] { IdentifiableMetadata.AzureSearchQueryKeyChecksumSeed };
+            Pattern = @$"{WellKnownRegexPatterns.PrefixAllBase64}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{42}}{Regex.Escape(Signature)}[A-D][{WellKnownRegexPatterns.Base62}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}";
         }
 
         public override bool EncodeForUrl => true;
-
-        override public ISet<string> Signatures => IdentifiableMetadata.AzureSearchSignature.ToSet();
-
-        override public IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureSearchQueryKeyChecksumSeed };
-
-        public override string Pattern
-        {
-            get => @$"{WellKnownRegexPatterns.PrefixAllBase64}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{42}}{Signatures!.First()}[A-D][{WellKnownRegexPatterns.Base62}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}";
-            protected set => base.Pattern = value;
-        }
 
         override public uint KeyLength => 39;
 

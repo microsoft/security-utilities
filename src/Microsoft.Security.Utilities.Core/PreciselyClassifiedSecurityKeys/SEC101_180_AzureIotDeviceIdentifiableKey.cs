@@ -7,14 +7,11 @@ namespace Microsoft.Security.Utilities
 {
     public class AzureIotDeviceIdentifiableKey : Azure32ByteIdentifiableKey
     {
-        public AzureIotDeviceIdentifiableKey()
+        public AzureIotDeviceIdentifiableKey() : base(IdentifiableMetadata.AzureIotSignature)
         {
             Id = "SEC101/180";
             Name = nameof(AzureIotDeviceIdentifiableKey);
+            ChecksumSeeds = new[] { IdentifiableMetadata.AzureIotDeviceChecksumSeed };
         }
-
-        public override ISet<string> Signatures => IdentifiableMetadata.AzureIotSignature.ToSet();
-
-        public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureIotDeviceChecksumSeed };
     }
 }

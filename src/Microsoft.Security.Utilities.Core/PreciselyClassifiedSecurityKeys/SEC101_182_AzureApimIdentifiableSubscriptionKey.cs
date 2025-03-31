@@ -7,14 +7,11 @@ namespace Microsoft.Security.Utilities
 {
     public class AzureApimIdentifiableSubscriptionKey : Azure64ByteIdentifiableKey
     {
-        public AzureApimIdentifiableSubscriptionKey()
+        public AzureApimIdentifiableSubscriptionKey() : base(IdentifiableMetadata.AzureApimSignature)
         {
             Id = "SEC101/182";
             Name = nameof(AzureApimIdentifiableSubscriptionKey);
+            ChecksumSeeds = new[] { IdentifiableMetadata.AzureApimSubscriptionChecksumSeed };
         }
-
-        public override ISet<string> Signatures => IdentifiableMetadata.AzureApimSignature.ToSet();
-
-        public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureApimSubscriptionChecksumSeed };
     }
 }

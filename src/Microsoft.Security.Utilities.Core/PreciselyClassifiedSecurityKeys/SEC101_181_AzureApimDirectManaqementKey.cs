@@ -7,14 +7,11 @@ namespace Microsoft.Security.Utilities
 {
     public class AzureApimIdentifiableDirectManagementKey : Azure64ByteIdentifiableKey
     {
-        public AzureApimIdentifiableDirectManagementKey()
+        public AzureApimIdentifiableDirectManagementKey() : base(IdentifiableMetadata.AzureApimSignature)
         {
             Id = "SEC101/181";
             Name = nameof(AzureApimIdentifiableDirectManagementKey);
+            ChecksumSeeds = new[] { IdentifiableMetadata.AzureApimDirectManagementChecksumSeed };
         }
-
-        public override ISet<string> Signatures => IdentifiableMetadata.AzureApimSignature.ToSet();
-
-        public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureApimDirectManagementChecksumSeed };
     }
 }

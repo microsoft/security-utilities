@@ -13,22 +13,22 @@ namespace Microsoft.Security.Utilities
 {
     public abstract class IdentifiableKey : RegexPattern, IIdentifiableKey, IHighPerformanceScannableKey
     {
-        public IdentifiableKey()
+        protected IdentifiableKey(string signature)
         {
             RotationPeriod = TimeSpan.FromDays(365 * 2);
             DetectionMetadata = DetectionMetadata.Identifiable;
+            Signatures = signature.ToSet();
+            ChecksumSeeds = Array.Empty<ulong>();
         }
 
         // Identifiable key patterns must have exactly one signature.
         internal string Signature => Signatures!.Single();
 
-        public string RegexNormalizedSignature => Regex.Escape(Signature);
-
         public virtual uint KeyLength => 32;
 
         public virtual bool EncodeForUrl => false;
 
-        public abstract IEnumerable<ulong> ChecksumSeeds { get; }
+        public IEnumerable<ulong> ChecksumSeeds { get; protected set; }
 
 #if HIGH_PERFORMANCE_CODEGEN
         IEnumerable<HighPerformancePattern> IHighPerformanceScannableKey.HighPerformancePatterns => HighPerformancePatterns;
