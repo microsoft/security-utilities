@@ -4,7 +4,7 @@
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-
+using Newtonsoft.Json.Serialization;
 
 namespace Microsoft.Security.Utilities.Cli
 {
@@ -16,33 +16,48 @@ namespace Microsoft.Security.Utilities.Cli
 
         internal int Run(ExportDetectionsOptions options)
         {
-            string outputDirectory = options.OutputDirectory;
-            string outputFileName;
+            WriteJson(options,
+                      "UnclassifiedPotentialSecurityKeys.json",
+                      WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys);
 
-            outputFileName = Path.Combine(outputDirectory, "PreciselyClassifiedSecurityKeys.json");
-            string json = JsonConvert.SerializeObject(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
-                                                      Formatting.Indented,
-                                                      new StringEnumConverter());
-            File.WriteAllText(outputFileName, json);
-
-            outputFileName = Path.Combine(outputDirectory, "UnclassifiedPotentialSecurityKeys.json");
-            json = JsonConvert.SerializeObject(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
-                                               Formatting.Indented,
-                                               new StringEnumConverter());
-            File.WriteAllText(outputFileName, json);
-
+            WriteJson(options,
+                     "PreciselyClassifiedSecurityKeys.json",
+                      WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys);
 
             foreach (var precision in new[] { DetectionMetadata.HighConfidence, DetectionMetadata.MediumConfidence, DetectionMetadata.LowConfidence })
             {
-                outputFileName = Path.Combine(outputDirectory, $"{precision}SecurityModels.json");
-                json = JsonConvert.SerializeObject(WellKnownRegexPatterns.SecretStoreClassificationDetections
-                    .Where(d => d.DetectionMetadata.HasFlag(precision)),
-                    Formatting.Indented,
-                    new StringEnumConverter());
-                File.WriteAllText(outputFileName, json);
+                WriteJson(options,
+                          $"{precision}SecurityModels.json",
+                          WellKnownRegexPatterns.SecretStoreClassificationDetections
+                         .Where(d => d.DetectionMetadata.HasFlag(precision)));
             }
 
             return 0;
+        }
+
+        private static void WriteJson(ExportDetectionsOptions options, string name, IEnumerable<RegexPattern> patterns)
+        {
+            string outputFileName = Path.Combine(options.OutputDirectory, name);
+
+            var settings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                ContractResolver = new OrderedContractResolver(),
+                Converters = { new StringEnumConverter() },
+            };
+
+            string json = JsonConvert.SerializeObject(patterns, settings);
+            File.WriteAllText(outputFileName, json);
+        }
+
+        private sealed class OrderedContractResolver : DefaultContractResolver
+        {
+            protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+            {
+                return base.CreateProperties(type, memberSerialization)
+                           .OrderBy(p => p.PropertyName, StringComparer.Ordinal)
+                           .ToList();
+            }
         }
     }
 }

@@ -1,37 +1,37 @@
 [
   {
-    "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?P<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+/=]|$)",
+    "DetectionMetadata": "LowConfidence",
     "Id": "SEC101/061",
     "Name": "OAuth2BearerToken",
-    "Signatures": null,
-    "DetectionMetadata": "LowConfidence"
+    "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?P<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+/=]|$)",
+    "Signatures": null
   },
   {
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=",
+    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Id": "SEC000/000",
     "Name": "Unclassified32ByteBase64String",
-    "Signatures": null,
-    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=",
+    "Signatures": null
   },
   {
-    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==",
+    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Id": "SEC000/001",
     "Name": "Unclassified64ByteBase64String",
-    "Signatures": null,
-    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==",
+    "Signatures": null
   },
   {
-    "Pattern": "^[~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{34}$",
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy, LowConfidence",
     "Id": "SEC101/101",
     "Name": "AadClientAppLegacyCredentials",
-    "Signatures": null,
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy, LowConfidence"
+    "Pattern": "^[~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{34}$",
+    "Signatures": null
   },
   {
-    "Pattern": "(^|[^1234567890abcdef])[1234567890abcdef]{32}([^1234567890abcdef]|$)",
+    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Id": "SEC000/002",
     "Name": "Unclassified16ByteHexadecimalString",
-    "Signatures": null,
-    "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence"
+    "Pattern": "(^|[^1234567890abcdef])[1234567890abcdef]{32}([^1234567890abcdef]|$)",
+    "Signatures": null
   }
 ]

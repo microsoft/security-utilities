@@ -11,6 +11,9 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# UNRELEASED
+- NEW: Sort properties by name in GeneratedRegexPatterns/*.json.
+
 # 1.16.0 - 03/05/2025
 - BRK: Eliminate `SEC000/101.Unclassified32CharacterString` as noisy and not useful.
 - BRK: Rename `SEC101/102.AdoPat` friendly name to `AdoLegacyPat`.
