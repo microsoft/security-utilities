@@ -21,7 +21,7 @@
 - NEW: Sort properties by name in GeneratedRegexPatterns/*.json.
 - PRF: Remove unnecessary and expensive recomputation of `RegexPatter.Pattern`, `RegexPattern.Signatures`, and `IdentifiableKey.ChecksumSeeds` on every property access.
 
-# 1.16.0 - 03/05/2025/
+# 1.16.0 - 03/05/2025
 - BRK: Eliminate `SEC000/101.Unclassified32CharacterString` as noisy and not useful.
 - BRK: Rename `SEC101/102.AdoPat` friendly name to `AdoLegacyPat`.
 - BRK: `IdentifiableScan` no longer supports stream input. The following API are removed. Use `IdentifiableScan.DetectSecrets(string)`.
