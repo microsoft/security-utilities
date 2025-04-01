@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -308,7 +307,7 @@ public class RegexPattern
 
     public virtual Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>(Id, Name);
 
-    [DataMember(Order = 5)]
+    [DataMember(Order = 9)]
     public string Pattern { get; protected set; }
 
 #if NET7_0_OR_GREATER
