@@ -20,7 +20,7 @@
 - BRK: `IdentifiableKey.RegexNormalizedSignature` is removed.
 - BRK: Abstract classes `IdentifiableKey`, `Azure32ByteIdentifiableKey`, `Azure64ByteIdentifiableKey`, and `AzureMessagingIdentifiableKey` now require derived classes to pass their signature to the base constructor.
 - BRK: Remove derived `RegexPattern` class properties `ChecksumSeeds`, `EncodeForUrl`, and `KeyLength` as these are not relevant to the literal authoring of equivalent regex patterns in other languages.
-- BRK: Rename `LegacyCommonAnnotatedSecurityKey` to `CommonAnnotatedSecurityKey` and mark this inlined `Microsoft.Security.Utilities.Core` class as internal
+- BRK: Rename `LegacyCommonAnnotatedSecurityKey` to `CommonAnnotatedSecurityKey` and mark this inlined `Microsoft.Security.Utilities` class as internal.
 - NEW: Provide deterministic ordering of properties in GeneratedRegexPatterns/*.json via `DataMember` attributes.
 - PRF: Remove unnecessary and expensive recomputation of `RegexPatter.Pattern`, `RegexPattern.Signatures`, and `IdentifiableKey.ChecksumSeeds` on every property access.
 - RRR: Rename `CommonAnnotatedSecurityKey` to `UnclassifiedLegacyCommonAnnotatedSecurityKey`.
