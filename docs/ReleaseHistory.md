@@ -18,6 +18,8 @@
 - BRK: `RegexPattern.RotationPeriod` is no longer publicly settable.
 - BRK: `IdentifiableKey.RegexNormalizedSignature` is removed.
 - BRK: Abstract classes `IdentifiableKey`, `Azure32ByteIdentifiableKey`, `Azure64ByteIdentifiableKey`, and `AzureMessagingIdentifiableKey` now require derived classes to pass their signature to the base constructor.
+- BUG: `IdentifiableScan` now properly flows `RegexPattern.RotationPeriod` to `Detection` instances. `Detection.RotationPeriod` previously always retained `default` as a value.
+- BUG: `IdentifiableScan` now properly flows `RegexPattern.DetectionMetadata` to `Detection` instances. `Detection.DetectionMetadata` was previously hard-coded as `DetectionMetadata.HighEntropy`.
 - NEW: Sort properties by name in GeneratedRegexPatterns/*.json.
 - PRF: Remove unnecessary and expensive recomputation of `RegexPatter.Pattern`, `RegexPattern.Signatures`, and `IdentifiableKey.ChecksumSeeds` on every property access.
 
