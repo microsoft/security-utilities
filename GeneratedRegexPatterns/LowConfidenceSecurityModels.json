@@ -2,7 +2,6 @@
   {
     "Id": "SEC101/061",
     "Name": "OAuth2BearerToken",
-    "Label": "a loose OAuth2 bearer token",
     "DetectionMetadata": "LowConfidence",
     "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?P<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+/=]|$)",
     "Signatures": null
@@ -10,7 +9,6 @@
   {
     "Id": "SEC000/000",
     "Name": "Unclassified32ByteBase64String",
-    "Label": "an unclassified 32-byte base64 string",
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=",
     "Signatures": null
@@ -18,7 +16,6 @@
   {
     "Id": "SEC000/001",
     "Name": "Unclassified64ByteBase64String",
-    "Label": "an unclassified 64-byte base64 string",
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==",
     "Signatures": null
@@ -26,7 +23,6 @@
   {
     "Id": "SEC101/101",
     "Name": "AadClientAppLegacyCredentials",
-    "Label": "an Azure Entra client application legacy format password",
     "DetectionMetadata": "ObsoleteFormat, HighEntropy, LowConfidence",
     "Pattern": "^[~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{34}$",
     "Signatures": null
@@ -34,7 +30,6 @@
   {
     "Id": "SEC000/002",
     "Name": "Unclassified16ByteHexadecimalString",
-    "Label": "an unclassified 16-byte hexadecimal string",
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Pattern": "(^|[^1234567890abcdef])[1234567890abcdef]{32}([^1234567890abcdef]|$)",
     "Signatures": null
