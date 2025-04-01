@@ -9,10 +9,10 @@ namespace Microsoft.Security.Utilities
     {
         public string Id { get; }
 
-        public string Name { get; } 
-        
+        public string Name { get; }
+
         public uint KeyLength { get; }
-        
+
         public bool EncodeForUrl { get; }
 
         public ISet<string> Signatures { get; }

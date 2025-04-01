@@ -319,7 +319,6 @@ public class RegexPattern
     /// Gets or sets an opaque, stable identifier for the pattern (corresponding to a SARIF 'reportingDescriptorReference.id' value).
     /// </summary>
     [DataMember(Order = 1)]
-
     public string Id { get; protected set; }
 
     /// <summary>
