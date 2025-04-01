@@ -22,6 +22,8 @@ namespace Microsoft.Security.Utilities
             Pattern = "(?i)(^|[^a-z0-9])(?P<refine>oy2[a-z2-7]{43})([^a-z0-9]|$)";
 
             Signatures = new HashSet<string>(new[] { "oy2", "OY2" });
+
+            Label = "a NuGet API key";
         }
 
         public override Tuple<string, string> GetMatchIdAndName(string match)

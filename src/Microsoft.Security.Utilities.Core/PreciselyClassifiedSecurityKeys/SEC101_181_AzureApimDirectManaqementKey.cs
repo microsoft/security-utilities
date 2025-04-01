@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/181";
             Name = nameof(AzureApimIdentifiableDirectManagementKey);
+            Label = "an Azure API Management direct management key";
         }
 
         public override ISet<string> Signatures => IdentifiableMetadata.AzureApimSignature.ToSet();

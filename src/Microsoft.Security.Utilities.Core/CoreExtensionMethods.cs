@@ -16,5 +16,55 @@ namespace Microsoft.Security.Utilities
         {
             return new HashSet<string>(value);
         }
+
+        /// <summary>
+        /// Given a detection originating in an input and a user-facing secret
+        /// kind label, returns a message similar to: "'...79lNiA' is an Azure
+        /// DevOps personal access token (PAT).'". A portion of the plaintext
+        /// finding is preserved to introduce uniqueness in the output and to
+        /// assist in searching the textual scan target in which the data was
+        /// found.
+        /// </summary>
+        /// <param name="value">A detection originating in a textual scan
+        /// target.</param>
+        /// <param name="input">The textual input that was scanned.</param>
+        /// <returns>A message with a partial rendering of the plaintext
+        /// finding, suitable for writing to the console, an IDE error list,
+        /// etc.</returns>
+        public static string FormattedMessage(this Detection value, string input)
+        {
+            string truncated = input.Substring(value.Start, value.Length).Truncate();
+
+            bool isHighConfidence = value.Metadata.HasFlag(DetectionMetadata.HighConfidence);
+
+            string verb = isHighConfidence ? "is" : "may comprise";
+
+            string suffix = !string.IsNullOrEmpty(value.CrossCompanyCorrelatingId)
+                ? $" The correlating id for this detection is {value.CrossCompanyCorrelatingId}."
+                : string.Empty;
+            
+            return $"'{truncated}' {verb} {value.Label}.{suffix}";
+        }
+
+        public static string Truncate(this string text, int lengthExclusiveOfEllipsis = 6)
+        {
+            text ??= string.Empty;
+            string truncatedText = text.TrimEnd('=');
+            string suffix = new string('=', text.Length - truncatedText.Length);
+
+            if (truncatedText.Length <= lengthExclusiveOfEllipsis)
+            {
+                return text;
+            }
+
+            truncatedText = truncatedText.Substring(truncatedText.Length - lengthExclusiveOfEllipsis);
+
+            bool charsElided = truncatedText.Length != text.Length;
+
+            // "\u2026" == "…"
+            return (charsElided ? "\u2026" : string.Empty) +
+                   truncatedText.Substring(truncatedText.Length - lengthExclusiveOfEllipsis) +
+                   (charsElided ? suffix : string.Empty);
+        }
     }
 }

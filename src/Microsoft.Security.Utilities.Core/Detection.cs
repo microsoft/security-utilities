@@ -14,15 +14,16 @@ public class Detection : IEquatable<Detection>
     }
 
     public Detection(Detection other)
-        : this(other?.Id, other?.Name, other?.Start ?? default, other?.Length ?? default, other?.Metadata ?? default, other?.RotationPeriod ?? default, other?.CrossCompanyCorrelatingId ?? default, other?.RedactionToken ?? default)
+        : this(other?.Id, other?.Name, other?.Label, other?.Start ?? default, other?.Length ?? default, other?.Metadata ?? default, other?.RotationPeriod ?? default, other?.CrossCompanyCorrelatingId ?? default, other?.RedactionToken ?? default)
     {
         other = other ?? throw new ArgumentNullException(nameof(other));
     }
 
-    public Detection(string? id, string? name, int start, int length, DetectionMetadata metadata, TimeSpan rotationPeriod = default, string? crossCompanyCorrelatingId = null, string? redactionToken = null)
+    public Detection(string? id, string? name, string? label, int start, int length, DetectionMetadata metadata, TimeSpan rotationPeriod = default, string? crossCompanyCorrelatingId = null, string? redactionToken = null)
     {
         Id = id;
         Name = name;
+        Label = label;
         Start = start;
         Length = length;
         Metadata = metadata;
@@ -32,14 +33,21 @@ public class Detection : IEquatable<Detection>
     }
 
     /// <summary>
-    /// Gets or sets an opaque, stable identifier for the pattern (corresponding to a SARIF 'reportingDescriptorReference.id' value).
+    /// Gets or sets an opaque, stable identifier for the pattern (corresponding
+    /// to a SARIF 'reportingDescriptorReference.id' value), e.g., 'SEC101/102'.
     /// </summary>
     public string? Id { get; set; }
 
     /// <summary>
-    /// Gets or sets a readable name for the detection.
+    /// Gets or sets a readable pascal-cased name for the detection, e.g., 'AdoPat'.
     /// </summary>
+
     public string? Name { get; set; }
+    /// <summary>
+    /// Gets or sets a user-facing label for the detection, e.g., 'an Azure
+    /// DevOps personal access token (PAT).
+    /// </summary>
+    public string? Label { get; set; }
 
     public string Moniker => $"{Id}.{Name}";
 

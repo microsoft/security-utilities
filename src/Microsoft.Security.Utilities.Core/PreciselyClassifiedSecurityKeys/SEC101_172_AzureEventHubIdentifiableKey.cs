@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/172";
             Name = nameof(AzureEventHubIdentifiableKey);
+            Label = "an Azure Event Hub access key";
         }
 
         override public ISet<string> Signatures => IdentifiableMetadata.AzureEventHubSignature.ToSet();

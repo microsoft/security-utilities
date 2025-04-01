@@ -12,6 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/176";
             Name = nameof(AzureContainerRegistryIdentifiableKey);
+            Label = "an Azure Container Registry access key";
         }
 
         public override ISet<string> Signatures => IdentifiableMetadata.AzureContainerRegistrySignature.ToSet();

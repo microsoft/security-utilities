@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/160";
             Name = nameof(AzureCosmosDBIdentifiableKey);
+            Label = "an Azure CosmosDB access key";
         }
 
         public override ISet<string> Signatures => IdentifiableMetadata.AzureCosmosDBSignature.ToSet();

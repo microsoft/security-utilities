@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/180";
             Name = nameof(AzureIotDeviceIdentifiableKey);
+            Label = "an Azure IoT device access key";
         }
 
         public override ISet<string> Signatures => IdentifiableMetadata.AzureIotSignature.ToSet();

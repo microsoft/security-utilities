@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/178";
             Name = nameof(AzureIotHubIdentifiableKey);
+            Label = "an Azure IoT Hub access key";
         }
 
         public override ISet<string> Signatures => IdentifiableMetadata.AzureIotSignature.ToSet();

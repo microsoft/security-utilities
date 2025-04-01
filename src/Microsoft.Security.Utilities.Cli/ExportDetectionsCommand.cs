@@ -22,7 +22,7 @@ namespace Microsoft.Security.Utilities.Cli
 
             WriteJson(options,
                      "PreciselyClassifiedSecurityKeys.json",
-                      WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys);
+                      WellKnownRegexPatterns.HighConfidenceSecurityModels);
 
             foreach (var precision in new[] { DetectionMetadata.HighConfidence, DetectionMetadata.MediumConfidence, DetectionMetadata.LowConfidence })
             {
@@ -54,9 +54,8 @@ namespace Microsoft.Security.Utilities.Cli
         {
             protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
             {
-                return base.CreateProperties(type, memberSerialization)
-                           .OrderBy(p => p.PropertyName, StringComparer.Ordinal)
-                           .ToList();
+                return [..base.CreateProperties(type, memberSerialization)
+                              .OrderBy(p => p.PropertyName, StringComparer.Ordinal)];
             }
         }
     }

@@ -23,7 +23,11 @@ namespace Microsoft.Security.Utilities.Core
             // the scan data from between its encapsulating chars.
             string regex = $"x(?P<refine>{nameof(scanData)})x";
 
-            var regexPattern = new RegexPattern(id: "1001", name: "MyRule", DetectionMetadata.None, regex);
+            var regexPattern = new RegexPattern(id: "1001",
+                                                name: "MyRule",
+                                                label: "a test secret",
+                                                DetectionMetadata.None,
+                                                regex);
             var masker = new SecretMasker([regexPattern], regexEngine: RE2RegexEngine.Instance);
             
             var detection = masker.DetectSecrets(scanData).FirstOrDefault();

@@ -2,11 +2,12 @@
   {
     "DetectionMetadata": "Identifiable",
     "Id": "SEC101/200",
-    "Name": "CommonAnnotatedSecurityKey",
+    "Name": "UnclassifiedLegacyCommonAnnotatedSecurityKey",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ9(?:9|D|H)[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{16}[A-Za-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{7}(?:[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{2}==)?)",
     "Signatures": [
       "JQQJ"
-    ]
+    ],
+    "UserFacingLabel": "an unclassified legacy common annotated security key"
   },
   {
     "DetectionMetadata": "Identifiable",
@@ -16,7 +17,8 @@
     "Signatures": [
       "8Q~",
       "7Q~"
-    ]
+    ],
+    "UserFacingLabel": "an Azure Entra client app password"
   },
   {
     "ChecksumSeeds": [
@@ -33,7 +35,8 @@
     "RegexNormalizedSignature": "AzFu",
     "Signatures": [
       "AzFu"
-    ]
+    ],
+    "UserFacingLabel": "an Azure Functions access key"
   },
   {
     "ChecksumSeeds": [
@@ -48,7 +51,8 @@
     "RegexNormalizedSignature": "AzSe",
     "Signatures": [
       "AzSe"
-    ]
+    ],
+    "UserFacingLabel": "an Azure Search query key"
   },
   {
     "ChecksumSeeds": [
@@ -63,7 +67,8 @@
     "RegexNormalizedSignature": "AzSe",
     "Signatures": [
       "AzSe"
-    ]
+    ],
+    "UserFacingLabel": "an Azure Search admin key"
   },
   {
     "ChecksumSeeds": [
@@ -80,7 +85,8 @@
     "RegexNormalizedSignature": "\\+ARm",
     "Signatures": [
       "+ARm"
-    ]
+    ],
+    "UserFacingLabel": "an Azure Relay access key"
   },
   {
     "ChecksumSeeds": [
@@ -97,7 +103,8 @@
     "RegexNormalizedSignature": "\\+AEh",
     "Signatures": [
       "+AEh"
-    ]
+    ],
+    "UserFacingLabel": "an Azure Event Hub access key"
   },
   {
     "ChecksumSeeds": [
@@ -114,7 +121,8 @@
     "RegexNormalizedSignature": "\\+ASb",
     "Signatures": [
       "+ASb"
-    ]
+    ],
+    "UserFacingLabel": "an Azure Service Bus access key"
   },
   {
     "ChecksumSeeds": [
@@ -129,7 +137,8 @@
     "RegexNormalizedSignature": "AIoT",
     "Signatures": [
       "AIoT"
-    ]
+    ],
+    "UserFacingLabel": "an Azure IoT Hub access key"
   },
   {
     "ChecksumSeeds": [
@@ -144,7 +153,8 @@
     "RegexNormalizedSignature": "AIoT",
     "Signatures": [
       "AIoT"
-    ]
+    ],
+    "UserFacingLabel": "an Azure IoT device access key"
   },
   {
     "ChecksumSeeds": [
@@ -159,7 +169,8 @@
     "RegexNormalizedSignature": "AIoT",
     "Signatures": [
       "AIoT"
-    ]
+    ],
+    "UserFacingLabel": "an Azure IoT device provisioning access key"
   },
   {
     "ChecksumSeeds": [
@@ -174,7 +185,8 @@
     "RegexNormalizedSignature": "\\+ASt",
     "Signatures": [
       "+ASt"
-    ]
+    ],
+    "UserFacingLabel": "an Azure storage account access key"
   },
   {
     "ChecksumSeeds": [
@@ -195,7 +207,8 @@
     "RegexNormalizedSignature": "ACDb",
     "Signatures": [
       "ACDb"
-    ]
+    ],
+    "UserFacingLabel": "an Azure CosmosDB access key"
   },
   {
     "ChecksumSeeds": [
@@ -210,7 +223,8 @@
     "RegexNormalizedSignature": "\\+ABa",
     "Signatures": [
       "+ABa"
-    ]
+    ],
+    "UserFacingLabel": "an Azure Batch access key"
   },
   {
     "ChecksumSeeds": [
@@ -225,7 +239,8 @@
     "RegexNormalizedSignature": "\\+AMC",
     "Signatures": [
       "+AMC"
-    ]
+    ],
+    "UserFacingLabel": "an Azure ML web service (classic) access key"
   },
   {
     "ChecksumSeeds": [
@@ -240,7 +255,8 @@
     "RegexNormalizedSignature": "APIM",
     "Signatures": [
       "APIM"
-    ]
+    ],
+    "UserFacingLabel": "an Azure API Management direct management key"
   },
   {
     "ChecksumSeeds": [
@@ -255,7 +271,8 @@
     "RegexNormalizedSignature": "APIM",
     "Signatures": [
       "APIM"
-    ]
+    ],
+    "UserFacingLabel": "an Azure API Management subscription key"
   },
   {
     "ChecksumSeeds": [
@@ -270,7 +287,8 @@
     "RegexNormalizedSignature": "APIM",
     "Signatures": [
       "APIM"
-    ]
+    ],
+    "UserFacingLabel": "an Azure API Management gateway key"
   },
   {
     "ChecksumSeeds": [
@@ -285,7 +303,8 @@
     "RegexNormalizedSignature": "APIM",
     "Signatures": [
       "APIM"
-    ]
+    ],
+    "UserFacingLabel": "an Azure API Management repository key"
   },
   {
     "ChecksumSeeds": [
@@ -300,7 +319,8 @@
     "RegexNormalizedSignature": "AzCa",
     "Signatures": [
       "AzCa"
-    ]
+    ],
+    "UserFacingLabel": "an Azure Cache for Redis access key"
   },
   {
     "ChecksumSeeds": [
@@ -315,7 +335,8 @@
     "RegexNormalizedSignature": "\\+ACR",
     "Signatures": [
       "+ACR"
-    ]
+    ],
+    "UserFacingLabel": "an Azure Container Registry access key"
   },
   {
     "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence",
@@ -325,37 +346,42 @@
     "Signatures": [
       "oy2",
       "OY2"
-    ]
+    ],
+    "UserFacingLabel": "a NuGet API key"
   },
   {
     "DetectionMetadata": "HighEntropy, EmbeddedChecksum",
     "Id": "SEC101/102",
     "Name": "AdoLegacyPat",
     "Pattern": "(?:[^2-7a-z]|^)(?P<refine>[2-7a-z]{52})(?:[^2-7a-z]|$)",
-    "Signatures": null
+    "Signatures": null,
+    "UserFacingLabel": "an Azure DevOps legacy format personal access token (PAT)"
   },
   {
     "DetectionMetadata": "ObsoleteFormat, HighEntropy",
     "Id": "SEC101/104",
     "Name": "AzureCosmosDBLegacyCredentials",
     "Pattern": "(?i)\\.documents\\.azure\\.com.+(?:^|[^0-9a-z\\/+])(?P<refine>[0-9a-z\\/+]{86}==)(?:[^=]|$)",
-    "Signatures": null
+    "Signatures": null,
+    "UserFacingLabel": "an Azure Cosmos DB legacy format access key"
   },
   {
     "DetectionMetadata": "HighEntropy",
     "Id": "SEC101/106",
     "Name": "AzureStorageAccountLegacyCredentials",
     "Pattern": "(?i)(?:AccountName|StorageName|StorageAccount)\\s*=.+(?:Account|Storage)Key\\s*=\\s*(?P<refine>[0-9a-z\\\\\\/+]{86}==)(?:[^=]|$)",
-    "Signatures": null
+    "Signatures": null,
+    "UserFacingLabel": "an Azure storage account legacy format access key"
   },
   {
     "DetectionMetadata": "ObsoleteFormat, HighEntropy, MediumConfidence",
     "Id": "SEC101/105",
-    "Name": "AzureMessageLegacyCredentials",
+    "Name": "AzureMessagingLegacyCredentials",
     "Pattern": "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)",
     "Signatures": [
       ".servicebus"
-    ]
+    ],
+    "UserFacingLabel": "an Azure messaging legacy format access key"
   },
   {
     "DetectionMetadata": "HighEntropy, HighConfidence",
@@ -364,7 +390,8 @@
     "Pattern": "(?:^|[^0-9a-f\\-])(?P<refine>dapi[0-9a-f\\-]{32,34})(?:[^0-9a-f\\-]|$)",
     "Signatures": [
       "dapi"
-    ]
+    ],
+    "UserFacingLabel": "an Azure Databricks personal access token (PAT)"
   },
   {
     "ChecksumSeeds": [
@@ -379,7 +406,8 @@
     "RegexNormalizedSignature": "AZEG",
     "Signatures": [
       "AZEG"
-    ]
+    ],
+    "UserFacingLabel": "an Azure Event Grid access key"
   },
   {
     "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence",
@@ -388,7 +416,8 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>npm_[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{36})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]|$)",
     "Signatures": [
       "npm_"
-    ]
+    ],
+    "UserFacingLabel": "an NPM author key"
   },
   {
     "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence",
@@ -397,6 +426,7 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]|$)",
     "Signatures": [
       "ab85"
-    ]
+    ],
+    "UserFacingLabel": "a non-functional secret scanning sample token"
   }
 ]

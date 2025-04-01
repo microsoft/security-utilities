@@ -19,7 +19,7 @@ namespace Tests.Microsoft.Security.Utilities.Core
         {
             using var assertionScope = new AssertionScope();
 
-            var cask = new CommonAnnotatedSecurityKey();
+            var cask = new UnclassifiedLegacyCommonAnnotatedSecurityKey();
             var examples = cask.GenerateTruePositiveExamples().ToList();
 
             var masker = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
@@ -54,7 +54,7 @@ namespace Tests.Microsoft.Security.Utilities.Core
             var masker = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
                                               generateCorrelatingIds: false);
 
-            foreach (var pattern in WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys)
+            foreach (var pattern in WellKnownRegexPatterns.HighConfidenceSecurityModels)
             {
                 var identifiable = pattern as IIdentifiableKey;
                 if (identifiable == null) { continue; }

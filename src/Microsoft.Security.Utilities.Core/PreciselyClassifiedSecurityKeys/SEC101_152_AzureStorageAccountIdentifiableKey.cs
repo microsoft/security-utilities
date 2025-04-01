@@ -12,6 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/152";
             Name = nameof(AzureStorageAccountIdentifiableKey);
+            Label = "an Azure storage account access key";
         }
 
         public override ISet<string> Signatures => IdentifiableMetadata.AzureStorageSignature.ToSet();

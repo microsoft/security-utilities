@@ -15,6 +15,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AdoLegacyPat);
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.EmbeddedChecksum;
             Pattern = "(?:[^2-7a-z]|^)(?P<refine>[2-7a-z]{52})(?:[^2-7a-z]|$)";
+            Label = "an Azure DevOps legacy format personal access token (PAT)";
         }
 
         public override Tuple<string, string> GetMatchIdAndName(string match)

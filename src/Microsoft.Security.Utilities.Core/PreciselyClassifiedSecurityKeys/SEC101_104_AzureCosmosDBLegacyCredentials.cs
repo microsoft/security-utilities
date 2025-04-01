@@ -13,6 +13,7 @@ namespace Microsoft.Security.Utilities
             Name = nameof(AzureCosmosDBLegacyCredentials);
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat;
             Pattern = "(?i)\\.documents\\.azure\\.com.+(?:^|[^0-9a-z\\/+])(?P<refine>[0-9a-z\\/+]{86}==)(?:[^=]|$)";
+            Label = "an Azure Cosmos DB legacy format access key";
         }
 
         public override Tuple<string, string> GetMatchIdAndName(string match)

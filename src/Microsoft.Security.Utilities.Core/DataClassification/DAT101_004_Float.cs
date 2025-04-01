@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
             Id = "DAT101/004";
             Name = nameof(Float);
             Pattern = @"^-?(\d+)?\.\d+$";
+            Label = "a floating point number";
         }
 
         public override IEnumerable<string> GenerateTruePositiveExamples()

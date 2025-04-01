@@ -13,6 +13,7 @@ namespace Microsoft.Security.Utilities
             Id = "SEC101/158";
             Name = nameof(AzureFunctionIdentifiableKey);
             Signatures = IdentifiableMetadata.AzureFunctionSignature.ToSet();
+            Label = "an Azure Functions access key";
         }
 
         public override bool EncodeForUrl => true;

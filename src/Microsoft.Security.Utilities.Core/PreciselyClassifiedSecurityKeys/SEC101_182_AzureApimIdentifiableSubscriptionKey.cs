@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/182";
             Name = nameof(AzureApimIdentifiableSubscriptionKey);
+            Label = "an Azure API Management subscription key";
         }
 
         public override ISet<string> Signatures => IdentifiableMetadata.AzureApimSignature.ToSet();

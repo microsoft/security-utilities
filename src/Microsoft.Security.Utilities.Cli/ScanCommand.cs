@@ -10,6 +10,7 @@ namespace Microsoft.Security.Utilities.Cli
     {
         public ScanCommand()
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
         }
 
         internal int Run(ScanOptions options)
@@ -38,7 +39,7 @@ namespace Microsoft.Security.Utilities.Cli
         {
             string input = options.Input;
 
-            var scan = new IdentifiableScan(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys, generateCorrelatingIds: true);
+            var scan = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceSecurityModels, generateCorrelatingIds: true);
 
             string directory = Path.GetDirectoryName(input);
             string fileSpecifier = Path.GetFileName(input);
@@ -49,13 +50,14 @@ namespace Microsoft.Security.Utilities.Cli
 
             foreach (string path in Directory.GetFiles(directory, fileSpecifier, searchOption))
             {
-                string file = File.ReadAllText(path);
+                string fileName = Path.GetFileName(path);
+                string contents = File.ReadAllText(path);
                 bool foundAtLeastOne = false;
 
-                foreach (var detection in scan.DetectSecrets(file))
+                foreach (var detection in scan.DetectSecrets(contents))
                 {
                     foundAtLeastOne = true;
-                    Console.WriteLine("Found {0} ('{1}') at position {2}", detection.Id, detection.RedactionToken, detection.Start + detection.Length);
+                    Console.WriteLine($"{fileName} ({detection.Start},{detection.End}): {detection.Moniker} : {detection.FormattedMessage(contents)}");
                 }
 
                 if (!foundAtLeastOne)
@@ -70,7 +72,7 @@ namespace Microsoft.Security.Utilities.Cli
 
         internal int ProcessInputString(ScanOptions options)
         {
-            var scan = new IdentifiableScan(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys, generateCorrelatingIds: true);
+            var scan = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceSecurityModels, generateCorrelatingIds: true);
 
             bool foundAtLeastOne = false;
 

@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/171";
             Name = nameof(AzureServiceBusIdentifiableKey);
+            Label = "an Azure Service Bus access key";
         }
 
         override public ISet<string> Signatures => IdentifiableMetadata.AzureServiceBusSignature.ToSet();

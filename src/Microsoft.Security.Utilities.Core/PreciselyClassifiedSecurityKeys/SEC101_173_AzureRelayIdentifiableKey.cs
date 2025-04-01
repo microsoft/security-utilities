@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/173";
             Name = nameof(AzureRelayIdentifiableKey);
+            Label = "an Azure Relay access key";
         }
 
         public override ISet<string> Signatures => IdentifiableMetadata.AzureRelaySignature.ToSet();

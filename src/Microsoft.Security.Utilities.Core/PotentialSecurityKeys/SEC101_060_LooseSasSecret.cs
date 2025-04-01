@@ -15,6 +15,7 @@ namespace Microsoft.Security.Utilities
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.MediumConfidence;
             Pattern = @$"(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?P<refine>[0-9a-z\/+%]{{43,129}}(?:=|%3d))";
             Signatures = new HashSet<string>(new[] { "sig=", "ret=" });
+            Label = "a loose SAS HMAC";
         }
 
 

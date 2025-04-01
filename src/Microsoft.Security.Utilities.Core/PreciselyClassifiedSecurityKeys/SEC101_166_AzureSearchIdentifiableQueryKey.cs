@@ -12,6 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/166";
             Name = nameof(AzureSearchIdentifiableQueryKey);
+            Label = "an Azure Search query key";
         }
 
         public override bool EncodeForUrl => true;

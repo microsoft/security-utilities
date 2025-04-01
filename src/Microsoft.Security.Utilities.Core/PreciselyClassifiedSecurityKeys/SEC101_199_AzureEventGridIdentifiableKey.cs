@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/199";
             Name = nameof(AzureEventGridIdentifiableKey);
+            Label = "an Azure Event Grid access key";
         }
 
         public override ISet<string> Signatures => IdentifiableMetadata.AzureEventGridSignature.ToSet();

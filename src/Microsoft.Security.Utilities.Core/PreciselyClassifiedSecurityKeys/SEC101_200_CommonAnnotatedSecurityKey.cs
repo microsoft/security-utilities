@@ -1,24 +1,23 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Microsoft.Security.Utilities
 {
-    public class CommonAnnotatedSecurityKey : RegexPattern, IHighPerformanceScannableKey
+    public class UnclassifiedLegacyCommonAnnotatedSecurityKey : RegexPattern, IHighPerformanceScannableKey
     {
         // NOTE: Use 4 character signature for high-performance scanner compatibility.
         private const string Signature = "JQQJ";
 
-        public CommonAnnotatedSecurityKey()
+        public UnclassifiedLegacyCommonAnnotatedSecurityKey()
         {
             Id = "SEC101/200";
-            Name = nameof(CommonAnnotatedSecurityKey);
+            Name = nameof(UnclassifiedLegacyCommonAnnotatedSecurityKey);
             DetectionMetadata = DetectionMetadata.Identifiable;
             Pattern = $"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{52}}JQQJ9(?:9|D|H)[{WellKnownRegexPatterns.Base62}][A-L][{WellKnownRegexPatterns.Base62}]{{16}}[A-Za-z][{WellKnownRegexPatterns.Base62}]{{7}}(?:[{WellKnownRegexPatterns.Base62}]{{2}}==)?)";
-            Signatures =  Signature.ToSet(); 
+            Signatures =  Signature.ToSet();
+            Label = "an unclassified legacy common annotated security key";
         }
 
 #if HIGH_PERFORMANCE_CODEGEN

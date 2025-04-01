@@ -12,6 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/154";
             Name = nameof(AzureCacheForRedisIdentifiableKey);
+            Label = "an Azure Cache for Redis access key";
         }
 
         public override ISet<string> Signatures => IdentifiableMetadata.AzureCacheForRedisSignature.ToSet();

@@ -32,7 +32,7 @@ public static class WellKnownRegexPatterns
         }
     }
 
-    public static IEnumerable<RegexPattern> PreciselyClassifiedSecurityKeys { get; } = HighConfidenceSecurityModelsIterator();
+    public static IEnumerable<RegexPattern> HighConfidenceSecurityModels { get; } = HighConfidenceSecurityModelsIterator();
 
     public static IEnumerable<RegexPattern> HighConfidenceSecurityModelsIterator()
     {
@@ -49,7 +49,7 @@ public static class WellKnownRegexPatterns
 
     public static IEnumerable<RegexPattern> UnclassifiedPotentialSecurityKeys { get; } = new RegexPattern[]
     {
-        new GenericJwt(),
+        new UnclassifiedJwt(),
         new UrlCredentials(),
         new LooseSasSecret(),
         new OAuth2BearerToken(),
@@ -62,7 +62,7 @@ public static class WellKnownRegexPatterns
 
     public static IEnumerable<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } = new RegexPattern[]
     {
-        new CommonAnnotatedSecurityKey(),
+        new UnclassifiedLegacyCommonAnnotatedSecurityKey(),
         new AadClientAppIdentifiableCredentials(),
         new AzureFunctionIdentifiableKey(),
         new AzureSearchIdentifiableQueryKey(),
@@ -87,7 +87,7 @@ public static class WellKnownRegexPatterns
         new AdoLegacyPat(),                         // SEC101/102
         new AzureCosmosDBLegacyCredentials(),       // SEC101/104
         new AzureStorageAccountLegacyCredentials(), // SEC101/106
-        new AzureMessageLegacyCredentials(),
+        new AzureMessagingLegacyCredentials(),
         new AzureDatabricksPat(),
         new AzureEventGridIdentifiableKey(),
     };
@@ -106,7 +106,6 @@ public static class WellKnownRegexPatterns
         new NpmAuthorKey(),
         new SecretScanningSampleToken(),
     };
-
 
     public static string RandomUrlUnreserved(int count, bool sparse = false)
     {

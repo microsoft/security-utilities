@@ -20,6 +20,7 @@ public class AadClientAppLegacyCredentials34 : RegexPattern
         Name = AadClientAppLegacyCredentials;
         DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat | DetectionMetadata.LowConfidence;
         Pattern = $"^[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{34}}$";
+        Label = "an Azure Entra client application legacy format password";
     }
 
     public override Tuple<string, string> GetMatchIdAndName(string match)

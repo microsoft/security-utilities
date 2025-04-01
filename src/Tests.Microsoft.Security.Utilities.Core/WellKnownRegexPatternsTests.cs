@@ -123,7 +123,7 @@ namespace Microsoft.Security.Utilities
 
                 var rulesets = new[] {
                     WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
-                    WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys
+                    WellKnownRegexPatterns.HighConfidenceSecurityModels
                 };
 
                 var missingConfidence = new List<string>();
@@ -171,7 +171,7 @@ namespace Microsoft.Security.Utilities
 
                 var rulesets = new[] {
                     WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
-                    WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys
+                    WellKnownRegexPatterns.HighConfidenceSecurityModels
                 };
 
                 var missingSignatures = new List<string>();
@@ -215,7 +215,7 @@ namespace Microsoft.Security.Utilities
 
             var rulesets = new[]{
                 WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
-                WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
+                WellKnownRegexPatterns.HighConfidenceSecurityModels,
                 WellKnownRegexPatterns.DataClassification,
             };
 
@@ -284,7 +284,7 @@ namespace Microsoft.Security.Utilities
 
             var rulesets = new[]{
                 WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
-                WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
+                WellKnownRegexPatterns.HighConfidenceSecurityModels,
                 WellKnownRegexPatterns.DataClassification,
             };
 
@@ -314,7 +314,7 @@ namespace Microsoft.Security.Utilities
             var patterns = new List<RegexPattern>();
 
             patterns.AddRange(WellKnownRegexPatterns.DataClassification);
-            patterns.AddRange(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys);
+            patterns.AddRange(WellKnownRegexPatterns.HighConfidenceSecurityModels);
             patterns.AddRange(WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys);
 
             return patterns;

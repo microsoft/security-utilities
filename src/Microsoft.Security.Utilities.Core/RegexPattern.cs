@@ -18,6 +18,7 @@ public class RegexPattern
 
     public RegexPattern(string id,
                         string name,
+                        string label,
                         DetectionMetadata patternMetadata,
                         string pattern,
                         TimeSpan rotationPeriod = default,
@@ -33,11 +34,12 @@ public class RegexPattern
 
         Id = id;
         Name = name;
-        m_regexOptions = regexOptions;
-        Signatures = signatures;
-        RotationPeriod = rotationPeriod;
-        m_sampleGenerator = sampleGenerator;
+        Label = label;
         DetectionMetadata = patternMetadata;
+        RotationPeriod = rotationPeriod;
+        Signatures = signatures;
+        m_regexOptions = regexOptions;
+        m_sampleGenerator = sampleGenerator;
     }
 
 #pragma warning disable CS8618
@@ -224,6 +226,7 @@ public class RegexPattern
 
                 yield return new Detection(id,
                                            name,
+                                           label: Label,
                                            match.Index,
                                            match.Length,
                                            DetectionMetadata,
@@ -321,6 +324,13 @@ public class RegexPattern
     /// Gets or sets a readable name for the detection.
     /// </summary>
     public string Name { get; protected set; }
+
+    /// <summary>
+    /// Gets or sets a sentence fragment that comprises the secret kind,
+    /// suitable for emitting in user-facing strings, as a label in a
+    /// user-interface, etc.
+    /// </summary>
+    public string Label { get; protected set; }
 
     public TimeSpan RotationPeriod { get; set; }
 

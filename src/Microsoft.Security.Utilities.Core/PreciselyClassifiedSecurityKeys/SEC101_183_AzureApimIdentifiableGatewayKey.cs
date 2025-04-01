@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/183";
             Name = nameof(AzureApimIdentifiableGatewayKey);
+            Label = "an Azure API Management gateway key";
         }
 
         public override ISet<string> Signatures => IdentifiableMetadata.AzureApimSignature.ToSet();
