@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -307,7 +308,7 @@ public class RegexPattern
 
     public virtual Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>(Id, Name);
 
-    [JsonProperty(Order = 4)]
+    [DataMember(Order = 4)]
     public string Pattern { get; protected set; }
 
 #if NET7_0_OR_GREATER
@@ -319,14 +320,14 @@ public class RegexPattern
     /// <summary>
     /// Gets or sets an opaque, stable identifier for the pattern (corresponding to a SARIF 'reportingDescriptorReference.id' value).
     /// </summary>
-    [JsonProperty(Order = 1)]
+    [DataMember(Order = 1)]
 
     public string Id { get; protected set; }
 
     /// <summary>
     /// Gets or sets a readable name for the detection.
     /// </summary>
-    [JsonProperty(Order = 2)]
+    [DataMember(Order = 2)]
     public string Name { get; protected set; }
 
     /// <summary>
@@ -334,10 +335,10 @@ public class RegexPattern
     /// suitable for emitting in user-facing strings, as a label in a
     /// user-interface, etc.
     /// </summary>
-    [JsonProperty(Order = 3)]
+    [DataMember(Order = 3)]
     public string Label { get; protected set; }
 
-    [JsonProperty(Order = 5)]
+    [DataMember(Order = 5)]
     public TimeSpan RotationPeriod { get; protected set; }
 
     /// <summary>
@@ -358,7 +359,7 @@ public class RegexPattern
     /// performance as these calls are typically much faster than
     /// equivalent regular expressions.
     /// </remarks>
-    [JsonProperty(Order = 6)] 
+    [DataMember(Order = 6)] 
     public ISet<string>? Signatures { get; protected set; }
 
     private readonly Func<string[]>? m_sampleGenerator;
@@ -420,7 +421,7 @@ public class RegexPattern
         return "^" + pattern;
     }
 #endif
-    public class JsonPropertyAttribute : Attribute
+    public class DataMemberAttribute : Attribute
     {
         public int Order { get; set; }
     }
