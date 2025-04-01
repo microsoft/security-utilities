@@ -9,7 +9,7 @@ namespace Microsoft.Security.Utilities
     {
         private static readonly byte[] EmptyByteArray = new byte[0];
 
-        public AdoLegacyPat() 
+        public AdoLegacyPat()
         {
             Id = "SEC101/102";
             Name = nameof(AdoLegacyPat);
