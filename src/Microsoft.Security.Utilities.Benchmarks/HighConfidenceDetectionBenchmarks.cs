@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
     {
         protected override IEnumerable<RegexPattern> RegexPatterns => new RegexPattern[]
         {
-            new CommonAnnotatedSecurityKey(),
+            new UnclassifiedLegacyCommonAnnotatedSecurityKey(),
             new AadClientAppIdentifiableCredentials(),
             new AzureFunctionIdentifiableKey(),
             new AzureSearchIdentifiableQueryKey(),
