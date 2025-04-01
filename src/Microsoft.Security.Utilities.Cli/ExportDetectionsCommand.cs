@@ -42,21 +42,11 @@ namespace Microsoft.Security.Utilities.Cli
             var settings = new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented,
-                ContractResolver = new OrderedContractResolver(),
                 Converters = { new StringEnumConverter() },
             };
 
             string json = JsonConvert.SerializeObject(patterns, settings);
             File.WriteAllText(outputFileName, json);
-        }
-
-        private sealed class OrderedContractResolver : DefaultContractResolver
-        {
-            protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-            {
-                return [..base.CreateProperties(type, memberSerialization)
-                              .OrderBy(p => p.PropertyName, StringComparer.Ordinal)];
-            }
         }
     }
 }
