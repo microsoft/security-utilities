@@ -1,17 +1,18 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Generic;
-
 namespace Microsoft.Security.Utilities
 {
     public abstract class AzureMessagingIdentifiableKey : Azure32ByteIdentifiableKey
     {
-        public override IEnumerable<ulong> ChecksumSeeds => new[]
+        protected AzureMessagingIdentifiableKey(string signature) : base(signature)
         {
-            IdentifiableMetadata.AzureMessagingSendKeyChecksumSeed,
-            IdentifiableMetadata.AzureMessagingListenKeyChecksumSeed,
-            IdentifiableMetadata.AzureMessagingManageKeyChecksumSeed,
-        };
+            ChecksumSeeds = new[]
+            {
+                IdentifiableMetadata.AzureMessagingSendKeyChecksumSeed,
+                IdentifiableMetadata.AzureMessagingListenKeyChecksumSeed,
+                IdentifiableMetadata.AzureMessagingManageKeyChecksumSeed,
+            };
+        }
     }
 }

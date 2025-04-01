@@ -7,14 +7,11 @@ namespace Microsoft.Security.Utilities
 {
     public class AzureMLWebServiceClassicIdentifiableKey : Azure64ByteIdentifiableKey
     {
-        public AzureMLWebServiceClassicIdentifiableKey()
+        public AzureMLWebServiceClassicIdentifiableKey() : base(IdentifiableMetadata.AzureMLClassicSignature)
         {
             Id = "SEC101/170";
             Name = nameof(AzureMLWebServiceClassicIdentifiableKey);
+            ChecksumSeeds = new[] { IdentifiableMetadata.AzureMLClassicChecksumSeed };
         }
-
-        public override ISet<string> Signatures => IdentifiableMetadata.AzureMLClassicSignature.ToSet();
-
-        public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureMLClassicChecksumSeed };
     }
 }

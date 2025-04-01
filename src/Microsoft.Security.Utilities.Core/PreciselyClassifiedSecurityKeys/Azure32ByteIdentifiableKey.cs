@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 #nullable enable
 
@@ -11,10 +12,9 @@ namespace Microsoft.Security.Utilities
 {
     public abstract class Azure32ByteIdentifiableKey : IdentifiableKey
     {
-        public override string Pattern
+        protected Azure32ByteIdentifiableKey(string signature) : base(signature)
         {
-            get => @$"{WellKnownRegexPatterns.PrefixAllBase64}(?P<refine>[{WellKnownRegexPatterns.Base64}]{{33}}{RegexNormalizedSignature}[A-P][{WellKnownRegexPatterns.Base64}]{{5}}=){WellKnownRegexPatterns.SuffixAllBase64}";
-            protected set => base.Pattern = value;
+            Pattern = @$"{WellKnownRegexPatterns.PrefixAllBase64}(?P<refine>[{WellKnownRegexPatterns.Base64}]{{33}}{Regex.Escape(signature)}[A-P][{WellKnownRegexPatterns.Base64}]{{5}}=){WellKnownRegexPatterns.SuffixAllBase64}";
         }
 
 #if HIGH_PERFORMANCE_CODEGEN

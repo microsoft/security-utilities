@@ -7,14 +7,11 @@ namespace Microsoft.Security.Utilities
 {
     public class AzureBatchIdentifiableKey : Azure64ByteIdentifiableKey
     {
-        public AzureBatchIdentifiableKey()
+        public AzureBatchIdentifiableKey() : base(IdentifiableMetadata.AzureBatchSignature)
         {
             Id = "SEC101/163";
             Name = nameof(AzureBatchIdentifiableKey);
+            ChecksumSeeds = new[] { IdentifiableMetadata.AzureBatchChecksumSeed };
         }
-
-        public override ISet<string> Signatures=> IdentifiableMetadata.AzureBatchSignature.ToSet();
-
-        public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureBatchChecksumSeed };
     }
 }

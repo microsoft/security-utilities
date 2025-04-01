@@ -7,12 +7,10 @@ namespace Microsoft.Security.Utilities
 {
     public class AzureServiceBusIdentifiableKey : AzureMessagingIdentifiableKey
     {
-        public AzureServiceBusIdentifiableKey()
+        public AzureServiceBusIdentifiableKey() : base(IdentifiableMetadata.AzureServiceBusSignature)
         {
             Id = "SEC101/171";
             Name = nameof(AzureServiceBusIdentifiableKey);
         }
-
-        override public ISet<string> Signatures => IdentifiableMetadata.AzureServiceBusSignature.ToSet();
     }
 }
