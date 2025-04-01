@@ -1,17 +1,17 @@
 [
   {
-    "DetectionMetadata": "Identifiable",
     "Id": "SEC101/200",
     "Name": "CommonAnnotatedSecurityKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ9(?:9|D|H)[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{16}[A-Za-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{7}(?:[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{2}==)?)",
     "Signatures": [
       "JQQJ"
     ]
   },
   {
-    "DetectionMetadata": "Identifiable",
     "Id": "SEC101/156",
     "Name": "AadClientAppIdentifiableCredentials",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-+/])(?P<refine>[~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{3}(7|8)Q~[~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{31,34})([^~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-+/]|$)",
     "Signatures": [
       "8Q~",
@@ -19,289 +19,180 @@
     ]
   },
   {
-    "ChecksumSeeds": [
-      5077085528363970608,
-      5575864757416767536,
-      6014965721085063216
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": true,
     "Id": "SEC101/158",
-    "KeyLength": 40,
     "Name": "AzureFunctionIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{44}AzFu[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]|$)",
     "Signatures": [
       "AzFu"
     ]
   },
   {
-    "ChecksumSeeds": [
-      5869709231681187888
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": true,
     "Id": "SEC101/166",
-    "KeyLength": 39,
     "Name": "AzureSearchIdentifiableQueryKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AzSe"
     ]
   },
   {
-    "ChecksumSeeds": [
-      5783013817603469360
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": true,
     "Id": "SEC101/167",
-    "KeyLength": 39,
     "Name": "AzureSearchIdentifiableAdminKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AzSe"
     ]
   },
   {
-    "ChecksumSeeds": [
-      6009330654380044336,
-      5506058963192262704,
-      5575859178286952496
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/173",
-    "KeyLength": 32,
     "Name": "AzureRelayIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+ARm[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+ARm"
     ]
   },
   {
-    "ChecksumSeeds": [
-      6009330654380044336,
-      5506058963192262704,
-      5575859178286952496
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/172",
-    "KeyLength": 32,
     "Name": "AzureEventHubIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+AEh[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+AEh"
     ]
   },
   {
-    "ChecksumSeeds": [
-      6009330654380044336,
-      5506058963192262704,
-      5575859178286952496
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/171",
-    "KeyLength": 32,
     "Name": "AzureServiceBusIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+ASb[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+ASb"
     ]
   },
   {
-    "ChecksumSeeds": [
-      5291540757367369776
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/178",
-    "KeyLength": 32,
     "Name": "AzureIotHubIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AIoT[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AIoT"
     ]
   },
   {
-    "ChecksumSeeds": [
-      4928475562238095408
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/180",
-    "KeyLength": 32,
     "Name": "AzureIotDeviceIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AIoT[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AIoT"
     ]
   },
   {
-    "ChecksumSeeds": [
-      4931568359632875568
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/179",
-    "KeyLength": 32,
     "Name": "AzureIotDeviceProvisioningIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AIoT[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AIoT"
     ]
   },
   {
-    "ChecksumSeeds": [
-      4928457935994778672
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/152",
-    "KeyLength": 64,
     "Name": "AzureStorageAccountIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}\\+ASt[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+ASt"
     ]
   },
   {
-    "ChecksumSeeds": [
-      5003045579370016816,
-      5575864757095706672,
-      5575864757096230960,
-      5937278606306848816,
-      6014965502159106096,
-      6014965720764330032,
-      6014965720764854320
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/160",
-    "KeyLength": 64,
     "Name": "AzureCosmosDBIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}ACDb[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "ACDb"
     ]
   },
   {
-    "ChecksumSeeds": [
-      4711400055309086768
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/163",
-    "KeyLength": 64,
     "Name": "AzureBatchIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}\\+ABa[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+ABa"
     ]
   },
   {
-    "ChecksumSeeds": [
-      4858365246511342384
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/170",
-    "KeyLength": 64,
     "Name": "AzureMLWebServiceClassicIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}\\+AMC[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+AMC"
     ]
   },
   {
-    "ChecksumSeeds": [
-      6081388236577714224
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/181",
-    "KeyLength": 64,
     "Name": "AzureApimIdentifiableDirectManagementKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "APIM"
     ]
   },
   {
-    "ChecksumSeeds": [
-      5291540757367369776
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/182",
-    "KeyLength": 64,
     "Name": "AzureApimIdentifiableSubscriptionKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "APIM"
     ]
   },
   {
-    "ChecksumSeeds": [
-      5143520228578766896
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/183",
-    "KeyLength": 64,
     "Name": "AzureApimIdentifiableGatewayKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "APIM"
     ]
   },
   {
-    "ChecksumSeeds": [
-      5145771916421312560
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/184",
-    "KeyLength": 64,
     "Name": "AzureApimIdentifiableRepositoryKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "APIM"
     ]
   },
   {
-    "ChecksumSeeds": [
-      4711718922539446320
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/154",
-    "KeyLength": 32,
     "Name": "AzureCacheForRedisIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AzCa[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AzCa"
     ]
   },
   {
-    "ChecksumSeeds": [
-      4702692889634567216
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/176",
-    "KeyLength": 39,
     "Name": "AzureContainerRegistryIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{42}\\+ACR[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+ACR"
     ]
   },
   {
-    "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence",
     "Id": "SEC101/031",
     "Name": "NuGetApiKey",
+    "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence",
     "Pattern": "(?i)(^|[^a-z0-9])(?P<refine>oy2[a-z2-7]{43})([^a-z0-9]|$)",
     "Signatures": [
       "oy2",
@@ -309,41 +200,36 @@
     ]
   },
   {
-    "DetectionMetadata": "HighEntropy, HighConfidence",
     "Id": "SEC101/110",
     "Name": "AzureDatabricksPat",
+    "DetectionMetadata": "HighEntropy, HighConfidence",
     "Pattern": "(?:^|[^0-9a-f\\-])(?P<refine>dapi[0-9a-f\\-]{32,34})(?:[^0-9a-f\\-]|$)",
     "Signatures": [
       "dapi"
     ]
   },
   {
-    "ChecksumSeeds": [
-      4928457935994778672
-    ],
-    "DetectionMetadata": "Identifiable",
-    "EncodeForUrl": false,
     "Id": "SEC101/199",
-    "KeyLength": 32,
     "Name": "AzureEventGridIdentifiableKey",
+    "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AZEG[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AZEG"
     ]
   },
   {
-    "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence",
     "Id": "SEC101/050",
     "Name": "NpmAuthorKey",
+    "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>npm_[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{36})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]|$)",
     "Signatures": [
       "npm_"
     ]
   },
   {
-    "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence",
     "Id": "SEC101/565",
     "Name": "SecretScanningSampleToken",
+    "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]|$)",
     "Signatures": [
       "ab85"
