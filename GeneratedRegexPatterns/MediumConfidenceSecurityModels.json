@@ -1,17 +1,17 @@
 [
   {
-    "DetectionMetadata": "ObsoleteFormat, HighEntropy, MediumConfidence",
     "Id": "SEC101/105",
     "Name": "AzureMessageLegacyCredentials",
+    "DetectionMetadata": "ObsoleteFormat, HighEntropy, MediumConfidence",
     "Pattern": "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)",
     "Signatures": [
       ".servicebus"
     ]
   },
   {
-    "DetectionMetadata": "HighEntropy, MediumConfidence",
     "Id": "SEC101/528",
     "Name": "GenericJwt",
+    "DetectionMetadata": "HighEntropy, MediumConfidence",
     "Pattern": "(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{23,}\\.e[0-9A-Za-z-_=]{23,}\\.[0-9A-Za-z-_=]{24,}(?:[^0-9A-Za-z-_]|$)",
     "Signatures": [
       "eyJ",
@@ -20,9 +20,9 @@
     ]
   },
   {
-    "DetectionMetadata": "MediumConfidence",
     "Id": "SEC101/127",
     "Name": "UrlCredentials",
+    "DetectionMetadata": "MediumConfidence",
     "Pattern": "($|\\b)(ftps?|https?):\\/\\/(?P<refine>[^:@\\/]+:[^:@?\\/]+)@",
     "Signatures": [
       "ftp",
@@ -30,9 +30,9 @@
     ]
   },
   {
-    "DetectionMetadata": "HighEntropy, MediumConfidence",
     "Id": "SEC101/060",
     "Name": "LooseSasSecret",
+    "DetectionMetadata": "HighEntropy, MediumConfidence",
     "Pattern": "(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?P<refine>[0-9a-z\\/+%]{43,129}(?:=|%3d))",
     "Signatures": [
       "sig=",
@@ -40,9 +40,9 @@
     ]
   },
   {
-    "DetectionMetadata": "MediumConfidence",
     "Id": "SEC101/055",
     "Name": "Pkcs12CertificatePrivateKeyBundle",
+    "DetectionMetadata": "MediumConfidence",
     "Pattern": "MI[I-L][0-9a-zA-Z\\/+]{2}[AQgw]IBAzCC",
     "Signatures": [
       "IBAzCC"

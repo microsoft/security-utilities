@@ -6,12 +6,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities;
 
+[DataContract]
 public class RegexPattern
 {
     public const string FallbackRedactionToken = "+++";
@@ -33,11 +35,11 @@ public class RegexPattern
 
         Id = id;
         Name = name;
-        m_regexOptions = regexOptions;
-        Signatures = signatures;
-        RotationPeriod = rotationPeriod;
-        m_sampleGenerator = sampleGenerator;
         DetectionMetadata = patternMetadata;
+        RotationPeriod = rotationPeriod;
+        Signatures = signatures;
+        m_regexOptions = regexOptions;
+        m_sampleGenerator = sampleGenerator;
     }
 
 #pragma warning disable CS8618
@@ -304,6 +306,7 @@ public class RegexPattern
 
     public virtual Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>(Id, Name);
 
+    [DataMember(Order = 4)]
     public string Pattern { get; protected set; }
 
 #if NET7_0_OR_GREATER
@@ -315,13 +318,17 @@ public class RegexPattern
     /// <summary>
     /// Gets or sets an opaque, stable identifier for the pattern (corresponding to a SARIF 'reportingDescriptorReference.id' value).
     /// </summary>
+    [DataMember(Order = 1)]
+
     public string Id { get; protected set; }
 
     /// <summary>
     /// Gets or sets a readable name for the detection.
     /// </summary>
+    [DataMember(Order = 2)]
     public string Name { get; protected set; }
 
+    [DataMember(Order = 5)]
     public TimeSpan RotationPeriod { get; protected set; }
 
     /// <summary>
@@ -342,6 +349,7 @@ public class RegexPattern
     /// performance as these calls are typically much faster than
     /// equivalent regular expressions.
     /// </remarks>
+    [DataMember(Order = 6)]
     public ISet<string>? Signatures { get; protected set; }
 
     private readonly Func<string[]>? m_sampleGenerator;
@@ -352,6 +360,7 @@ public class RegexPattern
     /// </summary>
     /// <remarks>Options may not be available when .NET is not used to
     /// provide regex processing.</remarks>
+    [DataMember(Order = 3)]
     public DetectionMetadata DetectionMetadata { get; protected set; }
 
     public bool ShouldSerializeRotationPeriod() => false;
