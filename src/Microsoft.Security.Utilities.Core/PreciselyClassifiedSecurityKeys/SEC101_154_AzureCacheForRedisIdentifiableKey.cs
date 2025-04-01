@@ -8,16 +8,13 @@ namespace Microsoft.Security.Utilities
 {
     public class AzureCacheForRedisIdentifiableKey : Azure32ByteIdentifiableKey
     {
-        public AzureCacheForRedisIdentifiableKey()
+        public AzureCacheForRedisIdentifiableKey() : base(IdentifiableMetadata.AzureCacheForRedisSignature)
         {
             Id = "SEC101/154";
             Name = nameof(AzureCacheForRedisIdentifiableKey);
             Label = "an Azure Cache for Redis access key";
+            ChecksumSeeds = new[] { IdentifiableMetadata.AzureCacheForRedisChecksumSeed };
         }
-
-        public override ISet<string> Signatures => IdentifiableMetadata.AzureCacheForRedisSignature.ToSet();
-
-        public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureCacheForRedisChecksumSeed};
 
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {

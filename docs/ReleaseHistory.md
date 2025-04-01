@@ -12,7 +12,14 @@
 - FNS => False negative reduction in static analysis.
 
 # UNRELEASED
+- BRK: `RegexPattern.Pattern` is no longer virtual.
+- BRK: `RegexPattern.Signatures` is no longer virtual.
+- BRK: `IdentifiableKey.ChecksumSeeds` is no longer virtual.
+- BRK: `RegexPattern.RotationPeriod` is no longer publicly settable.
+- BRK: `IdentifiableKey.RegexNormalizedSignature` is removed.
+- BRK: Abstract classes `IdentifiableKey`, `Azure32ByteIdentifiableKey`, `Azure64ByteIdentifiableKey`, and `AzureMessagingIdentifiableKey` now require derived classes to pass their signature to the base constructor.
 - NEW: Sort properties by name in GeneratedRegexPatterns/*.json.
+- PRF: Remove unnecessary and expensive recomputation of `RegexPatter.Pattern`, `RegexPattern.Signatures`, and `IdentifiableKey.ChecksumSeeds` on every property access.
 
 # 1.16.0 - 03/05/2025
 - BRK: Eliminate `SEC000/101.Unclassified32CharacterString` as noisy and not useful.

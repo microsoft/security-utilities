@@ -3,26 +3,20 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities
 {
     public class AzureContainerRegistryIdentifiableKey : IdentifiableKey
     {
-        public AzureContainerRegistryIdentifiableKey()
+        public AzureContainerRegistryIdentifiableKey() : base(IdentifiableMetadata.AzureContainerRegistrySignature)
         {
             Id = "SEC101/176";
             Name = nameof(AzureContainerRegistryIdentifiableKey);
-            Label = "an Azure Container Registry access key";
-        }
-
-        public override ISet<string> Signatures => IdentifiableMetadata.AzureContainerRegistrySignature.ToSet();
-
-        override public IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureContainerRegistryChecksumSeed };
-
-        public override string Pattern
-        {
-            get => @$"{WellKnownRegexPatterns.PrefixAllBase64}(?P<refine>[{WellKnownRegexPatterns.Base64}]{{42}}{RegexNormalizedSignature}[A-D][{WellKnownRegexPatterns.Base64}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}";
-            protected set => base.Pattern = value;
+            Label = "an Azure Container Registry access key"; 
+            ChecksumSeeds = new[] { IdentifiableMetadata.AzureContainerRegistryChecksumSeed };
+            Pattern = @$"{WellKnownRegexPatterns.PrefixAllBase64}(?P<refine>[{WellKnownRegexPatterns.Base64}]{{42}}{Regex.Escape(Signature)}[A-D][{WellKnownRegexPatterns.Base64}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}";
         }
 
         override public uint KeyLength => 39;

@@ -7,15 +7,12 @@ namespace Microsoft.Security.Utilities
 {
     public class AzureApimIdentifiableRepositoryKey : Azure64ByteIdentifiableKey
     {
-        public AzureApimIdentifiableRepositoryKey()
+        public AzureApimIdentifiableRepositoryKey() : base(IdentifiableMetadata.AzureApimSignature)
         {
             Id = "SEC101/184";
             Name = nameof(AzureApimIdentifiableRepositoryKey);
             Label = "an Azure API Management repository key";
+            ChecksumSeeds = new[] { IdentifiableMetadata.AzureApimRepositoryChecksumSeed };
         }
-
-        public override ISet<string> Signatures => IdentifiableMetadata.AzureApimSignature.ToSet();
-
-        public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureApimRepositoryChecksumSeed };
     }
 }

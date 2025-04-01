@@ -3,35 +3,28 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities
 {
     public class AzureFunctionIdentifiableKey : IdentifiableKey
     {
-        public AzureFunctionIdentifiableKey()
+        public AzureFunctionIdentifiableKey() : base(IdentifiableMetadata.AzureFunctionSignature)
         {
             Id = "SEC101/158";
             Name = nameof(AzureFunctionIdentifiableKey);
-            Signatures = IdentifiableMetadata.AzureFunctionSignature.ToSet();
-            Label = "an Azure Functions access key";
+            Label = "an Azure Functions access key"; 
+            ChecksumSeeds = new[]
+            {
+                IdentifiableMetadata.AzureFunctionKeyChecksumSeed,
+                IdentifiableMetadata.AzureFunctionMasterKeyChecksumSeed,
+                IdentifiableMetadata.AzureFunctionSystemKeyChecksumSeed,
+            };
+            Pattern = @$"{WellKnownRegexPatterns.PrefixUrlSafeBase64}(?P<refine>[{WellKnownRegexPatterns.RegexEncodedUrlSafeBase64}]{{44}}{Regex.Escape(Signature)}[{WellKnownRegexPatterns.RegexEncodedUrlSafeBase64}]{{5}}[AQgw]==){WellKnownRegexPatterns.SuffixUrlSafeBase64}";
         }
 
         public override bool EncodeForUrl => true;
-
-        override public ISet<string> Signatures => IdentifiableMetadata.AzureFunctionSignature.ToSet();
-
-        override public IEnumerable<ulong> ChecksumSeeds => new[]
-        {
-            IdentifiableMetadata.AzureFunctionKeyChecksumSeed,
-            IdentifiableMetadata.AzureFunctionMasterKeyChecksumSeed,
-            IdentifiableMetadata.AzureFunctionSystemKeyChecksumSeed,
-        };
-
-        public override string Pattern
-        {
-            get => @$"{WellKnownRegexPatterns.PrefixUrlSafeBase64}(?P<refine>[{WellKnownRegexPatterns.RegexEncodedUrlSafeBase64}]{{44}}{Signatures!.First()}[{WellKnownRegexPatterns.RegexEncodedUrlSafeBase64}]{{5}}[AQgw]==){WellKnownRegexPatterns.SuffixUrlSafeBase64}";
-            protected set => base.Pattern = value;
-        }
 
         override public uint KeyLength => 40;
 

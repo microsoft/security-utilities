@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 #nullable enable
 
@@ -10,13 +11,12 @@ namespace Microsoft.Security.Utilities
 {
     public abstract class Azure64ByteIdentifiableKey : IdentifiableKey
     {
-        public override uint KeyLength => 64;
-
-        public override string Pattern
+        protected Azure64ByteIdentifiableKey(string signature) : base(signature)
         {
-            get => $@"{WellKnownRegexPatterns.PrefixAllBase64}(?P<refine>[{WellKnownRegexPatterns.Base64}]{{76}}{RegexNormalizedSignature}[{WellKnownRegexPatterns.Base64}]{{5}}[AQgw]==){WellKnownRegexPatterns.SuffixAllBase64}";
-            protected set => base.Pattern = value;
+            Pattern = $@"{WellKnownRegexPatterns.PrefixAllBase64}(?P<refine>[{WellKnownRegexPatterns.Base64}]{{76}}{Regex.Escape(signature)}[{WellKnownRegexPatterns.Base64}]{{5}}[AQgw]==){WellKnownRegexPatterns.SuffixAllBase64}";
         }
+
+        public override uint KeyLength => 64;
 
 #if HIGH_PERFORMANCE_CODEGEN
         private protected override IEnumerable<HighPerformancePattern> HighPerformancePatterns => [

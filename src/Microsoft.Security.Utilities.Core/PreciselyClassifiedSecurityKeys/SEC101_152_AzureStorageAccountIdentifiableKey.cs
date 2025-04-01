@@ -8,16 +8,13 @@ namespace Microsoft.Security.Utilities
 {
     public class AzureStorageAccountIdentifiableKey : Azure64ByteIdentifiableKey
     {
-        public AzureStorageAccountIdentifiableKey()
+        public AzureStorageAccountIdentifiableKey() : base(IdentifiableMetadata.AzureStorageSignature)
         {
             Id = "SEC101/152";
             Name = nameof(AzureStorageAccountIdentifiableKey);
             Label = "an Azure storage account access key";
+            ChecksumSeeds = new[] { IdentifiableMetadata.AzureStorageAccountChecksumSeed };
         }
-
-        public override ISet<string> Signatures => IdentifiableMetadata.AzureStorageSignature.ToSet();
-
-        public override IEnumerable<ulong> ChecksumSeeds => new[] { IdentifiableMetadata.AzureStorageAccountChecksumSeed };
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
