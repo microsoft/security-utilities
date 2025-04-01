@@ -3,15 +3,19 @@
 
 #nullable enable
 
+using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities;
 
+[DataContract]
 public class RegexPattern
 {
     public const string FallbackRedactionToken = "+++";
@@ -307,7 +311,7 @@ public class RegexPattern
 
     public virtual Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>(Id, Name);
 
-    [DataMember(Order = 9)]
+    [DataMember(Order = 5)]
     public string Pattern { get; protected set; }
 
 #if NET7_0_OR_GREATER
@@ -421,8 +425,4 @@ public class RegexPattern
         return "^" + pattern;
     }
 #endif
-    public class DataMemberAttribute : Attribute
-    {
-        public int Order { get; set; }
-    }
 }
