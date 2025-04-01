@@ -2,55 +2,55 @@
   {
     "DetectionMetadata": "ObsoleteFormat, HighEntropy, MediumConfidence",
     "Id": "SEC101/105",
+    "Label": "an Azure messaging legacy format access key",
     "Name": "AzureMessagingLegacyCredentials",
     "Pattern": "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)",
     "Signatures": [
       ".servicebus"
-    ],
-    "UserFacingLabel": "an Azure messaging legacy format access key"
+    ]
   },
   {
     "DetectionMetadata": "HighEntropy, MediumConfidence",
     "Id": "SEC101/528",
+    "Label": "an unclassified JWT token",
     "Name": "UnclassifiedJwt",
     "Pattern": "(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{23,}\\.e[0-9A-Za-z-_=]{23,}\\.[0-9A-Za-z-_=]{24,}(?:[^0-9A-Za-z-_]|$)",
     "Signatures": [
       "eyJ",
       "eyAi",
       "ewog"
-    ],
-    "UserFacingLabel": "an unclassified JWT token"
+    ]
   },
   {
     "DetectionMetadata": "MediumConfidence",
     "Id": "SEC101/127",
+    "Label": null,
     "Name": "UrlCredentials",
     "Pattern": "($|\\b)(ftps?|https?):\\/\\/(?P<refine>[^:@\\/]+:[^:@?\\/]+)@",
     "Signatures": [
       "ftp",
       "http"
-    ],
-    "UserFacingLabel": null
+    ]
   },
   {
     "DetectionMetadata": "HighEntropy, MediumConfidence",
     "Id": "SEC101/060",
+    "Label": "a loose SAS HMAC",
     "Name": "LooseSasSecret",
     "Pattern": "(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?P<refine>[0-9a-z\\/+%]{43,129}(?:=|%3d))",
     "Signatures": [
       "sig=",
       "ret="
-    ],
-    "UserFacingLabel": "a loose SAS HMAC"
+    ]
   },
   {
     "DetectionMetadata": "MediumConfidence",
     "Id": "SEC101/055",
+    "Label": "a PKCS#12 certificate private key bundle",
     "Name": "Pkcs12CertificatePrivateKeyBundle",
     "Pattern": "MI[I-L][0-9a-zA-Z\\/+]{2}[AQgw]IBAzCC",
     "Signatures": [
       "IBAzCC"
-    ],
-    "UserFacingLabel": "a PKCS#12 certificate private key bundle"
+    ]
   }
 ]

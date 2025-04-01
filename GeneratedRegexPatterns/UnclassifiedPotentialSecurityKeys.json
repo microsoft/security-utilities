@@ -2,85 +2,85 @@
   {
     "DetectionMetadata": "HighEntropy, MediumConfidence",
     "Id": "SEC101/528",
+    "Label": "an unclassified JWT token",
     "Name": "UnclassifiedJwt",
     "Pattern": "(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{23,}\\.e[0-9A-Za-z-_=]{23,}\\.[0-9A-Za-z-_=]{24,}(?:[^0-9A-Za-z-_]|$)",
     "Signatures": [
       "eyJ",
       "eyAi",
       "ewog"
-    ],
-    "UserFacingLabel": "an unclassified JWT token"
+    ]
   },
   {
     "DetectionMetadata": "MediumConfidence",
     "Id": "SEC101/127",
+    "Label": null,
     "Name": "UrlCredentials",
     "Pattern": "($|\\b)(ftps?|https?):\\/\\/(?P<refine>[^:@\\/]+:[^:@?\\/]+)@",
     "Signatures": [
       "ftp",
       "http"
-    ],
-    "UserFacingLabel": null
+    ]
   },
   {
     "DetectionMetadata": "HighEntropy, MediumConfidence",
     "Id": "SEC101/060",
+    "Label": "a loose SAS HMAC",
     "Name": "LooseSasSecret",
     "Pattern": "(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?P<refine>[0-9a-z\\/+%]{43,129}(?:=|%3d))",
     "Signatures": [
       "sig=",
       "ret="
-    ],
-    "UserFacingLabel": "a loose SAS HMAC"
+    ]
   },
   {
     "DetectionMetadata": "LowConfidence",
     "Id": "SEC101/061",
+    "Label": "a loose OAuth2 bearer token",
     "Name": "OAuth2BearerToken",
     "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?P<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+/=]|$)",
-    "Signatures": null,
-    "UserFacingLabel": "a loose OAuth2 bearer token"
+    "Signatures": null
   },
   {
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Id": "SEC000/000",
+    "Label": "an unclassified 32-byte base64 string",
     "Name": "Unclassified32ByteBase64String",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=",
-    "Signatures": null,
-    "UserFacingLabel": "an unclassified 32-byte base64 string"
+    "Signatures": null
   },
   {
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Id": "SEC000/001",
+    "Label": "an unclassified 64-byte base64 string",
     "Name": "Unclassified64ByteBase64String",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==",
-    "Signatures": null,
-    "UserFacingLabel": "an unclassified 64-byte base64 string"
+    "Signatures": null
   },
   {
     "DetectionMetadata": "ObsoleteFormat, HighEntropy, LowConfidence",
     "Id": "SEC101/101",
+    "Label": "an Azure Entra client application legacy format password",
     "Name": "AadClientAppLegacyCredentials",
     "Pattern": "^[~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{34}$",
-    "Signatures": null,
-    "UserFacingLabel": "an Azure Entra client application legacy format password"
+    "Signatures": null
   },
   {
     "DetectionMetadata": "MediumConfidence",
     "Id": "SEC101/055",
+    "Label": "a PKCS#12 certificate private key bundle",
     "Name": "Pkcs12CertificatePrivateKeyBundle",
     "Pattern": "MI[I-L][0-9a-zA-Z\\/+]{2}[AQgw]IBAzCC",
     "Signatures": [
       "IBAzCC"
-    ],
-    "UserFacingLabel": "a PKCS#12 certificate private key bundle"
+    ]
   },
   {
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Id": "SEC000/002",
+    "Label": "an unclassified 16-byte hexadecimal string",
     "Name": "Unclassified16ByteHexadecimalString",
     "Pattern": "(^|[^1234567890abcdef])[1234567890abcdef]{32}([^1234567890abcdef]|$)",
-    "Signatures": null,
-    "UserFacingLabel": "an unclassified 16-byte hexadecimal string"
+    "Signatures": null
   }
 ]
