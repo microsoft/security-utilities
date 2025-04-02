@@ -2,6 +2,8 @@
 
 #nullable disable
 
+using Microsoft.VisualBasic;
+
 using System.IO;
 
 namespace Microsoft.Security.Utilities.Cli
@@ -79,7 +81,7 @@ namespace Microsoft.Security.Utilities.Cli
             foreach (var detection in scan.DetectSecrets(options.StringInput))
             {
                 foundAtLeastOne = true;
-                Console.WriteLine("Found {0} ('{1}') at position {2}", detection.Id, detection.RedactionToken, detection.Start + detection.Length);
+                Console.WriteLine($"Offset {detection.Start},{detection.End} : {detection.Moniker} : {detection.FormattedMessage(contents)}");
             }
 
             if (!foundAtLeastOne)

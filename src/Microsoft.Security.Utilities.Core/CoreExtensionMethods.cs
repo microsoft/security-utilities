@@ -46,6 +46,13 @@ namespace Microsoft.Security.Utilities
             return $"'{truncated}' {verb} {value.Label}.{suffix}";
         }
 
+        /// <summary>
+        /// Truncates a string to a specified length, adding an ellipsis if any
+        /// of the input string is removed.
+        /// </summary>
+        /// <param name="text">The text to truncate.</param>
+        /// <param name="lengthExclusiveOfEllipsis">The desired length of the truncated text, exclusive of the ellipsis, if added.</param>
+        /// <returns>The rightmost truncated contents of the strength or the entire string (if its length is equal to or less than the specified length).</returns>
         public static string Truncate(this string text, int lengthExclusiveOfEllipsis = 6)
         {
             text ??= string.Empty;
