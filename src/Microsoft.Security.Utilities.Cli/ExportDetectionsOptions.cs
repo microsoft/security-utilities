@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 #nullable disable
-using CommandLine;    
+using CommandLine;
 
 namespace Microsoft.Security.Utilities.Cli
 {
     [Verb("export", HelpText = "Exports all rules to JSON representation")]
     public class ExportDetectionsOptions
-{
+    {
         [Option(
             "output",
             Required = true,
