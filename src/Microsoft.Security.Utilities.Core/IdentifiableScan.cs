@@ -17,7 +17,7 @@ public class IdentifiableScan : ISecretMasker
     private readonly HighPerformanceScanner highPerformanceSecretScanner;
     private SecretMasker backupSecretMasker;
     private readonly IRegexEngine regexEngine;
-    
+
     public IdentifiableScan(IEnumerable<RegexPattern> regexPatterns, bool generateCorrelatingIds, IRegexEngine regexEngine = null)
     {
         this.signatureToPatternsMap = new Dictionary<string, IList<RegexPattern>>();

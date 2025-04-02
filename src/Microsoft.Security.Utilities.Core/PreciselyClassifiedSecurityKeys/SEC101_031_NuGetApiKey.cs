@@ -16,13 +16,10 @@ namespace Microsoft.Security.Utilities
             Id = "SEC101/031";
             Name = nameof(NuGetApiKey);
             DetectionMetadata = DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy | DetectionMetadata.HighConfidence;
-
             // This is the ApiKeyV4 format implemented here:
             // https://github.com/NuGet/NuGetGallery/blob/main/src/NuGetGallery.Services/Authentication/ApiKeyV4.cs
             Pattern = "(?i)(^|[^a-z0-9])(?P<refine>oy2[a-z2-7]{43})([^a-z0-9]|$)";
-
             Signatures = new HashSet<string>(new[] { "oy2", "OY2" });
-
             Label = "a NuGet API key";
         }
 
