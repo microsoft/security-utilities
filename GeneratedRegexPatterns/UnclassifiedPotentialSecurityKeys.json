@@ -14,7 +14,7 @@
   {
     "Id": "SEC101/127",
     "Name": "UrlCredentials",
-    "Label": null,
+    "Label": "a URL with login credentials",
     "DetectionMetadata": "MediumConfidence",
     "Pattern": "($|\\b)(ftps?|https?):\\/\\/(?P<refine>[^:@\\/]+:[^:@?\\/]+)@",
     "Signatures": [

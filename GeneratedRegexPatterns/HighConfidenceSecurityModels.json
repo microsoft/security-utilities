@@ -103,7 +103,7 @@
   {
     "Id": "SEC101/179",
     "Name": "AzureIotDeviceProvisioningIdentifiableKey",
-    "Label": "an Azure IoT device provisioning access key",
+    "Label": "an Azure IoT device provisioning key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AIoT[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
