@@ -1,7 +1,7 @@
 [
   {
     "Id": "SEC101/105",
-    "Name": "AzureMessageLegacyCredentials",
+    "Name": "AzureMessagingLegacyCredentials",
     "DetectionMetadata": "ObsoleteFormat, HighEntropy, MediumConfidence",
     "Pattern": "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)",
     "Signatures": [
@@ -10,7 +10,7 @@
   },
   {
     "Id": "SEC101/528",
-    "Name": "GenericJwt",
+    "Name": "UnclassifiedJwt",
     "DetectionMetadata": "HighEntropy, MediumConfidence",
     "Pattern": "(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{23,}\\.e[0-9A-Za-z-_=]{23,}\\.[0-9A-Za-z-_=]{24,}(?:[^0-9A-Za-z-_]|$)",
     "Signatures": [

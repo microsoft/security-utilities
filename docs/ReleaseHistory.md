@@ -28,6 +28,7 @@
 - PRF: Remove unnecessary and expensive recomputation of `RegexPatter.Pattern`, `RegexPattern.Signatures`, and `IdentifiableKey.ChecksumSeeds` on every property access.
 - RRR: Rename `CommonAnnotatedSecurityKey` to `UnclassifiedLegacyCommonAnnotatedSecurityKey`.
 - RRR: Rename `GenericJwt` to `UnclassifiedJwt`.
+- RRR: Rename `AzureMessageLegacyCredentials` to `AzureMessagingLegacyCredentials`.
 
 # 1.16.0 - 03/05/2025
 - BRK: Eliminate `SEC000/101.Unclassified32CharacterString` as noisy and not useful.

@@ -49,7 +49,7 @@ public static class WellKnownRegexPatterns
 
     public static IEnumerable<RegexPattern> UnclassifiedPotentialSecurityKeys { get; } = new RegexPattern[]
     {
-        new GenericJwt(),
+        new UnclassifiedJwt(),
         new UrlCredentials(),
         new LooseSasSecret(),
         new OAuth2BearerToken(),
@@ -87,7 +87,7 @@ public static class WellKnownRegexPatterns
         new AdoLegacyPat(),                         // SEC101/102
         new AzureCosmosDBLegacyCredentials(),       // SEC101/104
         new AzureStorageAccountLegacyCredentials(), // SEC101/106
-        new AzureMessageLegacyCredentials(),
+        new AzureMessagingLegacyCredentials(),
         new AzureDatabricksPat(),
         new AzureEventGridIdentifiableKey(),
     };
