@@ -11,8 +11,8 @@ namespace Microsoft.Security.Utilities
         {
             Id = "DAT101/001";
             Name = nameof(GuidValue);
-            Pattern = @"(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$";
             Label = "a GUID";
+            Pattern = @"(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$";
         }
 
         public override IEnumerable<string> GenerateTruePositiveExamples()

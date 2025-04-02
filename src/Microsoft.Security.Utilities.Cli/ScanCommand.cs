@@ -78,7 +78,8 @@ namespace Microsoft.Security.Utilities.Cli
 
             bool foundAtLeastOne = false;
 
-            foreach (var detection in scan.DetectSecrets(options.StringInput))
+            string contents = options.StringInput;
+            foreach (var detection in scan.DetectSecrets(contents))
             {
                 foundAtLeastOne = true;
                 Console.WriteLine($"Offset {detection.Start},{detection.End} : {detection.Moniker} : {detection.FormattedMessage(contents)}");

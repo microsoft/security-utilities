@@ -10,8 +10,8 @@ namespace Microsoft.Security.Utilities
         {
             Id = "DAT101/003";
             Name = nameof(Integer);
-            Pattern = @"^-?\d+$";
             Label = "an integer";
+            Pattern = @"^-?\d+$";
         }
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
