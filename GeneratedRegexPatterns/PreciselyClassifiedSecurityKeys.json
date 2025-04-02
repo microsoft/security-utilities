@@ -2,7 +2,7 @@
   {
     "Id": "SEC101/200",
     "Name": "UnclassifiedLegacyCommonAnnotatedSecurityKey",
-    "Label": "an unclassified legacy common annotated security key",
+    "Label": null,
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ9(?:9|D|H)[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{16}[A-Za-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{7}(?:[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{2}==)?)",
     "Signatures": [
