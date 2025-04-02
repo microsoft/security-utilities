@@ -32,7 +32,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         return new Version(version.Major, version.Minor, version.Build);
     }
 
-    public SecretMasker() : this (default, default, default, default, default)
+    public SecretMasker() : this(default, default, default, default, default)
     {
     }
 
@@ -424,7 +424,7 @@ public class SecretMasker : ISecretMasker, IDisposable
     public HashSet<SecretLiteral> EncodedSecretLiterals { get; }
     public HashSet<SecretLiteral> ExplicitlyAddedSecretLiterals { get; }
 
-    public ReaderWriterLockSlim SyncObject = new (LockRecursionPolicy.NoRecursion);
+    public ReaderWriterLockSlim SyncObject = new(LockRecursionPolicy.NoRecursion);
 
     private bool m_disposed;
 }

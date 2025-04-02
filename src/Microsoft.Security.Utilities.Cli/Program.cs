@@ -14,7 +14,7 @@ namespace Microsoft.Security.Utilities.Cli
                     RedactOptions,
                     GenerateOptions,
                     ExportDetectionsOptions,
-		    ScanOptions> (args)
+            ScanOptions>(args)
                   .MapResult(
                     (RedactOptions options) => new RedactCommand().Run(options),
                     (GenerateOptions options) => new GenerateCommand().Run(options),
@@ -24,7 +24,7 @@ namespace Microsoft.Security.Utilities.Cli
             }
             catch (Exception e)
             {
-                Console.WriteLine (e);
+                Console.WriteLine(e);
                 return 1;
             }
         }

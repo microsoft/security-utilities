@@ -93,7 +93,7 @@ namespace Microsoft.Security.Utilities
                 (uint)random.Next()
             };
 
-            foreach(string alphabet in GenerateValidAlphabetTestCases())
+            foreach (string alphabet in GenerateValidAlphabetTestCases())
             {
                 var testEncoder = new CustomAlphabetEncoder(alphabet);
 
@@ -156,7 +156,7 @@ namespace Microsoft.Security.Utilities
                 },
             };
 
-            foreach(var testCase in testCases)
+            foreach (var testCase in testCases)
             {
                 Action action = () => new CustomAlphabetEncoder(testCase.Alphabet);
 

@@ -14,7 +14,7 @@ namespace Microsoft.Security.Utilities.Cli
         {
             string input = options.Input;
             string output = options.Output;
-            
+
             var secretMasker = new SecretMasker(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
                                                 generateCorrelatingIds: true);
 
@@ -25,8 +25,8 @@ namespace Microsoft.Security.Utilities.Cli
                 Directory.CreateDirectory(output);
             }
 
-            foreach (string file in Directory.GetFiles(input, "*", SearchOption.AllDirectories)) 
-            { 
+            foreach (string file in Directory.GetFiles(input, "*", SearchOption.AllDirectories))
+            {
                 string inputText = File.ReadAllText(file);
                 string redactedText = secretMasker.MaskSecrets(inputText);
 
@@ -39,7 +39,7 @@ namespace Microsoft.Security.Utilities.Cli
                     File.WriteAllText(outputFilePath, redactedText);
                 }
             }
-            
+
             return 0;
         }
     }

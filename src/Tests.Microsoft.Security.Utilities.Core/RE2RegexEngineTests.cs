@@ -25,7 +25,7 @@ namespace Microsoft.Security.Utilities.Core
 
             var regexPattern = new RegexPattern(id: "1001", name: "MyRule", DetectionMetadata.None, regex);
             var masker = new SecretMasker([regexPattern], regexEngine: RE2RegexEngine.Instance);
-            
+
             var detection = masker.DetectSecrets(scanData).FirstOrDefault();
             detection.Should().NotBe(default);
 
