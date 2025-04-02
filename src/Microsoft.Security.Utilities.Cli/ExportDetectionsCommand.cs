@@ -22,7 +22,7 @@ namespace Microsoft.Security.Utilities.Cli
 
             WriteJson(options,
                      "PreciselyClassifiedSecurityKeys.json",
-                      WellKnownRegexPatterns.HighConfidenceSecurityModels);
+                      WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys);
 
             foreach (var precision in new[] { DetectionMetadata.HighConfidence, DetectionMetadata.MediumConfidence, DetectionMetadata.LowConfidence })
             {

@@ -32,7 +32,7 @@ public static class WellKnownRegexPatterns
         }
     }
 
-    public static IEnumerable<RegexPattern> HighConfidenceSecurityModels { get; } = HighConfidenceSecurityModelsIterator();
+    public static IEnumerable<RegexPattern> PreciselyClassifiedSecurityKeys { get; } = HighConfidenceSecurityModelsIterator();
 
     public static IEnumerable<RegexPattern> HighConfidenceSecurityModelsIterator()
     {

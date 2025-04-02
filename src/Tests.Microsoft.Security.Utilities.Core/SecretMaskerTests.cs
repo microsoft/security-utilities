@@ -20,7 +20,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_PreciselyClassifiedSecurityKeys_Detections()
     {
-        ValidateSecurityModelsDetections(WellKnownRegexPatterns.HighConfidenceSecurityModels,
+        ValidateSecurityModelsDetections(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
                                          preciseClassifications: false);
     }
 
@@ -781,7 +781,7 @@ public class SecretMaskerTests
     [DataRow("xxx7Q~dead.dead.DEAD-DEAD-dead~deadxx", "SEC101/156.AadClientAppSecret:23F12851970BB19BD76A448449F16F85BF4AFE915AD14BAFEE635F15021CE6BB")]
     public void SecretMasker_PlaceholderTestSecretsAreMasked(string input, string expected)
     {
-        using var secretMasker = new SecretMasker(WellKnownRegexPatterns.HighConfidenceSecurityModels);
+        using var secretMasker = new SecretMasker(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys);
         string actual = secretMasker.MaskSecrets(input);
         Assert.AreEqual("+++", actual);
     }

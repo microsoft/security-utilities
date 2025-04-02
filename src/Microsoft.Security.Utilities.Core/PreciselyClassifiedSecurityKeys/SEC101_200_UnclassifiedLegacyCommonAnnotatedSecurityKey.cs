@@ -16,7 +16,8 @@ namespace Microsoft.Security.Utilities
             Name = nameof(UnclassifiedLegacyCommonAnnotatedSecurityKey);
             DetectionMetadata = DetectionMetadata.Identifiable;
             Pattern = $"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{52}}JQQJ9(?:9|D|H)[{WellKnownRegexPatterns.Base62}][A-L][{WellKnownRegexPatterns.Base62}]{{16}}[A-Za-z][{WellKnownRegexPatterns.Base62}]{{7}}(?:[{WellKnownRegexPatterns.Base62}]{{2}}==)?)";
-            Signatures =  Signature.ToSet(); 
+            Signatures =  Signature.ToSet();
+            Label = "an unclassified legacy common annotated security key";
         }
 
 #if HIGH_PERFORMANCE_CODEGEN
