@@ -8,6 +8,7 @@
 - BUG => General bug fix.
 - NEW => New API or feature.
 - PRF => Performance work.
+- RRR => Rule rename, refactor or corrected metadata.
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
@@ -18,9 +19,14 @@
 - BRK: `RegexPattern.RotationPeriod` is no longer publicly settable.
 - BRK: `IdentifiableKey.RegexNormalizedSignature` is removed.
 - BRK: Abstract classes `IdentifiableKey`, `Azure32ByteIdentifiableKey`, `Azure64ByteIdentifiableKey`, and `AzureMessagingIdentifiableKey` now require derived classes to pass their signature to the base constructor.
+- BUG: `IdentifiableScan` now properly flows `RegexPattern.RotationPeriod` to `Detection` instances. `Detection.RotationPeriod` previously always retained `default` as a value.
+- BUG: `IdentifiableScan` now properly flows `RegexPattern.DetectionMetadata` to `Detection` instances. `Detection.DetectionMetadata` was previously hard-coded as `DetectionMetadata.HighEntropy`.
+- NEW: Sort properties by name in GeneratedRegexPatterns/*.json.
 - BRK: Remove derived `RegexPattern` class properties `ChecksumSeeds`, `EncodeForUrl`, and `KeyLength` as these are not relevant to the literal authoring of equivalent regex patterns in other languages.
+- BRK: Rename `LegacyCommonAnnotatedSecurityKey` to `CommonAnnotatedSecurityKey` and mark this inlined `Microsoft.Security.Utilities` class as internal.
 - NEW: Provide deterministic ordering of properties in GeneratedRegexPatterns/*.json via `DataMember` attributes.
 - PRF: Remove unnecessary and expensive recomputation of `RegexPatter.Pattern`, `RegexPattern.Signatures`, and `IdentifiableKey.ChecksumSeeds` on every property access.
+- RRR: Rename `CommonAnnotatedSecurityKey` to `UnclassifiedLegacyCommonAnnotatedSecurityKey`.
 
 # 1.16.0 - 03/05/2025
 - BRK: Eliminate `SEC000/101.Unclassified32CharacterString` as noisy and not useful.

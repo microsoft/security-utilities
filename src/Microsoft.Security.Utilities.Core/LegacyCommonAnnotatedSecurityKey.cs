@@ -10,9 +10,9 @@ using Base62;
 
 namespace Microsoft.Security.Utilities
 {
-    public class CommonAnnotatedKey
+    internal class LegacyCommonAnnotatedSecurityKey
     {
-        public static bool TryCreate(string key, out CommonAnnotatedKey secret)
+        public static bool TryCreate(string key, out LegacyCommonAnnotatedSecurityKey secret)
         {
             secret = null;
             string identifiableKey = key;
@@ -71,7 +71,7 @@ namespace Microsoft.Security.Utilities
                 }
 
                 byte[] bytes = Convert.FromBase64String(key);
-                secret = new CommonAnnotatedKey(bytes);
+                secret = new LegacyCommonAnnotatedSecurityKey(bytes);
             }
             catch (FormatException)
             {
@@ -87,7 +87,7 @@ namespace Microsoft.Security.Utilities
 
         private string base64Key;
 
-        private CommonAnnotatedKey(byte[] bytes)
+        private LegacyCommonAnnotatedSecurityKey(byte[] bytes)
         {
             this.Bytes = bytes;
             this.base64Key = Convert.ToBase64String(this.Bytes);

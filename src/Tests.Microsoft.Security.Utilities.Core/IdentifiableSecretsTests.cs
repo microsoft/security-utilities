@@ -323,7 +323,7 @@ namespace Microsoft.Security.Utilities
 
                     ulong checksumSeed = IdentifiableSecrets.VersionTwoChecksumSeed;
 
-                    int firstChecksumByteIndex = CommonAnnotatedKey.ChecksumBytesIndex;
+                    int firstChecksumByteIndex = LegacyCommonAnnotatedSecurityKey.ChecksumBytesIndex;
                     byte[] bytesToChecksum = new byte[firstChecksumByteIndex];
                     Array.Copy(keyBytes, bytesToChecksum, bytesToChecksum.Length);
 
@@ -331,7 +331,7 @@ namespace Microsoft.Security.Utilities
                     byte[] computedChecksumBytes = BitConverter.GetBytes(checksum);
 
                     int checksumLength = longForm ? 4 : 3;
-                    Array.Copy(computedChecksumBytes, 0, keyBytes, CommonAnnotatedKey.ChecksumBytesIndex, checksumLength);
+                    Array.Copy(computedChecksumBytes, 0, keyBytes, LegacyCommonAnnotatedSecurityKey.ChecksumBytesIndex, checksumLength);
 
                     bool result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, signature);
                     result.Should().BeTrue(because: $"{key}' should validate using 'TryValidateCommonAnnotatedKey' with its original checksum");
@@ -341,21 +341,21 @@ namespace Microsoft.Security.Utilities
                     result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, differentSignature);
                     result.Should().BeFalse(because: $"'{key}' has signature '{signature}', not '{differentSignature}'");
 
-                    CommonAnnotatedKey.TryCreate(key, out CommonAnnotatedKey cask);
+                    LegacyCommonAnnotatedSecurityKey.TryCreate(key, out LegacyCommonAnnotatedSecurityKey cask);
                     cask.Should().NotBeNull(because: $"the '{key}' should be a valid cask");
 
                     byte[] originalChecksum = new byte[cask.ChecksumBytes.Length];
-                    Array.Copy(keyBytes, CommonAnnotatedKey.ChecksumBytesIndex, originalChecksum, 0, originalChecksum.Length);
+                    Array.Copy(keyBytes, LegacyCommonAnnotatedSecurityKey.ChecksumBytesIndex, originalChecksum, 0, originalChecksum.Length);
 
                     for (int j = 0; j < cask.ChecksumBytes.Length; j++)
                     {
                         // Ensure that the we've restored the key entirely
-                        Array.Copy(originalChecksum, 0, keyBytes, CommonAnnotatedKey.ChecksumBytesIndex, originalChecksum.Length);
+                        Array.Copy(originalChecksum, 0, keyBytes, LegacyCommonAnnotatedSecurityKey.ChecksumBytesIndex, originalChecksum.Length);
                         result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, signature);
                         result.Should().BeTrue(because: $"{key}' should validate using 'TryValidateCommonAnnotatedKey' with its original checksum");
 
                         // Now munge a single byte of the checksum and ensure that the key no longer validates.
-                        keyBytes[CommonAnnotatedKey.ChecksumBytesIndex + i] = (byte)~keyBytes[CommonAnnotatedKey.ChecksumBytesIndex + i];
+                        keyBytes[LegacyCommonAnnotatedSecurityKey.ChecksumBytesIndex + i] = (byte)~keyBytes[LegacyCommonAnnotatedSecurityKey.ChecksumBytesIndex + i];
 
                         // Having munged the checksum, the key should no longer validate.
                         result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, signature);
@@ -385,21 +385,21 @@ namespace Microsoft.Security.Utilities
                     bool result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, signature);
                     result.Should().BeTrue(because: $"{key}' should validate using 'TryValidateCommonAnnotatedKey' with its original checksum");
 
-                    CommonAnnotatedKey.TryCreate(key, out CommonAnnotatedKey cask);
+                    LegacyCommonAnnotatedSecurityKey.TryCreate(key, out LegacyCommonAnnotatedSecurityKey cask);
                     cask.Should().NotBeNull(because: $"the '{key}' should be a valid cask");
 
                     byte[] originalChecksum = new byte[cask.ChecksumBytes.Length];
-                    Array.Copy(keyBytes, CommonAnnotatedKey.ChecksumBytesIndex, originalChecksum, 0, originalChecksum.Length);
+                    Array.Copy(keyBytes, LegacyCommonAnnotatedSecurityKey.ChecksumBytesIndex, originalChecksum, 0, originalChecksum.Length);
 
                     for (int j = 0; j < cask.ChecksumBytes.Length; j++)
                     {
                         // Ensure that the we've restored the key entirely
-                        Array.Copy(originalChecksum, 0, keyBytes, CommonAnnotatedKey.ChecksumBytesIndex, originalChecksum.Length);
+                        Array.Copy(originalChecksum, 0, keyBytes, LegacyCommonAnnotatedSecurityKey.ChecksumBytesIndex, originalChecksum.Length);
                         result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, signature);
                         result.Should().BeTrue(because: $"{key}' should validate using 'TryValidateCommonAnnotatedKey' with its original checksum");
 
                         // Now munge a single byte of the checksum and ensure that the key no longer validates.
-                        keyBytes[CommonAnnotatedKey.ChecksumBytesIndex + i] = (byte)~keyBytes[CommonAnnotatedKey.ChecksumBytesIndex + i];
+                        keyBytes[LegacyCommonAnnotatedSecurityKey.ChecksumBytesIndex + i] = (byte)~keyBytes[LegacyCommonAnnotatedSecurityKey.ChecksumBytesIndex + i];
 
                         // Having munged the checksum, the key should no longer validate.
                         result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, signature);
@@ -430,7 +430,7 @@ namespace Microsoft.Security.Utilities
                     byte[] keyBytes = IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash, commonAnnotatedSecret);
                     string key = Convert.ToBase64String(keyBytes);
 
-                    bool result = CommonAnnotatedKey.TryCreate(key, out CommonAnnotatedKey caKey);
+                    bool result = LegacyCommonAnnotatedSecurityKey.TryCreate(key, out LegacyCommonAnnotatedSecurityKey caKey);
                     result.Should().BeTrue(because: "the ComputeCommonAnnotatedHash return value should be a valid cask");
 
                     result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, "TEST");
@@ -445,7 +445,7 @@ namespace Microsoft.Security.Utilities
                     keyBytes = IdentifiableSecrets.ComputeCommonAnnotatedHash(textToHash, commonAnnotatedSecret);
                     key = Convert.ToBase64String(keyBytes);
 
-                    result = CommonAnnotatedKey.TryCreate(key, out caKey);
+                    result = LegacyCommonAnnotatedSecurityKey.TryCreate(key, out caKey);
                     result.Should().BeTrue(because: "the ComputeCommonAnnotatedHash return value should be a valid cask");
 
                     result = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, "TEST");
@@ -719,7 +719,7 @@ namespace Microsoft.Security.Utilities
 
                             string label = derived ? "derived" : "hashed";
 
-                            bool result = CommonAnnotatedKey.TryCreate(computedKey, out CommonAnnotatedKey caKey);
+                            bool result = LegacyCommonAnnotatedSecurityKey.TryCreate(computedKey, out LegacyCommonAnnotatedSecurityKey caKey);
                             result.Should().BeTrue(because: $"the derived key '{computedKey}' should be a valid common annotated security key");
 
                             bool keyKindCorrect = derived ? caKey.IsDerivedKey : caKey.IsHashedDataKey;
@@ -940,7 +940,7 @@ namespace Microsoft.Security.Utilities
 
                                         string label = derived ? "derived" : "hashed";
 
-                                        result = CommonAnnotatedKey.TryCreate(computedKey, out CommonAnnotatedKey caKey);
+                                        result = LegacyCommonAnnotatedSecurityKey.TryCreate(computedKey, out LegacyCommonAnnotatedSecurityKey caKey);
                                         result.Should().BeTrue(because: $"the derived key '{computedKey}' should be a valid common annotated security key");
                                     }
 
