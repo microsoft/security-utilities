@@ -118,30 +118,30 @@ namespace Base62
             switch (Type.GetTypeCode(typeof(T)))
             {
                 case TypeCode.String:
-                    return (T)Convert.ChangeType(Encoding.UTF8.GetString(array), typeof(T), CultureInfo.InvariantCulture);
+                return (T)Convert.ChangeType(Encoding.UTF8.GetString(array), typeof(T), CultureInfo.InvariantCulture);
                 case TypeCode.Int16:
-                    if (BitConverter.IsLittleEndian)
-                    {
-                        Array.Reverse(array);
-                    }
+                if (BitConverter.IsLittleEndian)
+                {
+                    Array.Reverse(array);
+                }
 
-                    return (T)Convert.ChangeType(BitConverter.ToInt16(array, 0), typeof(T), CultureInfo.InvariantCulture);
+                return (T)Convert.ChangeType(BitConverter.ToInt16(array, 0), typeof(T), CultureInfo.InvariantCulture);
                 case TypeCode.Int32:
-                    if (BitConverter.IsLittleEndian)
-                    {
-                        Array.Reverse(array);
-                    }
+                if (BitConverter.IsLittleEndian)
+                {
+                    Array.Reverse(array);
+                }
 
-                    return (T)Convert.ChangeType(BitConverter.ToInt32(array, 0), typeof(T), CultureInfo.InvariantCulture);
+                return (T)Convert.ChangeType(BitConverter.ToInt32(array, 0), typeof(T), CultureInfo.InvariantCulture);
                 case TypeCode.Int64:
-                    if (BitConverter.IsLittleEndian)
-                    {
-                        Array.Reverse(array);
-                    }
+                if (BitConverter.IsLittleEndian)
+                {
+                    Array.Reverse(array);
+                }
 
-                    return (T)Convert.ChangeType(BitConverter.ToInt64(array, 0), typeof(T), CultureInfo.InvariantCulture);
+                return (T)Convert.ChangeType(BitConverter.ToInt64(array, 0), typeof(T), CultureInfo.InvariantCulture);
                 default:
-                    throw new Exception($"Type of {typeof(T)} does not support.");
+                throw new Exception($"Type of {typeof(T)} does not support.");
             }
         }
 

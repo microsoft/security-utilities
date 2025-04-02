@@ -11,6 +11,7 @@
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MsBuildThisFileDirectory)</SolutionDir>
     <PackageOutputPath>$(MsBuildThisFileDirectory)..\bld\nupkg\$(OutputSubDir)\</PackageOutputPath>
     <DebugType>portable</DebugType>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>    
   </PropertyGroup>
 
   <PropertyGroup Label="Assembly Attributes">
