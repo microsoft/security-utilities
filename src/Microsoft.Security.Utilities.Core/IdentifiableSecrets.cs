@@ -95,7 +95,7 @@ public static class IdentifiableSecrets
 
         ulong checksumSeed = VersionTwoChecksumSeed;
 
-        int firstChecksumByteIndex = CommonAnnotatedKey.ChecksumBytesIndex;
+        int firstChecksumByteIndex = LegacyCommonAnnotatedSecurityKey.ChecksumBytesIndex;
         byte[] bytesToChecksum = new byte[firstChecksumByteIndex];
         Array.Copy(key, bytesToChecksum, bytesToChecksum.Length);
         
@@ -127,10 +127,10 @@ public static class IdentifiableSecrets
 
     private static string GetBase64EncodedSignature(byte[] key)
     {
-        Debug.Assert(CommonAnnotatedKey.ProviderFixedSignatureOffset % 4 == 0);
-        Debug.Assert(CommonAnnotatedKey.ProviderFixedSignatureLength % 4 == 0);
-        const int signatureByteOffset = CommonAnnotatedKey.ProviderFixedSignatureOffset / 4 * 3;
-        const int signatureByteLength = CommonAnnotatedKey.ProviderFixedSignatureLength / 4 * 3;
+        Debug.Assert(LegacyCommonAnnotatedSecurityKey.ProviderFixedSignatureOffset % 4 == 0);
+        Debug.Assert(LegacyCommonAnnotatedSecurityKey.ProviderFixedSignatureLength % 4 == 0);
+        const int signatureByteOffset = LegacyCommonAnnotatedSecurityKey.ProviderFixedSignatureOffset / 4 * 3;
+        const int signatureByteLength = LegacyCommonAnnotatedSecurityKey.ProviderFixedSignatureLength / 4 * 3;
         return Convert.ToBase64String(key, signatureByteOffset, signatureByteLength);
     }
 
@@ -156,7 +156,7 @@ public static class IdentifiableSecrets
             return false;
         }
 
-        string signature = key.Substring(CommonAnnotatedKey.ProviderFixedSignatureOffset, CommonAnnotatedKey.ProviderFixedSignatureLength);
+        string signature = key.Substring(LegacyCommonAnnotatedSecurityKey.ProviderFixedSignatureOffset, LegacyCommonAnnotatedSecurityKey.ProviderFixedSignatureLength);
         if (!string.Equals(signature, base64EncodedSignature, StringComparison.OrdinalIgnoreCase))
         {
             return false;
@@ -166,8 +166,8 @@ public static class IdentifiableSecrets
 
         ulong checksumSeed = VersionTwoChecksumSeed;
 
-        string componentToChecksum = key.Substring(0, CommonAnnotatedKey.ChecksumOffset);
-        string checksumText = key.Substring(CommonAnnotatedKey.ChecksumOffset);
+        string componentToChecksum = key.Substring(0, LegacyCommonAnnotatedSecurityKey.ChecksumOffset);
+        string checksumText = key.Substring(LegacyCommonAnnotatedSecurityKey.ChecksumOffset);
 
         byte[] keyBytes = Convert.FromBase64String(componentToChecksum);
 
@@ -253,7 +253,7 @@ public static class IdentifiableSecrets
             throw new ArgumentException("The hashed data signature must be either 'D' (for derived keys) or 'H' (for arbitrary hashes).");
         }
 
-        if (!CommonAnnotatedKey.TryCreate(commonAnnotatedSecret, out CommonAnnotatedKey cask))
+        if (!LegacyCommonAnnotatedSecurityKey.TryCreate(commonAnnotatedSecret, out LegacyCommonAnnotatedSecurityKey cask))
         {
             throw new ArgumentException("The provided key is not a valid common annotated security key.");
         }

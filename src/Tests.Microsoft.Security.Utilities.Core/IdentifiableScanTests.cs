@@ -19,7 +19,7 @@ namespace Tests.Microsoft.Security.Utilities.Core
         {
             using var assertionScope = new AssertionScope();
 
-            var cask = new CommonAnnotatedSecurityKey();
+            var cask = new UnclassifiedLegacyCommonAnnotatedSecurityKey();
             var examples = cask.GenerateTruePositiveExamples().ToList();
 
             var masker = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,

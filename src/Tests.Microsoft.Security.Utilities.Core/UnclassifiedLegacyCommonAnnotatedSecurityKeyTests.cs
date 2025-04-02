@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Security.Utilities
 {
     [TestClass, ExcludeFromCodeCoverage]
-    public class CommonAnnotatedKeyTests
+    public class UnclassifiedLegacyCommonAnnotatedSecurityKeyTests
     {
         [TestMethod]
         public void CommonAnnotatedKey_TryCreateWithNonCaskSecret()
@@ -28,7 +28,7 @@ namespace Microsoft.Security.Utilities
 
                 foreach (string secret in new[] { caskSecret, legacySecret })
                 {
-                    var action = () => CommonAnnotatedKey.TryCreate(secret, out CommonAnnotatedKey cask);
+                    var action = () => LegacyCommonAnnotatedSecurityKey.TryCreate(secret, out LegacyCommonAnnotatedSecurityKey cask);
                     action.Should().NotThrow(because: "TryCreate should never throw");
                 }
             }
