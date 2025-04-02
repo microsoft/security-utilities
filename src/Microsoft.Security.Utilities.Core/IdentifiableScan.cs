@@ -120,9 +120,10 @@ public class IdentifiableScan : ISecretMasker
             Name = result.Item2,
             Start = detection.Start,
             Length = detection.Length,
-            Metadata = DetectionMetadata.HighEntropy,
-            CrossCompanyCorrelatingId = c3id,
             RedactionToken = redactionToken,
+            CrossCompanyCorrelatingId = c3id,
+            Metadata = pattern.DetectionMetadata,
+            RotationPeriod = pattern.RotationPeriod,
         };
     }
 
