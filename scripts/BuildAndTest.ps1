@@ -52,6 +52,9 @@ function Exit-WithFailureMessage($scriptName, $message) {
 }
 
 if (-not $NoBuild) {
+    Write-Information "Reformatting code..."
+    dotnet build $RepoRoot\src\Microsoft.Security.Utilities.sln
+
     Write-Information "Building Microsoft.Security.Utilities.sln (dotnet)..."
     dotnet build $RepoRoot\src\Microsoft.Security.Utilities.sln -c $Configuration -p:Deterministic=true -p:WarningsAsErrors="MSB3277"
     if ($LASTEXITCODE -ne 0) {
