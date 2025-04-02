@@ -9,6 +9,6 @@ namespace Microsoft.Security.Utilities
 {
     public interface IRegexEngine
     {
-        IEnumerable<UniversalMatch> Matches(string input, string pattern, RegexOptions options = RegexDefaults.DefaultOptionsCaseSensitive, TimeSpan timeout = default, string captureGroup = null);
+        IEnumerable<UniversalMatch> Matches(string input, string pattern, RegexOptions options = RegexDefaults.DefaultOptions, TimeSpan timeout = default, string captureGroup = null);
     }
 }

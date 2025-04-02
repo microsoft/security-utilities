@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
-
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Security.Utilities;
@@ -424,5 +424,27 @@ public class RegexPatternTests
         {
             new RegexPattern(Id, Name, DetectionMetadata.HighEntropy, null);
         });
+    }
+
+    [TestMethod]
+    public void RegexPattern_RegexOptions_UsesDefault()
+    {
+        var pattern = new RegexPattern("id", "name", DetectionMetadata.None, ".");
+        pattern.RegexOptions.Should().Be(RegexDefaults.DefaultOptions, 
+                                         because: "No regex options were passed so default should be used.");
+    }
+
+    [TestMethod]
+    public void RegexPattern_RegexOptions_AddsAndRemovesFromDefault()
+    {
+        var pattern = new RegexPattern(id: "id",
+                                       name: "name",
+                                       DetectionMetadata.None,
+                                       pattern: ".",
+                                       regexOptions: RegexOptions.Multiline,
+                                       disabledRegexOptions: RegexOptions.ExplicitCapture);
+
+        pattern.RegexOptions.Should().Be((RegexDefaults.DefaultOptions | RegexOptions.Multiline) & ~RegexOptions.ExplicitCapture,
+                                         because: "Multiline should be added and ExplicitCapture should be removed.");
     }
 }

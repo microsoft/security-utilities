@@ -309,6 +309,19 @@ namespace Microsoft.Security.Utilities
             }
         }
 
+        [TestMethod]
+        public void WellKnownRegexPatterns_EnsureAllPatternsHaveSupersetOfDefaultOptions()
+        {
+            using var assertionScope = new AssertionScope();
+            var patterns = GetAllPatterns();
+            foreach (RegexPattern pattern in patterns)
+            {
+                (pattern.RegexOptions & RegexDefaults.DefaultOptions).Should()
+                    .Be(RegexDefaults.DefaultOptions,
+                        because: "All built-in patterns should use the default regex options. Additional options and may be added, but no default options should be removed.");
+            }
+        }
+
         private static List<RegexPattern> GetAllPatterns()
         {
             var patterns = new List<RegexPattern>();

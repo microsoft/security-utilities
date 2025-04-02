@@ -13,12 +13,7 @@ namespace Microsoft.Security.Utilities
     {
         public static IRegexEngine Instance = new RE2RegexEngine();
 
-#if NET7_0_OR_GREATER
-        public const RegexOptions RegexOptionsDefaults = RegexOptions.ExplicitCapture | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.NonBacktracking;
-#else
-        public const RegexOptions RegexOptionsDefaults = RegexOptions.ExplicitCapture | RegexOptions.Compiled | RegexOptions.CultureInvariant;
-#endif
-        public IEnumerable<UniversalMatch> Matches(string input, string pattern, RegexOptions options = RegexOptionsDefaults, TimeSpan timeout = default, string captureGroup = null)
+        public IEnumerable<UniversalMatch> Matches(string input, string pattern, RegexOptions options = RegexDefaults.DefaultOptions, TimeSpan timeout = default, string captureGroup = null)
         {
             if (captureGroup == null)
             {
