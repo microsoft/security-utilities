@@ -30,6 +30,12 @@ jobs:
     - name: Show dotnet info
       run: dotnet --info
 
+    - name: Install format tool
+      run: dotnet tool install -g dotnet-format
+
+    - name: dotnet format
+      run: dotnet-format --folder --check --exclude .\GeneratedRegexPatterns\
+
     - name: Build
       run: ./BuildAndTest.cmd -Configuration ${{matrix.configuration}}
 
