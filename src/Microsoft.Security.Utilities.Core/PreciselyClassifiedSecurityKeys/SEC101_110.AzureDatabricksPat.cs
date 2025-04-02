@@ -11,11 +11,10 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/110";
             Name = nameof(AzureDatabricksPat);
+            Label = "an Azure Databricks personal access token (PAT)";
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.HighConfidence;
             Pattern = $"(?:^|[^0-9a-f\\-])(?P<refine>dapi[0-9a-f\\-]{{32,34}})(?:[^0-9a-f\\-]|$)";
             Signatures = new HashSet<string>(new[] { "dapi" });
-            Label = "an Azure Databricks personal access token (PAT)";
-
         }
 
         public override IEnumerable<string> GenerateTruePositiveExamples()

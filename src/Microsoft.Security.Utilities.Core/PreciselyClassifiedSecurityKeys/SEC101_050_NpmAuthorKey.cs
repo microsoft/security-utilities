@@ -11,10 +11,10 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/050";
             Name = nameof(NpmAuthorKey);
+            Label = "an NPM author key";
             DetectionMetadata = DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy | DetectionMetadata.HighConfidence;
             Pattern = @$"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>npm_[{WellKnownRegexPatterns.Base62}]{{36}}){WellKnownRegexPatterns.SuffixBase62}";
             Signatures = new HashSet<string>(new[] { "npm_" });
-            Label = "an NPM author key";
         }
 
         public override IEnumerable<string> GenerateTruePositiveExamples()

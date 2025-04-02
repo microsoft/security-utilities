@@ -19,10 +19,9 @@ internal sealed class Unclassified64ByteBase64String : RegexPattern
     {
         Id = "SEC000/001";
         Name = nameof(Unclassified64ByteBase64String);
-        Pattern = $@"{WellKnownRegexPatterns.PrefixAllBase64}[{WellKnownRegexPatterns.Base64}]{{86}}==";
-
-        DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.Unclassified | DetectionMetadata.LowConfidence;
         Label = "an unclassified 64-byte base64 string";
+        Pattern = $@"{WellKnownRegexPatterns.PrefixAllBase64}[{WellKnownRegexPatterns.Base64}]{{86}}==";
+        DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.Unclassified | DetectionMetadata.LowConfidence;
     }
 
     public override IEnumerable<string> GenerateTruePositiveExamples()

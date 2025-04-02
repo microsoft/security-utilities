@@ -11,7 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/179";
             Name = nameof(AzureIotDeviceProvisioningIdentifiableKey);
-            Label = "an Azure IoT device provisioning access key";
+            Label = "an Azure IoT device provisioning key";
             ChecksumSeeds = new[] { IdentifiableMetadata.AzureIotDeviceProvisioningChecksumSeed };
         }
     }

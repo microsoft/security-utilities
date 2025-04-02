@@ -22,6 +22,8 @@
 - BUG: `IdentifiableScan` now properly flows `RegexPattern.RotationPeriod` to `Detection` instances. `Detection.RotationPeriod` previously always retained `default` as a value.
 - BUG: `IdentifiableScan` now properly flows `RegexPattern.DetectionMetadata` to `Detection` instances. `Detection.DetectionMetadata` was previously hard-coded as `DetectionMetadata.HighEntropy`.
 - NEW: Sort properties by name in GeneratedRegexPatterns/*.json.
+- NEW: Add `RegexPattern.Label` and `Detection.Label` properties that comprise a readable description of a secret kind, e.g., `an Azure Functions access key`.
+- NEW: Add `Detection.FormattedMessage` extension method that returns user-facing strings such as `'…444444' is a NuGet API key. The correlating id for this detection is 3wsjgo3hBjSPHdIc2Td1.`.
 - BRK: Remove derived `RegexPattern` class properties `ChecksumSeeds`, `EncodeForUrl`, and `KeyLength` as these are not relevant to the literal authoring of equivalent regex patterns in other languages.
 - BRK: Rename `LegacyCommonAnnotatedSecurityKey` to `CommonAnnotatedSecurityKey` and mark this inlined `Microsoft.Security.Utilities` class as internal.
 - NEW: Provide deterministic ordering of properties in GeneratedRegexPatterns/*.json via `DataMember` attributes.

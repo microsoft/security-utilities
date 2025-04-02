@@ -11,11 +11,11 @@ namespace Microsoft.Security.Utilities
         public AzureMessagingLegacyCredentials()
         {
             Id = "SEC101/105";
-            Name = nameof(AzureMessagingLegacyCredentials);         
+            Name = nameof(AzureMessagingLegacyCredentials);
+            Label = "an Azure messaging legacy format access key";
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat | DetectionMetadata.MediumConfidence;
             Pattern = "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)";
             Signatures = new HashSet<string>(new[] { ".servicebus" });
-            Label = "an Azure messaging legacy format access key";
         }
 
         public override Tuple<string, string> GetMatchIdAndName(string match)
