@@ -431,7 +431,7 @@ public class RegexPatternTests
     {
         var pattern = new RegexPattern("id", "name", DetectionMetadata.None, ".");
         pattern.RegexOptions.Should().Be(RegexDefaults.DefaultOptions,
-                                         because: "No regex options were passed so default opptions should be used.");
+                                         because: "No regex options were passed so default options should be used.");
     }
 
     [TestMethod]
