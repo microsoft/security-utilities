@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
-
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Security.Utilities;
@@ -424,5 +424,55 @@ public class RegexPatternTests
         {
             new RegexPattern(Id, Name, DetectionMetadata.HighEntropy, null);
         });
+    }
+
+    [TestMethod]
+    public void RegexPattern_RegexOptions_NoExplicitArg_UsesDefaults()
+    {
+        var pattern = new RegexPattern("id", "name", DetectionMetadata.None, ".");
+        pattern.RegexOptions.Should().Be(RegexDefaults.DefaultOptions,
+                                         because: "no regex options were passed at construction so default opptions should be used");
+    }
+
+    [TestMethod]
+    public void RegexPattern_RegexOptions_ExplicitNullArg_UsesDefaults()
+    {
+        var pattern = new RegexPattern("id", "name", DetectionMetadata.None, ".", regexOptions: null);
+        pattern.RegexOptions.Should().Be(RegexDefaults.DefaultOptions,
+                                         because: "null was passed explicitly which should be equivalent to not passing anything");
+    }
+
+    [TestMethod]
+    public void RegexPattern_RegexOptions_ExplicitZeroArg_UsesNoOptions()
+    {
+        var pattern = new RegexPattern("id", "name", DetectionMetadata.None, ".", regexOptions: 0);
+        pattern.RegexOptions.Should().Be(RegexOptions.None,
+                                         because: "a non-null value of zero was passed explicitly at construction");
+    }
+
+    [TestMethod]
+    public void RegexPattern_RegexOptions_ExplicitCustomArg_UsesCustomArg()
+    {
+        var pattern = new RegexPattern(id: "id",
+                                       name: "name",
+                                       DetectionMetadata.None,
+                                       pattern: ".",
+                                       regexOptions: RegexOptions.Multiline);
+
+        pattern.RegexOptions.Should().Be(RegexOptions.Multiline,
+                                         because: "RegexOptions.Multiline was passed at construction and no other options should be added");
+    }
+
+    [TestMethod]
+    public void RegexPattern_ExplicitNoRegexOptions_UsesNoOptions()
+    {
+        var pattern = new RegexPattern(id: "id",
+                                       name: "name",
+                                       DetectionMetadata.None,
+                                       pattern: ".",
+                                       regexOptions: 0);
+
+        pattern.RegexOptions.Should().Be(RegexOptions.None,
+                                         because: "the default argument was explicitly passed a non-null zero value");
     }
 }

@@ -8,9 +8,9 @@ namespace Microsoft.Security.Utilities
     public static class RegexDefaults
     {
 #if NET7_0_OR_GREATER
-        public const RegexOptions DefaultOptionsCaseSensitive = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.NonBacktracking;
+        public static RegexOptions DefaultOptions => RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.NonBacktracking;
 #else
-        public const RegexOptions DefaultOptionsCaseSensitive = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
+        public static RegexOptions DefaultOptions => RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
 #endif
     }
 }

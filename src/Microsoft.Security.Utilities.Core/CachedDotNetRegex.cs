@@ -15,7 +15,7 @@ namespace Microsoft.Security.Utilities
     /// </summary>
     public class CachedDotNetRegex : IRegexEngine
     {
-        public static IRegexEngine Instance = new CachedDotNetRegex();
+        public static IRegexEngine Instance { get; } = new CachedDotNetRegex();
 
         internal static TimeSpan DefaultTimeout = TimeSpan.FromMilliseconds(int.MaxValue - 1);
 
@@ -25,14 +25,10 @@ namespace Microsoft.Security.Utilities
 
         internal static ConcurrentDictionary<(string Pattern, RegexOptions Options), Regex> RegexCache { get; } = new();
 
-        public static Regex GetOrCreateRegex(string pattern, RegexOptions options)
+        public static Regex GetOrCreateRegex(string pattern, RegexOptions? options = null)
         {
-            var key = (pattern, options);
-#if NET7_0_OR_GREATER
-            return RegexCache.GetOrAdd(key, key => new Regex(NormalizeGroupsPattern(key.Pattern), key.Options | RegexOptions.Compiled | RegexOptions.NonBacktracking));
-#else
-            return RegexCache.GetOrAdd(key, key => new Regex(NormalizeGroupsPattern(key.Pattern), key.Options | RegexOptions.Compiled));
-#endif
+            var key = (pattern, options ?? RegexDefaults.DefaultOptions);
+            return RegexCache.GetOrAdd(key, key => new Regex(NormalizeGroupsPattern(key.Pattern), key.Options));
         }
 
         internal static string NormalizeGroupsPattern(string pattern)
@@ -40,22 +36,7 @@ namespace Microsoft.Security.Utilities
             return pattern.Replace("?P<", "?<");
         }
 
-        public bool IsMatch(string input, string pattern, RegexOptions options = RegexDefaults.DefaultOptionsCaseSensitive, TimeSpan timeout = default, string captureGroup = null)
-        {
-            // Note: Instance Regex.IsMatch has no timeout overload.
-            Regex regex = GetOrCreateRegex(pattern, options);
-            Match match = regex.Match(input);
-            return match.Success && (captureGroup == null || match.Groups[captureGroup].Success);
-        }
-
-        public UniversalMatch Match(string input, string pattern, RegexOptions options = RegexDefaults.DefaultOptionsCaseSensitive, TimeSpan timeout = default, string captureGroup = null)
-        {
-            // Note: Instance Regex.Match has no timeout overload.
-            Regex regex = GetOrCreateRegex(pattern, options);
-            return ToFlex(regex.Match(input), captureGroup);
-        }
-
-        public IEnumerable<UniversalMatch> Matches(string input, string pattern, RegexOptions options = RegexDefaults.DefaultOptionsCaseSensitive, TimeSpan timeout = default, string captureGroup = null)
+        public IEnumerable<UniversalMatch> Matches(string input, string pattern, RegexOptions? options = null, TimeSpan timeout = default, string captureGroup = null)
         {
             if (timeout == default) { timeout = DefaultTimeout; }
             var w = Stopwatch.StartNew();
@@ -69,27 +50,6 @@ namespace Microsoft.Security.Utilities
                 // (MatchesCollection *is* lazily computed).
                 if (w.Elapsed > timeout) { break; }
             }
-        }
-
-        public bool Matches(string pattern, string text, out List<Dictionary<string, UniversalMatch>> matches, long maxMemoryInBytes = -1)
-        {
-            matches = new List<Dictionary<string, UniversalMatch>>();
-
-            Regex regex = GetOrCreateRegex(pattern, RegexOptions.None);
-
-            foreach (Match m in regex.Matches(text))
-            {
-                var current = new Dictionary<string, UniversalMatch>(m.Groups.Count);
-                foreach (string groupName in regex.GetGroupNames())
-                {
-                    Group group = m.Groups[groupName];
-                    current.Add(groupName, new UniversalMatch { Success = group.Success, Index = group.Index, Value = group.Value, Length = group.Length });
-                }
-
-                matches.Add(current);
-            }
-
-            return matches.Count > 0;
         }
 
         internal static UniversalMatch ToFlex(Match match, string captureGroup = null)

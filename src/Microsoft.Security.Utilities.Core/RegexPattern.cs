@@ -18,17 +18,22 @@ public class RegexPattern
 {
     public const string FallbackRedactionToken = "+++";
 
+    /// <summary>Constructs a new instance of the RegexPattern class.</summary>
+    /// <param name="id"> The unique identifier for the pattern.</param>
+    /// <param name="name">The name of the pattern.</param>
+    /// <param name="pattern">The regular expression pattern.</param>
+    /// <param name="patternMetadata">Metadata that describes the pattern.</param>
+    /// <param name="rotationPeriod">The period after which a matching secret should be rotated.</param>
+    /// <param name="signatures">The set of signatures. The regex is not run if none of them appear in the input.</param>
+    /// <param name="regexOptions">Regular expression options to use. If null, use <see cref="RegexDefaults.DefaultOptions"/></param>
+    /// <param name="sampleGenerator">A function that generates sample true positives for the pattern. Used by <see cref="GenerateTruePositiveExamples"/></param>
     public RegexPattern(string id,
                         string name,
                         DetectionMetadata patternMetadata,
                         string pattern,
                         TimeSpan rotationPeriod = default,
                         ISet<string>? signatures = null,
-#if NET7_0_OR_GREATER
-                        RegexOptions regexOptions = RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.NonBacktracking,
-#else
-                        RegexOptions regexOptions = RegexOptions.Compiled | RegexOptions.ExplicitCapture,
-#endif
+                        RegexOptions? regexOptions = null,
                         Func<string[]>? sampleGenerator = null)
     {
         Pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
@@ -38,13 +43,14 @@ public class RegexPattern
         DetectionMetadata = patternMetadata;
         RotationPeriod = rotationPeriod;
         Signatures = signatures;
-        m_regexOptions = regexOptions;
+        RegexOptions = regexOptions ?? RegexDefaults.DefaultOptions;
         m_sampleGenerator = sampleGenerator;
     }
 
-#pragma warning disable CS8618
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor.
     protected RegexPattern()
     {
+        RegexOptions = RegexDefaults.DefaultOptions;
     }
 #pragma warning restore CS8618
 
@@ -68,7 +74,7 @@ public class RegexPattern
         }
 
         if (!string.Equals(Pattern, item.Pattern, StringComparison.Ordinal) ||
-            m_regexOptions != item.m_regexOptions)
+            RegexOptions != item.RegexOptions)
         {
             return false;
         }
@@ -140,7 +146,7 @@ public class RegexPattern
                 result = (result * 31) + Name.GetHashCode();
             }
 
-            result = (result * 31) + m_regexOptions.GetHashCode();
+            result = (result * 31) + RegexOptions.GetHashCode();
             result = (result * 31) + RotationPeriod.GetHashCode();
             result = (result * 31) + DetectionMetadata.GetHashCode();
 #endif
@@ -194,7 +200,7 @@ public class RegexPattern
             regexEngine ??= CachedDotNetRegex.Instance;
 
             int startIndex;
-            foreach (UniversalMatch match in regexEngine.Matches(input, Pattern, m_regexOptions, captureGroup: "refine"))
+            foreach (UniversalMatch match in regexEngine.Matches(input, Pattern, RegexOptions, captureGroup: "refine"))
             {
                 startIndex = match.Index + 1;
 
@@ -309,12 +315,6 @@ public class RegexPattern
     [DataMember(Order = 4)]
     public string Pattern { get; protected set; }
 
-#if NET7_0_OR_GREATER
-    protected const RegexOptions DefaultRegexOptions = RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.NonBacktracking;
-#else
-    protected const RegexOptions DefaultRegexOptions = RegexOptions.Compiled | RegexOptions.ExplicitCapture;
-#endif
-
     /// <summary>
     /// Gets or sets an opaque, stable identifier for the pattern (corresponding to a SARIF 'reportingDescriptorReference.id' value).
     /// </summary>
@@ -331,11 +331,11 @@ public class RegexPattern
     public TimeSpan RotationPeriod { get; protected set; }
 
     /// <summary>
-    /// Gets or sets one or more regular expression options.
+    /// Gets the regular expression options.
     /// </summary>
     /// <remarks>Options may not be available when .NET is not used to
     /// provide regex processing.</remarks>
-    private readonly RegexOptions m_regexOptions;
+    public RegexOptions RegexOptions { get; }
 
     /// <summary>
     /// Gets or sets zero, one or more string literals that must be present in the

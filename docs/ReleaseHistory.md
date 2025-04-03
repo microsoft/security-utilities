@@ -19,6 +19,13 @@
 - BRK: `RegexPattern.RotationPeriod` is no longer publicly settable.
 - BRK: `IdentifiableKey.RegexNormalizedSignature` is removed.
 - BRK: Abstract classes `IdentifiableKey`, `Azure32ByteIdentifiableKey`, `Azure64ByteIdentifiableKey`, and `AzureMessagingIdentifiableKey` now require derived classes to pass their signature to the base constructor.
+- BRK: Rename `RegexDefaults.DefaultOptionsCaseSensitive` to `RegexDefaults.DefaultOptions`.
+- BRK: Remove `RegexPattern.DefaultRegexOptions`. Use `RegexDefaults.DefaultOptions` instead.
+- BRK: `RegexOptions.CultureInvariant` is now used by default.
+- BRK: Remove methods on `CachedDotNetRegex` that are not supported by the common `IRegexEngine` interface.
+- BRK: Direct use of `CachedDotNetRegex` no longer forces `RegexOptions.Compiled` and `RegexOptions.NonBacktracking`. It is up to the caller to pass them in if overriding the default argument.
+- BRK: `RegexOptions` arguments of `RegexPattern` constructor and methods on `IRegexEngine` and `CachedDotNetRegex` are now nullable.
+- BRK: If explicit non-null `RegexOptions` are passed to `RegexPattern` constructor, they will be used as-is and will no longer be combined with the default options.
 - BUG: `IdentifiableScan` now properly flows `RegexPattern.RotationPeriod` to `Detection` instances. `Detection.RotationPeriod` previously always retained `default` as a value.
 - BUG: `IdentifiableScan` now properly flows `RegexPattern.DetectionMetadata` to `Detection` instances. `Detection.DetectionMetadata` was previously hard-coded as `DetectionMetadata.HighEntropy`.
 - NEW: Sort properties by name in GeneratedRegexPatterns/*.json.
