@@ -24,7 +24,7 @@ public static class IdentifiableSecrets
 
     public const string CommonAnnotatedKeyRegexPattern = "[A-Za-z0-9]{52}JQQJ9(9|D|H)[A-Za-z0-9][A-L][A-Za-z0-9]{16}[A-Za-z][A-Za-z0-9]{7}([A-Za-z0-9]{2}==)?";
 
-    public static readonly Regex CommonAnnotatedKeyRegex = new(CommonAnnotatedKeyRegexPattern, RegexDefaults.DefaultOptionsCaseSensitive);
+    public static readonly Regex CommonAnnotatedKeyRegex = new(CommonAnnotatedKeyRegexPattern, RegexDefaults.DefaultOptions);
 
     public static uint MaximumGeneratedKeySize => 4096;
 
