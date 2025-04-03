@@ -53,9 +53,9 @@ function Exit-WithFailureMessage($scriptName, $message) {
 
 if (-not $NoBuild) {
     Write-Information "Reformatting code..."
-    dotnet format $RepoRoot\src\Microsoft.Security.Utilities.sln
+    dotnet format --verify-no-changes $RepoRoot\src\Microsoft.Security.Utilities.sln
     if ($LASTEXITCODE -ne 0) {
-        Exit-WithFailureMessage $ScriptName "Dotnet format of Microsoft.Security.Utilities.sln failed."
+        Exit-WithFailureMessage $ScriptName "Dotnet format is required for Microsoft.Security.Utilities.sln."
     }
 
     Write-Information "Building Microsoft.Security.Utilities.sln (dotnet)..."
