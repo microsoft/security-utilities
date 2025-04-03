@@ -25,9 +25,9 @@ namespace Microsoft.Security.Utilities
 
         internal static ConcurrentDictionary<(string Pattern, RegexOptions Options), Regex> RegexCache { get; } = new();
 
-        public static Regex GetOrCreateRegex(string pattern, RegexOptions options)
+        public static Regex GetOrCreateRegex(string pattern, RegexOptions? options = null)
         {
-            var key = (pattern, options);
+            var key = (pattern, options ?? RegexDefaults.DefaultOptions);
             return RegexCache.GetOrAdd(key, key => new Regex(NormalizeGroupsPattern(key.Pattern), key.Options));
         }
 
@@ -36,7 +36,7 @@ namespace Microsoft.Security.Utilities
             return pattern.Replace("?P<", "?<");
         }
 
-        public IEnumerable<UniversalMatch> Matches(string input, string pattern, RegexOptions options = RegexDefaults.DefaultOptions, TimeSpan timeout = default, string captureGroup = null)
+        public IEnumerable<UniversalMatch> Matches(string input, string pattern, RegexOptions? options = null, TimeSpan timeout = default, string captureGroup = null)
         {
             if (timeout == default) { timeout = DefaultTimeout; }
             var w = Stopwatch.StartNew();

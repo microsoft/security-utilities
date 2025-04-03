@@ -25,7 +25,7 @@ public class RegexPattern
     /// <param name="patternMetadata">Metadata that describes the pattern.</param>
     /// <param name="rotationPeriod">The period after which a matching secret should be rotated.</param>
     /// <param name="signatures">The set of signatures. The regex is not run if none of them appear in the input.</param>
-    /// <param name="regexOptions">Regular expression options to use.</param>
+    /// <param name="regexOptions">Regular expression options to use. If null, use <see cref="RegexDefaults.DefaultOptions"/></param>
     /// <param name="sampleGenerator">A function that generates sample true positives for the pattern. Used by <see cref="GenerateTruePositiveExamples"/></param>
     public RegexPattern(string id,
                         string name,
@@ -33,7 +33,7 @@ public class RegexPattern
                         string pattern,
                         TimeSpan rotationPeriod = default,
                         ISet<string>? signatures = null,
-                        RegexOptions regexOptions = RegexDefaults.DefaultOptions,
+                        RegexOptions? regexOptions = null,
                         Func<string[]>? sampleGenerator = null)
     {
         Pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
@@ -43,7 +43,7 @@ public class RegexPattern
         DetectionMetadata = patternMetadata;
         RotationPeriod = rotationPeriod;
         Signatures = signatures;
-        RegexOptions = regexOptions;
+        RegexOptions = regexOptions ?? RegexDefaults.DefaultOptions;
         m_sampleGenerator = sampleGenerator;
     }
 

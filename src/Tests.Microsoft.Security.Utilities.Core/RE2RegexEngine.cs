@@ -13,11 +13,11 @@ namespace Microsoft.Security.Utilities
     {
         public static IRegexEngine Instance = new RE2RegexEngine();
 
-        public IEnumerable<UniversalMatch> Matches(string input, string pattern, RegexOptions options = RegexDefaults.DefaultOptions, TimeSpan timeout = default, string captureGroup = null)
+        public IEnumerable<UniversalMatch> Matches(string input, string pattern, RegexOptions? options = null, TimeSpan timeout = default, string captureGroup = null)
         {
             if (captureGroup == null)
             {
-                foreach (FlexMatch flexMatch in RE2Regex.Instance.Matches(input, pattern, options, timeout, captureGroup))
+                foreach (FlexMatch flexMatch in RE2Regex.Instance.Matches(input, pattern, options ?? RegexDefaults.DefaultOptions, timeout, captureGroup))
                 {
                     yield return new UniversalMatch
                     {
