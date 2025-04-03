@@ -32,7 +32,7 @@
 - BUG: `IdentifiableScan` now properly flows `RegexPattern.DetectionMetadata` to `Detection` instances. `Detection.DetectionMetadata` was previously hard-coded as `DetectionMetadata.HighEntropy`.
 - NEW: Sort properties by name in GeneratedRegexPatterns/*.json.
 - NEW: Add `RegexPattern.Label` and `Detection.Label` properties that comprise a readable description of a secret kind, e.g., `an Azure Functions access key`.
-- NEW: Add `Detections.Format` helper to return user-facing strings such as `'…444444' is a NuGet API key. The correlating id for this detection is 3wsjgo3hBjSPHdIc2Td1.`.
+- NEW: Add `Detections.Format` helper to return user-facing strings such as `'...444444' is a NuGet API key. The correlating id for this detection is 3wsjgo3hBjSPHdIc2Td1.`.
 - NEW: Add `Detections.TruncateSecret` helper to return truncated secrets of specified length.
 - NEW: Provide deterministic ordering of properties in GeneratedRegexPatterns/*.json via `DataMember` attributes.
 - PRF: Remove unnecessary and expensive recomputation of `RegexPatter.Pattern`, `RegexPattern.Signatures`, and `IdentifiableKey.ChecksumSeeds` on every property access.
