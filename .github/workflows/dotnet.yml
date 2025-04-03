@@ -28,7 +28,10 @@ jobs:
           9.0.x
 
     - name: Show dotnet info
-      run: dotnet --info
+      run:  dotnet --info
+
+    - name: dotnet format check
+      run:  dotnet format --verify-no-changes ./src/Microsoft.Security.Utilities.sln --verbosity diagnostic
 
     - name: Build
       run: ./BuildAndTest.cmd -Configuration ${{matrix.configuration}}
