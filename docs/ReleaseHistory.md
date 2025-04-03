@@ -12,7 +12,7 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# UNRELEASED
+# 1.17.0 - 04/03/2025
 - BRK: `RegexPattern.Pattern` is no longer virtual.
 - BRK: `RegexPattern.Signatures` is no longer virtual.
 - BRK: `IdentifiableKey.ChecksumSeeds` is no longer virtual.
