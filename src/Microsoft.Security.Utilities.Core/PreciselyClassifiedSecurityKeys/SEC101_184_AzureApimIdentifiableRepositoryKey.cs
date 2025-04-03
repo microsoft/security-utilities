@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/184";
             Name = nameof(AzureApimIdentifiableRepositoryKey);
+            Label = "an Azure API Management repository key";
             ChecksumSeeds = new[] { IdentifiableMetadata.AzureApimRepositoryChecksumSeed };
         }
     }

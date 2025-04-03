@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Generic;
-
 namespace Microsoft.Security.Utilities
 {
     public class AzureCosmosDBIdentifiableKey : Azure64ByteIdentifiableKey
@@ -11,6 +9,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/160";
             Name = nameof(AzureCosmosDBIdentifiableKey);
+            Label = "an Azure CosmosDB access key";
             ChecksumSeeds = new[] {
                 IdentifiableMetadata.AzureCosmosDBDataEncryptionKeyChecksumSeed,
                 IdentifiableMetadata.AzureCosmosDBMasterReadOnlyKeyChecksumSeed,

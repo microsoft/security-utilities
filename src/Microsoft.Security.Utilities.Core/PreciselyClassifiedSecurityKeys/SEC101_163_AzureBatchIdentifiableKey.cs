@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/163";
             Name = nameof(AzureBatchIdentifiableKey);
+            Label = "an Azure Batch access key";
             ChecksumSeeds = new[] { IdentifiableMetadata.AzureBatchChecksumSeed };
         }
     }

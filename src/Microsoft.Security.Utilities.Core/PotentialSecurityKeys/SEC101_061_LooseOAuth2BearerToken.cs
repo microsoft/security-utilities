@@ -11,8 +11,8 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/061";
             Name = nameof(OAuth2BearerToken);
+            Label = "a loose OAuth2 bearer token";
             DetectionMetadata = DetectionMetadata.LowConfidence;
-
             // https://datatracker.ietf.org/doc/html/rfc6750#section-2.1
             Pattern = @$"(?i)authorization:(\s|%20)bearer(\s|%20)(?P<refine>[0-9a-z][{WellKnownRegexPatterns.UrlUnreserved}+\/=]*)([^{WellKnownRegexPatterns.UrlUnreserved}+/=]|$)";
         }

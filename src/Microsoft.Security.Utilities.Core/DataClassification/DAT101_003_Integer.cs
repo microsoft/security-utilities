@@ -10,6 +10,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "DAT101/003";
             Name = nameof(Integer);
+            Label = "an integer";
             Pattern = @"^-?\d+$";
         }
 

@@ -26,11 +26,14 @@
 - BRK: Direct use of `CachedDotNetRegex` no longer forces `RegexOptions.Compiled` and `RegexOptions.NonBacktracking`. It is up to the caller to pass them in if overriding the default argument.
 - BRK: `RegexOptions` arguments of `RegexPattern` constructor and methods on `IRegexEngine` and `CachedDotNetRegex` are now nullable.
 - BRK: If explicit non-null `RegexOptions` are passed to `RegexPattern` constructor, they will be used as-is and will no longer be combined with the default options.
+- BRK: Remove derived `RegexPattern` class properties `ChecksumSeeds`, `EncodeForUrl`, and `KeyLength` from generated rules JSON as these are not relevant to the literal authoring of equivalent regex patterns in other languages.
+- BRK: Rename `LegacyCommonAnnotatedSecurityKey` to `CommonAnnotatedSecurityKey` and mark this inlined `Microsoft.Security.Utilities` class as internal.
 - BUG: `IdentifiableScan` now properly flows `RegexPattern.RotationPeriod` to `Detection` instances. `Detection.RotationPeriod` previously always retained `default` as a value.
 - BUG: `IdentifiableScan` now properly flows `RegexPattern.DetectionMetadata` to `Detection` instances. `Detection.DetectionMetadata` was previously hard-coded as `DetectionMetadata.HighEntropy`.
 - NEW: Sort properties by name in GeneratedRegexPatterns/*.json.
-- BRK: Remove derived `RegexPattern` class properties `ChecksumSeeds`, `EncodeForUrl`, and `KeyLength` as these are not relevant to the literal authoring of equivalent regex patterns in other languages.
-- BRK: Rename `LegacyCommonAnnotatedSecurityKey` to `CommonAnnotatedSecurityKey` and mark this inlined `Microsoft.Security.Utilities` class as internal.
+- NEW: Add `RegexPattern.Label` and `Detection.Label` properties that comprise a readable description of a secret kind, e.g., `an Azure Functions access key`.
+- NEW: Add `Detections.Format` helper to return user-facing strings such as `'...444444' is a NuGet API key. The correlating id for this detection is 3wsjgo3hBjSPHdIc2Td1.`.
+- NEW: Add `Detections.TruncateSecret` helper to return truncated secrets of specified length.
 - NEW: Provide deterministic ordering of properties in GeneratedRegexPatterns/*.json via `DataMember` attributes.
 - PRF: Remove unnecessary and expensive recomputation of `RegexPatter.Pattern`, `RegexPattern.Signatures`, and `IdentifiableKey.ChecksumSeeds` on every property access.
 - RRR: Rename `CommonAnnotatedSecurityKey` to `UnclassifiedLegacyCommonAnnotatedSecurityKey`.

@@ -107,7 +107,6 @@ public static class WellKnownRegexPatterns
         new SecretScanningSampleToken(),
     };
 
-
     public static string RandomUrlUnreserved(int count, bool sparse = false)
     {
         return GenerateString(sparse ? SparseUrlUnreserved : UrlUnreserved, count);

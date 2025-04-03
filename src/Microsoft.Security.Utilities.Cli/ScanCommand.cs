@@ -2,8 +2,6 @@
 
 #nullable disable
 
-using System.IO;
-
 namespace Microsoft.Security.Utilities.Cli
 {
     public class ScanCommand
@@ -49,13 +47,14 @@ namespace Microsoft.Security.Utilities.Cli
 
             foreach (string path in Directory.GetFiles(directory, fileSpecifier, searchOption))
             {
-                string file = File.ReadAllText(path);
+                string fileName = Path.GetFileName(path);
+                string contents = File.ReadAllText(path);
                 bool foundAtLeastOne = false;
 
-                foreach (var detection in scan.DetectSecrets(file))
+                foreach (var detection in scan.DetectSecrets(contents))
                 {
                     foundAtLeastOne = true;
-                    Console.WriteLine("Found {0} ('{1}') at position {2}", detection.Id, detection.RedactionToken, detection.Start + detection.Length);
+                    Console.WriteLine($"{fileName} ({detection.Start},{detection.End}): {detection.Moniker} : {Detections.Format(detection, contents)}");
                 }
 
                 if (!foundAtLeastOne)
@@ -74,10 +73,11 @@ namespace Microsoft.Security.Utilities.Cli
 
             bool foundAtLeastOne = false;
 
-            foreach (var detection in scan.DetectSecrets(options.StringInput))
+            string contents = options.StringInput;
+            foreach (var detection in scan.DetectSecrets(contents))
             {
                 foundAtLeastOne = true;
-                Console.WriteLine("Found {0} ('{1}') at position {2}", detection.Id, detection.RedactionToken, detection.Start + detection.Length);
+                Console.WriteLine($"Offset {detection.Start},{detection.End} : {detection.Moniker} : {Detections.Format(detection, contents)}");
             }
 
             if (!foundAtLeastOne)

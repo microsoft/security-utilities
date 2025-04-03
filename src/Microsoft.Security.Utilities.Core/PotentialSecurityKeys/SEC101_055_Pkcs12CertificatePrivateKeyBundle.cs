@@ -40,10 +40,10 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/055";
             Name = nameof(Pkcs12CertificatePrivateKeyBundle);
+            Label = "a PKCS#12 certificate private key bundle";
             DetectionMetadata = DetectionMetadata.MediumConfidence;
-
             Pattern = @"MI[I-L][0-9a-zA-Z\/+]{2}[AQgw]IBAzCC";
-            Signatures = new[] { "IBAzCC" }.ToSet();
+            Signatures = new HashSet<string>(["IBAzCC"]);
         }
 
         public override IEnumerable<string> GenerateTruePositiveExamples()

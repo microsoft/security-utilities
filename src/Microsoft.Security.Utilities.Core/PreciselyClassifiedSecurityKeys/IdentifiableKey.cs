@@ -5,9 +5,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities
 {
@@ -17,7 +15,7 @@ namespace Microsoft.Security.Utilities
         {
             RotationPeriod = TimeSpan.FromDays(365 * 2);
             DetectionMetadata = DetectionMetadata.Identifiable;
-            Signatures = signature.ToSet();
+            Signatures = new HashSet<string>([signature]);
             ChecksumSeeds = Array.Empty<ulong>();
         }
 

@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection.Emit;
 
 namespace Tests.Microsoft.Security.Utilities
 {
@@ -18,6 +19,7 @@ namespace Tests.Microsoft.Security.Utilities
         {
             string id = $"{Guid.NewGuid()}";
             string name = $"{Guid.NewGuid()}";
+            string label = $"{Guid.NewGuid()}";
             string crossCompanyCorrelatingId = $"{Guid.NewGuid()}";
             string redactionToken = $"{Guid.NewGuid()}";
 
@@ -28,6 +30,7 @@ namespace Tests.Microsoft.Security.Utilities
 
             var detection = new Detection(id,
                                           name,
+                                          label,
                                           start,
                                           length,
                                           metadata,
@@ -37,6 +40,7 @@ namespace Tests.Microsoft.Security.Utilities
 
             Assert.AreEqual(id, detection.Id);
             Assert.AreEqual(name, detection.Name);
+            Assert.AreEqual(label, detection.Label);
             Assert.AreEqual(start, detection.Start);
             Assert.AreEqual(length, detection.Length);
             Assert.AreEqual(metadata, detection.Metadata);
@@ -47,6 +51,7 @@ namespace Tests.Microsoft.Security.Utilities
 
             detection = new Detection(string.Empty,
                                       string.Empty,
+                                      string.Empty,
                                       int.MinValue,
                                       int.MaxValue,
                                       0,
@@ -55,6 +60,7 @@ namespace Tests.Microsoft.Security.Utilities
 
             Assert.AreNotEqual(id, detection.Id);
             Assert.AreNotEqual(name, detection.Name);
+            Assert.AreNotEqual(label, detection.Label);
             Assert.AreNotEqual(start, detection.Start);
             Assert.AreNotEqual(length, detection.Length);
             Assert.AreNotEqual(metadata, detection.Metadata);
@@ -69,6 +75,7 @@ namespace Tests.Microsoft.Security.Utilities
         {
             string id = $"{Guid.NewGuid()}";
             string name = $"{Guid.NewGuid()}";
+            string label = $"{Guid.NewGuid()}";
             string sha256Hash = $"{Guid.NewGuid()}";
             string redactionToken = $"{Guid.NewGuid()}";
 
@@ -86,6 +93,7 @@ namespace Tests.Microsoft.Security.Utilities
             {
                 Id = id,
                 Name = name,
+                Label = label,
                 Start = start,
                 Length = length,
                 Metadata = metadata,
@@ -95,6 +103,7 @@ namespace Tests.Microsoft.Security.Utilities
 
             Assert.AreEqual(id, detection.Id);
             Assert.AreEqual(name, detection.Name);
+            Assert.AreEqual(label, detection.Label);
             Assert.AreEqual(start, detection.Start);
             Assert.AreEqual(length, detection.Length);
             Assert.AreEqual(metadata, detection.Metadata);
@@ -106,6 +115,7 @@ namespace Tests.Microsoft.Security.Utilities
             {
                 Id = string.Empty,
                 Name = string.Empty,
+                Label = string.Empty,
                 Start = int.MinValue,
                 Length = int.MaxValue,
                 Metadata = 0,
@@ -115,6 +125,7 @@ namespace Tests.Microsoft.Security.Utilities
 
             Assert.AreNotEqual(id, detection.Id);
             Assert.AreNotEqual(name, detection.Name);
+            Assert.AreNotEqual(label, detection.Label);
             Assert.AreNotEqual(start, detection.Start);
             Assert.AreNotEqual(length, detection.Length);
             Assert.AreNotEqual(metadata, detection.Metadata);
@@ -128,6 +139,7 @@ namespace Tests.Microsoft.Security.Utilities
         {
             string id = $"{Guid.NewGuid()}";
             string name = $"{Guid.NewGuid()}";
+            string label = $"{Guid.NewGuid()}";
             string sha256Hash = $"{Guid.NewGuid()}";
             string redactionToken = $"{Guid.NewGuid()}";
 
@@ -140,6 +152,7 @@ namespace Tests.Microsoft.Security.Utilities
             {
                 Id = id,
                 Name = name,
+                Label = label,
                 Start = start,
                 Length = length,
                 Metadata = metadata,
@@ -149,6 +162,7 @@ namespace Tests.Microsoft.Security.Utilities
 
             Assert.AreNotEqual(detection.Id, default);
             Assert.AreNotEqual(detection.Name, default);
+            Assert.AreNotEqual(detection.Label, default);
             Assert.AreNotEqual(detection.Start, default);
             Assert.AreNotEqual(detection.Length, default);
             Assert.AreNotEqual(detection.Metadata, default);
@@ -166,6 +180,12 @@ namespace Tests.Microsoft.Security.Utilities
             previousHashCode = detection.GetHashCode();
             detection.Name = default;
             Assert.AreNotEqual(detection.GetHashCode(), previousHashCode);
+
+            // Label is excluded from hash code calculation as it is not
+            // relevant ot equivalence.
+            previousHashCode = detection.GetHashCode();
+            detection.Label = default;
+            Assert.AreEqual(detection.GetHashCode(), previousHashCode);
 
             previousHashCode = detection.GetHashCode();
             detection.Start = default;
@@ -208,6 +228,20 @@ namespace Tests.Microsoft.Security.Utilities
             previousDetection = new Detection(currentDetection);
             Assert.AreEqual(currentDetection, previousDetection);
 
+            currentDetection.Name = $"{Guid.NewGuid()}"; ;
+            Assert.AreNotEqual(currentDetection, previousDetection);
+
+            previousDetection = new Detection(currentDetection);
+            Assert.AreEqual(currentDetection, previousDetection);
+
+            // Label is excluded from hash code calculation as it is not
+            // relevant to equivalence.
+            currentDetection.Label = $"{Guid.NewGuid()}"; ;
+            Assert.AreEqual(currentDetection, previousDetection);
+
+            previousDetection = new Detection(currentDetection);
+            Assert.AreEqual(currentDetection, previousDetection);
+
             currentDetection.Start++;
             Assert.AreNotEqual(currentDetection, previousDetection);
 
@@ -237,6 +271,7 @@ namespace Tests.Microsoft.Security.Utilities
 
             previousDetection = new Detection(currentDetection);
             Assert.AreEqual(currentDetection, previousDetection);
+
 
             // At this point, we should have reset our entire object to its
             // default state and GetHashCode() should be equivalent.

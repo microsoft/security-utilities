@@ -2,6 +2,7 @@
   {
     "Id": "SEC101/200",
     "Name": "UnclassifiedLegacyCommonAnnotatedSecurityKey",
+    "Label": "an unclassified legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ9(?:9|D|H)[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{16}[A-Za-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{7}(?:[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{2}==)?)",
     "Signatures": [
@@ -11,6 +12,7 @@
   {
     "Id": "SEC101/156",
     "Name": "AadClientAppIdentifiableCredentials",
+    "Label": "an Azure Entra client app password",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-+/])(?P<refine>[~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{3}(7|8)Q~[~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{31,34})([^~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-+/]|$)",
     "Signatures": [
@@ -21,6 +23,7 @@
   {
     "Id": "SEC101/158",
     "Name": "AzureFunctionIdentifiableKey",
+    "Label": "an Azure Functions access key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{44}AzFu[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]|$)",
     "Signatures": [
@@ -30,6 +33,7 @@
   {
     "Id": "SEC101/166",
     "Name": "AzureSearchIdentifiableQueryKey",
+    "Label": "an Azure Search query key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -39,6 +43,7 @@
   {
     "Id": "SEC101/167",
     "Name": "AzureSearchIdentifiableAdminKey",
+    "Label": "an Azure Search admin key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -48,6 +53,7 @@
   {
     "Id": "SEC101/173",
     "Name": "AzureRelayIdentifiableKey",
+    "Label": "an Azure Relay access key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+ARm[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -57,6 +63,7 @@
   {
     "Id": "SEC101/172",
     "Name": "AzureEventHubIdentifiableKey",
+    "Label": "an Azure Event Hub access key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+AEh[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -66,6 +73,7 @@
   {
     "Id": "SEC101/171",
     "Name": "AzureServiceBusIdentifiableKey",
+    "Label": "an Azure Service Bus access key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+ASb[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -75,6 +83,7 @@
   {
     "Id": "SEC101/178",
     "Name": "AzureIotHubIdentifiableKey",
+    "Label": "an Azure IoT Hub access key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AIoT[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -84,6 +93,7 @@
   {
     "Id": "SEC101/180",
     "Name": "AzureIotDeviceIdentifiableKey",
+    "Label": "an Azure IoT device access key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AIoT[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -93,6 +103,7 @@
   {
     "Id": "SEC101/179",
     "Name": "AzureIotDeviceProvisioningIdentifiableKey",
+    "Label": "an Azure IoT device provisioning key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AIoT[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -102,6 +113,7 @@
   {
     "Id": "SEC101/152",
     "Name": "AzureStorageAccountIdentifiableKey",
+    "Label": "an Azure storage account access key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}\\+ASt[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -111,6 +123,7 @@
   {
     "Id": "SEC101/160",
     "Name": "AzureCosmosDBIdentifiableKey",
+    "Label": "an Azure CosmosDB access key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}ACDb[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -120,6 +133,7 @@
   {
     "Id": "SEC101/163",
     "Name": "AzureBatchIdentifiableKey",
+    "Label": "an Azure Batch access key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}\\+ABa[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -129,6 +143,7 @@
   {
     "Id": "SEC101/170",
     "Name": "AzureMLWebServiceClassicIdentifiableKey",
+    "Label": "an Azure ML web service (classic) access key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}\\+AMC[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -138,6 +153,7 @@
   {
     "Id": "SEC101/181",
     "Name": "AzureApimIdentifiableDirectManagementKey",
+    "Label": "an Azure API Management direct management key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -147,6 +163,7 @@
   {
     "Id": "SEC101/182",
     "Name": "AzureApimIdentifiableSubscriptionKey",
+    "Label": "an Azure API Management subscription key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -156,6 +173,7 @@
   {
     "Id": "SEC101/183",
     "Name": "AzureApimIdentifiableGatewayKey",
+    "Label": "an Azure API Management gateway key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -165,6 +183,7 @@
   {
     "Id": "SEC101/184",
     "Name": "AzureApimIdentifiableRepositoryKey",
+    "Label": "an Azure API Management repository key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -174,6 +193,7 @@
   {
     "Id": "SEC101/154",
     "Name": "AzureCacheForRedisIdentifiableKey",
+    "Label": "an Azure Cache for Redis access key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AzCa[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -183,6 +203,7 @@
   {
     "Id": "SEC101/176",
     "Name": "AzureContainerRegistryIdentifiableKey",
+    "Label": "an Azure Container Registry access key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{42}\\+ACR[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -192,6 +213,7 @@
   {
     "Id": "SEC101/031",
     "Name": "NuGetApiKey",
+    "Label": "a NuGet API key",
     "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence",
     "Pattern": "(?i)(^|[^a-z0-9])(?P<refine>oy2[a-z2-7]{43})([^a-z0-9]|$)",
     "Signatures": [
@@ -202,6 +224,7 @@
   {
     "Id": "SEC101/110",
     "Name": "AzureDatabricksPat",
+    "Label": "an Azure Databricks personal access token (PAT)",
     "DetectionMetadata": "HighEntropy, HighConfidence",
     "Pattern": "(?:^|[^0-9a-f\\-])(?P<refine>dapi[0-9a-f\\-]{32,34})(?:[^0-9a-f\\-]|$)",
     "Signatures": [
@@ -211,6 +234,7 @@
   {
     "Id": "SEC101/199",
     "Name": "AzureEventGridIdentifiableKey",
+    "Label": "an Azure Event Grid access key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AZEG[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
@@ -220,6 +244,7 @@
   {
     "Id": "SEC101/050",
     "Name": "NpmAuthorKey",
+    "Label": "an NPM author key",
     "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>npm_[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{36})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]|$)",
     "Signatures": [
@@ -229,6 +254,7 @@
   {
     "Id": "SEC101/565",
     "Name": "SecretScanningSampleToken",
+    "Label": "a non-functional secret scanning sample token",
     "DetectionMetadata": "HighEntropy, FixedSignature, HighConfidence",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]|$)",
     "Signatures": [

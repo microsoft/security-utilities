@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -335,10 +334,11 @@ public class SecretMaskerTests
     {
         string id = nameof(id);
         string name = nameof(name);
+        string label = "a test secret";
         // Setup masker 1
         using var secretMasker1 = new SecretMasker();
-        secretMasker1.AddRegex(new RegexPattern(id, name, 0, "masker-1-regex-1_*"));
-        secretMasker1.AddRegex(new RegexPattern(id, name, 0, "masker-1-regex-2_*"));
+        secretMasker1.AddRegex(new RegexPattern(id, name, label, 0, "masker-1-regex-1_*"));
+        secretMasker1.AddRegex(new RegexPattern(id, name, label, 0, "masker-1-regex-2_*"));
         secretMasker1.AddValue("masker-1-value-1_");
         secretMasker1.AddValue("masker-1-value-2_");
         secretMasker1.AddLiteralEncoder(x => x.Replace("_", "_masker-1-encoder-1"));
@@ -346,12 +346,12 @@ public class SecretMaskerTests
 
         // Copy and add to masker 2.
         var secretMasker2 = secretMasker1.Clone();
-        secretMasker2.AddRegex(new RegexPattern(id, name, 0, "masker-2-regex-1_*"));
+        secretMasker2.AddRegex(new RegexPattern(id, name, label, 0, "masker-2-regex-1_*"));
         secretMasker2.AddValue("masker-2-value-1_");
         secretMasker2.AddLiteralEncoder(x => x.Replace("_", "_masker-2-encoder-1"));
 
         // Add to masker 1.
-        secretMasker1.AddRegex(new RegexPattern(id, name, 0, "masker-1-regex-3_*"));
+        secretMasker1.AddRegex(new RegexPattern(id, name, label, 0, "masker-1-regex-3_*"));
         secretMasker1.AddValue("masker-1-value-3_");
         secretMasker1.AddLiteralEncoder(x => x.Replace("_", "_masker-1-encoder-3"));
 
@@ -730,7 +730,7 @@ public class SecretMaskerTests
         {
             using var secretMasker = new SecretMasker() { DefaultLiteralRedactionToken = token, DefaultRegexRedactionToken = token };
             secretMasker.AddValue("abc");
-            secretMasker.AddRegex(new RegexPattern(id: "123", name: "Name", DetectionMetadata.None, pattern: "def"));
+            secretMasker.AddRegex(new RegexPattern(id: "123", name: "Name", "a test secret", DetectionMetadata.None, pattern: "def"));
 
             // There must be a space between the two matches to avoid coalescing
             // both finds into a single redaction operation.
@@ -746,7 +746,7 @@ public class SecretMaskerTests
     {
         using var secretMasker = new SecretMasker() { MinimumSecretLength = 3, DefaultRegexRedactionToken = "zzz", DefaultLiteralRedactionToken = "yyy" };
 
-        secretMasker.AddRegex(new RegexPattern(id: "1000", name: "Name", DetectionMetadata.None, pattern: "abc"));
+        secretMasker.AddRegex(new RegexPattern(id: "1000", name: "Name", "a test secret", DetectionMetadata.None, pattern: "abc"));
         secretMasker.AddValue("123");
 
         var input = "abcx123ab12";

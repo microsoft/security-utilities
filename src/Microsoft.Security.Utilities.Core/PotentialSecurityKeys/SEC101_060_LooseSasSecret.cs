@@ -12,11 +12,11 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/060";
             Name = nameof(LooseSasSecret);
+            Label = "a loose SAS HMAC";
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.MediumConfidence;
             Pattern = @$"(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?P<refine>[0-9a-z\/+%]{{43,129}}(?:=|%3d))";
             Signatures = new HashSet<string>(new[] { "sig=", "ret=" });
         }
-
 
         // HttpUtility.UrlEncode(new string('/', 43));
         private const string FortyThreeBase64EncodedSlashes = "%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f";

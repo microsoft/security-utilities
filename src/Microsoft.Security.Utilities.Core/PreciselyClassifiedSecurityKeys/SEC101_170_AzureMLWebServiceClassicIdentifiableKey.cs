@@ -11,6 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/170";
             Name = nameof(AzureMLWebServiceClassicIdentifiableKey);
+            Label = "an Azure ML web service (classic) access key";
             ChecksumSeeds = new[] { IdentifiableMetadata.AzureMLClassicChecksumSeed };
         }
     }

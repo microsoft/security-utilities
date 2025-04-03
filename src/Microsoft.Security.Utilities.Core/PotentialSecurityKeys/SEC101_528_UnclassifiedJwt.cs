@@ -13,12 +13,12 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/528";
             Name = nameof(UnclassifiedJwt);
+            Label = "an unclassified JWT token";
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.MediumConfidence;
             Pattern = @$"(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{{23,}}\.e[0-9A-Za-z-_=]{{23,}}\.[0-9A-Za-z-_=]{{24,}}(?:[^0-9A-Za-z-_]|$)";
-
             // These signatures represent base64-encoding of the following
             // constants, respectively: '{"', '{" ', and '{\r\n`.
-            Signatures = new[] { "eyJ", "eyAi", "ewog" }.ToSet();
+            Signatures = new HashSet<string>(["eyJ", "eyAi", "ewog"]);
         }
 
         public override Tuple<string, string> GetMatchIdAndName(string match)

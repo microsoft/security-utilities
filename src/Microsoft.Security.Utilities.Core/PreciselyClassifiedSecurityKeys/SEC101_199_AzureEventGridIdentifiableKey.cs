@@ -9,6 +9,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/199";
             Name = nameof(AzureEventGridIdentifiableKey);
+            Label = "an Azure Event Grid access key";
             ChecksumSeeds = new[] { IdentifiableSecrets.VersionTwoChecksumSeed };
         }
     }

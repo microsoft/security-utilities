@@ -4,11 +4,10 @@
 using System;
 using System.Collections.Generic;
 
-
 namespace Microsoft.Security.Utilities;
 
 /// <summary>
-/// A class that can scan data for identifiable secrets.
+/// A class that scans data strictly for identifiable secrets.
 /// </summary>
 public class IdentifiableScan : ISecretMasker
 {
@@ -18,14 +17,12 @@ public class IdentifiableScan : ISecretMasker
     private readonly HighPerformanceScanner highPerformanceSecretScanner;
     private SecretMasker backupSecretMasker;
     private readonly IRegexEngine regexEngine;
-    private readonly List<string> orderedIds;
 
     public IdentifiableScan(IEnumerable<RegexPattern> regexPatterns, bool generateCorrelatingIds, IRegexEngine regexEngine = null)
     {
         this.signatureToPatternsMap = new Dictionary<string, IList<RegexPattern>>();
         this.regexEngine = regexEngine ?? CachedDotNetRegex.Instance;
         this.generateCorrelatingIds = generateCorrelatingIds;
-        this.orderedIds = new List<string>();
 
         var highPerformancePatterns = new HashSet<CompiledHighPerformancePattern>();
 
@@ -118,6 +115,7 @@ public class IdentifiableScan : ISecretMasker
         {
             Id = preciseId,
             Name = result.Item2,
+            Label = pattern.Label,
             Start = detection.Start,
             Length = detection.Length,
             RedactionToken = redactionToken,

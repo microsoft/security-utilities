@@ -144,39 +144,20 @@ public class SecretMasker : ISecretMasker, IDisposable
         {
             if (object.Equals(currentDetection, null))
             {
-                currentDetection =
-                    new Detection(detection.Id,
-                                  detection.Name,
-                                  detection.Start,
-                                  detection.Length,
-                                  detection.Metadata,
-                                  detection.RotationPeriod,
-                                  detection.CrossCompanyCorrelatingId,
-                                  detection.RedactionToken);
-
+                currentDetection = new Detection(detection);
                 currentDetections.Add(currentDetection);
             }
             else
             {
                 if (detection.Start <= currentDetection.End)
                 {
-                    // Overlapping case or contiguous case.
+                    // Overlapping or contiguous case.
                     currentDetection.Length = Math.Max(currentDetection.End, detection.End) - currentDetection.Start;
                 }
                 else
                 {
-                    // No overlap
-                    // Overlapping case.
-                    currentDetection =
-                        new Detection(detection.Id,
-                                      detection.Name,
-                                      detection.Start,
-                                      detection.Length,
-                                      detection.Metadata,
-                                      detection.RotationPeriod,
-                                      detection.CrossCompanyCorrelatingId,
-                                      detection.RedactionToken);
-
+                    // No overlap.
+                    currentDetection = new Detection(detection);
                     currentDetections.Add(currentDetection);
                 }
             }

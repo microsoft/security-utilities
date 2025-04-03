@@ -29,6 +29,7 @@ public class RegexPattern
     /// <param name="sampleGenerator">A function that generates sample true positives for the pattern. Used by <see cref="GenerateTruePositiveExamples"/></param>
     public RegexPattern(string id,
                         string name,
+                        string label,
                         DetectionMetadata patternMetadata,
                         string pattern,
                         TimeSpan rotationPeriod = default,
@@ -40,6 +41,7 @@ public class RegexPattern
 
         Id = id;
         Name = name;
+        Label = label;
         DetectionMetadata = patternMetadata;
         RotationPeriod = rotationPeriod;
         Signatures = signatures;
@@ -232,6 +234,7 @@ public class RegexPattern
 
                 yield return new Detection(id,
                                            name,
+                                           label: Label,
                                            match.Index,
                                            match.Length,
                                            DetectionMetadata,
@@ -312,7 +315,7 @@ public class RegexPattern
 
     public virtual Tuple<string, string>? GetMatchIdAndName(string match) => new Tuple<string, string>(Id, Name);
 
-    [DataMember(Order = 4)]
+    [DataMember(Order = 5)]
     public string Pattern { get; protected set; }
 
     /// <summary>
@@ -327,7 +330,15 @@ public class RegexPattern
     [DataMember(Order = 2)]
     public string Name { get; protected set; }
 
-    [DataMember(Order = 5)]
+    /// <summary>
+    /// Gets or sets a sentence fragment that comprises the secret kind,
+    /// suitable for emitting in user-facing strings, as a label in a
+    /// user-interface, etc.
+    /// </summary>
+    [DataMember(Order = 3)]
+    public string Label { get; protected set; }
+
+    [DataMember(Order = 6)]
     public TimeSpan RotationPeriod { get; protected set; }
 
     /// <summary>
@@ -348,7 +359,7 @@ public class RegexPattern
     /// performance as these calls are typically much faster than
     /// equivalent regular expressions.
     /// </remarks>
-    [DataMember(Order = 6)]
+    [DataMember(Order = 7)]
     public ISet<string>? Signatures { get; protected set; }
 
     private readonly Func<string[]>? m_sampleGenerator;
@@ -359,7 +370,7 @@ public class RegexPattern
     /// </summary>
     /// <remarks>Options may not be available when .NET is not used to
     /// provide regex processing.</remarks>
-    [DataMember(Order = 3)]
+    [DataMember(Order = 4)]
     public DetectionMetadata DetectionMetadata { get; protected set; }
 
     public bool ShouldSerializeRotationPeriod() => false;

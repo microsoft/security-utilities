@@ -48,6 +48,7 @@ public class SecretLiteral
                 {
                     yield return new Detection(id: null,
                                                name: null,
+                                               label: null,
                                                start: startIndex,
                                                length: Value.Length,
                                                metadata: 0,

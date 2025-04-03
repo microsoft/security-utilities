@@ -10,6 +10,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "DAT101/002";
             Name = nameof(IPv4);
+            Label = "an IPv4 address";
             Pattern = @"^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$";
         }
 

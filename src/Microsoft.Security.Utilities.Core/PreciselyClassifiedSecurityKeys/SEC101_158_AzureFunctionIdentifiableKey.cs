@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities
@@ -13,6 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/158";
             Name = nameof(AzureFunctionIdentifiableKey);
+            Label = "an Azure Functions access key";
             ChecksumSeeds = new[]
             {
                 IdentifiableMetadata.AzureFunctionKeyChecksumSeed,
