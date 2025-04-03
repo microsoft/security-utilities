@@ -20,7 +20,7 @@ namespace Microsoft.Security.Utilities
             Label = "a non-functional secret scanning sample token";
             DetectionMetadata = DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy | DetectionMetadata.HighConfidence;
             Pattern = @$"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{{5}}){WellKnownRegexPatterns.SuffixBase62}";
-            Signatures = "ab85".ToSet();
+            Signatures = new HashSet<string>(["ab85"]);
         }
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
