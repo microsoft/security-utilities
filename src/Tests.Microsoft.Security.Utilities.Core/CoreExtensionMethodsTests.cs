@@ -23,10 +23,10 @@ namespace Tests.Microsoft.Security.Utilities.Core
             var detections = classifier.GetDetections(example, generateCrossCompanyCorrelatingIds: true);
             detections?.Count().Should().Be(1);
             var detection = detections.First();
-            string truncated = example.Truncate();
+            string truncated = Detections.TruncateSecret(example);
             string c3id = RegexPattern.GenerateCrossCompanyCorrelatingId(example);
             string expected = $"'{truncated}' is a non-functional secret scanning sample token. The correlating id for this detection is {c3id}.";
-            detection.FormattedMessage(example).Should().Be(expected);
+            Detections.Format(detection, example).Should().Be(expected);
         }
     }
 }

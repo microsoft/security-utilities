@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-global using static Microsoft.Security.Utilities.Formatting;
+global using static Microsoft.Security.Utilities.Detections;
 
 namespace Microsoft.Security.Utilities
 {
-    public static class Formatting
+    public static class Detections
     {
         /// <summary>
         /// Given a detection originating in an input and a user-facing secret
@@ -21,10 +21,10 @@ namespace Microsoft.Security.Utilities
         /// <returns>A message with a partial rendering of the plaintext
         /// finding, suitable for writing to the console, an IDE error list,
         /// etc.</returns>
-        public static string FormattedMessage(Detection detection, string input)
+        public static string Format(Detection detection, string input)
         {
             string match = input.Substring(detection.Start, detection.Length);
-            string truncated = Truncate(match);
+            string truncated = TruncateSecret(match);
 
             bool isHighConfidence = detection.Metadata.HasFlag(DetectionMetadata.HighConfidence);
 
@@ -44,7 +44,7 @@ namespace Microsoft.Security.Utilities
         /// <param name="text">The text to truncate.</param>
         /// <param name="lengthExclusiveOfEllipsis">The desired length of the truncated text, exclusive of the ellipsis, if added.</param>
         /// <returns>The rightmost truncated contents of the strength or the entire string (if its length is equal to or less than the specified length).</returns>
-        public static string Truncate(string text, int lengthExclusiveOfEllipsis = 6)
+        public static string TruncateSecret(string text, int lengthExclusiveOfEllipsis = 6)
         {
             text ??= string.Empty;
             string truncatedText = text.TrimEnd('=');
