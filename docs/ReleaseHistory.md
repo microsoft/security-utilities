@@ -19,18 +19,18 @@
 - BRK: `RegexPattern.RotationPeriod` is no longer publicly settable.
 - BRK: `IdentifiableKey.RegexNormalizedSignature` is removed.
 - BRK: Abstract classes `IdentifiableKey`, `Azure32ByteIdentifiableKey`, `Azure64ByteIdentifiableKey`, and `AzureMessagingIdentifiableKey` now require derived classes to pass their signature to the base constructor.
+- BRK: Rename `RegexDefaults.DefaultOptionsCaseSensitive` to `RegexDefaults.DefaultOptions`.
+- BRK: Remove `RegexPattern.DefaultRegexOptions`. Use `RegexDefaults.DefaultOptions` instead.
+- BRK: `RegexOptions.CultureInvariant` is now used by default.
+- BRK: Remove methods on `CachedDotNetRegex` that are not supported by the common `IRegexEngine` interface.
+- BRK: Direct use of `CachedDotNetRegex` no longer forces `RegexOptions.Compiled` and `RegexOptions.NonBacktracking`. It is up to the caller to pass them in if overriding the default argument.
+- BRK: If explicit `RegexOptions` are passed to `RegexPattern` constructor, they will be used as-is and will no longer be combined with the default options.
 - BUG: `IdentifiableScan` now properly flows `RegexPattern.RotationPeriod` to `Detection` instances. `Detection.RotationPeriod` previously always retained `default` as a value.
 - BUG: `IdentifiableScan` now properly flows `RegexPattern.DetectionMetadata` to `Detection` instances. `Detection.DetectionMetadata` was previously hard-coded as `DetectionMetadata.HighEntropy`.
 - NEW: Sort properties by name in GeneratedRegexPatterns/*.json.
 - BRK: Remove derived `RegexPattern` class properties `ChecksumSeeds`, `EncodeForUrl`, and `KeyLength` as these are not relevant to the literal authoring of equivalent regex patterns in other languages.
 - BRK: Rename `LegacyCommonAnnotatedSecurityKey` to `CommonAnnotatedSecurityKey` and mark this inlined `Microsoft.Security.Utilities` class as internal.
-- BRK: Remove methods on `CachedDotNetRegex` that are not supported by the common `IRegexEngine` interface.
-- BRK: Direct use of `CachedDotNetRegex` no longer forces `RegexOptions.Compiled` and `RegexOptions.NonBacktracking`. It is up to the caller to pass them in if overriding the default argument.
-- BRK: Rename `RegexDefaults.DefaultOptionsCaseSensitive` to `RegexDefaults.DefaultOptions`.
-- BRK: Remove `RegexPattern.DefaultRegexOptions`. Use `RegexDefaults.DefaultOptions` instead.
-- BRK: `RegexOptions.CultureInvariant` is now used by default.
 - NEW: Provide deterministic ordering of properties in GeneratedRegexPatterns/*.json via `DataMember` attributes.
-- NEW: It is now possible to turn off default regex options by passing `disabledRegexOptions` to the `RegexPattern` constructor.
 - PRF: Remove unnecessary and expensive recomputation of `RegexPatter.Pattern`, `RegexPattern.Signatures`, and `IdentifiableKey.ChecksumSeeds` on every property access.
 - RRR: Rename `CommonAnnotatedSecurityKey` to `UnclassifiedLegacyCommonAnnotatedSecurityKey`.
 - RRR: Rename `GenericJwt` to `UnclassifiedJwt`.
