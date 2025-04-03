@@ -8,6 +8,8 @@ namespace Microsoft.Security.Utilities.Cli
     {
         public static int Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             try
             {
                 return Parser.Default.ParseArguments<

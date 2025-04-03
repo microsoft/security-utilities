@@ -2,17 +2,12 @@
 
 #nullable disable
 
-using Microsoft.VisualBasic;
-
-using System.IO;
-
 namespace Microsoft.Security.Utilities.Cli
 {
     public class ScanCommand
     {
         public ScanCommand()
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
         }
 
         internal int Run(ScanOptions options)
