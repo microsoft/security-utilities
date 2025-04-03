@@ -24,7 +24,8 @@
 - BRK: `RegexOptions.CultureInvariant` is now used by default.
 - BRK: Remove methods on `CachedDotNetRegex` that are not supported by the common `IRegexEngine` interface.
 - BRK: Direct use of `CachedDotNetRegex` no longer forces `RegexOptions.Compiled` and `RegexOptions.NonBacktracking`. It is up to the caller to pass them in if overriding the default argument.
-- BRK: If explicit `RegexOptions` are passed to `RegexPattern` constructor, they will be used as-is and will no longer be combined with the default options.
+- BRK: `RegexOptions` argument of `RegexPattern` constructor is now nullable.
+- BRK: If explicit non-null `RegexOptions` are passed to `RegexPattern` constructor, they will be used as-is and will no longer be combined with the default options.
 - BUG: `IdentifiableScan` now properly flows `RegexPattern.RotationPeriod` to `Detection` instances. `Detection.RotationPeriod` previously always retained `default` as a value.
 - BUG: `IdentifiableScan` now properly flows `RegexPattern.DetectionMetadata` to `Detection` instances. `Detection.DetectionMetadata` was previously hard-coded as `DetectionMetadata.HighEntropy`.
 - NEW: Sort properties by name in GeneratedRegexPatterns/*.json.
