@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Microsoft.Security.Utilities
 {
-    internal static class RegexDefaults
+    public static class RegexDefaults
     {
 #if NET7_0_OR_GREATER
         public static RegexOptions DefaultOptions { get; } = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.NonBacktracking;
