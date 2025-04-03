@@ -430,21 +430,20 @@ public class RegexPatternTests
     public void RegexPattern_RegexOptions_UsesDefault()
     {
         var pattern = new RegexPattern("id", "name", DetectionMetadata.None, ".");
-        pattern.RegexOptions.Should().Be(RegexDefaults.DefaultOptions, 
-                                         because: "No regex options were passed so default should be used.");
+        pattern.RegexOptions.Should().Be(RegexDefaults.DefaultOptions,
+                                         because: "No regex options were passed so default opptions should be used.");
     }
 
     [TestMethod]
-    public void RegexPattern_RegexOptions_AddsAndRemovesFromDefault()
+    public void RegexPattern_RegexOptions_UsesCustom()
     {
         var pattern = new RegexPattern(id: "id",
                                        name: "name",
                                        DetectionMetadata.None,
                                        pattern: ".",
-                                       regexOptions: RegexOptions.Multiline,
-                                       disabledRegexOptions: RegexOptions.ExplicitCapture);
+                                       regexOptions: RegexOptions.Multiline);
 
-        pattern.RegexOptions.Should().Be((RegexDefaults.DefaultOptions | RegexOptions.Multiline) & ~RegexOptions.ExplicitCapture,
-                                         because: "Multiline should be added and ExplicitCapture should be removed.");
+        pattern.RegexOptions.Should().Be(RegexOptions.Multiline,
+                                         because: "Multiline and no other options were passed at construction.");
     }
 }

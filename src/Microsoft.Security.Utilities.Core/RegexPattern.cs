@@ -22,11 +22,10 @@ public class RegexPattern
     /// <param name="id"> The unique identifier for the pattern.</param>
     /// <param name="name">The name of the pattern.</param>
     /// <param name="pattern">The regular expression pattern.</param>
-    /// <param name="patternMetadata">Pattern metadata that describes the pattern.</param>
+    /// <param name="patternMetadata">Metadata that describes the pattern.</param>
     /// <param name="rotationPeriod">The period after which a matching secret should be rotated.</param>
     /// <param name="signatures">The set of signatures. The regex is not run if none of them appear in the input.</param>
-    /// <param name="regexOptions">Regular expression options to use in addition to <see cref="RegexDefaults.DefaultOptions" />.</param>
-    /// <param name="disabledRegexOptions">Regular expression options to disable. Use this to remove unwanted options from <see cref="RegexDefaults.DefaultOptions"/>.</param>
+    /// <param name="regexOptions">Regular expression options to use.</param>
     /// <param name="sampleGenerator">A function that generates sample true positives for the pattern. Used by <see cref="GenerateTruePositiveExamples"/></param>
     public RegexPattern(string id,
                         string name,
@@ -34,8 +33,7 @@ public class RegexPattern
                         string pattern,
                         TimeSpan rotationPeriod = default,
                         ISet<string>? signatures = null,
-                        RegexOptions regexOptions = RegexOptions.None,
-                        RegexOptions disabledRegexOptions = RegexOptions.None,
+                        RegexOptions regexOptions = RegexDefaults.DefaultOptions,
                         Func<string[]>? sampleGenerator = null)
     {
         Pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
@@ -45,7 +43,7 @@ public class RegexPattern
         DetectionMetadata = patternMetadata;
         RotationPeriod = rotationPeriod;
         Signatures = signatures;
-        RegexOptions = (regexOptions | RegexDefaults.DefaultOptions) & ~disabledRegexOptions;
+        RegexOptions = regexOptions;
         m_sampleGenerator = sampleGenerator;
     }
 
