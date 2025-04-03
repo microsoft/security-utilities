@@ -480,7 +480,7 @@ public class RegexPatternTests
     [TestMethod]
     public void RegexPattern_RegexOptions_NoExplicitArg_UsesDefaults()
     {
-        var pattern = new RegexPattern("id", "name", DetectionMetadata.None, ".");
+        var pattern = new RegexPattern("id", "name", "label", DetectionMetadata.None, ".");
         pattern.RegexOptions.Should().Be(RegexDefaults.DefaultOptions,
                                          because: "no regex options were passed at construction so default opptions should be used");
     }
@@ -488,7 +488,7 @@ public class RegexPatternTests
     [TestMethod]
     public void RegexPattern_RegexOptions_ExplicitNullArg_UsesDefaults()
     {
-        var pattern = new RegexPattern("id", "name", DetectionMetadata.None, ".", regexOptions: null);
+        var pattern = new RegexPattern("id", "name", "label", DetectionMetadata.None, ".", regexOptions: null);
         pattern.RegexOptions.Should().Be(RegexDefaults.DefaultOptions,
                                          because: "null was passed explicitly which should be equivalent to not passing anything");
     }
@@ -496,7 +496,7 @@ public class RegexPatternTests
     [TestMethod]
     public void RegexPattern_RegexOptions_ExplicitZeroArg_UsesNoOptions()
     {
-        var pattern = new RegexPattern("id", "name", DetectionMetadata.None, ".", regexOptions: 0);
+        var pattern = new RegexPattern("id", "name", "label", DetectionMetadata.None, ".", regexOptions: 0);
         pattern.RegexOptions.Should().Be(RegexOptions.None,
                                          because: "a non-null value of zero was passed explicitly at construction");
     }
@@ -506,6 +506,7 @@ public class RegexPatternTests
     {
         var pattern = new RegexPattern(id: "id",
                                        name: "name",
+                                       label: "label",
                                        DetectionMetadata.None,
                                        pattern: ".",
                                        regexOptions: RegexOptions.Multiline);
@@ -519,6 +520,7 @@ public class RegexPatternTests
     {
         var pattern = new RegexPattern(id: "id",
                                        name: "name",
+                                       label: "label",
                                        DetectionMetadata.None,
                                        pattern: ".",
                                        regexOptions: 0);
