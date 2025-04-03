@@ -9,7 +9,7 @@ namespace Microsoft.Security.Utilities
     {
         private static readonly byte[] EmptyByteArray = new byte[0];
 
-        public AzureStorageAccountLegacyCredentials() 
+        public AzureStorageAccountLegacyCredentials()
         {
             Id = "SEC101/106";
             Name = nameof(AzureStorageAccountLegacyCredentials);

@@ -9,5 +9,5 @@ namespace Microsoft.Security.Utilities.Benchmarks
         {
             new UnclassifiedLegacyCommonAnnotatedSecurityKey(),
         };
-    }   
+    }
 }

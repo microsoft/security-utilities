@@ -15,7 +15,8 @@ namespace Microsoft.Security.Utilities
         // is would case the stress test (n=1000) to take 10+ minutes to run due the expensive nature of generating
         // private keys and certificates. We use Lazy here since during non-test execution we do not want to incur
         // the cost of generating these examples.
-        private static Lazy<List<string>> _truePositiveExamples = new Lazy<List<string>>(() => {
+        private static Lazy<List<string>> _truePositiveExamples = new Lazy<List<string>>(() =>
+        {
             var examples = new List<string>();
 #if NET6_0_OR_GREATER
             foreach (string? password in new string?[] { Guid.NewGuid().ToString(), null })

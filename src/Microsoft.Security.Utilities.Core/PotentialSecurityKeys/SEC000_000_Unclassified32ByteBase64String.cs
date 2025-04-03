@@ -31,7 +31,7 @@ internal sealed class Unclassified32ByteBase64String : RegexPattern
 
     public override IEnumerable<Detection> GetDetections(string input,
                                                          bool generateSha256Hashes,
-                                                         string defaultRedactionToken = RegexPattern.FallbackRedactionToken, 
+                                                         string defaultRedactionToken = RegexPattern.FallbackRedactionToken,
                                                          IRegexEngine? regexEngine = null)
     {
         foreach (Detection detection in base.GetDetections(input, generateSha256Hashes, defaultRedactionToken, regexEngine))

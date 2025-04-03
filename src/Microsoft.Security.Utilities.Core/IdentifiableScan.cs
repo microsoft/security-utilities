@@ -25,7 +25,7 @@ public class IdentifiableScan : ISecretMasker
         this.generateCorrelatingIds = generateCorrelatingIds;
 
         var highPerformancePatterns = new HashSet<CompiledHighPerformancePattern>();
-        
+
         foreach (RegexPattern pattern in regexPatterns)
         {
             if (pattern.Signatures == null)

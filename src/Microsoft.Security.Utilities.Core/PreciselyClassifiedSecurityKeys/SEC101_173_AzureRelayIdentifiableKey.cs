@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities
 {
     public class AzureRelayIdentifiableKey : AzureMessagingIdentifiableKey
     {
-        public AzureRelayIdentifiableKey() :base(IdentifiableMetadata.AzureRelaySignature)
+        public AzureRelayIdentifiableKey() : base(IdentifiableMetadata.AzureRelaySignature)
         {
             Id = "SEC101/173";
             Name = nameof(AzureRelayIdentifiableKey);

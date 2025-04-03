@@ -15,7 +15,7 @@ namespace Base62
     {
         [ThreadStatic]
         private static StringBuilder s_sb;
-        
+
         private const string DefaultCharacterSet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         private const string InvertedCharacterSet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 

@@ -70,7 +70,7 @@ public static class IdentifiableSecrets
     public static bool TryValidateCommonAnnotatedKey(byte[] key,
                                                      string base64EncodedSignature)
     {
-        if (key == null || 
+        if (key == null ||
             (key.Length != StandardCommonAnnotatedKeySizeInBytes && key.Length != LongFormCommonAnnotatedKeySizeInBytes))
         {
             return false;
@@ -98,7 +98,7 @@ public static class IdentifiableSecrets
         int firstChecksumByteIndex = LegacyCommonAnnotatedSecurityKey.ChecksumBytesIndex;
         byte[] bytesToChecksum = new byte[firstChecksumByteIndex];
         Array.Copy(key, bytesToChecksum, bytesToChecksum.Length);
-        
+
         int checksum = Marvin.ComputeHash32(bytesToChecksum, checksumSeed, 0, bytesToChecksum.Length);
         byte[] computedChecksumBytes = BitConverter.GetBytes(checksum);
 
@@ -244,7 +244,7 @@ public static class IdentifiableSecrets
     }
 
     internal static string ComputeCommonAnnotatedHash(string textToHash,
-                                                    string commonAnnotatedSecret,                                                    
+                                                    string commonAnnotatedSecret,
                                                     bool longForm = false,
                                                     char hashedDataSignature = 'H')
     {
@@ -779,7 +779,7 @@ public static class IdentifiableSecrets
         int expectedChecksum = BitConverter.ToInt32(checksumBytes, 0);
         int actualChecksum = Marvin.ComputeHash32(bytes, checksumSeed, 0, bytes.Length - checksumSizeInBytes);
 
-        if (actualChecksum== expectedChecksum)
+        if (actualChecksum == expectedChecksum)
         {
             return true;
         }
@@ -942,20 +942,20 @@ public static class IdentifiableSecrets
         switch (padding)
         {
             case 2:
-            {
-                // Clear two bits where the signature will be right-shifted
-                // to align on the base64-encoded 6-bit boundary.
-                mask = 0xfcffffff;
-                break;
-            }
+                {
+                    // Clear two bits where the signature will be right-shifted
+                    // to align on the base64-encoded 6-bit boundary.
+                    mask = 0xfcffffff;
+                    break;
+                }
 
             case 4:
-            {
-                // Clear four bits where the signature will be right-shifted
-                // to remain aligned with base64-encoded 6-bit boundary.
-                mask = 0xf0ffffff;
-                break;
-            }
+                {
+                    // Clear four bits where the signature will be right-shifted
+                    // to remain aligned with base64-encoded 6-bit boundary.
+                    mask = 0xf0ffffff;
+                    break;
+                }
         }
 
         signature &= mask;

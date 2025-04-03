@@ -55,7 +55,7 @@ if (-not $NoBuild) {
     Write-Information "Building Microsoft.Security.Utilities.sln (dotnet)..."
     dotnet build $RepoRoot\src\Microsoft.Security.Utilities.sln -c $Configuration -p:Deterministic=true -p:WarningsAsErrors="MSB3277"
     if ($LASTEXITCODE -ne 0) {
-        Exit-WithFailureMessage $ScriptName "Build of \Microsoft.Security.Utilities failed."
+        Exit-WithFailureMessage $ScriptName "Build of Microsoft.Security.Utilities.sln failed."
     }
 }
 
@@ -69,7 +69,7 @@ if (-not $NoTest) {
 
     dotnet test $RepoRoot\src\Microsoft.Security.Utilities.sln -c $Configuration --logger trx --no-build $CodeCoverageCommand /p:IncludeTestAssembly=false
     if ($LASTEXITCODE -ne 0) {
-        Exit-WithFailureMessage $ScriptName "Test of \Microsoft.Security.Utilities failed."
+        Exit-WithFailureMessage $ScriptName "Test of Microsoft.Security.Utilities.sln failed."
     }
 }
 
@@ -89,7 +89,7 @@ if ($Configuration -eq 'Release') {
     Write-Information "Building SecurityUtilitiesPackageReference.sln (dotnet)..."
     dotnet build $RepoRoot\src\SecurityUtilitiesPackageReference\SecurityUtilitiesPackageReference.sln -c $Configuration
     if ($LASTEXITCODE -ne 0) {
-        Exit-WithFailureMessage $ScriptName "Build of SecurityUtilitiesPackageReference failed."
+        Exit-WithFailureMessage $ScriptName "Build of SecurityUtilitiesPackageReference.sln failed."
     }
 
     if (-not $NoTest) {

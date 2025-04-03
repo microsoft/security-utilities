@@ -29,7 +29,7 @@ namespace Microsoft.Security.Utilities
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             foreach (string key in base.GenerateTruePositiveExamples())
-            { 
+            {
                 if (key.Contains("/") || key.Contains("+"))
                 {
                     continue;

@@ -29,7 +29,7 @@ namespace Microsoft.Security.Utilities.Core
                                                 DetectionMetadata.None,
                                                 regex);
             var masker = new SecretMasker([regexPattern], regexEngine: RE2RegexEngine.Instance);
-            
+
             var detection = masker.DetectSecrets(scanData).FirstOrDefault();
             detection.Should().NotBe(default);
 

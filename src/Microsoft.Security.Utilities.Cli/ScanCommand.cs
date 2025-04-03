@@ -31,7 +31,7 @@ namespace Microsoft.Security.Utilities.Cli
             {
                 return ProcessInputFile(options);
             }
-            else 
+            else
             {
                 return ProcessInputString(options);
             }

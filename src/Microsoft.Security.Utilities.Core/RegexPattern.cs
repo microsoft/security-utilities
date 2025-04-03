@@ -387,6 +387,7 @@ public class RegexPattern
     /// - Uppercase, lowercase, and digit character classes are simplified to ranges.
     /// - The pattern is anchored to the start of the input.
     /// <returns>
+    /// <summary>
     private protected static string MakeHighPerformancePattern(string pattern, string signature)
     {
         string regexNormalizedSignature = Regex.Escape(signature);
