@@ -17,7 +17,7 @@ namespace Microsoft.Security.Utilities.Cli
             's',
             "string-input",
             HelpText = "A path to a file to scan for identifiable secrets.")]
-        public string StringInput  { get; set; }
+        public string StringInput { get; set; }
 
         [Option(
             "recurse",

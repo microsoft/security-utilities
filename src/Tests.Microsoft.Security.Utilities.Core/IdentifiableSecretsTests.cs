@@ -208,7 +208,7 @@ namespace Microsoft.Security.Utilities
                                                                                            longForm);
 
                 action.Should().Throw<ArgumentException>(because: $"'{key}' is not a valid secret for ComputeDerivedCommonAnnotatedKey");
-             
+
                 key = IdentifiableSecrets.GenerateCommonAnnotatedKey(signature, customerManagedKey: true, new byte[9], new byte[3], longForm);
 
                 action.Should().NotThrow<ArgumentException>(because: $"'{key}' is a valid secret for ComputeDerivedCommonAnnotatedKey");
@@ -271,7 +271,7 @@ namespace Microsoft.Security.Utilities
 
                         action = () => IdentifiableSecrets.ComputeCommonAnnotatedHash("NonsensitiveData",
                                                                                       Convert.ToBase64String(new byte[64]),
-                                                                                      longForm, 
+                                                                                      longForm,
                                                                                       keyKindSignature);
 
                         action.Should().Throw<ArgumentException>(because: $"'{keyKindSignature}' should not be a valid ComputeCommonAnnotatedHash identifier");
@@ -488,8 +488,8 @@ namespace Microsoft.Security.Utilities
             byte[] keyBytes = Convert.FromBase64String(key);
             bool resultFromString = IdentifiableSecrets.TryValidateCommonAnnotatedKey(key, base64EncodedSignature);
             bool resultFromBytes = IdentifiableSecrets.TryValidateCommonAnnotatedKey(keyBytes, base64EncodedSignature);
-        
-            resultFromBytes.Should().Be(resultFromString, because: 
+
+            resultFromBytes.Should().Be(resultFromString, because:
                 $"""
                 TryValidate(string, string) and TryValidate(byte[], string) should be equivalent,
                 but returned different results for key='{key}', signature='{base64EncodedSignature}':
@@ -678,7 +678,7 @@ namespace Microsoft.Security.Utilities
                                                            secretBytes,
                                                            "TEST",
                                                            customerManagedKey: true,
-                                                           new byte[9], 
+                                                           new byte[9],
                                                            new byte[3],
                                                            longForm: false,
                                                            keyKindSignature: 'D');
@@ -1185,45 +1185,45 @@ namespace Microsoft.Security.Utilities
             switch (base64EncodingKind)
             {
                 case Base64EncodingKind.Standard:
-                {
-                    byte[] dotNetDecodedBytes = Convert.FromBase64String(secret);
-                    VerifyByteArraysAreEqual(apiDecodedBytes, dotNetDecodedBytes);
+                    {
+                        byte[] dotNetDecodedBytes = Convert.FromBase64String(secret);
+                        VerifyByteArraysAreEqual(apiDecodedBytes, dotNetDecodedBytes);
 
-                    string urlSafeEncoded = Base64UrlEncoder.Encode(dotNetDecodedBytes);
-                    string base64Encoded = IdentifiableSecrets.TransformToStandardEncoding(urlSafeEncoded);
-                    base64Encoded += IdentifiableSecrets.RetrievePaddingForBase64EncodedText(base64Encoded);
+                        string urlSafeEncoded = Base64UrlEncoder.Encode(dotNetDecodedBytes);
+                        string base64Encoded = IdentifiableSecrets.TransformToStandardEncoding(urlSafeEncoded);
+                        base64Encoded += IdentifiableSecrets.RetrievePaddingForBase64EncodedText(base64Encoded);
 
-                    base64Encoded.Should().Be(secret);
-                    break;
-                }
+                        base64Encoded.Should().Be(secret);
+                        break;
+                    }
                 case Base64EncodingKind.UrlSafe:
-                {
-                    byte[] azureDecodedBytes = Base64UrlEncoder.DecodeBytes(secret);
-                    VerifyByteArraysAreEqual(apiDecodedBytes, azureDecodedBytes);
+                    {
+                        byte[] azureDecodedBytes = Base64UrlEncoder.DecodeBytes(secret);
+                        VerifyByteArraysAreEqual(apiDecodedBytes, azureDecodedBytes);
 
-                    string base64Encoded = Convert.ToBase64String(azureDecodedBytes);
-                    string urlSafeEncoded = IdentifiableSecrets.TransformToUrlSafeEncoding(base64Encoded);
+                        string base64Encoded = Convert.ToBase64String(azureDecodedBytes);
+                        string urlSafeEncoded = IdentifiableSecrets.TransformToUrlSafeEncoding(base64Encoded);
 
-                    string padding = IdentifiableSecrets.RetrievePaddingForBase64EncodedText(secret);
-                    urlSafeEncoded.Should().Be(secret + padding);
-                    break;
-                }
+                        string padding = IdentifiableSecrets.RetrievePaddingForBase64EncodedText(secret);
+                        urlSafeEncoded.Should().Be(secret + padding);
+                        break;
+                    }
                 case Base64EncodingKind.Unknown:
-                {
-                    secret += IdentifiableSecrets.RetrievePaddingForBase64EncodedText(secret);
-                    byte[] dotNetDecodedBytes = Convert.FromBase64String(secret);
-                    byte[] azureDecodedBytes = Base64UrlEncoder.DecodeBytes(secret);
+                    {
+                        secret += IdentifiableSecrets.RetrievePaddingForBase64EncodedText(secret);
+                        byte[] dotNetDecodedBytes = Convert.FromBase64String(secret);
+                        byte[] azureDecodedBytes = Base64UrlEncoder.DecodeBytes(secret);
 
-                    VerifyByteArraysAreEqual(apiDecodedBytes, dotNetDecodedBytes);
-                    VerifyByteArraysAreEqual(dotNetDecodedBytes, azureDecodedBytes);
+                        VerifyByteArraysAreEqual(apiDecodedBytes, dotNetDecodedBytes);
+                        VerifyByteArraysAreEqual(dotNetDecodedBytes, azureDecodedBytes);
 
-                    string base64Encoded = Convert.ToBase64String(apiDecodedBytes);
-                    string urlSafeEncoded = Base64UrlEncoder.Encode(dotNetDecodedBytes);
+                        string base64Encoded = Convert.ToBase64String(apiDecodedBytes);
+                        string urlSafeEncoded = Base64UrlEncoder.Encode(dotNetDecodedBytes);
 
-                    Assert.IsTrue(base64Encoded == secret &&
-                                  urlSafeEncoded == secret.TrimEnd('='));
-                    break;
-                }
+                        Assert.IsTrue(base64Encoded == secret &&
+                                      urlSafeEncoded == secret.TrimEnd('='));
+                        break;
+                    }
             }
 
             // Next, we validate that modifying the seed, signature or 
@@ -1369,11 +1369,11 @@ namespace Microsoft.Security.Utilities
             byte[] singleByte = new byte[1];
             s_random.NextBytes(singleByte);
 
-            int character = (int)singleByte[0] %26;
+            int character = (int)singleByte[0] % 26;
 
             s_random.NextBytes(singleByte);
             bool isUpper = singleByte[0] % 2 == 0;
-            
+
             string signature = $"{s_base62Alphabet[character]}{Guid.NewGuid().ToString("N").Substring(0, 3)}";
             return isUpper ? signature.ToUpperInvariant() : signature.ToLowerInvariant();
         }
