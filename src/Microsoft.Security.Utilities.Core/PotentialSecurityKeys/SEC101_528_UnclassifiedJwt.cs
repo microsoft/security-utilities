@@ -31,7 +31,7 @@ namespace Microsoft.Security.Utilities
                 header = $"{header}{Base64Padding(header)}";
                 decoded = Encoding.UTF8.GetString(Convert.FromBase64String(header));
             }
-            catch(FormatException)
+            catch (FormatException)
             {
                 return null;
             }

@@ -28,7 +28,7 @@ namespace Microsoft.Security.Utilities
 
         [TestMethod]
         public void WellKnownRegexPatterns_AllRuleIdsAndNamesAreUnique()
-        {            
+        {
             using var assertionScope = new AssertionScope();
 
             var patterns = GetAllPatterns();
@@ -303,7 +303,7 @@ namespace Microsoft.Security.Utilities
                     groupNames[0].Should().Be("refine", because: $"Pattern '{pattern.GetType().Name}' capture group should be named 'refine'");
 
                     pattern.Pattern.Should()
-                        .Contain("(?P<refine>", 
+                        .Contain("(?P<refine>",
                                  because: $"Pattern '{pattern.GetType().Name}' should contain an RE2-compatible '(?P<refine>...)' named capture group");
                 }
             }

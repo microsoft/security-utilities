@@ -8,14 +8,14 @@ namespace Microsoft.Security.Utilities.Cli
     {
         internal int Run(GenerateOptions options)
         {
-            for (int i = 0; i< options.Count; i++) 
+            for (int i = 0; i < options.Count; i++)
             {
                 string key =
                     IdentifiableSecrets.GenerateBase64KeyHelper(options.ChecksumSeed,
                                                                 options.LengthInBytes,
                                                                 options.FixedSignature,
                                                                 options.UrlSafe);
-                    
+
 
                 Console.WriteLine(key);
             }

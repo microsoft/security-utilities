@@ -39,8 +39,8 @@ public class CompiledHighPerformancePatternTests
     {
         path = Path.GetDirectoryName(path);
         path = Path.Combine(path,
-                            "..", 
-                            "Microsoft.Security.Utilities.Core", 
+                            "..",
+                            "Microsoft.Security.Utilities.Core",
                             $"{nameof(CompiledHighPerformancePattern)}.Generated.cs");
         return path;
     }

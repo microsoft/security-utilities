@@ -28,7 +28,7 @@ public class IdentifiableScan : ISecretMasker
         this.orderedIds = new List<string>();
 
         var highPerformancePatterns = new HashSet<CompiledHighPerformancePattern>();
-        
+
         foreach (RegexPattern pattern in regexPatterns)
         {
             if (pattern.Signatures == null)

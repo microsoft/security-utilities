@@ -426,7 +426,7 @@ internal static class IdentifiableMetadata
         catch (ArgumentOutOfRangeException) { return false; }
     }
 
-     private static bool AzureCacheForRedisWithSpecialCharacterChecksum(string secret, ulong checksumSeed)
+    private static bool AzureCacheForRedisWithSpecialCharacterChecksum(string secret, ulong checksumSeed)
     {
         byte[]? bytes = null;
 

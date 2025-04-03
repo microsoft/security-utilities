@@ -19,7 +19,7 @@ namespace Microsoft.Security.Utilities.Core
         {
             var classifier = new Unclassified16ByteHexadecimalString();
             string validInput = "0123456789abcdef0123456789abcdef";
-            
+
             var result = classifier.GetMatchIdAndName(validInput);
 
             Assert.IsNotNull(result);

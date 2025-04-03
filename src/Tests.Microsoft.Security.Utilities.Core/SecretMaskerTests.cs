@@ -49,7 +49,7 @@ public class SecretMaskerTests
         {
             using var scope = new AssertionScope();
 
-            foreach (IRegexEngine engine  in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance, null })
+            foreach (IRegexEngine engine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance, null })
             {
                 foreach (bool generateCrossCompanyCorrelatingIds in new[] { true, false })
                 {
@@ -115,7 +115,7 @@ public class SecretMaskerTests
                             //    should refuse to generate a fingerprint, no matter how the masker is configured.
                             string actualRedactionToken = detection.RedactionToken;
                             string expectedRedactionToken = generateCrossCompanyCorrelatingIds &&
-                                                            (preciseClassifications | detection.Metadata.HasFlag(DetectionMetadata.HighEntropy)) 
+                                                            (preciseClassifications | detection.Metadata.HasFlag(DetectionMetadata.HighEntropy))
                                                                 ? $"{pattern.Id}:{c3id}"
                                                                 : "+++";
 
@@ -203,13 +203,13 @@ public class SecretMaskerTests
                             }
 
                             string expectedRedactedValue = generateCrossCompanyCorrelatingIds
-                                ? $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(standaloneSecret)}" 
+                                ? $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(standaloneSecret)}"
                                 : RegexPattern.FallbackRedactionToken;
 
                             redacted.Should().Contain(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds}");
                         }
 
-                        foreach(string testExample in pattern.GenerateFalsePositiveExamples())
+                        foreach (string testExample in pattern.GenerateFalsePositiveExamples())
                         {
                             string secretValue = testExample;
 
@@ -227,7 +227,7 @@ public class SecretMaskerTests
 
     private SecretMasker InitializeTestMasker(bool generateCorrelatingIds = false)
     {
-        var testSecretMasker = new SecretMasker(new[] { new UrlCredentials() }, 
+        var testSecretMasker = new SecretMasker(new[] { new UrlCredentials() },
                                                 generateCorrelatingIds: generateCorrelatingIds);
         return testSecretMasker;
     }
@@ -268,7 +268,7 @@ public class SecretMaskerTests
 
         ValidateTelemetry(secretMasker);
     }
-    
+
     [TestMethod]
     public void IsUserInfoWithSpecialCharactersMaskedCorrectly()
     {
@@ -281,7 +281,7 @@ public class SecretMaskerTests
         Assert.AreEqual(expected, actual);
         ValidateTelemetry(secretMasker);
     }
-        
+
     [TestMethod]
     public void IsUserInfoWithDigitsInNameMaskedCorrectly()
     {
@@ -293,7 +293,7 @@ public class SecretMaskerTests
         Assert.AreEqual(expected, actual);
         ValidateTelemetry(secretMasker);
     }
-    
+
     [TestMethod]
     public void IsUserInfoWithLongPasswordAndNameMaskedCorrectly()
     {
@@ -390,7 +390,7 @@ public class SecretMaskerTests
         Assert.AreEqual("***masker-1-encoder-3", secretMasker2.MaskSecrets("masker-1-value-1_masker-1-encoder-3")); // separate encoder storage from original
     }
 
-    
+
     [TestMethod]
     public void SecretMasker_Encoder()
     {
@@ -565,7 +565,7 @@ public class SecretMaskerTests
         var detections = secretMasker.DetectSecrets(secret);
         detections.Count().Should().Be(1);
         Detection detection = detections.First();
-        
+
         int colonIndex = detection.RedactionToken.IndexOf(':');
         string correlatingId = detection.RedactionToken.Substring(colonIndex + 1);
         correlatingId.Should().Be("0W7kMOsBl4huQu/6Rekx");
@@ -579,7 +579,7 @@ public class SecretMaskerTests
         var input = "abc";
 
         var actual = secretMasker.MaskSecrets(input);
-        
+
         Assert.AreEqual(input, actual);
     }
 
@@ -745,7 +745,7 @@ public class SecretMaskerTests
     public void SecretMasker_DistinguishLiteralAndRegexRedactionTokens()
     {
         using var secretMasker = new SecretMasker() { MinimumSecretLength = 3, DefaultRegexRedactionToken = "zzz", DefaultLiteralRedactionToken = "yyy" };
-        
+
         secretMasker.AddRegex(new RegexPattern(id: "1000", name: "Name", DetectionMetadata.None, pattern: "abc"));
         secretMasker.AddValue("123");
 
