@@ -12,7 +12,7 @@ public sealed class UrlCredentials : RegexPattern
     {
         Id = "SEC101/127";
         Name = nameof(UrlCredentials);
-        Label= "a URL with login credentials";
+        Label = "a URL with login credentials";
         Pattern = @"($|\b)(ftps?|https?):\/\/(?P<refine>[^:@\/]+:[^:@?\/]+)@";
         DetectionMetadata = DetectionMetadata.MediumConfidence;
         Signatures = new HashSet<string>(new[]

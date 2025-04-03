@@ -12,7 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/158";
             Name = nameof(AzureFunctionIdentifiableKey);
-            Label = "an Azure Functions access key"; 
+            Label = "an Azure Functions access key";
             ChecksumSeeds = new[]
             {
                 IdentifiableMetadata.AzureFunctionKeyChecksumSeed,

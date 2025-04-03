@@ -124,7 +124,7 @@ public class RegexPatternTests
     [TestMethod]
     public void RegexPattern_Equals_ReturnsTrue_WhenRotationPeriodsAreEqual()
     {
-       // Arrange
+        // Arrange
         var secret1 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", TimeSpan.FromSeconds(15));
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", TimeSpan.FromSeconds(15));
 

@@ -322,7 +322,6 @@ public class RegexPattern
     /// Gets or sets an opaque, stable identifier for the pattern (corresponding to a SARIF 'reportingDescriptorReference.id' value).
     /// </summary>
     [DataMember(Order = 1)]
-
     public string Id { get; protected set; }
 
     /// <summary>
@@ -360,7 +359,7 @@ public class RegexPattern
     /// performance as these calls are typically much faster than
     /// equivalent regular expressions.
     /// </remarks>
-    [DataMember(Order = 7)] 
+    [DataMember(Order = 7)]
     public ISet<string>? Signatures { get; protected set; }
 
     private readonly Func<string[]>? m_sampleGenerator;

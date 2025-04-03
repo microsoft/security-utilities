@@ -745,7 +745,7 @@ public class SecretMaskerTests
     public void SecretMasker_DistinguishLiteralAndRegexRedactionTokens()
     {
         using var secretMasker = new SecretMasker() { MinimumSecretLength = 3, DefaultRegexRedactionToken = "zzz", DefaultLiteralRedactionToken = "yyy" };
-        
+
         secretMasker.AddRegex(new RegexPattern(id: "1000", name: "Name", "a test secret", DetectionMetadata.None, pattern: "abc"));
         secretMasker.AddValue("123");
 

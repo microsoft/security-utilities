@@ -35,7 +35,7 @@ namespace Microsoft.Security.Utilities
             string suffix = !string.IsNullOrEmpty(detection.CrossCompanyCorrelatingId)
                 ? $" The correlating id for this detection is {detection.CrossCompanyCorrelatingId}."
                 : string.Empty;
-            
+
             return $"'{truncated}' {verb} {detection.Label}.{suffix}";
         }
 
