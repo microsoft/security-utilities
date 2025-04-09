@@ -122,7 +122,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
     }
 
-    public string MaskSecrets(string input)
+    public string MaskSecrets(string input, Action<Detection>? onDetection = null)
     {
         if (input == null)
         {
@@ -142,6 +142,8 @@ public class SecretMasker : ISecretMasker, IDisposable
         Detection? currentDetection = default;
         foreach (Detection detection in detections.OrderBy(x => x.Start))
         {
+            onDetection?.Invoke(detection);
+
             if (object.Equals(currentDetection, null))
             {
                 currentDetection = new Detection(detection);

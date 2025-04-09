@@ -12,6 +12,10 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# UNRELEASED
+- BRK: `SecretMasker.MaskSecrets` and `ISecretMasker.DetectSecrets` now accept an additional optional parameter. This is binary breaking only for callers, source-breaking as well for implementations of `ISecretMasker`.
+- NEW: `SecreMasker.MaskSecrets` and `ISecretMasker.DetectSecrets` now accept an callback to receive the detection results that are triggering redaction.
+
 # 1.17.0 - 04/03/2025
 - BRK: `RegexPattern.Pattern` is no longer virtual.
 - BRK: `RegexPattern.Signatures` is no longer virtual.

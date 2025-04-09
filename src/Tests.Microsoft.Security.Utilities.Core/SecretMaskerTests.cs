@@ -755,6 +755,35 @@ public class SecretMaskerTests
         Assert.AreEqual("zzzxyyyab12", result);
     }
 
+    [TestMethod]
+    public void SecretMasker_ProvidesDetectionsViaCallback()
+    {
+        using var secretMasker = new SecretMasker();
+        secretMasker.AddRegex(new RegexPattern(id: "1", name: "Pattern1", label: "", DetectionMetadata.None, pattern: "pattern1"));
+        secretMasker.AddRegex(new RegexPattern(id: "2", name: "Pattern2", label: "", DetectionMetadata.None, pattern: "pattern2"));
+        secretMasker.AddValue("literal1");
+
+        string input = "yada yada pattern1 pattern2 literal1 yada yada";
+        var detections = new List<Detection>();
+        string result = secretMasker.MaskSecrets(input, d => detections.Add(d));
+
+        Assert.AreEqual("yada yada +++ +++ *** yada yada", result); ;
+
+        Assert.AreEqual(3, detections.Count);
+
+        Assert.AreEqual("1", detections[0].Id);
+        Assert.AreEqual(input.IndexOf("pattern1"), detections[0].Start);
+        Assert.AreEqual("pattern1".Length, detections[0].Length);
+
+        Assert.AreEqual("2", detections[1].Id);
+        Assert.AreEqual(input.IndexOf("pattern2"), detections[1].Start);
+        Assert.AreEqual("pattern2".Length, detections[1].Length);
+
+        Assert.AreEqual(null, detections[2].Id);
+        Assert.AreEqual(input.IndexOf("literal1"), detections[2].Start);
+        Assert.AreEqual("literal1".Length, detections[2].Length);
+    }
+
     [DataTestMethod]
     [DataRow("deaddeaddeaddeaddeaddeaddeaddeadde/dead+deaddeaddeaddeaddeaddeaddeaddeaddeadAPIMxxxxxQ==", "SEC102/102.Unclassified64ByteBase64String:1DC39072DA446911FE3E87EB697FB22ED6E2F75D7ECE4D0CE7CF4288CE0094D1")]
     [DataRow("deaddeaddeaddeaddeaddeaddeaddeadde/dead+deaddeaddeaddeaddeaddeaddeaddeaddeadACDbxxxxxQ==", "SEC102/102.Unclassified64ByteBase64String:6AB186D06C8C6FBA25D39806913A70A4D77AB97C526D42B8C8DA6D441DE9F3C5")]

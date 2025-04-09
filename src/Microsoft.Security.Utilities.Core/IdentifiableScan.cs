@@ -129,7 +129,7 @@ public class IdentifiableScan : ISecretMasker
     {
     }
 
-    string ISecretMasker.MaskSecrets(string input)
+    string ISecretMasker.MaskSecrets(string input, Action<Detection> onDetection)
     {
         throw new NotImplementedException();
     }
