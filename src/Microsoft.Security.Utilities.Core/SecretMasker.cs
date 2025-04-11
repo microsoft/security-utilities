@@ -124,10 +124,25 @@ public class SecretMasker : ISecretMasker, IDisposable
 
     /// <summary>
     /// Masks secrets detected by <see cref="DetectSecrets(string)"/> in the
-    /// input string, replacing them with <see cref="Detection.RedactionToken"/>.
+    /// input, replacing them with <see cref="Detection.RedactionToken"/>.
     /// </summary>
-    /// <param name="input">The input string to mask.</param>
-    /// <param name="detectionAction">An optional action to perform on each detection, including all detections that overlap or are adjacent to others.</param>
+    /// <remarks>
+    /// When secrets overlap or are adjacent to each other, the entire range
+    /// encompassing them is masked and the leftmost detection's redaction token
+    /// is used. If there is more than one overlapping leftmost detection, then
+    /// the redaction token among them that sorts first by ordinal
+    /// case-sesstring comparison is used.
+    ///
+    /// The detection action receives  all detections, including those that
+    /// overlap or are adjacent to others. The detections are received in order
+    /// sorted from left to right, then by redaction token in ordinal
+    /// case-sensitive order. In the extreme case that there are multiple
+    /// detections with the same start index and the same redaction token, the
+    /// relative order in which these are received is arbitrary and may change
+    /// between runs.
+    /// </remarks>
+    /// <param name="input">The input to mask.</param>
+    /// <param name="detectionAction">An optional action to perform on each detection.</param>
     public string MaskSecrets(string input, Action<Detection>? detectionAction = null)
     {
         if (input == null)
@@ -144,7 +159,15 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
 
         List<Detection> detections = enumerableDetections.ToList();
-        detections.Sort((x, y) => x.Start.CompareTo(y.Start));
+        detections.Sort((x, y) =>
+        {
+            int result = x.Start.CompareTo(y.Start);
+            if (result == 0)
+            {
+                result = string.CompareOrdinal(x.RedactionToken, y.RedactionToken);
+            }
+            return result;
+        });
 
         int startIndex = 0;
         s_stringBuilder ??= new StringBuilder();
@@ -152,14 +175,16 @@ public class SecretMasker : ISecretMasker, IDisposable
 
         for (int i = 0; i < detections.Count; i++)
         {
-            var detection = detections[i];
+            Detection detection = detections[i];
             detectionAction?.Invoke(detection);
  
             // Absorb overlapping and adjacent detections into leftmost detection.
             int endIndex = detection.End;
             while (i < detections.Count - 1 && detections[i + 1].Start <= endIndex)
             {
-                endIndex = Math.Max(endIndex, detections[i + 1].End);
+                Detection absorbedDetection = detections[i + 1];
+                detectionAction?.Invoke(absorbedDetection);
+                endIndex = Math.Max(endIndex, absorbedDetection.End);
                 i++;
             }
 

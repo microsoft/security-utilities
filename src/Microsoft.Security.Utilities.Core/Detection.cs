@@ -4,7 +4,6 @@
 #nullable enable
 
 using System;
-using System.Diagnostics;
 
 namespace Microsoft.Security.Utilities;
 
@@ -13,7 +12,7 @@ public sealed class Detection
     private string? _moniker;
 
     public Detection(string? id,
-                     string? name, 
+                     string? name,
                      string? label,
                      int start,
                      int length,
@@ -34,19 +33,19 @@ public sealed class Detection
     }
 
     /// <summary>
-    /// Gets or sets an opaque, stable identifier for the pattern (corresponding
-    /// to a SARIF 'reportingDescriptorReference.id' value), e.g., 'SEC101/102'.
+    /// Gets an opaque, stable identifier for the pattern (corresponding to a
+    /// SARIF 'reportingDescriptorReference.id' value), e.g., 'SEC101/102'.
     /// </summary>
     public string? Id { get; }
 
     /// <summary>
-    /// Gets or sets a readable pascal-cased name for the detection, e.g., 'AdoPat'.
+    /// Gets a readable pascal-cased name for the detection, e.g., 'AdoPat'.
     /// </summary>
     public string? Name { get; }
 
     /// <summary>
-    /// Gets or sets a user-facing label for the detection, e.g., 'an Azure
-    /// DevOps personal access token (PAT).
+    /// Gets a user-facing label for the detection, e.g., 'an Azure DevOps
+    /// personal access token (PAT).
     /// </summary>
     public string? Label { get; }
 
@@ -65,6 +64,7 @@ public sealed class Detection
     public string? CrossCompanyCorrelatingId { get; }
 
     public string? RedactionToken { get; }
+
 #if DEBUG
     public override string ToString()
     {

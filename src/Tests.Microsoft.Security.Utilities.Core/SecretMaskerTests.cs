@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -758,30 +759,64 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_ProvidesDetectionsViaCallback()
     {
-        using var secretMasker = new SecretMasker();
-        secretMasker.AddRegex(new RegexPattern(id: "1", name: "Pattern1", label: "", DetectionMetadata.None, pattern: "pattern1"));
-        secretMasker.AddRegex(new RegexPattern(id: "2", name: "Pattern2", label: "", DetectionMetadata.None, pattern: "pattern2"));
+        using var secretMasker = new SecretMasker(Array.Empty<RegexPattern>(), generateCorrelatingIds: true);
+        secretMasker.AddRegex(new RegexPattern(id: "TEST000/001", name: "Pattern1", label: "", DetectionMetadata.None, pattern: "pattern1"));
+        secretMasker.AddRegex(new RegexPattern(id: "TEST000/002", name: "Pattern2", label: "", DetectionMetadata.HighEntropy, pattern: "pattern2"));
         secretMasker.AddValue("literal1");
 
         string input = "yada yada pattern1 pattern2 literal1 yada yada";
         var detections = new List<Detection>();
         string result = secretMasker.MaskSecrets(input, d => detections.Add(d));
 
-        Assert.AreEqual("yada yada +++ +++ *** yada yada", result); ;
+        Assert.AreEqual("yada yada +++ TEST000/002:UVpc+Yj5lkP42Qt1TT9Y *** yada yada", result); ;
 
         Assert.AreEqual(3, detections.Count);
 
-        Assert.AreEqual("1", detections[0].Id);
+        Assert.AreEqual("TEST000/001", detections[0].Id);
         Assert.AreEqual(input.IndexOf("pattern1"), detections[0].Start);
         Assert.AreEqual("pattern1".Length, detections[0].Length);
 
-        Assert.AreEqual("2", detections[1].Id);
+        Assert.AreEqual("TEST000/002", detections[1].Id);
         Assert.AreEqual(input.IndexOf("pattern2"), detections[1].Start);
         Assert.AreEqual("pattern2".Length, detections[1].Length);
 
         Assert.AreEqual(null, detections[2].Id);
         Assert.AreEqual(input.IndexOf("literal1"), detections[2].Start);
         Assert.AreEqual("literal1".Length, detections[2].Length);
+    }
+
+    [TestMethod]
+    public void SecretMasker_ProvidesOverlappingAndAdjacentDetectionsViaCallback()
+    {
+        using var secretMasker = new SecretMasker(Array.Empty<RegexPattern>(), generateCorrelatingIds: true);
+        secretMasker.AddRegex(new RegexPattern(id: "TEST000/001", name: "Pattern1", label: "", DetectionMetadata.None, pattern: "pattern1"));
+        secretMasker.AddRegex(new RegexPattern(id: "TEST000/002", name: "Pattern2", label: "", DetectionMetadata.HighEntropy, pattern: "pattern2"));
+        secretMasker.AddValue("pattern1 pattern2");
+        secretMasker.AddValue(" literal1");
+
+        string input = "yada yada pattern1 pattern2 literal1 yada yada";
+        var detections = new List<Detection>();
+        string result = secretMasker.MaskSecrets(input, d => detections.Add(d));
+
+        Assert.AreEqual("yada yada *** yada yada", result); ;
+
+        Assert.AreEqual(4, detections.Count);
+
+        Assert.AreEqual(null, detections[0].Id); // tied for leftmost, wins because "***" sorts first
+        Assert.AreEqual(input.IndexOf("pattern1 pattern2"), detections[0].Start);
+        Assert.AreEqual("pattern1 pattern2".Length, detections[0].Length);
+
+        Assert.AreEqual("TEST000/001", detections[1].Id);
+        Assert.AreEqual(input.IndexOf("pattern1"), detections[1].Start);
+        Assert.AreEqual("pattern1".Length, detections[1].Length);
+
+        Assert.AreEqual("TEST000/002", detections[2].Id);
+        Assert.AreEqual(input.IndexOf("pattern2"), detections[2].Start);
+        Assert.AreEqual("pattern2".Length, detections[2].Length);
+
+        Assert.AreEqual(null, detections[3].Id);
+        Assert.AreEqual(input.IndexOf(" literal1"), detections[3].Start);
+        Assert.AreEqual(" literal1".Length, detections[3].Length);
     }
 
     [DataTestMethod]
