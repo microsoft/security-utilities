@@ -14,7 +14,7 @@
 
 # UNRELEASED
 - BRK, NEW: `SecretMasker.MaskSecrets` and `ISecretMasker.DetectSecrets` now accept an `Action<Detection>` callback (with a default value of `null`) to receive detections that result from the operation. This is binary-breaking only for `SecretMasker` callers and source-breaking as well for `ISecretMasker` implementations.
-- BRK: `Detection` is now sealed, and immutable. All property setters and the copy constructor are removed.
+- BRK: `Detection` is now sealed and immutable. All property setters and the copy constructor are removed.
 - BRK: `Detection`  no longer overrides `Equals` and `GetHashCode` nor implements `IEquatable<Detection>`. `Detection.Equals` and `Detection.GetHashCode` will therefore now be based on reference equality.
 - PRF: Fewer intermediate allocations are performed by `SecretMasker.MaskSecrets`.
 

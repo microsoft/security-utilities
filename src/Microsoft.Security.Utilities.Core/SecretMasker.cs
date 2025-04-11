@@ -131,7 +131,7 @@ public class SecretMasker : ISecretMasker, IDisposable
     /// encompassing them is masked and the leftmost detection's redaction token
     /// is used. If there is more than one overlapping leftmost detection, then
     /// the redaction token among them that sorts first by ordinal
-    /// case-sesstring comparison is used.
+    /// case-sensitive string comparison is used.
     ///
     /// The detection action receives  all detections, including those that
     /// overlap or are adjacent to others. The detections are received in order
