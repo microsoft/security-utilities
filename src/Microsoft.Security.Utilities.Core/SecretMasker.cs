@@ -177,7 +177,7 @@ public class SecretMasker : ISecretMasker, IDisposable
         {
             Detection detection = detections[i];
             detectionAction?.Invoke(detection);
- 
+
             // Absorb overlapping and adjacent detections into leftmost detection.
             int endIndex = detection.End;
             while (i < detections.Count - 1 && detections[i + 1].Start <= endIndex)

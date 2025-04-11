@@ -17,8 +17,8 @@ public sealed class Detection
                      int start,
                      int length,
                      DetectionMetadata metadata,
-                     TimeSpan rotationPeriod = default, 
-                     string? crossCompanyCorrelatingId = null, 
+                     TimeSpan rotationPeriod = default,
+                     string? crossCompanyCorrelatingId = null,
                      string? redactionToken = null)
     {
         Id = id;
