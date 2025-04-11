@@ -169,10 +169,10 @@ public class SecretMasker : ISecretMasker, IDisposable
             return result;
         });
 
-        int startIndex = 0;
         s_stringBuilder ??= new StringBuilder();
         s_stringBuilder.Length = 0;
 
+        int startIndex = 0;
         for (int i = 0; i < detections.Count; i++)
         {
             Detection detection = detections[i];
