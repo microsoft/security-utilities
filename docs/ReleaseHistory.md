@@ -12,6 +12,12 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# UNRELEASED
+- BRK, NEW: `SecretMasker.MaskSecrets` and `ISecretMasker.DetectSecrets` now accept an `Action<Detection>` callback (with a default value of `null`) to receive detections that result from the operation. This is binary-breaking only for `SecretMasker` callers and source-breaking as well for `ISecretMasker` implementations.
+- BRK: `Detection` is now sealed and immutable. All property setters and the copy constructor are removed.
+- BRK: `Detection`  no longer overrides `Equals` and `GetHashCode` nor implements `IEquatable<Detection>`. `Detection.Equals` and `Detection.GetHashCode` will therefore now be based on reference equality.
+- PRF: Fewer intermediate allocations are performed by `SecretMasker.MaskSecrets`.
+
 # 1.17.0 - 04/03/2025
 - BRK: `RegexPattern.Pattern` is no longer virtual.
 - BRK: `RegexPattern.Signatures` is no longer virtual.

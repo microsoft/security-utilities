@@ -11,5 +11,5 @@ namespace Microsoft.Security.Utilities;
 public interface ISecretMasker : IDisposable
 {
     IEnumerable<Detection> DetectSecrets(string input);
-    string MaskSecrets(string input);
+    string MaskSecrets(string input, Action<Detection> onDetection = null);
 }

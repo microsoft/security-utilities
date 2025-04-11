@@ -122,62 +122,80 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
     }
 
-    public string MaskSecrets(string input)
+    /// <summary>
+    /// Masks secrets detected by <see cref="DetectSecrets(string)"/> in the
+    /// input, replacing them with <see cref="Detection.RedactionToken"/>.
+    /// </summary>
+    /// <remarks>
+    /// When secrets overlap or are adjacent to each other, the entire range
+    /// encompassing them is masked and the leftmost detection's redaction token
+    /// is used. If there is more than one overlapping leftmost detection, then
+    /// the redaction token among them that sorts first by ordinal
+    /// case-sensitive string comparison is used.
+    ///
+    /// The detection action receives  all detections, including those that
+    /// overlap or are adjacent to others. The detections are received in order
+    /// sorted from left to right, then by redaction token in ordinal
+    /// case-sensitive order. In the extreme case that there are multiple
+    /// detections with the same start index and the same redaction token, the
+    /// relative order in which these are received is arbitrary and may change
+    /// between runs.
+    /// </remarks>
+    /// <param name="input">The input to mask.</param>
+    /// <param name="detectionAction">An optional action to perform on each detection.</param>
+    public string MaskSecrets(string input, Action<Detection>? detectionAction = null)
     {
         if (input == null)
         {
             return string.Empty;
         }
 
-        var detections = DetectSecrets(input);
+        var enumerableDetections = DetectSecrets(input);
 
         // Short-circuit if nothing to replace.
-        if (!detections.Any())
+        if (!enumerableDetections.Any())
         {
             return input;
         }
 
-        // Merge positions into ranges of characters to replace.
-        var currentDetections = new List<Detection>();
-        Detection? currentDetection = default;
-        foreach (Detection detection in detections.OrderBy(x => x.Start))
+        List<Detection> detections = enumerableDetections.ToList();
+        detections.Sort((x, y) =>
         {
-            if (object.Equals(currentDetection, null))
+            int result = x.Start.CompareTo(y.Start);
+            if (result == 0)
             {
-                currentDetection = new Detection(detection);
-                currentDetections.Add(currentDetection);
+                result = string.CompareOrdinal(x.RedactionToken, y.RedactionToken);
             }
-            else
-            {
-                if (detection.Start <= currentDetection.End)
-                {
-                    // Overlapping or contiguous case.
-                    currentDetection.Length = Math.Max(currentDetection.End, detection.End) - currentDetection.Start;
-                }
-                else
-                {
-                    // No overlap.
-                    currentDetection = new Detection(detection);
-                    currentDetections.Add(currentDetection);
-                }
-            }
-        }
+            return result;
+        });
 
         s_stringBuilder ??= new StringBuilder();
         s_stringBuilder.Length = 0;
 
         int startIndex = 0;
-        foreach (var detection in currentDetections)
+        for (int i = 0; i < detections.Count; i++)
         {
-            _ = s_stringBuilder.Append(input.Substring(startIndex, detection.Start - startIndex))
-                    .Append(detection.RedactionToken);
+            Detection detection = detections[i];
+            detectionAction?.Invoke(detection);
 
-            startIndex = detection.Start + detection.Length;
+            // Absorb overlapping and adjacent detections into leftmost detection.
+            int endIndex = detection.End;
+            while (i < detections.Count - 1 && detections[i + 1].Start <= endIndex)
+            {
+                Detection absorbedDetection = detections[i + 1];
+                detectionAction?.Invoke(absorbedDetection);
+                endIndex = Math.Max(endIndex, absorbedDetection.End);
+                i++;
+            }
+
+            s_stringBuilder.Append(input, startIndex, detection.Start - startIndex);
+            s_stringBuilder.Append(detection.RedactionToken);
+            startIndex = endIndex;
         }
 
         if (startIndex < input.Length)
         {
-            _ = s_stringBuilder.Append(input.Substring(startIndex));
+            s_stringBuilder.Append(input, startIndex, input.Length - startIndex);
         }
 
         return s_stringBuilder.ToString();
