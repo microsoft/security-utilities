@@ -111,25 +111,22 @@ public class IdentifiableScan : ISecretMasker
             ? $"{preciseId}:{c3id}"
             : RegexPattern.FallbackRedactionToken;
 
-        return new Detection
-        {
-            Id = preciseId,
-            Name = result.Item2,
-            Label = pattern.Label,
-            Start = detection.Start,
-            Length = detection.Length,
-            RedactionToken = redactionToken,
-            CrossCompanyCorrelatingId = c3id,
-            Metadata = pattern.DetectionMetadata,
-            RotationPeriod = pattern.RotationPeriod,
-        };
+        return new Detection(id: preciseId,
+                             name: result.Item2,
+                             label: pattern.Label,
+                             start: detection.Start,
+                             length: detection.Length,
+                             redactionToken: redactionToken,
+                             crossCompanyCorrelatingId: c3id,
+                             metadata: pattern.DetectionMetadata,
+                             rotationPeriod: pattern.RotationPeriod);
     }
 
     public void Dispose()
     {
     }
 
-    string ISecretMasker.MaskSecrets(string input)
+    string ISecretMasker.MaskSecrets(string input, Action<Detection> onDetection)
     {
         throw new NotImplementedException();
     }
