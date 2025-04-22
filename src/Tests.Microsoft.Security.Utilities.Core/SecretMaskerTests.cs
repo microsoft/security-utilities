@@ -20,7 +20,7 @@ public class SecretMaskerTests
     public void SecretMasker_PreciselyClassifiedSecurityKeys_Detections()
     {
         ValidateSecurityModelsDetections(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
-                                         preciseClassifications: false);
+                                         preciseClassifications: true);
     }
 
     [TestMethod]
@@ -49,82 +49,82 @@ public class SecretMaskerTests
         {
             using var scope = new AssertionScope();
 
-            foreach (IRegexEngine engine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance, null })
+            foreach (IRegexEngine engine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
             {
                 foreach (bool generateCrossCompanyCorrelatingIds in new[] { true, false })
                 {
-                    // The high-performance engine doesn't support the imprecisely classified 
-                    // models. These are currently misnamed as 'low entropy'. TBD.
-                    if (engine == null && preciseClassifications)
+                    foreach (bool disableHighPerformanceScanner in new[] { false, true })
                     {
-                        continue;
-                    }
-
-                    using ISecretMasker secretMasker = engine != null
-                        ? new SecretMasker(patterns, generateCrossCompanyCorrelatingIds, engine)
-                        : new IdentifiableScan(patterns, generateCrossCompanyCorrelatingIds);
-
-                    foreach (RegexPattern pattern in patterns)
-                    {
-                        foreach (string testExample in pattern.GenerateTruePositiveExamples())
+                        using var secretMasker = new SecretMasker(patterns, generateCrossCompanyCorrelatingIds, engine);
+                        if (disableHighPerformanceScanner)
                         {
-                            string context = testExample;
-                            var matches = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine");
-                            bool result = matches.Count() == 1;
-                            result.Should().BeTrue(because: $"Pattern {pattern.Id} should match '{context}' exactly once");
+                            secretMasker.DisableHighPerformanceScannerForTests();
+                        }
 
-                            string standaloneSecret = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine").First().Value;
-
-                            string moniker = pattern.GetMatchMoniker(standaloneSecret);
-
-                            // 1. All generated test patterns should be detected by the masker.
-                            var detections = secretMasker.DetectSecrets(context).ToList();
-                            if (allowAdditionalFindings)
+                        foreach (RegexPattern pattern in patterns)
+                        {
+                            foreach (string testExample in pattern.GenerateTruePositiveExamples())
                             {
-                                // TODO duplication in analysis has snuck in.
-                                // https://github.com/microsoft/security-utilities/issues/95
-                                detections = detections.Where(d => d.Moniker == moniker && context.Substring(d.Start, d.Length) == standaloneSecret).ToList();
+                                string context = testExample;
+                                var matches = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine");
+                                bool result = matches.Count() == 1;
+                                result.Should().BeTrue(because: $"Pattern {pattern.Id} should match '{context}' exactly once");
+
+                                string standaloneSecret = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine").First().Value;
+
+                                string moniker = pattern.GetMatchMoniker(standaloneSecret);
+
+                                // 1. All generated test patterns should be detected by the masker.
+                                var detections = secretMasker.DetectSecrets(context).ToList();
+                                if (allowAdditionalFindings)
+                                {
+                                    // TODO duplication in analysis has snuck in.
+                                    // https://github.com/microsoft/security-utilities/issues/95
+                                    detections = detections.Where(d => d.Moniker == moniker && context.Substring(d.Start, d.Length) == standaloneSecret).ToList();
+                                }
+
+                                detections.Count.Should().Be(1, because: $"'{context}' should result in a single '{moniker}' finding");
+
+                                Detection detection = detections[0];
+                                detection.Moniker.Should().Be(moniker);
+
+                                // 2. All identifiable or high confidence findings should be marked as high entropy.
+                                if (preciseClassifications)
+                                {
+                                    result = detection.Metadata.HasFlag(DetectionMetadata.HighEntropy);
+                                    result.Should().BeTrue(because: $"{moniker} finding should be classified as high entropy");
+                                }
+
+                                // 3. All high entropy secret kinds should generate a cross-company correlating id,
+                                //    but only if the masker was initialized to produce them. Every low entropy model
+                                //    should refuse to generate a c3id, no matter how the masker is configured.
+                                string c3id = RegexPattern.GenerateCrossCompanyCorrelatingId(standaloneSecret);
+                                string actualC3id = detection.CrossCompanyCorrelatingId;
+                                string expectedC3id = generateCrossCompanyCorrelatingIds &&
+                                                      detection.Metadata.HasFlag(DetectionMetadata.HighEntropy)
+                                                            ? c3id
+                                                            : null;
+
+                                result = object.Equals(expectedC3id, actualC3id);
+                                result.Should().BeTrue(because: "C3id should be generated correctly");
+
+
+                                // 4. All high entropy secret kinds should generate a fingerprint, but only
+                                //    if the masker was initialized to produce them. Every low entropy model
+                                //    should refuse to generate a fingerprint, no matter how the masker is configured.
+                                string actualRedactionToken = detection.RedactionToken;
+                                string expectedRedactionToken = generateCrossCompanyCorrelatingIds &&
+                                                                detection.Metadata.HasFlag(DetectionMetadata.HighEntropy)
+                                                                    ? $"{pattern.Id}:{c3id}"
+                                                                    : "+++";
+
+                                result = actualRedactionToken.Equals(expectedRedactionToken);
+                                result.Should().BeTrue(because: "Redaction token should be generated correctly");
+
+                                // 5. Moniker that flows to classified secret should match the detection.
+                                result = detection.Moniker.Equals(moniker);
+                                result.Should().BeTrue(because: $"{moniker} finding should not be reported as {detection.Moniker} for test data {context}");
                             }
-
-                            detections.Count.Should().Be(1, because: $"'{context}' should result in a single '{moniker}' finding");
-
-                            Detection detection = detections[0];
-                            detection.Moniker.Should().Be(moniker);
-
-                            // 2. All identifiable or high confidence findings should be marked as high entropy.
-                            result = preciseClassifications ? detection.Metadata.HasFlag(DetectionMetadata.HighEntropy) : true;
-                            result.Should().BeTrue(because: $"{moniker} finding should be classified as high entropy");
-
-                            // 3. All high entropy secret kinds should generate a cross-company correlating id,
-                            //    but only if the masker was initialized to produce them. Every low entropy model
-                            //    should refuse to generate a c3id, no matter how the masker is configured.
-
-                            string c3id = RegexPattern.GenerateCrossCompanyCorrelatingId(standaloneSecret);
-                            string actualC3id = detection.CrossCompanyCorrelatingId;
-                            string expectedC3id = generateCrossCompanyCorrelatingIds &&
-                                                  (preciseClassifications | detection.Metadata.HasFlag(DetectionMetadata.HighEntropy))
-                                                        ? c3id
-                                                        : null;
-
-                            result = object.Equals(expectedC3id, actualC3id);
-                            result.Should().BeTrue(because: "C3id should be generated correctly");
-
-
-                            // 4. All high entropy secret kinds should generate a fingerprint, but only
-                            //    if the masker was initialized to produce them. Every low entropy model
-                            //    should refuse to generate a fingerprint, no matter how the masker is configured.
-                            string actualRedactionToken = detection.RedactionToken;
-                            string expectedRedactionToken = generateCrossCompanyCorrelatingIds &&
-                                                            (preciseClassifications | detection.Metadata.HasFlag(DetectionMetadata.HighEntropy))
-                                                                ? $"{pattern.Id}:{c3id}"
-                                                                : "+++";
-
-                            result = actualRedactionToken.Equals(expectedRedactionToken);
-                            result.Should().BeTrue(because: "Redaction token should be generated correctly");
-
-                            // 5. Moniker that flows to classified secret should match the detection.
-                            result = detection.Moniker.Equals(moniker);
-                            result.Should().BeTrue(because: $"{moniker} finding should not be reported as {detection.Moniker} for test data {context}");
                         }
                     }
                 }
@@ -155,7 +155,6 @@ public class SecretMaskerTests
     }
 
     private void ValidateSecurityModelsMasking(IEnumerable<RegexPattern> patterns, IRegexEngine engine, bool lowEntropyModels)
-
     {
         using var assertionScope = new AssertionScope();
 
@@ -169,55 +168,53 @@ public class SecretMaskerTests
             {
                 foreach (bool generateCrossCompanyCorrelatingIds in new[] { true, false })
                 {
-                    using var secretMasker = new SecretMasker(patterns, generateCrossCompanyCorrelatingIds, engine);
-
-                    foreach (var pattern in patterns)
+                    foreach (bool disableHighPerformanceScanner in new[] { false, true })
                     {
-                        if (!lowEntropyModels && !pattern.DetectionMetadata.HasFlag(DetectionMetadata.HighEntropy))
+                        using var secretMasker = new SecretMasker(patterns, generateCrossCompanyCorrelatingIds, engine);
+                        if (disableHighPerformanceScanner)
                         {
-                            continue;
+                            secretMasker.DisableHighPerformanceScannerForTests();
                         }
 
-                        foreach (string testExample in pattern.GenerateTruePositiveExamples())
+                        foreach (var pattern in patterns)
                         {
-                            var detection = secretMasker.DetectSecrets(testExample).FirstOrDefault();
-                            bool result = detection != null;
-                            result.Should().BeTrue(because: $"'{testExample}' should contain a secret detected by at least one rule");
-
-                            string standaloneSecret = testExample.Substring(detection.Start, detection.Length);
-
-                            string moniker = pattern.GetMatchMoniker(standaloneSecret);
-
-                            // 1. All generated test patterns should be detected by the masker.
-                            string redacted = secretMasker.MaskSecrets(testExample);
-                            result = redacted.Equals(testExample);
-                            result.Should().BeFalse(because: $"'{standaloneSecret}' for '{moniker}' should be redacted from scan text");
-
-                            // TODO: the generated examples don't distinguish the secret from surrounding context,
-                            // for rules such as our connection string detecting logic. We need a future change to
-                            // separate this data. For now, we skip all connection string patterns. This is a problem
-                            // for masking only (and not detection) because we have no location details when masking.
-                            if (pattern.Id == "SEC101/060" || testExample.Contains(";"))
+                            if (!lowEntropyModels && !pattern.DetectionMetadata.HasFlag(DetectionMetadata.HighEntropy))
                             {
                                 continue;
                             }
 
-                            string expectedRedactedValue = generateCrossCompanyCorrelatingIds
-                                ? $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(standaloneSecret)}"
-                                : RegexPattern.FallbackRedactionToken;
+                            foreach (string testExample in pattern.GenerateTruePositiveExamples())
+                            {
+                                var detection = secretMasker.DetectSecrets(testExample).FirstOrDefault();
+                                bool result = detection != null;
+                                result.Should().BeTrue(because: $"'{testExample}' should contain a secret detected by at least one rule");
 
-                            redacted.Should().Contain(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds}");
-                        }
+                                string standaloneSecret = testExample.Substring(detection.Start, detection.Length);
 
-                        foreach (string testExample in pattern.GenerateFalsePositiveExamples())
-                        {
-                            string secretValue = testExample;
+                                string moniker = pattern.GetMatchMoniker(standaloneSecret);
 
-                            // 1. All generated false positive test patterns should
-                            //  not result in a mask operation.
-                            string redacted = secretMasker.MaskSecrets(secretValue);
-                            bool result = redacted.Equals(secretValue);
-                            result.Should().BeTrue(because: $"'{secretValue}' for '{pattern.Id}.{pattern.Name}' should not be redacted from scan text");
+                                // 1. All generated test patterns should be detected by the masker.
+                                string redacted = secretMasker.MaskSecrets(testExample);
+                                result = redacted.Equals(testExample);
+                                result.Should().BeFalse(because: $"'{standaloneSecret}' for '{moniker}' should be redacted from scan text");
+
+                                string expectedRedactedValue = generateCrossCompanyCorrelatingIds
+                                    ? $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(standaloneSecret)}"
+                                    : RegexPattern.FallbackRedactionToken;
+
+                                redacted.Should().Contain(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds}");
+                            }
+
+                            foreach (string testExample in pattern.GenerateFalsePositiveExamples())
+                            {
+                                string secretValue = testExample;
+
+                                // 1. All generated false positive test patterns should
+                                //  not result in a mask operation.
+                                string redacted = secretMasker.MaskSecrets(secretValue);
+                                bool result = redacted.Equals(secretValue);
+                                result.Should().BeTrue(because: $"'{secretValue}' for '{pattern.Id}.{pattern.Name}' should not be redacted from scan text");
+                            }
                         }
                     }
                 }

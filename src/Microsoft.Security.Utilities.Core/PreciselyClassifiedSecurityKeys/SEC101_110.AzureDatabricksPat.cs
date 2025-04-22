@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    public class AzureDatabricksPat : RegexPattern
+    public class AzureDatabricksPat : RegexPattern, IHighPerformanceScannableKey
     {
         public AzureDatabricksPat()
         {
@@ -16,6 +16,17 @@ namespace Microsoft.Security.Utilities
             Pattern = $"(?:^|[^0-9a-f\\-])(?P<refine>dapi[0-9a-f\\-]{{32,34}})(?:[^0-9a-f\\-]|$)";
             Signatures = new HashSet<string>(new[] { "dapi" });
         }
+
+#if HIGH_PERFORMANCE_CODEGEN
+        IEnumerable<HighPerformancePattern> IHighPerformanceScannableKey.HighPerformancePatterns => [
+            new(signature: "dapi",
+                scopedRegex: """^.{4}[0-9a-f\-]{32,34}""",
+                signaturePrefixLength: 0,
+                minMatchLength: 36,
+                maxMatchLength: 38
+            )
+        ];
+#endif
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {

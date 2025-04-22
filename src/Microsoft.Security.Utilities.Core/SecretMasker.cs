@@ -20,11 +20,13 @@ namespace Microsoft.Security.Utilities;
 /// <returns>The escaped or encoded literal.</returns>
 public delegate string LiteralEncoder(string literal);
 
-public class SecretMasker : ISecretMasker, IDisposable
+public class SecretMasker : ISecretMasker
 {
-    IRegexEngine? _regexEngine;
+    private readonly IRegexEngine _regexEngine;
+    private HighPerformanceScanner? _highPerformanceScanner;
+    private Dictionary<string, IList<RegexPattern>>? _highPerformanceSignatureToPatternsMap;
 
-    public static Version Version => RetrieveVersion();
+    public static Version Version { get; } = RetrieveVersion();
 
     internal static Version RetrieveVersion()
     {
@@ -42,13 +44,13 @@ public class SecretMasker : ISecretMasker, IDisposable
                         string? defaultRegexRedactionToken = null,
                         string? defaultLiteralRedactionToken = null)
     {
-        m_disposed = false;
+        _disposed = false;
 
         RegexPatterns = regexSecrets != null
             ? new HashSet<RegexPattern>(regexSecrets)
             : new HashSet<RegexPattern>();
 
-        m_generateCorrelatingIds = generateCorrelatingIds;
+        _generateCorrelatingIds = generateCorrelatingIds;
 
         ExplicitlyAddedSecretLiterals = new HashSet<SecretLiteral>();
         EncodedSecretLiterals = new HashSet<SecretLiteral>();
@@ -58,6 +60,8 @@ public class SecretMasker : ISecretMasker, IDisposable
 
         DefaultRegexRedactionToken = defaultRegexRedactionToken ?? RegexPattern.FallbackRedactionToken;
         DefaultLiteralRedactionToken = defaultLiteralRedactionToken ?? SecretLiteral.FallbackRedactionToken;
+
+        AddHighPerformancePatterns(RegexPatterns);
     }
 
     // We don't permit secrets great than 5 characters in length to be
@@ -71,6 +75,12 @@ public class SecretMasker : ISecretMasker, IDisposable
         try
         {
             copy.SyncObject.EnterReadLock();
+
+            _regexEngine = copy._regexEngine;
+            _highPerformanceScanner = copy._highPerformanceScanner;
+            _highPerformanceSignatureToPatternsMap = copy._highPerformanceSignatureToPatternsMap;
+            _generateCorrelatingIds = copy._generateCorrelatingIds;
+
             MinimumSecretLength = copy.MinimumSecretLength;
             DefaultRegexRedactionToken = copy.DefaultRegexRedactionToken;
             DefaultLiteralRedactionToken = copy.DefaultLiteralRedactionToken;
@@ -107,19 +117,7 @@ public class SecretMasker : ISecretMasker, IDisposable
     /// </summary>
     public virtual void AddRegex(RegexPattern regexSecret)
     {
-        // Write section.
-        try
-        {
-            SyncObject.EnterWriteLock();
-            _ = RegexPatterns.Add(regexSecret);
-        }
-        finally
-        {
-            if (SyncObject.IsWriteLockHeld)
-            {
-                SyncObject.ExitWriteLock();
-            }
-        }
+        AddPatterns([regexSecret]);
     }
 
     /// <summary>
@@ -348,23 +346,38 @@ public class SecretMasker : ISecretMasker, IDisposable
             yield break;
         }
 
-        if (RegexPatterns.Count == 0 &&
-            EncodedSecretLiterals.Count == 0 &&
-            ExplicitlyAddedSecretLiterals.Count == 0)
-        {
-            yield break;
-        }
-
         // Read section.
         try
         {
             SyncObject.EnterReadLock();
             var stopwatch = Stopwatch.StartNew();
 
+            if (_highPerformanceScanner != null)
+            {
+                foreach (HighPerformanceDetection highPerformanceDetection in _highPerformanceScanner.Scan(input))
+                {
+                    string found = input.Substring(highPerformanceDetection.Start, highPerformanceDetection.Length);
+                    foreach (RegexPattern pattern in _highPerformanceSignatureToPatternsMap![highPerformanceDetection.Signature])
+                    {
+                        Detection? detection = FinalizeHighPerformanceDetection(highPerformanceDetection, found, pattern);
+                        if (detection != null)
+                        {
+                            yield return detection;
+                            break;
+                        }
+                    }
+                }
+            }
+
             // Get indexes and lengths of all substrings that will be replaced.
             foreach (RegexPattern regexSecret in RegexPatterns)
             {
-                foreach (var detection in regexSecret.GetDetections(input, m_generateCorrelatingIds, DefaultRegexRedactionToken, _regexEngine))
+                if (_highPerformanceScanner != null && regexSecret is IHighPerformanceScannableKey)
+                {
+                    continue;
+                }
+
+                foreach (var detection in regexSecret.GetDetections(input, _generateCorrelatingIds, DefaultRegexRedactionToken, _regexEngine))
                 {
                     yield return detection;
                 }
@@ -389,6 +402,38 @@ public class SecretMasker : ISecretMasker, IDisposable
         }
     }
 
+    private Detection? FinalizeHighPerformanceDetection(HighPerformanceDetection detection, string found, RegexPattern pattern)
+    {
+        Tuple<string, string>? result = pattern.GetMatchIdAndName(found);
+        if (result == null)
+        {
+            return null;
+        }
+
+        string? c3id = null;
+        string preciseId = result.Item1;
+
+        Debug.Assert(pattern.DetectionMetadata.HasFlag(DetectionMetadata.HighEntropy), "High-performance patterns should have high-entropy and therefore can use C3ID.");
+        if (_generateCorrelatingIds)
+        {
+            c3id = RegexPattern.GenerateCrossCompanyCorrelatingId(found);
+        }
+
+        string redactionToken = c3id != null
+            ? $"{preciseId}:{c3id}"
+            : RegexPattern.FallbackRedactionToken;
+
+        return new Detection(id: preciseId,
+                             name: result.Item2,
+                             label: pattern.Label,
+                             start: detection.Start,
+                             length: detection.Length,
+                             redactionToken: redactionToken,
+                             crossCompanyCorrelatingId: c3id,
+                             metadata: pattern.DetectionMetadata,
+                             rotationPeriod: pattern.RotationPeriod);
+    }
+
     public void Dispose()
     {
         Dispose(true);
@@ -402,28 +447,92 @@ public class SecretMasker : ISecretMasker, IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (disposing && !m_disposed)
+        if (disposing && !_disposed)
         {
             SyncObject.Dispose();
-            m_disposed = true;
+            _disposed = true;
         }
     }
 
     public void AddPatterns(IEnumerable<RegexPattern> regexPatterns)
     {
-        foreach (var regexPattern in regexPatterns)
+        // Write section.
+        try
         {
-            AddRegex(regexPattern);
+            SyncObject.EnterWriteLock();
+
+            foreach (var pattern in regexPatterns)
+            {
+                RegexPatterns.Add(pattern);
+            }
+
+            AddHighPerformancePatterns(regexPatterns);
+        }
+        finally
+        {
+            if (SyncObject.IsWriteLockHeld)
+            {
+                SyncObject.ExitWriteLock();
+            }
         }
     }
 
+    private void AddHighPerformancePatterns(IEnumerable<RegexPattern> patterns)
+    {
+        List<CompiledHighPerformancePattern>? compiledHighPerformancePatterns = null;
 
-    private readonly bool m_generateCorrelatingIds;
+        foreach (var pattern in patterns)
+        {
+            if (pattern is not IHighPerformanceScannableKey)
+            {
+                continue;
+            }
+
+            compiledHighPerformancePatterns ??= new();
+            _highPerformanceSignatureToPatternsMap ??= new();
+
+            Debug.Assert(pattern.Signatures != null, "High-performance scannable key must have non-null signatures.");
+            foreach (string signature in pattern.Signatures!)
+            {
+                var highPerformancePattern = CompiledHighPerformancePattern.ForSignature(signature)!;
+                Debug.Assert(highPerformancePattern != null, "Every signature of high-performance compatible patterns have a compiled counterpart.");
+                compiledHighPerformancePatterns.Add(highPerformancePattern!);
+
+                if (!_highPerformanceSignatureToPatternsMap.TryGetValue(signature, out IList<RegexPattern>? patternsForSignature))
+                {
+                    patternsForSignature = new List<RegexPattern>();
+                    _highPerformanceSignatureToPatternsMap[signature] = patternsForSignature;
+                }
+
+                patternsForSignature.Add(pattern);
+            }
+        }
+
+        if (compiledHighPerformancePatterns != null)
+        {
+            _highPerformanceScanner ??= new();
+            _highPerformanceScanner.AddPatterns(compiledHighPerformancePatterns);
+        }
+    }
+
+    // This is a test hook to test without using the high performance scanner.
+    // There is no reason for a public API consumer to opt into the slower
+    // scanning, but we want to exercise the general regexes we distribute in
+    // JSON in our tests. Note that adding additional patterns after calling
+    // this will re-enable high-performance scanning for any new patterns until
+    // this is called again.
+    internal void DisableHighPerformanceScannerForTests()
+    {
+        _highPerformanceScanner = null;
+        _highPerformanceSignatureToPatternsMap = null;
+    }
+
+    private readonly bool _generateCorrelatingIds;
     public HashSet<LiteralEncoder> LiteralEncoders { get; }
     public HashSet<SecretLiteral> EncodedSecretLiterals { get; }
     public HashSet<SecretLiteral> ExplicitlyAddedSecretLiterals { get; }
 
-    public ReaderWriterLockSlim SyncObject = new(LockRecursionPolicy.NoRecursion);
+    public ReaderWriterLockSlim SyncObject { get; } = new(LockRecursionPolicy.NoRecursion);
 
-    private bool m_disposed;
+    private bool _disposed;
 }

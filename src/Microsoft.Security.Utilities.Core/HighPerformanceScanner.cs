@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -28,25 +29,43 @@ namespace Microsoft.Security.Utilities;
 /// </summary>
 internal sealed class HighPerformanceScanner
 {
+    private Dictionary<int, CompiledHighPerformancePattern> _patternsByPackedSignature = new();
+
 #if NET9_0_OR_GREATER
-    private SearchValues<string> _signatures;
+    private static SearchValues<string> s_emptySignatures = SearchValues.Create(Array.Empty<string>(), StringComparison.Ordinal);
+    private SearchValues<string> _signatures = s_emptySignatures;
 #elif NET8_0_OR_GREATER
-    private SearchValues<char> _signatureStarts;
+    private static SearchValues<char> s_emptySignatureStarts = SearchValues.Create(Array.Empty<char>());
+    private SearchValues<char> _signatureStarts = s_emptySignatureStarts;
 #else
-    private char[] _signatureStarts;
+    private char[] _signatureStarts = Array.Empty<char>();
 #endif
-    private Dictionary<int, CompiledHighPerformancePattern> _patternsByPackedSignature;
+
+    public HighPerformanceScanner()
+    {
+    }
 
     public HighPerformanceScanner(IEnumerable<CompiledHighPerformancePattern> patterns)
     {
+        AddPatterns(patterns);
+    }
+
+    public void AddPatterns(IEnumerable<CompiledHighPerformancePattern> patterns)
+    {
+        foreach (CompiledHighPerformancePattern newPattern in patterns)
+        {
+            Debug.Assert(!_patternsByPackedSignature.TryGetValue(newPattern.PackedSignature, out var p) || p == newPattern, "Multiple compiled high-performance patterns with same packed signature.");
+            _patternsByPackedSignature[newPattern.PackedSignature] = newPattern;
+        }
+
+        IEnumerable<CompiledHighPerformancePattern> allPatterns = _patternsByPackedSignature.Values;
 #if NET9_0_OR_GREATER
-        _signatures = SearchValues.Create(patterns.Select(p => p.Signature).ToArray(), StringComparison.Ordinal);
+        _signatures = SearchValues.Create(allPatterns.Select(p => p.Signature).ToArray(), StringComparison.Ordinal);
 #elif NET8_0_OR_GREATER
-        _signatureStarts = SearchValues.Create(patterns.Select(p => p.Signature[0]).Distinct().ToArray());
+        _signatureStarts = SearchValues.Create(allPatterns.Select(p => p.Signature[0]).Distinct().ToArray());
 #else
-        _signatureStarts = patterns.Select(p => p.Signature[0]).Distinct().ToArray();
+        _signatureStarts = allPatterns.Select(p => p.Signature[0]).Distinct().ToArray();
 #endif
-        _patternsByPackedSignature = patterns.ToDictionary(p => p.PackedSignature);
     }
 
     /// <summary>

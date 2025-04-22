@@ -31,7 +31,7 @@ private string GenerateCode()
 {
     try
     {
-        var type = typeof(IdentifiableScan).Assembly.GetType("Microsoft.Security.Utilities.CompiledHighPerformancePattern", throwOnError: true);
+        var type = typeof(SecretMasker).Assembly.GetType("Microsoft.Security.Utilities.CompiledHighPerformancePattern", throwOnError: true);
         var method = type.GetMethod("GenerateAdditionalCode", BindingFlags.Static | BindingFlags.NonPublic);
         if (method == null)
         {
