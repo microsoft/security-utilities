@@ -1,0 +1,2 @@
+<!-- Currently empty. Prevent any parent Directory.Build.targets from being imported. -->
+<Project />
