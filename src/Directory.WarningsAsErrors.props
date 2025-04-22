@@ -1,0 +1,28 @@
+<Project>
+  <!--
+    NOTE: We only turn on warnings-as-errors in Release because it hurts
+    iteration time in the IDE to error out while the code is still
+    work-in-progress.
+   -->
+  <PropertyGroup Label="WarningsAsErrors" Condition="'$(Configuration)' == 'Release'">
+    <!-- Treat compiler warnings as errors. -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <!-- Treat all build warnings as errors -->
+    <MSBuildTreatWarningsAsErrors>$(TreatWarningsAsErrors)</MSBuildTreatWarningsAsErrors> 
+
+    <!--
+      https://learn.microsoft.com/en-us/nuget/reference/errors-and-warnings/nu1901-nu1904
+
+      NU190X: Package 'A.B.C' N.N.N has a known (low|moderate|high|critical)
+              severity vulnerability, https://example.com/advisories/some-id
+
+      We leave these as warnings and do not elevate them to error because they
+      can trigger without code changes when there's a new vulnerability. We
+      don't want to break the build and force these to be addressed (or worse,
+      suppressed altogether) in an otherwise unrelated PR.
+     -->
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
+    <MSBuildWarningsNotAsErrors>$(WarningsNotAsErrors)</MSBuildWarningsNotAsErrors>
+  </PropertyGroup>
+</Project>

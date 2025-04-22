@@ -53,4 +53,6 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DefineConstants>$(DefineConstants);HIGH_PERFORMANCE_CODEGEN</DefineConstants>
   </PropertyGroup>
+
+  <Import Project="Directory.WarningsAsErrors.props" />
 </Project>

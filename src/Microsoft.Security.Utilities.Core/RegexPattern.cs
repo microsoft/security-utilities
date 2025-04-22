@@ -21,6 +21,7 @@ public class RegexPattern
     /// <summary>Constructs a new instance of the RegexPattern class.</summary>
     /// <param name="id"> The unique identifier for the pattern.</param>
     /// <param name="name">The name of the pattern.</param>
+    /// <param name="label">A sentence fragment that describes the secret kind.</param>
     /// <param name="pattern">The regular expression pattern.</param>
     /// <param name="patternMetadata">Metadata that describes the pattern.</param>
     /// <param name="rotationPeriod">The period after which a matching secret should be rotated.</param>
