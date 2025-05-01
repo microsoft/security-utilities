@@ -63,7 +63,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
 #endif
 
         [ParamsAllValues]
-        public Case Case { get; set;} = Case.HardPrefix;
+        public Case Case { get; set; } = Case.HardPrefix;
 
         // Use a fixed seed to ensure different runs use the same data.
         private readonly Random _rng = new Random(Seed: 42);

@@ -38,15 +38,15 @@ namespace Microsoft.Security.Utilities
 
 #if HIGH_PERFORMANCE_CODEGEN
         IEnumerable<HighPerformancePattern> IHighPerformanceScannableKey.HighPerformancePatterns => [
-            new(signature: "oy2", 
-                scopedRegex: @"^.{3}[a-z2-7]{43}", 
-                signaturePrefixLength: 0, 
-                minMatchLength: 46, 
+            new(signature: "oy2",
+                scopedRegex: @"^.{3}[a-z2-7]{43}",
+                signaturePrefixLength: 0,
+                minMatchLength: 46,
                 maxMatchLength: 46),
-            new(signature: "OY2", 
-                scopedRegex: @"^.{3}[A-Z2-7]{43}", 
-                signaturePrefixLength: 0, 
-                minMatchLength: 46, 
+            new(signature: "OY2",
+                scopedRegex: @"^.{3}[A-Z2-7]{43}",
+                signaturePrefixLength: 0,
+                minMatchLength: 46,
                 maxMatchLength: 46
             ),
         ];
