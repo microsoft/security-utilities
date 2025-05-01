@@ -68,6 +68,11 @@ internal sealed class HighPerformanceScanner
 #endif
     }
 
+    public HighPerformanceScanner Clone()
+    {
+        return new HighPerformanceScanner(_patternsByPackedSignature.Values);
+    }
+
     /// <summary>
     /// Scan the input for all patterns and return the detections found.
     /// </summary>

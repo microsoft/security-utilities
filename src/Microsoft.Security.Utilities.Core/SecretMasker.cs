@@ -24,7 +24,7 @@ public class SecretMasker : ISecretMasker
 {
     private readonly IRegexEngine _regexEngine;
     private HighPerformanceScanner? _highPerformanceScanner;
-    private Dictionary<string, IList<RegexPattern>>? _highPerformanceSignatureToPatternsMap;
+    private Dictionary<string, List<RegexPattern>>? _highPerformanceSignatureToPatternsMap;
 
     public static Version Version { get; } = RetrieveVersion();
 
@@ -77,9 +77,9 @@ public class SecretMasker : ISecretMasker
             copy.SyncObject.EnterReadLock();
 
             _regexEngine = copy._regexEngine;
-            _highPerformanceScanner = copy._highPerformanceScanner;
-            _highPerformanceSignatureToPatternsMap = copy._highPerformanceSignatureToPatternsMap;
             _generateCorrelatingIds = copy._generateCorrelatingIds;
+            _highPerformanceScanner = copy._highPerformanceScanner?.Clone();
+            _highPerformanceSignatureToPatternsMap = DeepClone(copy._highPerformanceSignatureToPatternsMap);
 
             MinimumSecretLength = copy.MinimumSecretLength;
             DefaultRegexRedactionToken = copy.DefaultRegexRedactionToken;
@@ -95,6 +95,22 @@ public class SecretMasker : ISecretMasker
             {
                 copy.SyncObject.ExitReadLock();
             }
+        }
+
+        static Dictionary<string, List<RegexPattern>>? DeepClone(Dictionary<string, List<RegexPattern>>? copy)
+        {
+            if (copy == null)
+            {
+                return null;
+            }
+
+            var result = new Dictionary<string, List<RegexPattern>>(copy.Count);
+            foreach (var pair in copy)
+            {
+                result.Add(pair.Key, new(pair.Value));
+            }
+
+            return result;
         }
     }
 
@@ -498,7 +514,7 @@ public class SecretMasker : ISecretMasker
                 Debug.Assert(highPerformancePattern != null, "Every signature of high-performance compatible patterns have a compiled counterpart.");
                 compiledHighPerformancePatterns.Add(highPerformancePattern!);
 
-                if (!_highPerformanceSignatureToPatternsMap.TryGetValue(signature, out IList<RegexPattern>? patternsForSignature))
+                if (!_highPerformanceSignatureToPatternsMap.TryGetValue(signature, out List<RegexPattern>? patternsForSignature))
                 {
                     patternsForSignature = new List<RegexPattern>();
                     _highPerformanceSignatureToPatternsMap[signature] = patternsForSignature;
