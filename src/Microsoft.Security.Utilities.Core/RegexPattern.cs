@@ -56,10 +56,13 @@ public class RegexPattern
         RegexOptions = RegexDefaults.DefaultOptions;
     }
 #pragma warning restore CS8618
+    
+    [DataMember(Order = 8)]
 
     public virtual Version CreatedVersion { get; } = new Version(1, 17, 0, 0);
 
-    public virtual Version? LastUpdatedVersion { get; } = null;
+    [DataMember(Order = 9)]
+    public virtual Version? LastUpdatedVersion => CreatedVersion;
 
     [ExcludeFromCodeCoverage]
     public override bool Equals(object? obj)
