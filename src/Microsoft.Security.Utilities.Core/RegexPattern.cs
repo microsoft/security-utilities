@@ -57,6 +57,10 @@ public class RegexPattern
     }
 #pragma warning restore CS8618
 
+    public virtual Version CreatedVersion { get; } = new Version(1, 17, 0, 0);
+
+    public virtual Version? LastUpdatedVersion { get; } = null;
+
     [ExcludeFromCodeCoverage]
     public override bool Equals(object? obj)
     {
