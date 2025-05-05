@@ -8,8 +8,8 @@
     "Signatures": [
       ".servicebus"
     ],
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.4.12",
+    "LastUpdatedVersion": "1.4.12"
   },
   {
     "Id": "SEC101/528",
@@ -22,8 +22,8 @@
       "eyAi",
       "ewog"
     ],
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.4.24",
+    "LastUpdatedVersion": "1.4.24"
   },
   {
     "Id": "SEC101/127",
@@ -48,8 +48,8 @@
       "sig=",
       "ret="
     ],
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.4.24",
+    "LastUpdatedVersion": "1.4.24"
   },
   {
     "Id": "SEC101/055",
@@ -60,7 +60,7 @@
     "Signatures": [
       "IBAzCC"
     ],
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.14.0",
+    "LastUpdatedVersion": "1.14.0"
   }
 ]

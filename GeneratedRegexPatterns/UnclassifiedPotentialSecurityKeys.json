@@ -10,8 +10,8 @@
       "eyAi",
       "ewog"
     ],
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.4.24",
+    "LastUpdatedVersion": "1.4.24"
   },
   {
     "Id": "SEC101/127",
@@ -36,8 +36,8 @@
       "sig=",
       "ret="
     ],
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.4.24",
+    "LastUpdatedVersion": "1.4.24"
   },
   {
     "Id": "SEC101/061",
@@ -46,8 +46,8 @@
     "DetectionMetadata": "LowConfidence",
     "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?P<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+/=]|$)",
     "Signatures": null,
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.5.0",
+    "LastUpdatedVersion": "1.5.0"
   },
   {
     "Id": "SEC000/000",
@@ -56,8 +56,8 @@
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=",
     "Signatures": null,
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.4.12",
+    "LastUpdatedVersion": "1.4.12"
   },
   {
     "Id": "SEC000/001",
@@ -66,8 +66,8 @@
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==",
     "Signatures": null,
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.4.12",
+    "LastUpdatedVersion": "1.4.12"
   },
   {
     "Id": "SEC101/101",
@@ -88,8 +88,8 @@
     "Signatures": [
       "IBAzCC"
     ],
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.14.0",
+    "LastUpdatedVersion": "1.14.0"
   },
   {
     "Id": "SEC000/002",
@@ -98,7 +98,7 @@
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Pattern": "(^|[^1234567890abcdef])[1234567890abcdef]{32}([^1234567890abcdef]|$)",
     "Signatures": null,
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.4.12",
+    "LastUpdatedVersion": "1.4.12"
   }
 ]
