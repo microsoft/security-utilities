@@ -15,6 +15,8 @@ namespace Microsoft.Security.Utilities
             Pattern = @"(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$";
         }
 
+        public override Version CreatedVersion => Releases.Version_01_14_00;
+
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             // Example of a GUID, but not a UUID. This example is the Office 365 SharePoint Online App Id. See https://learn.microsoft.com/en-us/troubleshoot/entra/entra-id/governance/verify-first-party-apps-sign-in.

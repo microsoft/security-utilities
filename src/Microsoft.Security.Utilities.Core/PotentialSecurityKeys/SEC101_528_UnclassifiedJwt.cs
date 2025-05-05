@@ -21,6 +21,11 @@ namespace Microsoft.Security.Utilities
             Signatures = new HashSet<string>(["eyJ", "eyAi", "ewog"]);
         }
 
+        public override Version CreatedVersion => Releases.Version_01_04_24;
+
+
+        public override Version LastUpdatedVersion => Releases.Version_01_04_24;
+
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
             string header = match.Substring(0, match.IndexOf('.'));

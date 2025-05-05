@@ -18,6 +18,8 @@ namespace Microsoft.Security.Utilities
             Pattern = "(?i)(?:AccountName|StorageName|StorageAccount)\\s*=.+(?:Account|Storage)Key\\s*=\\s*(?P<refine>[0-9a-z\\\\\\/+]{86}==)(?:[^=]|$)";
         }
 
+        public override Version CreatedVersion => Releases.Version_01_04_10;
+
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
             if (IdentifiableMetadata.IsAzureStorageAccountIdentifiableKey(match))

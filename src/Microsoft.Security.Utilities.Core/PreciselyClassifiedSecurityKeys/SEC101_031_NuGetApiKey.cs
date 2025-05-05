@@ -23,6 +23,8 @@ namespace Microsoft.Security.Utilities
             Label = "a NuGet API key";
         }
 
+        public override Version CreatedVersion => Releases.Version_01_04_02;
+
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
             if (match.Any(char.IsLower) && match.Any(char.IsUpper))

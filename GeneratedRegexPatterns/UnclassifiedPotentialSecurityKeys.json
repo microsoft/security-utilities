@@ -9,7 +9,9 @@
       "eyJ",
       "eyAi",
       "ewog"
-    ]
+    ],
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   },
   {
     "Id": "SEC101/127",
@@ -20,7 +22,9 @@
     "Signatures": [
       "ftp",
       "http"
-    ]
+    ],
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   },
   {
     "Id": "SEC101/060",
@@ -31,7 +35,9 @@
     "Signatures": [
       "sig=",
       "ret="
-    ]
+    ],
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   },
   {
     "Id": "SEC101/061",
@@ -39,7 +45,9 @@
     "Label": "a loose OAuth2 bearer token",
     "DetectionMetadata": "LowConfidence",
     "Pattern": "(?i)authorization:(\\s|%20)bearer(\\s|%20)(?P<refine>[0-9a-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+\\/=]*)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_~.\\-+/=]|$)",
-    "Signatures": null
+    "Signatures": null,
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   },
   {
     "Id": "SEC000/000",
@@ -47,7 +55,9 @@
     "Label": "an unclassified 32-byte base64 string",
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{43}=",
-    "Signatures": null
+    "Signatures": null,
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   },
   {
     "Id": "SEC000/001",
@@ -55,7 +65,9 @@
     "Label": "an unclassified 64-byte base64 string",
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{86}==",
-    "Signatures": null
+    "Signatures": null,
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   },
   {
     "Id": "SEC101/101",
@@ -63,7 +75,9 @@
     "Label": "an Azure Entra client application legacy format password",
     "DetectionMetadata": "ObsoleteFormat, HighEntropy, LowConfidence",
     "Pattern": "^[~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{34}$",
-    "Signatures": null
+    "Signatures": null,
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   },
   {
     "Id": "SEC101/055",
@@ -73,7 +87,9 @@
     "Pattern": "MI[I-L][0-9a-zA-Z\\/+]{2}[AQgw]IBAzCC",
     "Signatures": [
       "IBAzCC"
-    ]
+    ],
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   },
   {
     "Id": "SEC000/002",
@@ -81,6 +97,8 @@
     "Label": "an unclassified 16-byte hexadecimal string",
     "DetectionMetadata": "HighEntropy, Unclassified, LowConfidence",
     "Pattern": "(^|[^1234567890abcdef])[1234567890abcdef]{32}([^1234567890abcdef]|$)",
-    "Signatures": null
+    "Signatures": null,
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   }
 ]

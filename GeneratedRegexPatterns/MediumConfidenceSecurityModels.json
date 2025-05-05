@@ -7,7 +7,9 @@
     "Pattern": "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)",
     "Signatures": [
       ".servicebus"
-    ]
+    ],
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   },
   {
     "Id": "SEC101/528",
@@ -19,7 +21,9 @@
       "eyJ",
       "eyAi",
       "ewog"
-    ]
+    ],
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   },
   {
     "Id": "SEC101/127",
@@ -30,7 +34,9 @@
     "Signatures": [
       "ftp",
       "http"
-    ]
+    ],
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   },
   {
     "Id": "SEC101/060",
@@ -41,7 +47,9 @@
     "Signatures": [
       "sig=",
       "ret="
-    ]
+    ],
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   },
   {
     "Id": "SEC101/055",
@@ -51,6 +59,8 @@
     "Pattern": "MI[I-L][0-9a-zA-Z\\/+]{2}[AQgw]IBAzCC",
     "Signatures": [
       "IBAzCC"
-    ]
+    ],
+    "CreatedVersion": "1.17.0.0",
+    "LastUpdatedVersion": "1.17.0.0"
   }
 ]

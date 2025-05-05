@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 using System;
 using System.Collections.Generic;
-using System.Web;
 
 namespace Microsoft.Security.Utilities
 {
@@ -17,6 +16,8 @@ namespace Microsoft.Security.Utilities
             Pattern = @$"(?i)(?:^|[?;&])(?:dsas_secret|sig)=(?P<refine>[0-9a-z\/+%]{{43,129}}(?:=|%3d))";
             Signatures = new HashSet<string>(new[] { "sig=", "ret=" });
         }
+
+        public override Version CreatedVersion => Releases.Version_01_04_24;
 
         // HttpUtility.UrlEncode(new string('/', 43));
         private const string FortyThreeBase64EncodedSlashes = "%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f";
