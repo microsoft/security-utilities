@@ -13,47 +13,60 @@ namespace Microsoft.Security.Utilities.Benchmarks
 
     public enum Case
     {
-        // This is close to the worst case scenario for large input. Every
-        // base64 alphabet char is equally likely to appear in the input, making
-        // signature sniffing harder.
+        /// <summary>
+        /// This is close to the worst case scenario for large input. Every
+        /// base64 alphabet char is equally likely to appear in the input,
+        /// making signature sniffing harder.
+        /// </summary>
         HardPrefix,
 
-        // This is close to the best case scenario. A char that does not appear
-        // in any identifiable key signature is repeated in the prefix, making
-        // signature sniffing easier.
+        /// <summary>
+        /// This is close to the best case scenario. A char that does not appear
+        /// in any identifiable key signature is repeated in the prefix, making
+        /// signature sniffing easier.
+        /// </summary>
         EasyPrefix,
 
-        // This will scan secrets without prefixing them. Testing the performance against
-        // small inputs.
+        /// <summary>
+        /// This will scan secrets without prefixing them in order to test the
+        /// performance against small inputs.
+        /// </summary>
         NoPrefix,
     }
 
     public abstract class SecretMaskerDetectionBenchmarks
     {
-        // The size of randomized data to add as a prefix for every secret for
-        // the EasyPrefix and HardPrefix cases. This is intended to make
-        // positive hits less concentrated in the profiling.
-        public const int SecretPrefixSize = 10 * 1024;
+        /// <summary>
+        /// The length in chars of randomized data to add as a prefix for every
+        /// secret for the <see cref="Case.EasyPrefix"/> and <see
+        /// cref="Case.HardPrefix"/> cases. This is intended to make positive
+        /// hits less concentrated in the profiling.
+        /// </summary>
+        public const int SecretPrefixLength = 100 * 1024;
 
-        // Whether to use the high performance scanner. Normally, the high
-        // performance scanner is always used, but there's a test hook to turn
-        // it off, which we use to see how much it is optimizing.
+        /// <summary>
+        /// Whether to use the high performance scanner. Normally, the high
+        /// performance scanner is always used, but there's a test hook to turn
+        /// it off, which we use to see how much it is optimizing.
+        /// </summary>
         [Params(true, false)]
         public bool UseHighPerformanceScanner { get; set; } = true;
 
-        // Whether to generate correlating ids for each match. Setting this to
-        // true will contribute fixed hash production overhead to all the
-        // scanners. Uncomment 'Params' attribute to benchmark with and without
-        // it.
-        //
+        /// <summary>
+        /// Whether to generate correlating ids for each match. Setting this to
+        /// true will contribute fixed hash production overhead to all the
+        /// scanners. Uncomment 'Params' attribute to benchmark with and without
+        /// it.
+        /// </summary>
         //[Params(true,  false)]
         public bool GenerateCorrelatingIds { get; set; } = false;
 
-        // The regex engine to use. The DotNet engine is faster than RE2 on
-        // modern .NET, and RE2 is faster than DotNet on .NET Framework for
-        // large input. Uncomment Params attribute to benchmark both engines,
-        // Otherwise, we'll use the better default for the current platform.
-        //
+        /// <summary>
+        /// The regex engine to use. The DotNet engine is faster than RE2 on
+        /// modern .NET, and RE2 is faster than DotNet on .NET Framework for
+        /// large input. Uncomment Params attribute to benchmark both engines,
+        /// Otherwise, we'll use the better default for the current platform.
+        /// </summary>
         //[Params(RegexEngine.DotNet, RegexEngine.RE2)]
         public RegexEngine RegexEngine { get; set; } =
 #if NET
@@ -72,22 +85,23 @@ namespace Microsoft.Security.Utilities.Benchmarks
         protected SecretMasker Masker { get; private set; } = null!;
         protected abstract IEnumerable<RegexPattern> RegexPatterns { get; }
 
-        private string GeneratePrefix(int size, bool random)
+        private string GeneratePrefix(int length, bool random)
         {
+           length = length / 4 * 4; // Round down to a multiple of 4.
             string prefix;
 
             if (random)
             {
-                var data = new byte[size / 4 * 3]; // Account for base64 encoding overhead.
+                var data = new byte[length / 4 * 3]; // Account for base64 encoding overhead.
                 _rng.NextBytes(data);
                 prefix = Convert.ToBase64String(data);
             }
             else
             {
-                prefix = new string('%', size);
+                prefix = new string('%', length);
             }
 
-            if (prefix.Length != size)
+            if (prefix.Length != length)
             {
                 throw new InvalidOperationException("Something is wrong in math above.");
             }
@@ -95,10 +109,10 @@ namespace Microsoft.Security.Utilities.Benchmarks
             return prefix;
         }
 
-        private List<string> GenerateExamples(bool random, int prefixSize)
+        private List<string> GenerateExamples(bool random, int prefixLength)
         {
             var examples = new List<string>();
-            var prefix = GeneratePrefix(prefixSize, random);
+            var prefix = GeneratePrefix(prefixLength, random);
 
             foreach (var pattern in RegexPatterns)
             {
@@ -116,8 +130,8 @@ namespace Microsoft.Security.Utilities.Benchmarks
         {
             Examples = Case switch
             {
-                Case.HardPrefix => GenerateExamples(random: true, SecretPrefixSize),
-                Case.EasyPrefix => GenerateExamples(random: false, SecretPrefixSize),
+                Case.HardPrefix => GenerateExamples(random: true, SecretPrefixLength),
+                Case.EasyPrefix => GenerateExamples(random: false, SecretPrefixLength),
                 Case.NoPrefix => GenerateExamples(random: false, 0),
                 _ => throw new ArgumentOutOfRangeException(nameof(Case), "Unknown case"),
             };
