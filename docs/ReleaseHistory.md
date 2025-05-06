@@ -16,7 +16,7 @@
 - BRK, NEW: `SecretMasker.MaskSecrets` and `ISecretMasker.DetectSecrets` now accept an `Action<Detection>` callback (with a default value of `null`) to receive detections that result from the operation. This is binary-breaking only for `SecretMasker` callers and source-breaking as well for `ISecretMasker` implementations.
 - BRK: `Detection` is now sealed and immutable. All property setters and the copy constructor are removed.
 - BRK: `Detection`  no longer overrides `Equals` and `GetHashCode` nor implements `IEquatable<Detection>`. `Detection.Equals` and `Detection.GetHashCode` will therefore now be based on reference equality.
-- BRK, PRF: `IdentifiableScan` has been removed and it's functionality has been merged into to `SecretMasker` which now scans the patterns its given as fast as possible, which will be significantly faster for identifiable key patterns.
+- BRK, PRF: `IdentifiableScan` has been removed and it's functionality has been merged into `SecretMasker` which now scans the patterns it's given as fast as possible, which will be significantly faster for identifiable key patterns.
 - BRK: `SecretMasker.Clone` has been removed.
 - BRK: `WellKnownRegexPatterns.*Iterator` methods have been removed. Use the corresponding `WellKnownPatterns.*` properties instead.
 - BRK: `WellKnownRegexPatterns.*` properties are now of stronger type`IReadOnlyList<RegexPattern>` instead of `IEnumerable<RegexPattern>`.
