@@ -328,68 +328,6 @@ public class SecretMaskerTests
     }
 
     [TestMethod]
-    public void SecretMasker_CopyConstructor()
-    {
-        string id = nameof(id);
-        string name = nameof(name);
-        string label = "a test secret";
-        // Setup masker 1
-        using var secretMasker1 = new SecretMasker();
-        secretMasker1.AddRegex(new RegexPattern(id, name, label, 0, "masker-1-regex-1_*"));
-        secretMasker1.AddRegex(new RegexPattern(id, name, label, 0, "masker-1-regex-2_*"));
-        secretMasker1.AddValue("masker-1-value-1_");
-        secretMasker1.AddValue("masker-1-value-2_");
-        secretMasker1.AddLiteralEncoder(x => x.Replace("_", "_masker-1-encoder-1"));
-        secretMasker1.AddLiteralEncoder(x => x.Replace("_", "_masker-1-encoder-2"));
-
-        // Copy and add to masker 2.
-        var secretMasker2 = secretMasker1.Clone();
-        secretMasker2.AddRegex(new RegexPattern(id, name, label, 0, "masker-2-regex-1_*"));
-        secretMasker2.AddValue("masker-2-value-1_");
-        secretMasker2.AddLiteralEncoder(x => x.Replace("_", "_masker-2-encoder-1"));
-
-        // Add to masker 1.
-        secretMasker1.AddRegex(new RegexPattern(id, name, label, 0, "masker-1-regex-3_*"));
-        secretMasker1.AddValue("masker-1-value-3_");
-        secretMasker1.AddLiteralEncoder(x => x.Replace("_", "_masker-1-encoder-3"));
-
-        // Assert masker 1 values.
-        Assert.AreEqual("+++", secretMasker1.MaskSecrets("masker-1-regex-1___")); // original regex
-        Assert.AreEqual("+++", secretMasker1.MaskSecrets("masker-1-regex-2___")); // original regex
-        Assert.AreEqual("+++", secretMasker1.MaskSecrets("masker-1-regex-3___")); // new regex
-        Assert.AreEqual("***", secretMasker1.MaskSecrets("masker-1-value-1_")); // original value
-        Assert.AreEqual("***", secretMasker1.MaskSecrets("masker-1-value-2_")); // original value
-        Assert.AreEqual("***", secretMasker1.MaskSecrets("masker-1-value-3_")); // new value
-        Assert.AreEqual("***", secretMasker1.MaskSecrets("masker-1-value-1_masker-1-encoder-1")); // original value, original encoder
-        Assert.AreEqual("***", secretMasker1.MaskSecrets("masker-1-value-1_masker-1-encoder-2")); // original value, original encoder
-        Assert.AreEqual("***", secretMasker1.MaskSecrets("masker-1-value-1_masker-1-encoder-3")); // original value, new encoder
-        Assert.AreEqual("***", secretMasker1.MaskSecrets("masker-1-value-3_masker-1-encoder-1")); // new value, original encoder
-        Assert.AreEqual("***", secretMasker1.MaskSecrets("masker-1-value-3_masker-1-encoder-2")); // new value, original encoder
-        Assert.AreEqual("***", secretMasker1.MaskSecrets("masker-1-value-3_masker-1-encoder-3")); // new value, new encoder
-        Assert.AreEqual("masker-2-regex-1___", secretMasker1.MaskSecrets("masker-2-regex-1___")); // separate regex storage from copy
-        Assert.AreEqual("masker-2-value-1_", secretMasker1.MaskSecrets("masker-2-value-1_")); // separate value storage from copy
-        Assert.AreEqual("***masker-2-encoder-1", secretMasker1.MaskSecrets("masker-1-value-1_masker-2-encoder-1")); // separate encoder storage from copy
-
-        // Assert masker 2 values.
-        Assert.AreEqual("+++", secretMasker2.MaskSecrets("masker-1-regex-1___")); // copied regex
-        Assert.AreEqual("+++", secretMasker2.MaskSecrets("masker-1-regex-2___")); // copied regex
-        Assert.AreEqual("+++", secretMasker2.MaskSecrets("masker-2-regex-1___")); // new regex
-        Assert.AreEqual("***", secretMasker2.MaskSecrets("masker-1-value-1_")); // copied value
-        Assert.AreEqual("***", secretMasker2.MaskSecrets("masker-1-value-2_")); // copied value
-        Assert.AreEqual("***", secretMasker2.MaskSecrets("masker-2-value-1_")); // new value
-        Assert.AreEqual("***", secretMasker2.MaskSecrets("masker-1-value-1_masker-1-encoder-1")); // copied value, copied encoder
-        Assert.AreEqual("***", secretMasker2.MaskSecrets("masker-1-value-1_masker-1-encoder-2")); // copied value, copied encoder
-        Assert.AreEqual("***", secretMasker2.MaskSecrets("masker-1-value-1_masker-2-encoder-1")); // copied value, new encoder
-        Assert.AreEqual("***", secretMasker2.MaskSecrets("masker-2-value-1_masker-1-encoder-1")); // new value, copied encoder
-        Assert.AreEqual("***", secretMasker2.MaskSecrets("masker-2-value-1_masker-1-encoder-2")); // new value, copied encoder
-        Assert.AreEqual("***", secretMasker2.MaskSecrets("masker-2-value-1_masker-2-encoder-1")); // new value, new encoder
-        Assert.AreEqual("masker-1-regex-3___", secretMasker2.MaskSecrets("masker-1-regex-3___")); // separate regex storage from original
-        Assert.AreEqual("masker-1-value-3_", secretMasker2.MaskSecrets("masker-1-value-3_")); // separate value storage from original
-        Assert.AreEqual("***masker-1-encoder-3", secretMasker2.MaskSecrets("masker-1-value-1_masker-1-encoder-3")); // separate encoder storage from original
-    }
-
-
-    [TestMethod]
     public void SecretMasker_Encoder()
     {
         // Add encoder before values.

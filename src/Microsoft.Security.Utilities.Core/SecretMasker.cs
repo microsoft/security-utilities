@@ -69,51 +69,6 @@ public class SecretMasker : ISecretMasker
     // masking will N - 1 of this property value.
     public static int MinimumSecretLengthCeiling { get; set; }
 
-    protected SecretMasker(SecretMasker copy)
-    {
-        // Read section.
-        try
-        {
-            copy.SyncObject.EnterReadLock();
-
-            _regexEngine = copy._regexEngine;
-            _generateCorrelatingIds = copy._generateCorrelatingIds;
-            _highPerformanceScanner = copy._highPerformanceScanner?.Clone();
-            _highPerformanceSignatureToPatternsMap = DeepClone(copy._highPerformanceSignatureToPatternsMap);
-
-            MinimumSecretLength = copy.MinimumSecretLength;
-            DefaultRegexRedactionToken = copy.DefaultRegexRedactionToken;
-            DefaultLiteralRedactionToken = copy.DefaultLiteralRedactionToken;
-            RegexPatterns = new HashSet<RegexPattern>(copy.RegexPatterns);
-            LiteralEncoders = new HashSet<LiteralEncoder>(copy.LiteralEncoders);
-            EncodedSecretLiterals = new HashSet<SecretLiteral>(copy.EncodedSecretLiterals);
-            ExplicitlyAddedSecretLiterals = new HashSet<SecretLiteral>(copy.ExplicitlyAddedSecretLiterals);
-        }
-        finally
-        {
-            if (copy.SyncObject.IsReadLockHeld)
-            {
-                copy.SyncObject.ExitReadLock();
-            }
-        }
-
-        static Dictionary<string, List<RegexPattern>>? DeepClone(Dictionary<string, List<RegexPattern>>? copy)
-        {
-            if (copy == null)
-            {
-                return null;
-            }
-
-            var result = new Dictionary<string, List<RegexPattern>>(copy.Count);
-            foreach (var pair in copy)
-            {
-                result.Add(pair.Key, new(pair.Value));
-            }
-
-            return result;
-        }
-    }
-
     [ThreadStatic]
     private static StringBuilder? s_stringBuilder;
 
@@ -454,11 +409,6 @@ public class SecretMasker : ISecretMasker
     {
         Dispose(true);
         GC.SuppressFinalize(this);
-    }
-
-    public virtual SecretMasker Clone()
-    {
-        return new SecretMasker(this);
     }
 
     protected virtual void Dispose(bool disposing)
