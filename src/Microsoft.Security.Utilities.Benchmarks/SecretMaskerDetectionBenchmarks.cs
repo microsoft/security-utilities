@@ -42,7 +42,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
         /// cref="Case.HardPrefix"/> cases. This is intended to make positive
         /// hits less concentrated in the profiling.
         /// </summary>
-        public const int SecretPrefixLength = 100 * 1024;
+        public const int SecretPrefixLength = 100 * 1000;
 
         /// <summary>
         /// Whether to use the high performance scanner. Normally, the high
@@ -87,14 +87,14 @@ namespace Microsoft.Security.Utilities.Benchmarks
 
         private string GeneratePrefix(int length, bool random)
         {
-           length = length / 4 * 4; // Round down to a multiple of 4.
             string prefix;
 
             if (random)
             {
-                var data = new byte[length / 4 * 3]; // Account for base64 encoding overhead.
+                var byteCount = Base64CharsToBytes(length);
+                var data = new byte[byteCount];
                 _rng.NextBytes(data);
-                prefix = Convert.ToBase64String(data);
+                prefix = Convert.ToBase64String(data).Substring(0, length);
             }
             else
             {
@@ -103,10 +103,20 @@ namespace Microsoft.Security.Utilities.Benchmarks
 
             if (prefix.Length != length)
             {
-                throw new InvalidOperationException("Something is wrong in math above.");
+                throw new InvalidOperationException("Produced prefix with incorrect length.");
             }
 
             return prefix;
+        }
+
+        private static int Base64CharsToBytes(int chars)
+        {
+            return RoundUpToMultipleOf(chars, 4) / 4 * 3;
+        }
+
+        private static int RoundUpToMultipleOf(int value, int multiple)
+        {
+            return (value + multiple - 1) / multiple * multiple;
         }
 
         private List<string> GenerateExamples(bool random, int prefixLength)
