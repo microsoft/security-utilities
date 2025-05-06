@@ -26,10 +26,9 @@ public static class WellKnownRegexPatterns
                    new OAuth2BearerToken(),
                    new Unclassified32ByteBase64String(),
                    new Unclassified64ByteBase64String(),
-                   new AadClientAppLegacyCredentials34(),      // SEC101/101 legacy generated passwords.
+                   new AadClientAppLegacyCredentials34(),
                    new Pkcs12CertificatePrivateKeyBundle(),
-                   new Unclassified16ByteHexadecimalString()
-    );
+                   new Unclassified16ByteHexadecimalString());
 
     public static IReadOnlyList<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } =
         CreateList(new UnclassifiedLegacyCommonAnnotatedSecurityKey(),
@@ -54,9 +53,9 @@ public static class WellKnownRegexPatterns
                    new AzureCacheForRedisIdentifiableKey(),
                    new AzureContainerRegistryIdentifiableKey(),
                    new NuGetApiKey(),
-                   new AdoLegacyPat(),                         // SEC101/102
-                   new AzureCosmosDBLegacyCredentials(),       // SEC101/104
-                   new AzureStorageAccountLegacyCredentials(), // SEC101/106
+                   new AdoLegacyPat(),
+                   new AzureCosmosDBLegacyCredentials(),
+                   new AzureStorageAccountLegacyCredentials(),
                    new AzureMessagingLegacyCredentials(),
                    new AzureDatabricksPat(),
                    new AzureEventGridIdentifiableKey());
