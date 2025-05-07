@@ -16,5 +16,5 @@ public class AzureAppConfigurationLegacyCommonAnnotatedSecurityKey : LegacyCommo
 
     protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureAppConfiguration;
 
-    public override Version CreatedVersion => Releases.Unreleased;
+    public override Version CreatedVersion => Releases.Version_01_18_00;
 }

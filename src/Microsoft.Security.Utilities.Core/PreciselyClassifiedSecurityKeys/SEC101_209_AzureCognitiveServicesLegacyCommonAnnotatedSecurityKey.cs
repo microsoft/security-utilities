@@ -14,7 +14,7 @@ public class AzureCognitiveServicesLegacyCommonAnnotatedSecurityKey : CognitiveS
         Label = "a general Azure Cognitive Services legacy common annotated security key";
     }
 
-    public override Version CreatedVersion => Releases.Unreleased;
+    public override Version CreatedVersion => Releases.Version_01_18_00;
 
     protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureCognitiveServices;
 }

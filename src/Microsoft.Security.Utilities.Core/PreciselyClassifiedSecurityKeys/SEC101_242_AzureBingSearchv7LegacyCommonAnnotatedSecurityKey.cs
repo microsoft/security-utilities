@@ -14,7 +14,7 @@ public class AzureBingSearchv7LegacyCommonAnnotatedSecurityKey : CognitiveServic
         Label = "an Azure Bing Search v7 (Cognitive Services) legacy common annotated security key";
     }
 
-    public override Version CreatedVersion => Releases.Unreleased;
+    public override Version CreatedVersion => Releases.Version_01_18_00;
 
     protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureBingSearchv7;
 }

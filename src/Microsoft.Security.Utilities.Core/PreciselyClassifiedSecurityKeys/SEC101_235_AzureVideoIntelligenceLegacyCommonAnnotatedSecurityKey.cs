@@ -14,7 +14,7 @@ public class AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey : CognitiveS
         Label = "an Azure Video Intelligence (Cognitive Services) legacy common annotated security key";
     }
 
-    public override Version CreatedVersion => Releases.Unreleased;
+    public override Version CreatedVersion => Releases.Version_01_18_00;
 
     protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureVideoIntelligence;
 }

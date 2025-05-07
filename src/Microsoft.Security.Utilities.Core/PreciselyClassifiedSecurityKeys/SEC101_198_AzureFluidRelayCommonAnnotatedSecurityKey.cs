@@ -16,5 +16,5 @@ public class AzureFluidRelayLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnot
 
     protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureFluidRelay;
 
-    public override Version CreatedVersion => Releases.Unreleased;
+    public override Version CreatedVersion => Releases.Version_01_18_00;
 }

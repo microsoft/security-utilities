@@ -16,5 +16,5 @@ public class AzureEventGridLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnota
 
     protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureEventGrid;
 
-    public override Version CreatedVersion => Releases.Unreleased;
+    public override Version CreatedVersion => Releases.Version_01_18_00;
 }

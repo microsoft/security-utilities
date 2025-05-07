@@ -16,5 +16,5 @@ public class AzureMixedRealityLegacyCommonAnnotatedSecurityKeyPat : LegacyCommon
 
     protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureMixedReality;
 
-    public override Version CreatedVersion => Releases.Unreleased;
+    public override Version CreatedVersion => Releases.Version_01_18_00;
 }
