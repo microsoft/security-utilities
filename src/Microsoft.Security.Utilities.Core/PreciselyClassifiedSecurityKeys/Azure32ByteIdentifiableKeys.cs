@@ -33,8 +33,6 @@ internal sealed class Azure32ByteIdentifiableKeys : RegexPattern
         });
     }
 
-    public override Version CreatedVersion => throw new NotImplementedException();
-
     public override Tuple<string, string>? GetMatchIdAndName(string match)
     {
         if (match.Length < 38)
