@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 namespace Microsoft.Security.Utilities;
 
 [DataContract]
-public abstract class RegexPattern
+public class RegexPattern
 {
     public const string FallbackRedactionToken = "+++";
 
@@ -59,7 +59,7 @@ public abstract class RegexPattern
 
     [DataMember(Order = 8)]
 
-    public abstract Version CreatedVersion { get; }
+    public virtual Version CreatedVersion { get; } = new Version();
 
     [DataMember(Order = 9)]
     public virtual Version? LastUpdatedVersion => CreatedVersion;

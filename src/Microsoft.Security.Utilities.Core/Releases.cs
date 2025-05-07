@@ -47,6 +47,7 @@ internal static class Releases
     public static Version Version_01_04_16 => new Version(1, 4, 16);
     public static Version Version_01_04_15 => new Version(1, 4, 15);
     public static Version Version_01_04_12 => new Version(1, 4, 12);
+    public static Version Version_01_04_11 => new Version(1, 4, 11);
     public static Version Version_01_04_10 => new Version(1, 4, 10);
     public static Version Version_01_04_02 => new Version(1, 4, 2);
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
@@ -27,6 +28,9 @@ namespace Microsoft.Security.Utilities
                 maxMatchLength: 55),
         ];
 #endif
+
+        public override Version CreatedVersion => Releases.Version_01_04_11;
+
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             yield return $"secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_{WellKnownRegexPatterns.RandomBase62(5)}";

@@ -8,8 +8,8 @@
     "Signatures": [
       "JQQJ"
     ],
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.4.24",
+    "LastUpdatedVersion": "1.4.24"
   },
   {
     "Id": "SEC101/156",
@@ -249,8 +249,8 @@
     "Signatures": [
       "+ACR"
     ],
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/031",
@@ -352,7 +352,7 @@
     "Signatures": [
       "ab85"
     ],
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.4.11",
+    "LastUpdatedVersion": "1.4.11"
   }
 ]

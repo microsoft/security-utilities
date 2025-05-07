@@ -14,8 +14,6 @@ namespace Microsoft.Security.Utilities;
 [ExcludeFromCodeCoverage]
 internal sealed class Unclassified64ByteBase64String : RegexPattern
 {
-    private Azure64ByteIdentifiableKeys azure64ByteIdentifiableKeys = new Azure64ByteIdentifiableKeys();
-
     public Unclassified64ByteBase64String()
     {
         Id = "SEC000/001";
@@ -40,14 +38,6 @@ internal sealed class Unclassified64ByteBase64String : RegexPattern
         foreach (Detection detection in base.GetDetections(input, generateSha256Hashes, defaultRedactionToken, regexEngine))
         {
             string match = input.Substring(detection.Start, detection.Length);
-
-            if (!Equals(azure64ByteIdentifiableKeys.GetDetections(match,
-                                                                         generateSha256Hashes,
-                                                                         defaultRedactionToken,
-                                                                         regexEngine).FirstOrDefault(), objB: default))
-            {
-                continue;
-            }
 
             yield return detection;
         }

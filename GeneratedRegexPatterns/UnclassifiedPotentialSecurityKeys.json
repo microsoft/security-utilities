@@ -23,8 +23,8 @@
       "ftp",
       "http"
     ],
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/060",
@@ -76,8 +76,8 @@
     "DetectionMetadata": "ObsoleteFormat, HighEntropy, LowConfidence",
     "Pattern": "^[~.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{34}$",
     "Signatures": null,
-    "CreatedVersion": "1.17.0.0",
-    "LastUpdatedVersion": "1.17.0.0"
+    "CreatedVersion": "1.4.11",
+    "LastUpdatedVersion": "1.4.11"
   },
   {
     "Id": "SEC101/055",

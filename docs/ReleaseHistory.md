@@ -260,6 +260,7 @@
 
 ## 1.4.11 - 04/08/2024
 - RUL: Add `SEC101/101.AadClientAppLegacyCredentials` detection.
+- RUL: Add `SEC101/565.SecretScanningSampleToken` detection.
 
 ## 1.4.10 - 04/08/2024
 - RUL: Add `SEC101/102.AdoPat` detection.
