@@ -3,19 +3,18 @@
 
 using System;
 
-namespace Microsoft.Security.Utilities
+namespace Microsoft.Security.Utilities;
+
+public class AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
 {
-    public class AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
+    public AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey() : base()
     {
-        public AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey() : base()
-        {
-            Id = "SEC101/204";
-            Name = nameof(AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey);
-            Label = "an Azure Communication Services legacy common annotated security key";
-        }
-
-        protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureCommunicationServices;
-
-        public override Version CreatedVersion => Releases.Unreleased;
+        Id = "SEC101/204";
+        Name = nameof(AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey);
+        Label = "an Azure Communication Services legacy common annotated security key";
     }
+
+    protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureCommunicationServices;
+
+    public override Version CreatedVersion => Releases.Unreleased;
 }

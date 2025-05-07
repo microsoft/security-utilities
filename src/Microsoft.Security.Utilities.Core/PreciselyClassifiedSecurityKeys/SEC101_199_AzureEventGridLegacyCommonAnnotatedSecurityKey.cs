@@ -3,19 +3,18 @@
 
 using System;
 
-namespace Microsoft.Security.Utilities
+namespace Microsoft.Security.Utilities;
+
+public class AzureEventGridLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
 {
-    public class AzureEventGridLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
+    public AzureEventGridLegacyCommonAnnotatedSecurityKey() : base()
     {
-        public AzureEventGridLegacyCommonAnnotatedSecurityKey() : base()
-        {
-            Id = "SEC101/199";
-            Name = nameof(AzureEventGridLegacyCommonAnnotatedSecurityKey);
-            Label = "an Azure Event Grid legacy common annotated security key";
-        }
-
-        protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureEventGrid;
-
-        public override Version CreatedVersion => Releases.Unreleased;
+        Id = "SEC101/199";
+        Name = nameof(AzureEventGridLegacyCommonAnnotatedSecurityKey);
+        Label = "an Azure Event Grid legacy common annotated security key";
     }
+
+    protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureEventGrid;
+
+    public override Version CreatedVersion => Releases.Unreleased;
 }

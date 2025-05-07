@@ -3,19 +3,18 @@
 
 using System;
 
-namespace Microsoft.Security.Utilities
+namespace Microsoft.Security.Utilities;
+
+public class AzureMixedRealityLegacyCommonAnnotatedSecurityKeyPat : LegacyCommonAnnotatedSecurityAccessKey
 {
-    public class AzureMixedRealityLegacyCommonAnnotatedSecurityKeyPat : LegacyCommonAnnotatedSecurityAccessKey
+    public AzureMixedRealityLegacyCommonAnnotatedSecurityKeyPat() : base()
     {
-        public AzureMixedRealityLegacyCommonAnnotatedSecurityKeyPat() : base()
-        {
-            Id = "SEC101/202";
-            Name = nameof(AzureMixedRealityLegacyCommonAnnotatedSecurityKeyPat);
-            Label = "an Azure Mixed Reality legacy common annotated security key";
-        }
-
-        protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureMixedReality;
-
-        public override Version CreatedVersion => Releases.Unreleased;
+        Id = "SEC101/202";
+        Name = nameof(AzureMixedRealityLegacyCommonAnnotatedSecurityKeyPat);
+        Label = "an Azure Mixed Reality legacy common annotated security key";
     }
+
+    protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureMixedReality;
+
+    public override Version CreatedVersion => Releases.Unreleased;
 }

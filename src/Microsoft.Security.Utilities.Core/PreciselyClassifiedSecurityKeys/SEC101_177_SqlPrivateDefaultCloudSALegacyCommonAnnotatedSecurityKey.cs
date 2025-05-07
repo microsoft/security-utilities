@@ -3,19 +3,18 @@
 
 using System;
 
-namespace Microsoft.Security.Utilities
+namespace Microsoft.Security.Utilities;
+
+public class SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
 {
-    public class SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
+    public SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey() : base()
     {
-        public SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey() : base()
-        {
-            Id = "SEC101/177";
-            Name = nameof(SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey);
-            Label = "a SQL private default cloud SA legacy common annotated security key";
-        }
-
-        protected override string ProviderSignature => LegacyCaskProviderSignatures.SqlServerPrivate;
-
-        public override Version CreatedVersion => Releases.Unreleased;
+        Id = "SEC101/177";
+        Name = nameof(SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey);
+        Label = "a SQL private default cloud SA legacy common annotated security key";
     }
+
+    protected override string ProviderSignature => LegacyCaskProviderSignatures.SqlServerPrivate;
+
+    public override Version CreatedVersion => Releases.Unreleased;
 }

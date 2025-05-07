@@ -17,6 +17,7 @@ public static class LegacyCaskProviderSignatures
         AzureMixedReality,
         AzureMaps,
         AzureCommunicationServices,
+        AzureCognitiveServices,
     };
 
     /// <summary>
@@ -66,4 +67,10 @@ public static class LegacyCaskProviderSignatures
     /// 'SEC101/204.AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey'.
     // </summary>
     public const string AzureCommunicationServices = "AZCS";
+
+    /// <summary>
+    /// The Azure Cognitice Services legacy CASK provider signature, as used by
+    /// 'SEC101/205.AzureAIServicesLegacyCommonAnnotatedSecurityKey'.
+    // </summary>
+    public const string AzureCognitiveServices = "ACOG";
 }

@@ -66,7 +66,8 @@ public static class WellKnownRegexPatterns
                    new AzureDevOpsLegacyCommonAnnotatedSecurityKeyPat(),
                    new AzureMixedRealityLegacyCommonAnnotatedSecurityKeyPat(),
                    new AzureMapsLegacyCommonAnnotatedSecurityKey(),
-                   new AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey());
+                   new AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey(),
+                   new AzureAIServicesLegacyCommonAnnotatedSecurityKey());
 
     public static IReadOnlyList<RegexPattern> DataClassification { get; } =
         CreateList(new IPv4(),

@@ -3,19 +3,18 @@
 
 using System;
 
-namespace Microsoft.Security.Utilities
+namespace Microsoft.Security.Utilities;
+
+public class AzureAppConfigurationLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
 {
-    public class AzureAppConfigurationLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
+    public AzureAppConfigurationLegacyCommonAnnotatedSecurityKey() : base()
     {
-        public AzureAppConfigurationLegacyCommonAnnotatedSecurityKey() : base()
-        {
-            Id = "SEC101/197";
-            Name = nameof(AzureAppConfigurationLegacyCommonAnnotatedSecurityKey);
-            Label = "an Azure App Configuration legacy common annotated security key";
-        }
-
-        protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureAppConfiguration;
-
-        public override Version CreatedVersion => Releases.Unreleased;
+        Id = "SEC101/197";
+        Name = nameof(AzureAppConfigurationLegacyCommonAnnotatedSecurityKey);
+        Label = "an Azure App Configuration legacy common annotated security key";
     }
+
+    protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureAppConfiguration;
+
+    public override Version CreatedVersion => Releases.Unreleased;
 }

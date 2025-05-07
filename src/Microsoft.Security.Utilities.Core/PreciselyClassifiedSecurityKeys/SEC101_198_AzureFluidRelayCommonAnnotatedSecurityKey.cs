@@ -3,19 +3,18 @@
 
 using System;
 
-namespace Microsoft.Security.Utilities
+namespace Microsoft.Security.Utilities;
+
+public class AzureFluidRelayLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
 {
-    public class AzureFluidRelayLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
+    public AzureFluidRelayLegacyCommonAnnotatedSecurityKey() : base()
     {
-        public AzureFluidRelayLegacyCommonAnnotatedSecurityKey() : base()
-        {
-            Id = "SEC101/198";
-            Name = nameof(AzureFluidRelayLegacyCommonAnnotatedSecurityKey);
-            Label = "an Azure Fluid Relay legacy common annotated security key";
-        }
-
-        protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureFluidRelay;
-
-        public override Version CreatedVersion => Releases.Unreleased;
+        Id = "SEC101/198";
+        Name = nameof(AzureFluidRelayLegacyCommonAnnotatedSecurityKey);
+        Label = "an Azure Fluid Relay legacy common annotated security key";
     }
+
+    protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureFluidRelay;
+
+    public override Version CreatedVersion => Releases.Unreleased;
 }

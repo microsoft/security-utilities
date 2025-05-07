@@ -3,19 +3,18 @@
 
 using System;
 
-namespace Microsoft.Security.Utilities
+namespace Microsoft.Security.Utilities;
+
+public class AzureMapsLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
 {
-    public class AzureMapsLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
+    public AzureMapsLegacyCommonAnnotatedSecurityKey() : base()
     {
-        public AzureMapsLegacyCommonAnnotatedSecurityKey() : base()
-        {
-            Id = "SEC101/203";
-            Name = nameof(AzureMapsLegacyCommonAnnotatedSecurityKey);
-            Label = "an Azure Maps legacy common annotated security key";
-        }
-
-        protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureMaps;
-
-        public override Version CreatedVersion => Releases.Unreleased;
+        Id = "SEC101/203";
+        Name = nameof(AzureMapsLegacyCommonAnnotatedSecurityKey);
+        Label = "an Azure Maps legacy common annotated security key";
     }
+
+    protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureMaps;
+
+    public override Version CreatedVersion => Releases.Unreleased;
 }
