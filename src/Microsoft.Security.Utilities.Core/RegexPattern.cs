@@ -58,7 +58,6 @@ public class RegexPattern
 #pragma warning restore CS8618
 
     [DataMember(Order = 8)]
-
     public virtual Version CreatedVersion
     {
         get
