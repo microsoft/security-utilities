@@ -27,6 +27,19 @@ namespace Microsoft.Security.Utilities
         };
 
         [TestMethod]
+        public void WellKnownRegexPatterns_AllRulesProvideCreatedVersion()
+        {
+            using var assertionScope = new AssertionScope();
+
+            var patterns = GetAllPatterns();
+            foreach (RegexPattern pattern in patterns)
+            {
+                bool result = pattern.CreatedVersion == null;
+                result.Should().BeFalse(because: $"pattern '{pattern.GetType().Name}' should declare an explicit 'CreatedVersion'");
+            }
+        }
+
+        [TestMethod]
         public void WellKnownRegexPatterns_AllRuleIdsAndNamesAreUnique()
         {
             using var assertionScope = new AssertionScope();
