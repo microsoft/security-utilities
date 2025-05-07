@@ -20,8 +20,6 @@ namespace Microsoft.Security.Utilities
 
         public override Version CreatedVersion => Releases.Version_01_04_02;
 
-        public override Version LastUpdatedVersion => Releases.Version_01_04_02;
-
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
             if ((match.Length == 37 && match[3] == '7') || (match.Length == 40 && match[3] == '8'))

@@ -20,8 +20,6 @@ namespace Microsoft.Security.Utilities
 
         public override Version CreatedVersion => Releases.Version_01_04_02;
 
-        public override Version LastUpdatedVersion => Releases.Version_01_04_02;
-
         public override bool EncodeForUrl => true;
 
         override public uint KeyLength => 39;

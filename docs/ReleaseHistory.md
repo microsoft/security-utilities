@@ -16,6 +16,7 @@
 - BRK, NEW: `SecretMasker.MaskSecrets` and `ISecretMasker.DetectSecrets` now accept an `Action<Detection>` callback (with a default value of `null`) to receive detections that result from the operation. This is binary-breaking only for `SecretMasker` callers and source-breaking as well for `ISecretMasker` implementations.
 - BRK: `Detection` is now sealed and immutable. All property setters and the copy constructor are removed.
 - BRK: `Detection`  no longer overrides `Equals` and `GetHashCode` nor implements `IEquatable<Detection>`. `Detection.Equals` and `Detection.GetHashCode` will therefore now be based on reference equality.
+- NEW: Add `RegexPattern.CreatedVersion` and `RegexPattern.LastUpdatedVersion` to track version of rule introduction and last update to rule logic. This change has the result of emitting this information to the generated rules JSON metadata files.
 - PRF: Fewer intermediate allocations are performed by `SecretMasker.MaskSecrets`.
 
 # 1.17.0 - 04/03/2025
@@ -240,7 +241,6 @@
 - NEW: Implement `IdentifiableSecrets.ComputeDerivedSymmetricKey` to generate identifiable derived keys from arbitrary identifiable secrets.
 
 ## 1.4.14 - 04/16/2024
-
 ## 1.4.13 - 04/09/2024
 
 ## 1.4.12 - 04/09/2024

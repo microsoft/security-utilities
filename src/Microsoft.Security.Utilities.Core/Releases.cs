@@ -1,9 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 
 namespace Microsoft.Security.Utilities;
 
+/// <summary>
+/// This class contains the version numbers of the library releases. Prior to
+/// version 1.4.15, we did not properly maintain change tracking in our release
+/// history and we have not back-filled release notes for all code changes. We
+/// have added an explicit release version for every historical version where a
+/// rule was introduced. And so we have release here for version 1.4.11 (because
+/// SEC101/AadClientAppLegacyCredentials was added in this version) but we do
+/// not have an entry for 1.4.14 (because no new rules were added in this
+/// version).
+/// </summary>
 internal static class Releases
 {
     // Current
