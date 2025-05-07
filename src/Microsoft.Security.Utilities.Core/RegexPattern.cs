@@ -59,7 +59,13 @@ public class RegexPattern
 
     [DataMember(Order = 8)]
 
-    public virtual Version CreatedVersion { get; } = new Version();
+    public virtual Version CreatedVersion
+    {
+        get
+        {
+            throw new NotImplementedException();
+        }
+    }
 
     [DataMember(Order = 9)]
     public virtual Version? LastUpdatedVersion => CreatedVersion;
