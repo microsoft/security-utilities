@@ -32,6 +32,11 @@ partial class CompiledHighPerformancePattern
     /*lang=regex*/ private const string RawRegex5 = """^[a-zA-Z0-9+/]{33}.{4}[A-P][a-zA-Z0-9+/]{5}=""";
     /*lang=regex*/ private const string RawRegex6 = """^[a-zA-Z0-9+/]{76}.{4}[a-zA-Z0-9+/]{5}[AQgw]==""";
     /*lang=regex*/ private const string RawRegex7 = """^[a-zA-Z0-9+/]{42}.{4}[A-D][a-zA-Z0-9+/]{5}""";
+    /*lang=regex*/ private const string RawRegex8 = """^.{3}[a-z2-7]{43}""";
+    /*lang=regex*/ private const string RawRegex9 = """^.{3}[A-Z2-7]{43}""";
+    /*lang=regex*/ private const string RawRegex10 = """^.{4}[0-9a-f\-]{32,34}""";
+    /*lang=regex*/ private const string RawRegex11 = """^.{4}[a-zA-Z0-9]{36}""";
+    /*lang=regex*/ private const string RawRegex12 = """^secret_scanning_.{4}fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{5}""";
 
     private static readonly Regex Regex0 = GetRegex0();
     private static readonly Regex Regex1 = GetRegex1();
@@ -41,6 +46,11 @@ partial class CompiledHighPerformancePattern
     private static readonly Regex Regex5 = GetRegex5();
     private static readonly Regex Regex6 = GetRegex6();
     private static readonly Regex Regex7 = GetRegex7();
+    private static readonly Regex Regex8 = GetRegex8();
+    private static readonly Regex Regex9 = GetRegex9();
+    private static readonly Regex Regex10 = GetRegex10();
+    private static readonly Regex Regex11 = GetRegex11();
+    private static readonly Regex Regex12 = GetRegex12();
 
     private static readonly CompiledHighPerformancePattern[] s_patterns = [
         new("+ABa", 76, 88, 88, Regex6),
@@ -52,6 +62,7 @@ partial class CompiledHighPerformancePattern
         new("+ASt", 76, 88, 88, Regex6),
         new("7Q~", 3, 37, 37, Regex1),
         new("8Q~", 3, 40, 40, Regex2),
+        new("ab85", 16, 55, 55, Regex12),
         new("ACDb", 76, 88, 88, Regex6),
         new("AIoT", 33, 44, 44, Regex5),
         new("APIM", 76, 88, 88, Regex6),
@@ -59,7 +70,11 @@ partial class CompiledHighPerformancePattern
         new("AZEG", 33, 44, 44, Regex5),
         new("AzFu", 44, 56, 56, Regex3),
         new("AzSe", 42, 52, 52, Regex4),
+        new("dapi", 0, 36, 38, Regex10),
         new("JQQJ", 52, 84, 88, Regex0),
+        new("npm_", 0, 40, 40, Regex11),
+        new("oy2", 0, 46, 46, Regex8),
+        new("OY2", 0, 46, 46, Regex9),
     ];
 
     private static readonly Dictionary<string, CompiledHighPerformancePattern> s_patternsBySignature = s_patterns.ToDictionary(p => p.Signature);
@@ -73,6 +88,11 @@ partial class CompiledHighPerformancePattern
     [GeneratedRegex(RawRegex5, Options)] private static partial Regex GetRegex5();
     [GeneratedRegex(RawRegex6, Options)] private static partial Regex GetRegex6();
     [GeneratedRegex(RawRegex7, Options)] private static partial Regex GetRegex7();
+    [GeneratedRegex(RawRegex8, Options)] private static partial Regex GetRegex8();
+    [GeneratedRegex(RawRegex9, Options)] private static partial Regex GetRegex9();
+    [GeneratedRegex(RawRegex10, Options)] private static partial Regex GetRegex10();
+    [GeneratedRegex(RawRegex11, Options)] private static partial Regex GetRegex11();
+    [GeneratedRegex(RawRegex12, Options)] private static partial Regex GetRegex12();
 #else
     private static Regex GetRegex0() => new(RawRegex0, Options);
     private static Regex GetRegex1() => new(RawRegex1, Options);
@@ -82,6 +102,11 @@ partial class CompiledHighPerformancePattern
     private static Regex GetRegex5() => new(RawRegex5, Options);
     private static Regex GetRegex6() => new(RawRegex6, Options);
     private static Regex GetRegex7() => new(RawRegex7, Options);
+    private static Regex GetRegex8() => new(RawRegex8, Options);
+    private static Regex GetRegex9() => new(RawRegex9, Options);
+    private static Regex GetRegex10() => new(RawRegex10, Options);
+    private static Regex GetRegex11() => new(RawRegex11, Options);
+    private static Regex GetRegex12() => new(RawRegex12, Options);
 #endif
 }
 

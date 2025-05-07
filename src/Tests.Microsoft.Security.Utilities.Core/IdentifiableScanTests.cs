@@ -23,8 +23,8 @@ namespace Tests.Microsoft.Security.Utilities.Core
             var examples = cask.GenerateTruePositiveExamples().ToList();
 
             using var masker =
-                new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
-                                     generateCorrelatingIds: false);
+                new SecretMasker(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
+                                 generateCorrelatingIds: false);
 
             foreach (string example in examples)
             {
@@ -52,8 +52,8 @@ namespace Tests.Microsoft.Security.Utilities.Core
 
             using var assertionScope = new AssertionScope();
 
-            using var masker = new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
-                                              generateCorrelatingIds: false);
+            using var masker = new SecretMasker(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
+                                                generateCorrelatingIds: false);
 
             foreach (var pattern in WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys)
             {
@@ -93,25 +93,30 @@ namespace Tests.Microsoft.Security.Utilities.Core
         {
             using var assertionScope = new AssertionScope();
 
-            using var standardMasker =
-                new SecretMasker(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
-                                 generateCorrelatingIds: false);
-
-            using var highPerformanceMasker =
-                new IdentifiableScan(WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels,
-                                     generateCorrelatingIds: false);
-
-            foreach (var pattern in WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys)
+            foreach (bool generateCorrelatingIds in new[] { true, false })
             {
-                foreach (string example in pattern.GenerateTruePositiveExamples())
+                using var standardMasker =
+                    new SecretMasker(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
+                                     generateCorrelatingIds);
+
+                using var highPerformanceMasker =
+                    new SecretMasker(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
+                                     generateCorrelatingIds);
+
+                standardMasker.DisableHighPerformanceScannerForTests();
+
+                foreach (var pattern in WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys)
                 {
-                    var standardDetections = standardMasker.DetectSecrets(example).ToList();
+                    foreach (string example in pattern.GenerateTruePositiveExamples())
+                    {
+                        var standardDetections = standardMasker.DetectSecrets(example).ToList();
 
-                    var highPerformanceDetections = highPerformanceMasker.DetectSecrets(example).ToList();
+                        var highPerformanceDetections = highPerformanceMasker.DetectSecrets(example).ToList();
 
-                    highPerformanceDetections.Should().BeEquivalentTo(standardDetections,
-                        options => options.WithStrictOrdering(),
-                        because: $"the high-performance scanner should match the standard scanner for '{example}'");
+                        highPerformanceDetections.Should().BeEquivalentTo(standardDetections,
+                            options => options.WithStrictOrdering(),
+                            because: $"the high-performance scanner should match the standard scanner for '{example}'");
+                    }
                 }
             }
         }

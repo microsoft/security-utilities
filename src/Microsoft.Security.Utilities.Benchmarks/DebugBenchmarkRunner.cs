@@ -27,6 +27,15 @@ internal static class DebugBenchmarkRunner
             object instance = Activator.CreateInstance(type)!;
             foreach (MethodInfo method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance))
             {
+                if (method.IsDefined(typeof(GlobalSetupAttribute)))
+                {
+                    Console.WriteLine($"{type.Name}.{method.Name}");
+                    method.Invoke(instance, null);
+                }
+            }
+
+            foreach (MethodInfo method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance))
+            {
                 if (method.IsDefined(typeof(BenchmarkAttribute)))
                 {
                     Console.Write($"{type.Name}.{method.Name}");
