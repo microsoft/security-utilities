@@ -33,6 +33,18 @@ public LegacyCommonAnnotatedSecurityAccessKey()
         ];
 #endif
 
+        public override Tuple<string, string> GetMatchIdAndName(string match)
+        {
+            if (!LegacyCommonAnnotatedSecurityKey.TryCreate(match, out var legacyCask))
+            {
+                return null;
+            }
+
+            return legacyCask.ProviderFixedSignature == ProviderSignature
+                ? base.GetMatchIdAndName(match)
+                : null;
+        }
+
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             byte[] providerDataBytes = Convert.FromBase64String(ProviderData);

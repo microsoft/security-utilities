@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
+
 namespace Microsoft.Security.Utilities
 {
     public class AzureEventGridLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
@@ -13,5 +15,7 @@ namespace Microsoft.Security.Utilities
         }
 
         protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureEventGrid;
+
+        public override Version CreatedVersion => Releases.Unreleased;
     }
 }

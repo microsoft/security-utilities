@@ -22,6 +22,14 @@ public class HighPerformanceScannerTests
     }
 
     [TestMethod]
+    public void HighPerformanceScanner_NoPatterns()
+    {
+        var scanner = new HighPerformanceScanner();
+        List<HighPerformanceDetection> detections = scanner.Scan(input: "Hello");
+        detections.Should().BeEmpty();
+    }
+
+    [TestMethod]
     public void HighPerformanceScanner_OverlappingMatches()
     {
         /* lang=regex */

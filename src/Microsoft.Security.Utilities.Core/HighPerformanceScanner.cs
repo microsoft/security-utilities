@@ -29,24 +29,44 @@ namespace Microsoft.Security.Utilities;
 internal sealed class HighPerformanceScanner
 {
 #if NET9_0_OR_GREATER
-    private SearchValues<string> _signatures;
+    private SearchValues<string>? _signatures;
 #elif NET8_0_OR_GREATER
-    private SearchValues<char> _signatureStarts;
+    private SearchValues<char>? _signatureStarts;
 #else
-    private char[] _signatureStarts;
+    private char[]? _signatureStarts;
 #endif
-    private Dictionary<int, CompiledHighPerformancePattern> _patternsByPackedSignature;
 
-    public HighPerformanceScanner(IEnumerable<CompiledHighPerformancePattern> patterns)
+    private Dictionary<int, CompiledHighPerformancePattern> _patternsByPackedSignature = new();
+
+    public HighPerformanceScanner(IEnumerable<CompiledHighPerformancePattern>? patterns = null)
     {
+        if (patterns != null)
+        {
+            AddPatterns(patterns);
+        }
+    }
+
+    public void AddPatterns(IEnumerable<CompiledHighPerformancePattern> patterns)
+    {
+        if (!patterns.Any())
+        {
+            return;
+        }
+
+        foreach (CompiledHighPerformancePattern newPattern in patterns)
+        {
+            Debug.Assert(!_patternsByPackedSignature.TryGetValue(newPattern.PackedSignature, out var p) || p == newPattern, "Multiple compiled high-performance patterns with same packed signature.");
+            _patternsByPackedSignature[newPattern.PackedSignature] = newPattern;
+        }
+
+        IEnumerable<CompiledHighPerformancePattern> allPatterns = _patternsByPackedSignature.Values;
 #if NET9_0_OR_GREATER
-        _signatures = SearchValues.Create(patterns.Select(p => p.Signature).ToArray(), StringComparison.Ordinal);
+        _signatures = SearchValues.Create(allPatterns.Select(p => p.Signature).ToArray(), StringComparison.Ordinal);
 #elif NET8_0_OR_GREATER
-        _signatureStarts = SearchValues.Create(patterns.Select(p => p.Signature[0]).Distinct().ToArray());
+        _signatureStarts = SearchValues.Create(allPatterns.Select(p => p.Signature[0]).Distinct().ToArray());
 #else
-        _signatureStarts = patterns.Select(p => p.Signature[0]).Distinct().ToArray();
+        _signatureStarts = allPatterns.Select(p => p.Signature[0]).Distinct().ToArray();
 #endif
-        _patternsByPackedSignature = patterns.ToDictionary(p => p.PackedSignature);
     }
 
     /// <summary>
@@ -54,7 +74,7 @@ internal sealed class HighPerformanceScanner
     /// </summary>
     public List<HighPerformanceDetection> Scan(StringInput input)
     {
-        if (input.Length == 0)
+        if (input.Length == 0 || _patternsByPackedSignature.Count == 0)
         {
             return [];
         }
@@ -139,6 +159,7 @@ internal sealed class HighPerformanceScanner
     private CompiledHighPerformancePattern? FindNextSignature(StringInput input, ref int index)
     {
 #if NET9_0_OR_GREATER
+        Debug.Assert(_signatures != null, "We should not scan for signatures when no patterns have been added.");
         // .NET 9: This API is *highly* optimized when searching for small ASCII
         //  substrings as we do. It uses the 'Teddy' algorithm:
         //  https://github.com/dotnet/runtime/blob/c1fe87ad88532f0e80de3739fe7b215e6e1f8b90/src/libraries/System.Private.CoreLib/src/System/SearchValues/Strings/AsciiStringSearchValuesTeddyBase.cs#L17
@@ -152,6 +173,7 @@ internal sealed class HighPerformanceScanner
         CompiledHighPerformancePattern? pattern = GetPatternForSignature(input, index);
         return pattern;
 #else
+        Debug.Assert(_signatureStarts != null, "We should not scan for signatures when no patterns have been added.");
         while (true)
         {
 #if NET8_0_OR_GREATER

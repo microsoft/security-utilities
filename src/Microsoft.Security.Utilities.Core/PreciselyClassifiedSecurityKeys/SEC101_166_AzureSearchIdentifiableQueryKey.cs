@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -16,6 +17,8 @@ namespace Microsoft.Security.Utilities
             ChecksumSeeds = new[] { IdentifiableMetadata.AzureSearchQueryKeyChecksumSeed };
             Pattern = @$"{WellKnownRegexPatterns.PrefixAllBase64}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{42}}{Regex.Escape(Signature)}[A-D][{WellKnownRegexPatterns.Base62}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}";
         }
+
+        public override Version CreatedVersion => Releases.Version_01_04_02;
 
         public override bool EncodeForUrl => true;
 

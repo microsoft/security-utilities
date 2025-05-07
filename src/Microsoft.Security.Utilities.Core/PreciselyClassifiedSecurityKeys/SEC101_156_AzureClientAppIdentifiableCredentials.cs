@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System;
 using System.Collections.Generic;
 
@@ -16,6 +17,8 @@ namespace Microsoft.Security.Utilities
             Pattern = $"{WellKnownRegexPatterns.PrefixUrlUnreserved}(?P<refine>[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{3}}(7|8)Q~[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{31,34}}){WellKnownRegexPatterns.SuffixUrlUnreserved}";
             Signatures = new HashSet<string>(new[] { "8Q~", "7Q~" });
         }
+
+        public override Version CreatedVersion => Releases.Version_01_04_02;
 
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {

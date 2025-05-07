@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Microsoft.Security.Utilities
 {
-    public class NuGetApiKey : RegexPattern
+    public class NuGetApiKey : RegexPattern, IHighPerformanceScannableKey
     {
         private const string Base32 = "abcdefghijklmnopqrstuvwxyz234567";
 
@@ -23,6 +23,8 @@ namespace Microsoft.Security.Utilities
             Label = "a NuGet API key";
         }
 
+        public override Version CreatedVersion => Releases.Version_01_04_02;
+
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
             if (match.Any(char.IsLower) && match.Any(char.IsUpper))
@@ -35,6 +37,22 @@ namespace Microsoft.Security.Utilities
 
             return base.GetMatchIdAndName(match);
         }
+
+#if HIGH_PERFORMANCE_CODEGEN
+        IEnumerable<HighPerformancePattern> IHighPerformanceScannableKey.HighPerformancePatterns => [
+            new(signature: "oy2",
+                scopedRegex: @"^.{3}[a-z2-7]{43}",
+                signaturePrefixLength: 0,
+                minMatchLength: 46,
+                maxMatchLength: 46),
+            new(signature: "OY2",
+                scopedRegex: @"^.{3}[A-Z2-7]{43}",
+                signaturePrefixLength: 0,
+                minMatchLength: 46,
+                maxMatchLength: 46
+            ),
+        ];
+#endif
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {

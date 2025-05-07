@@ -14,5 +14,7 @@ namespace Microsoft.Security.Utilities
             Label = "an Azure Event Grid legacy identifiable access key";
             ChecksumSeeds = [0x53656e6452656376];
         }
+
+        public override Version CreatedVersion => Releases.Version_01_04_20;
     }
 }

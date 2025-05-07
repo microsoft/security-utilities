@@ -16,6 +16,8 @@ namespace Microsoft.Security.Utilities
             Pattern = "(?i)\\.documents\\.azure\\.com.+(?:^|[^0-9a-z\\/+])(?P<refine>[0-9a-z\\/+]{86}==)(?:[^=]|$)";
         }
 
+        public override Version CreatedVersion => Releases.Version_01_04_10;
+
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
             if (IdentifiableMetadata.IsAzureCosmosDBIdentifiableKey(match))

@@ -22,6 +22,8 @@ public sealed class UrlCredentials : RegexPattern
         });
     }
 
+    override public Version CreatedVersion => Releases.Version_01_04_02;
+
     public override Tuple<string, string> GetMatchIdAndName(string match)
     {
         return base.GetMatchIdAndName(match);

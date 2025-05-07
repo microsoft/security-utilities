@@ -9,7 +9,7 @@ namespace Microsoft.Security.Utilities
     public class UnclassifiedLegacyCommonAnnotatedSecurityKey : RegexPattern, IHighPerformanceScannableKey
     {
         // NOTE: Use 4 character signature for high-performance scanner compatibility.
-        private const string Signature = "JQQJ";
+        public const string Signature = "JQQJ";
 
         public UnclassifiedLegacyCommonAnnotatedSecurityKey()
         {
@@ -30,6 +30,7 @@ namespace Microsoft.Security.Utilities
                 maxMatchLength: 88),
         ];
 #endif
+
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
             if (!LegacyCommonAnnotatedSecurityKey.TryCreate(match, out var legacyCask))
@@ -44,6 +45,8 @@ namespace Microsoft.Security.Utilities
 
             return base.GetMatchIdAndName(match);
         }
+
+        public override Version CreatedVersion => Releases.Version_01_04_24;
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {

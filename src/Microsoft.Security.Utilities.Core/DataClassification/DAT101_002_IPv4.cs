@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+using System;
 using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
@@ -13,6 +14,8 @@ namespace Microsoft.Security.Utilities
             Label = "an IPv4 address";
             Pattern = @"^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$";
         }
+
+        public override Version CreatedVersion => Releases.Version_01_14_00;
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
