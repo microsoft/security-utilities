@@ -60,6 +60,7 @@ public static class WellKnownRegexPatterns
                    new AzureDatabricksPat(),
                    new AzureEventGridIdentifiableKey(),
                    new AzureAppConfigurationLegacyCommonAnnotatedSecurityKey(),
+                   new AzureFluidRelayLegacyCommonAnnotatedSecurityKey(),
                    new AzureEventGridLegacyCommonAnnotatedSecurityKey(),
                    new AzureDevOpsLegacyCommonAnnotatedSecurityKeyPat());
 

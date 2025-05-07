@@ -302,6 +302,18 @@
     "LastUpdatedVersion": "1.18.0"
   },
   {
+    "Id": "SEC101/198",
+    "Name": "AzureFluidRelayLegacyCommonAnnotatedSecurityKey",
+    "Label": "an Azure Fluid Relay legacy common annotated security key",
+    "DetectionMetadata": "Identifiable",
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAAAZFR[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
+    "Signatures": [
+      "JQQJ"
+    ],
+    "CreatedVersion": "1.18.0",
+    "LastUpdatedVersion": "1.18.0"
+  },
+  {
     "Id": "SEC101/199",
     "Name": "AzureEventGridLegacyCommonAnnotatedSecurityKey",
     "Label": "an Azure Event Grid legacy common annotated security key",

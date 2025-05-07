@@ -10,15 +10,22 @@ public static class LegacyCaskProviderSignatures
     public static ISet<string> All = new HashSet<string>
     {
         AzureAppConfiguration,
+        AzureFluidRelay,
         AzureEventGrid,
         AzureDevOps,
     };
 
     /// <summary>
-    /// The Azure App COnfiguration legacy CASK provider signature, as used by
-    /// 'SEC101/197.AzureAppConfigurationCredentialsLegacyCommonAnnotatedSecurityKey'.
+    /// The Azure App Configuration legacy CASK provider signature, as used by
+    /// 'SEC101/197.AzureAppConfigurationLegacyCommonAnnotatedSecurityKey'.
     /// </summary>
     public const string AzureAppConfiguration = "AZAC";
+
+    /// <summary>
+    /// The Azure Fluid Relaty legacy CASK provider signature, as used by
+    /// 'SEC101/198.AzureFluidRelayLegacyCommonAnnotatedSecurityKey'.
+    /// </summary>
+    public const string AzureFluidRelay = "AZFR";
 
     /// <summary>
     /// The Azure Event Grid legacy CASK provider signature, as used by
