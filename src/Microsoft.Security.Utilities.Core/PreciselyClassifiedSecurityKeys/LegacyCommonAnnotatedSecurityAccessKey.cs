@@ -49,6 +49,8 @@ public LegacyCommonAnnotatedSecurityAccessKey()
         {
             byte[] providerDataBytes = Convert.FromBase64String(ProviderData);
 
+            bool customerManagedKey = char.IsUpper(ProviderSignature[0]);
+
             for (int i = 0; i < 62; i++)
             {
                 char testChar = CustomAlphabetEncoder.DefaultBase62Alphabet[i];
@@ -58,7 +60,7 @@ public LegacyCommonAnnotatedSecurityAccessKey()
                 key = IdentifiableSecrets.GenerateCommonAnnotatedTestKey(randomBytes: null,
                                                                          IdentifiableSecrets.VersionTwoChecksumSeed,
                                                                          ProviderSignature,
-                                                                         customerManagedKey: true,
+                                                                         customerManagedKey,
                                                                          platformReserved: null,
                                                                          providerReserved: providerDataBytes,
                                                                          longForm: false,

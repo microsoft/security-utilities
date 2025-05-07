@@ -9,11 +9,18 @@ public static class LegacyCaskProviderSignatures
 {
     public static ISet<string> All = new HashSet<string>
     {
+        SqlServerPrivate,
         AzureAppConfiguration,
         AzureFluidRelay,
         AzureEventGrid,
         AzureDevOps,
     };
+
+    /// <summary>
+    /// The private SQL Server legacy CASK provider signature, as used by
+    /// 'SEC101/177.SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey'.
+    /// </summary>
+    public const string SqlServerPrivate = "msql";
 
     /// <summary>
     /// The Azure App Configuration legacy CASK provider signature, as used by

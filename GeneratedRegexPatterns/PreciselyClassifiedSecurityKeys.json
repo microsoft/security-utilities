@@ -1,5 +1,17 @@
 [
   {
+    "Id": "SEC101/177",
+    "Name": "SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey",
+    "Label": "a SQL private default cloud SA legacy common annotated security key",
+    "DetectionMetadata": "Identifiable",
+    "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAAmsql[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
+    "Signatures": [
+      "JQQJ"
+    ],
+    "CreatedVersion": "1.18.0",
+    "LastUpdatedVersion": "1.18.0"
+  },
+  {
     "Id": "SEC101/200",
     "Name": "UnclassifiedLegacyCommonAnnotatedSecurityKey",
     "Label": "an unclassified legacy common annotated security key",

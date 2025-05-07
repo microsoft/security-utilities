@@ -31,7 +31,8 @@ public static class WellKnownRegexPatterns
                    new Unclassified16ByteHexadecimalString());
 
     public static IReadOnlyList<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } =
-        CreateList(new UnclassifiedLegacyCommonAnnotatedSecurityKey(),
+        CreateList(new SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey(),
+                   new UnclassifiedLegacyCommonAnnotatedSecurityKey(),
                    new AadClientAppIdentifiableCredentials(),
                    new AzureFunctionIdentifiableKey(),
                    new AzureSearchIdentifiableQueryKey(),
