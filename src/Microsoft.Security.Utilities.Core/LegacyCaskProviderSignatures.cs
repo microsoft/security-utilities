@@ -15,6 +15,7 @@ public static class LegacyCaskProviderSignatures
         AzureEventGrid,
         AzureDevOps,
         AzureMixedReality,
+        AzureMaps,
     };
 
     /// <summary>
@@ -30,7 +31,7 @@ public static class LegacyCaskProviderSignatures
     public const string AzureAppConfiguration = "AZAC";
 
     /// <summary>
-    /// The Azure Fluid Relaty legacy CASK provider signature, as used by
+    /// The Azure Fluid Relay legacy CASK provider signature, as used by
     /// 'SEC101/198.AzureFluidRelayLegacyCommonAnnotatedSecurityKey'.
     /// </summary>
     public const string AzureFluidRelay = "AZFR";
@@ -42,14 +43,20 @@ public static class LegacyCaskProviderSignatures
     public const string AzureEventGrid = "AZEG";
 
     /// <summary>
-    /// The Azure DevOps legacy CASK provider signature, as used by
     /// 'SEC101/201.AzureDevOpsLegacyCommonAnnotatedSecurityKeyPat'.
+    /// The Azure DevOps legacy CASK provider signature, as used by
     /// </summary>
     public const string AzureDevOps = "AZDO";
 
     /// <summary>
-    /// The Azure Mixed Reality legacy CASK provider signature, as used by
     /// 'SEC101/202.AzureMixedRealityLegacyCommonAnnotatedSecurityKey'.
+    /// The Azure Mixed Reality legacy CASK provider signature, as used by
     /// </summary>
     public const string AzureMixedReality = "AZMR";
+    
+    /// <summary>
+    /// The Azure Maps legacy CASK provider signature, as used by
+    /// 'SEC101/203.AzureMapsLegacyCommonAnnotatedSecurityKey'.
+    // </summary>
+    public const string AzureMaps= "AZMP";
 }
