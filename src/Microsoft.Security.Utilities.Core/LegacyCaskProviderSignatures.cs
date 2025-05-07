@@ -9,19 +9,26 @@ public static class LegacyCaskProviderSignatures
 {
     public static ISet<string> All = new HashSet<string>
     {
-        AzureDevOps,
+        AzureAppConfiguration,
         AzureEventGrid,
+        AzureDevOps,
     };
 
     /// <summary>
-    /// The Azure DevOps legacy CASK provider signature, as used by
-    /// 'SEC101/201.AzureEventGridLegacyCommonAnnotatedSecurityKey'.
+    /// The Azure App COnfiguration legacy CASK provider signature, as used by
+    /// 'SEC101/197.AzureAppConfigurationCredentialsLegacyCommonAnnotatedSecurityKey'.
     /// </summary>
-    public const string AzureDevOps = "AZDO";
+    public const string AzureAppConfiguration = "AZAC";
 
     /// <summary>
     /// The Azure Event Grid legacy CASK provider signature, as used by
     /// 'SEC101/199.AzureEventGridLegacyCommonAnnotatedSecurityKey'.
     /// </summary>
     public const string AzureEventGrid = "AZEG";
+
+    /// <summary>
+    /// The Azure DevOps legacy CASK provider signature, as used by
+    /// 'SEC101/201.AzureEventGridLegacyCommonAnnotatedSecurityKey'.
+    /// </summary>
+    public const string AzureDevOps = "AZDO";
 }
