@@ -22,7 +22,7 @@ namespace Microsoft.Security.Utilities
 
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
-            if (IdentifiableMetadata.IsAzureCosmosDBIdentifiableKey(match))
+            if (IdentifiableMetadata.IsAzureServiceBusIdentifiableKey(match))
             {
                 return null;
             }

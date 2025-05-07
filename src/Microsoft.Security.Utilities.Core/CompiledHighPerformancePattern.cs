@@ -194,7 +194,7 @@ internal sealed partial class CompiledHighPerformancePattern
         // Key = signature, Value = code to construct its CompiledHighPerformancePattern.
         Dictionary<string, string> patterns = [];
 
-        foreach (IHighPerformanceScannableKey generalPattern in WellKnownRegexPatterns.HighConfidenceMicrosoftSecurityModels.OfType<IHighPerformanceScannableKey>())
+        foreach (IHighPerformanceScannableKey generalPattern in WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys.OfType<IHighPerformanceScannableKey>())
         {
             foreach (HighPerformancePattern pattern in generalPattern.HighPerformancePatterns)
             {

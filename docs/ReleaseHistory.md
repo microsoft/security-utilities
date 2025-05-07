@@ -16,9 +16,17 @@
 - BRK, NEW: `SecretMasker.MaskSecrets` and `ISecretMasker.DetectSecrets` now accept an `Action<Detection>` callback (with a default value of `null`) to receive detections that result from the operation. This is binary-breaking only for `SecretMasker` callers and source-breaking as well for `ISecretMasker` implementations.
 - BRK: `Detection` is now sealed and immutable. All property setters and the copy constructor are removed.
 - BRK: `Detection`  no longer overrides `Equals` and `GetHashCode` nor implements `IEquatable<Detection>`. `Detection.Equals` and `Detection.GetHashCode` will therefore now be based on reference equality.
+- BRK, PRF: `IdentifiableScan` has been removed and its functionality has been merged into `SecretMasker` which now scans the patterns it's given as fast as possible, which will be significantly faster for identifiable key patterns.
+- BRK: `SecretMasker.Clone` has been removed.
+- BRK: `WellKnownRegexPatterns.*Iterator` methods have been removed. Use the corresponding `WellKnownPatterns.*` properties instead.
+- BRK: `WellKnownRegexPatterns.*` properties are now of stronger type`IReadOnlyList<RegexPattern>` instead of `IEnumerable<RegexPattern>`.
+- BRK: `SecretMasker.SyncObject` is now a read-only property instead of a public mutable field.
+- NEW: `SecretMasker` is now capable of finding identifiable keys without relying on delimiting characters`.
+- PRF: Add high-performance scanning for additional patterns: `SEC101/031.NuGetApiKey`, `SEC101/050.NpmAuthorKey`, `SEC101/110.AzureDatabricksPat`, and `SEC101/565.SecretScanningSampleToken`.
 - BRK: Delete obsoleted `Azure32ByteIdentifiableKeys` and `Azure64ByteIdentifiableKeys` classes. All analysis in these classes is rendered as explicit checks elsewhere.
 - NEW: Add `RegexPattern.CreatedVersion` and `RegexPattern.LastUpdatedVersion` to track version of rule introduction and last update to rule logic. This change has the result of emitting this information to the generated rules JSON metadata files.
 - PRF: Fewer intermediate allocations are performed by `SecretMasker.MaskSecrets`.
+- FPS: Prevent `SEC101/105.AzureMessagingLegacyCredentials` from firing on non-legacy keys.
 
 # 1.17.0 - 04/03/2025
 - BRK: `RegexPattern.Pattern` is no longer virtual.

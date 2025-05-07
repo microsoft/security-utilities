@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -17,95 +19,65 @@ public static class WellKnownRegexPatterns
     [ThreadStatic]
     private static StringBuilder s_stringBuilder;
 
-    public static IEnumerable<RegexPattern> SecretStoreClassificationDetections { get; } = SecretStoreClassificationDetectionsIterator();
+    public static IReadOnlyList<RegexPattern> UnclassifiedPotentialSecurityKeys { get; } =
+        CreateList(new UnclassifiedJwt(),
+                   new UrlCredentials(),
+                   new LooseSasSecret(),
+                   new OAuth2BearerToken(),
+                   new Unclassified32ByteBase64String(),
+                   new Unclassified64ByteBase64String(),
+                   new AadClientAppLegacyCredentials34(),
+                   new Pkcs12CertificatePrivateKeyBundle(),
+                   new Unclassified16ByteHexadecimalString());
 
-    public static IEnumerable<RegexPattern> SecretStoreClassificationDetectionsIterator()
-    {
-        foreach (RegexPattern detection in HighConfidenceSecurityModelsIterator())
-        {
-            yield return detection;
-        }
+    public static IReadOnlyList<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } =
+        CreateList(new UnclassifiedLegacyCommonAnnotatedSecurityKey(),
+                   new AadClientAppIdentifiableCredentials(),
+                   new AzureFunctionIdentifiableKey(),
+                   new AzureSearchIdentifiableQueryKey(),
+                   new AzureSearchIdentifiableAdminKey(),
+                   new AzureRelayIdentifiableKey(),
+                   new AzureEventHubIdentifiableKey(),
+                   new AzureServiceBusIdentifiableKey(),
+                   new AzureIotHubIdentifiableKey(),
+                   new AzureIotDeviceIdentifiableKey(),
+                   new AzureIotDeviceProvisioningIdentifiableKey(),
+                   new AzureStorageAccountIdentifiableKey(),
+                   new AzureCosmosDBIdentifiableKey(),
+                   new AzureBatchIdentifiableKey(),
+                   new AzureMLWebServiceClassicIdentifiableKey(),
+                   new AzureApimIdentifiableDirectManagementKey(),
+                   new AzureApimIdentifiableSubscriptionKey(),
+                   new AzureApimIdentifiableGatewayKey(),
+                   new AzureApimIdentifiableRepositoryKey(),
+                   new AzureCacheForRedisIdentifiableKey(),
+                   new AzureContainerRegistryIdentifiableKey(),
+                   new NuGetApiKey(),
+                   new AdoLegacyPat(),
+                   new AzureCosmosDBLegacyCredentials(),
+                   new AzureStorageAccountLegacyCredentials(),
+                   new AzureMessagingLegacyCredentials(),
+                   new AzureDatabricksPat(),
+                   new AzureEventGridIdentifiableKey());
 
-        foreach (RegexPattern detection in UnclassifiedPotentialSecurityKeys)
-        {
-            yield return detection;
-        }
-    }
+    public static IReadOnlyList<RegexPattern> DataClassification { get; } =
+        CreateList(new IPv4(),
+                   new IPv6(),
+                   new Float(),
+                   new Integer(),
+                   new GuidValue());
 
-    public static IEnumerable<RegexPattern> PreciselyClassifiedSecurityKeys { get; } = HighConfidenceSecurityModelsIterator();
+    public static IReadOnlyList<RegexPattern> HighConfidenceThirdPartySecurityModels { get; } =
+        CreateList(new NpmAuthorKey(),
+                   new SecretScanningSampleToken());
 
-    public static IEnumerable<RegexPattern> HighConfidenceSecurityModelsIterator()
-    {
-        foreach (RegexPattern detection in HighConfidenceMicrosoftSecurityModels)
-        {
-            yield return detection;
-        }
+    public static IReadOnlyList<RegexPattern> PreciselyClassifiedSecurityKeys { get; } =
+        CombineLists(HighConfidenceMicrosoftSecurityModels,
+                     HighConfidenceThirdPartySecurityModels);
 
-        foreach (RegexPattern detection in HighConfidenceThirdPartySecurityModels)
-        {
-            yield return detection;
-        }
-    }
-
-    public static IEnumerable<RegexPattern> UnclassifiedPotentialSecurityKeys { get; } = new RegexPattern[]
-    {
-        new UnclassifiedJwt(),
-        new UrlCredentials(),
-        new LooseSasSecret(),
-        new OAuth2BearerToken(),
-        new Unclassified32ByteBase64String(),
-        new Unclassified64ByteBase64String(),
-        new AadClientAppLegacyCredentials34(),      // SEC101/101 legacy generated passwords.
-        new Pkcs12CertificatePrivateKeyBundle(),
-        new Unclassified16ByteHexadecimalString(),
-    };
-
-    public static IEnumerable<RegexPattern> HighConfidenceMicrosoftSecurityModels { get; } = new RegexPattern[]
-    {
-        new UnclassifiedLegacyCommonAnnotatedSecurityKey(),
-        new AadClientAppIdentifiableCredentials(),
-        new AzureFunctionIdentifiableKey(),
-        new AzureSearchIdentifiableQueryKey(),
-        new AzureSearchIdentifiableAdminKey(),
-        new AzureRelayIdentifiableKey(),
-        new AzureEventHubIdentifiableKey(),
-        new AzureServiceBusIdentifiableKey(),
-        new AzureIotHubIdentifiableKey(),
-        new AzureIotDeviceIdentifiableKey(),
-        new AzureIotDeviceProvisioningIdentifiableKey(),
-        new AzureStorageAccountIdentifiableKey(),
-        new AzureCosmosDBIdentifiableKey(),
-        new AzureBatchIdentifiableKey(),
-        new AzureMLWebServiceClassicIdentifiableKey(),
-        new AzureApimIdentifiableDirectManagementKey(),
-        new AzureApimIdentifiableSubscriptionKey(),
-        new AzureApimIdentifiableGatewayKey(),
-        new AzureApimIdentifiableRepositoryKey(),
-        new AzureCacheForRedisIdentifiableKey(),
-        new AzureContainerRegistryIdentifiableKey(),
-        new NuGetApiKey(),
-        new AdoLegacyPat(),                         // SEC101/102
-        new AzureCosmosDBLegacyCredentials(),       // SEC101/104
-        new AzureStorageAccountLegacyCredentials(), // SEC101/106
-        new AzureMessagingLegacyCredentials(),
-        new AzureDatabricksPat(),
-        new AzureEventGridIdentifiableKey(),
-    };
-
-    public static IEnumerable<RegexPattern> DataClassification { get; } = new RegexPattern[]
-    {
-        new IPv4(),
-        new IPv6(),
-        new Float(),
-        new Integer(),
-        new GuidValue(),
-    };
-
-    public static IEnumerable<RegexPattern> HighConfidenceThirdPartySecurityModels { get; } = new List<RegexPattern>
-    {
-        new NpmAuthorKey(),
-        new SecretScanningSampleToken(),
-    };
+    public static IReadOnlyList<RegexPattern> SecretStoreClassificationDetections { get; } =
+        CombineLists(PreciselyClassifiedSecurityKeys,
+                     UnclassifiedPotentialSecurityKeys);
 
     public static string RandomUrlUnreserved(int count, bool sparse = false)
     {
@@ -155,6 +127,21 @@ public static class WellKnownRegexPatterns
         string result = s_stringBuilder.ToString();
         s_stringBuilder.Length = 0;
         return result;
+    }
+
+    private static IReadOnlyList<RegexPattern> CreateList(params RegexPattern[] patterns)
+    {
+        return new ReadOnlyCollection<RegexPattern>(patterns);
+    }
+
+    private static IReadOnlyList<RegexPattern> CombineLists(params IReadOnlyList<RegexPattern>[] lists)
+    {
+        var combined = new List<RegexPattern>(lists.Sum(l => l.Count));
+        foreach (var list in lists)
+        {
+            combined.AddRange(list);
+        }
+        return combined.AsReadOnly();
     }
 
     // These test character sets, by design, do not follow their strict definition.

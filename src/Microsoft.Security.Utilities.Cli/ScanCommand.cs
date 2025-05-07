@@ -36,7 +36,7 @@ namespace Microsoft.Security.Utilities.Cli
         {
             string input = options.Input;
 
-            var scan = new IdentifiableScan(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys, generateCorrelatingIds: true);
+            var scan = new SecretMasker(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys, generateCorrelatingIds: true);
 
             string directory = Path.GetDirectoryName(input);
             string fileSpecifier = Path.GetFileName(input);
@@ -69,7 +69,7 @@ namespace Microsoft.Security.Utilities.Cli
 
         internal int ProcessInputString(ScanOptions options)
         {
-            var scan = new IdentifiableScan(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys, generateCorrelatingIds: true);
+            var scan = new SecretMasker(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys, generateCorrelatingIds: true);
 
             bool foundAtLeastOne = false;
 
