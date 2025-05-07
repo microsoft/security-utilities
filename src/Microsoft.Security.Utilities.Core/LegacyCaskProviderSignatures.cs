@@ -14,6 +14,7 @@ public static class LegacyCaskProviderSignatures
         AzureFluidRelay,
         AzureEventGrid,
         AzureDevOps,
+        AzureMixedReality,
     };
 
     /// <summary>
@@ -42,7 +43,13 @@ public static class LegacyCaskProviderSignatures
 
     /// <summary>
     /// The Azure DevOps legacy CASK provider signature, as used by
-    /// 'SEC101/201.AzureEventGridLegacyCommonAnnotatedSecurityKey'.
+    /// 'SEC101/201.AzureDevOpsLegacyCommonAnnotatedSecurityKeyPat'.
     /// </summary>
     public const string AzureDevOps = "AZDO";
+
+    /// <summary>
+    /// The Azure Mixed Reality legacy CASK provider signature, as used by
+    /// 'SEC101/202.AzureMixedRealityLegacyCommonAnnotatedSecurityKey'.
+    /// </summary>
+    public const string AzureMixedReality = "AZMR";
 }
