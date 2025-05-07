@@ -19,7 +19,7 @@ namespace Microsoft.Security.Utilities;
 /// </remarks>
 internal static class Releases
 {
-    public static Version Version_01_18_00 => new Version(1, 18, 0);
+    public static Version Version_01_18_00 = new Version(1, 18, 0);
     public static Version Version_01_17_00 = new Version(1, 17, 0);
     public static Version Version_01_16_00 = new Version(1, 16, 0);
     public static Version Version_01_15_00 = new Version(1, 15, 0);
