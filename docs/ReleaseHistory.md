@@ -22,9 +22,8 @@
 - BRK: `WellKnownRegexPatterns.*` properties are now of stronger type`IReadOnlyList<RegexPattern>` instead of `IEnumerable<RegexPattern>`.
 - BRK: `SecretMasker.SyncObject` is now a read-only property instead of a public mutable field.
 - NEW: `SecretMasker` is now capable of finding identifiable keys without relying on delimiting characters`.
-- PRF: Add high-performance scanning for additional patterns: `SEC101/031.NuGetApiKey`, `SEC101/050.NpmAuthorKey`, `SEC101/110.AzureDatabricksPat`, and `SEC101/565.SecretScanningSampleToken`.
-- BRK: Delete obsoleted `Azure32ByteIdentifiableKeys` and `Azure64ByteIdentifiableKeys` classes. All analysis in these classes is rendered as explicit checks elsewhere.
 - NEW: Add `RegexPattern.CreatedVersion` and `RegexPattern.LastUpdatedVersion` to track version of rule introduction and last update to rule logic. This change has the result of emitting this information to the generated rules JSON metadata files.
+- PRF: Add high-performance scanning for additional patterns: `SEC101/031.NuGetApiKey`, `SEC101/050.NpmAuthorKey`, `SEC101/110.AzureDatabricksPat`, and `SEC101/565.SecretScanningSampleToken`.
 - PRF: Fewer intermediate allocations are performed by `SecretMasker.MaskSecrets`.
 - FPS: Prevent `SEC101/105.AzureMessagingLegacyCredentials` from firing on non-legacy keys.
 
