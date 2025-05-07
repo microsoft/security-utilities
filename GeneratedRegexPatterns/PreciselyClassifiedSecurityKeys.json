@@ -430,7 +430,7 @@
   {
     "Id": "SEC101/205",
     "Name": "AzureAIServicesLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureAIServices (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure AI Services (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAAACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -442,7 +442,7 @@
   {
     "Id": "SEC101/206",
     "Name": "AzureOpenAILegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureOpenAI (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure OpenAI (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAABACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -454,7 +454,7 @@
   {
     "Id": "SEC101/207",
     "Name": "AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureAnomalyDetectorEE (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Anomaly Detector EE (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAACACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -466,7 +466,7 @@
   {
     "Id": "SEC101/208",
     "Name": "AzureAnomalyDetectorLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureAnomalyDetector (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Anomaly Detector (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAADACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -478,7 +478,7 @@
   {
     "Id": "SEC101/209",
     "Name": "AzureCognitiveServicesLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureCognitiveServices (Cognitive Services) legacy common annotated security key",
+    "Label": "a general Azure Cognitive Services legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAEACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -490,7 +490,7 @@
   {
     "Id": "SEC101/210",
     "Name": "AzureComputerVisionLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureComputerVision (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Computer Vision (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAFACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -502,7 +502,7 @@
   {
     "Id": "SEC101/211",
     "Name": "AzureContentModeratorLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureContentModerator (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Content Moderator (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAGACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -514,7 +514,7 @@
   {
     "Id": "SEC101/212",
     "Name": "AzureContentSafetyLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureContentSafety (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Content Safety (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAHACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -526,7 +526,7 @@
   {
     "Id": "SEC101/213",
     "Name": "AzureCustomVisionPredictionLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureCustomVisionPrediction (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Custom Vision Prediction (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAIACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -538,7 +538,7 @@
   {
     "Id": "SEC101/214",
     "Name": "AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureCustomVisionTraining (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Custom Vision Training (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAJACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -550,7 +550,7 @@
   {
     "Id": "SEC101/215",
     "Name": "AzureFaceLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureFace (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Face (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAKACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -562,7 +562,7 @@
   {
     "Id": "SEC101/216",
     "Name": "AzureFormRecognizerLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureFormRecognizer (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Form Recognizer (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAALACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -574,7 +574,7 @@
   {
     "Id": "SEC101/217",
     "Name": "AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureHealthDecisionSupport (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Health Decision Support (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAMACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -586,7 +586,7 @@
   {
     "Id": "SEC101/218",
     "Name": "AzureHealthInsightsLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureHealthInsights (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Health Insights (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAANACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -598,7 +598,7 @@
   {
     "Id": "SEC101/219",
     "Name": "AzureImmersiveReaderLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureImmersiveReader (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Immersive Reader (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAOACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -610,7 +610,7 @@
   {
     "Id": "SEC101/220",
     "Name": "AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureInternalAllInOne (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Internal All-In-One (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAPACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -622,7 +622,7 @@
   {
     "Id": "SEC101/221",
     "Name": "AzureKnowledgeLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureKnowledge (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Knowledge (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAQACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -634,7 +634,7 @@
   {
     "Id": "SEC101/222",
     "Name": "AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureLuisAuthoring (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Luis Authoring (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAARACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -646,7 +646,7 @@
   {
     "Id": "SEC101/223",
     "Name": "AzureLuisLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureLuis (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Luis (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAASACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -658,7 +658,7 @@
   {
     "Id": "SEC101/224",
     "Name": "AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureMetricsAdvisor (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Metrics Advisor (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAATACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -670,7 +670,7 @@
   {
     "Id": "SEC101/225",
     "Name": "AzurePersonalizerLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzurePersonalizer (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Personalizer (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAUACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -682,7 +682,7 @@
   {
     "Id": "SEC101/226",
     "Name": "AzureQnAMakerLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureQnAMaker (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure QnA Maker (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAVACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -694,7 +694,7 @@
   {
     "Id": "SEC101/227",
     "Name": "AzureQnAMakerv2LegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureQnAMakerv2 (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure QnA Maker v2 (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAWACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -706,7 +706,7 @@
   {
     "Id": "SEC101/228",
     "Name": "AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureSpeakerRecognition (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Speaker Recognition (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAXACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -718,7 +718,7 @@
   {
     "Id": "SEC101/229",
     "Name": "AzureSpeechServicesLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureSpeechServices (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Speech Services (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAYACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -730,7 +730,7 @@
   {
     "Id": "SEC101/230",
     "Name": "AzureSpeechTranslationLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureSpeechTranslation (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Speech Translation (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAZACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -742,7 +742,7 @@
   {
     "Id": "SEC101/231",
     "Name": "AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureTextAnalytics (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Text Analytics (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAaACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -754,7 +754,7 @@
   {
     "Id": "SEC101/232",
     "Name": "AzureTextTranslationLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureTextTranslation (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Text Translation (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAbACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -766,7 +766,7 @@
   {
     "Id": "SEC101/233",
     "Name": "AzureDummyLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureDummy (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Dummy (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAcACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -778,7 +778,7 @@
   {
     "Id": "SEC101/234",
     "Name": "AzureTranscriptionIntelligenceLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureTranscriptionIntelligence (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Transcription Intelligence (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAdACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -790,7 +790,7 @@
   {
     "Id": "SEC101/235",
     "Name": "AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureVideoIntelligence (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Video Intelligence (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAeACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -802,7 +802,7 @@
   {
     "Id": "SEC101/236",
     "Name": "AzureBingAutosuggestLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureBingAutosuggest (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Bing Autosuggest (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAfACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -814,7 +814,7 @@
   {
     "Id": "SEC101/237",
     "Name": "AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureBingAutosuggestv7 (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Bing Autosuggest v7 (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAgACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -826,7 +826,7 @@
   {
     "Id": "SEC101/238",
     "Name": "AzureBingCustomSearchLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureBingCustomSearch (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Bing Custom Search (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAhACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -838,7 +838,7 @@
   {
     "Id": "SEC101/239",
     "Name": "AzureBingCustomVisualSearchLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureBingCustomVisualSearch (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Bing Custom VisualSearch (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAiACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -850,7 +850,7 @@
   {
     "Id": "SEC101/240",
     "Name": "AzureBingEntitySearchLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureBingEntitySearch (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Bing Entity Search (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAjACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -862,7 +862,7 @@
   {
     "Id": "SEC101/241",
     "Name": "AzureBingSearchLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureBingSearch (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Bing Search (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAkACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -874,7 +874,7 @@
   {
     "Id": "SEC101/242",
     "Name": "AzureBingSearchv7LegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureBingSearchv7 (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Bing Search v7 (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAlACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -886,7 +886,7 @@
   {
     "Id": "SEC101/243",
     "Name": "AzureBingSpeechLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureBingSpeech (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Bing Speech (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAmACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -898,7 +898,7 @@
   {
     "Id": "SEC101/244",
     "Name": "AzureBingSpellCheckLegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureBingSpellCheck (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Bing Spell Check (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAnACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
@@ -910,7 +910,7 @@
   {
     "Id": "SEC101/245",
     "Name": "AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey",
-    "Label": "an AzureBingSpellCheckv7 (Cognitive Services) legacy common annotated security key",
+    "Label": "an Azure Bing Spell Check v7 (Cognitive Services) legacy common annotated security key",
     "DetectionMetadata": "Identifiable",
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ99[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{12}AAAoACOG[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{4})",
     "Signatures": [
