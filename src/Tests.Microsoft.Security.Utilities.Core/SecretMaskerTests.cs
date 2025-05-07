@@ -68,11 +68,11 @@ public class SecretMaskerTests
                                 string context = testExample;
                                 var matches = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine");
                                 bool result = matches.Count() == 1;
-                                result.Should().BeTrue(because: $"Pattern {pattern.Id} should match '{context}' exactly once");
+                                result.Should().BeTrue(because: $"pattern {pattern.Id} should match '{context}' exactly once");
 
                                 string standaloneSecret = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine").First().Value;
 
-                                string moniker = pattern.GetMatchMoniker(standaloneSecret);
+                                string moniker = $"{pattern.Id}.{pattern.Name}";
 
                                 // 1. All generated test patterns should be detected by the masker.
                                 var detections = secretMasker.DetectSecrets(context).ToList();
