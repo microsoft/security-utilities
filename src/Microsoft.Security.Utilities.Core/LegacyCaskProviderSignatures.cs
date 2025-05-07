@@ -16,6 +16,7 @@ public static class LegacyCaskProviderSignatures
         AzureDevOps,
         AzureMixedReality,
         AzureMaps,
+        AzureCommunicationServices,
     };
 
     /// <summary>
@@ -53,10 +54,16 @@ public static class LegacyCaskProviderSignatures
     /// The Azure Mixed Reality legacy CASK provider signature, as used by
     /// </summary>
     public const string AzureMixedReality = "AZMR";
-    
+
     /// <summary>
     /// The Azure Maps legacy CASK provider signature, as used by
     /// 'SEC101/203.AzureMapsLegacyCommonAnnotatedSecurityKey'.
     // </summary>
-    public const string AzureMaps= "AZMP";
+    public const string AzureMaps = "AZMP";
+
+    /// <summary>
+    /// The Azure Communication Services legacy CASK provider signature, as used by
+    /// 'SEC101/204.AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey'.
+    // </summary>
+    public const string AzureCommunicationServices = "AZCS";
 }
