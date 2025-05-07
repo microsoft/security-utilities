@@ -90,6 +90,8 @@ public static class WellKnownRegexPatterns
         new AzureMessagingLegacyCredentials(),
         new AzureDatabricksPat(),
         new AzureEventGridIdentifiableKey(),
+        new AzureEventGridLegacyCommonAnnotatedSecurityKey(),
+        new AzureDevOpsLegacyCommonAnnotatedSecurityKeyPat(),
     };
 
     public static IEnumerable<RegexPattern> DataClassification { get; } = new RegexPattern[]

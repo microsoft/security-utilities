@@ -107,8 +107,7 @@ public class SecretMaskerTests
                                                         : null;
 
                             result = object.Equals(expectedC3id, actualC3id);
-                            result.Should().BeTrue(because: "C3id should be generated correctly");
-
+                            result.Should().BeTrue(because: $"'{expectedC3id}' redaction token expected for '{moniker}' instance but observed '{actualC3id}'");
 
                             // 4. All high entropy secret kinds should generate a fingerprint, but only
                             //    if the masker was initialized to produce them. Every low entropy model
@@ -120,7 +119,7 @@ public class SecretMaskerTests
                                                                 : "+++";
 
                             result = actualRedactionToken.Equals(expectedRedactionToken);
-                            result.Should().BeTrue(because: "Redaction token should be generated correctly");
+                            result.Should().BeTrue(because: $"'{expectedRedactionToken}' redaction token expected for '{moniker}' finding but observed '{actualRedactionToken}'");
 
                             // 5. Moniker that flows to classified secret should match the detection.
                             result = detection.Moniker.Equals(moniker);

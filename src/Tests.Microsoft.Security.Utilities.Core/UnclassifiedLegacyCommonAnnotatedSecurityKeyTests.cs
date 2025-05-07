@@ -3,10 +3,12 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 using FluentAssertions;
 using FluentAssertions.Execution;
 
+using Microsoft.Security.Utilities.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Security.Utilities
@@ -32,6 +34,24 @@ namespace Microsoft.Security.Utilities
                     action.Should().NotThrow(because: "TryCreate should never throw");
                 }
             }
+        }
+
+        [TestMethod]
+        public void LegacyCommonAnnotatedKey_AllProviderSignaturesPresent()
+        {
+            foreach(FieldInfo fi in typeof(LegacyCaskProviderSignatures).GetFields(BindingFlags.Public | BindingFlags.Static))
+            {
+                if (fi.Name == nameof(LegacyCaskProviderSignatures.All))
+                {
+                    continue;
+                }
+
+                string fieldValue = (string)fi.GetValue(null);
+
+                LegacyCaskProviderSignatures.All.Contains(fieldValue).Should().BeTrue(because: $"'LegacyCaskProviderSignatures.All' should contain 'LegacyCaskProviderSignatures.{fi.Name}' value of '{fieldValue}'");
+            }
+
+            LegacyCaskProviderSignatures.All.Should().NotBeEmpty(because: "LegacyCaskProviderSignatures should not be empty");
         }
     }
 }

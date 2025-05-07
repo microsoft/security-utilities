@@ -13,6 +13,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Security.Utilities.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 #pragma warning disable SYSLIB0023  // 'RNGCryptoServiceProvider' is obsolete.
