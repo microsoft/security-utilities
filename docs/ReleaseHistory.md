@@ -184,7 +184,6 @@
 # 1.4.24 - 06/03/2024
 - RUL: Add `SEC101/060.LooseSasSecret` detection.
 - RUL: Add `SEC101/528.GenericJwt` detection.
-- RUL: Add `SEC101/199.AzureEventGridIdentifiableKey` check.
 - BRK: Rename `WellknownPatterns.HighConfidenceSecurityModels` to `WellknownPatterns.PreciselyClassifiedSecurityKeys`.
 - BRK: Rename `WellknownPatterns.LowConfidencePotentialSecurityKeys` to `WellknownPatterns.UnclassifiedPotentialSecurityKeys`.
 - BRK: Rename `RegexPattern.GenerateTestExamples` to `RegexPattern.GenerateTruePositiveExamples` (and add matching method for false positive examples).
