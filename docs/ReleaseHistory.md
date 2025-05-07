@@ -16,6 +16,7 @@
 - BRK, NEW: `SecretMasker.MaskSecrets` and `ISecretMasker.DetectSecrets` now accept an `Action<Detection>` callback (with a default value of `null`) to receive detections that result from the operation. This is binary-breaking only for `SecretMasker` callers and source-breaking as well for `ISecretMasker` implementations.
 - BRK: `Detection` is now sealed and immutable. All property setters and the copy constructor are removed.
 - BRK: `Detection`  no longer overrides `Equals` and `GetHashCode` nor implements `IEquatable<Detection>`. `Detection.Equals` and `Detection.GetHashCode` will therefore now be based on reference equality.
+- BRK: Delete obsoleted `Azure32ByteIdentifiableKeys` and `Azure64ByteIdentifiableKeys` classes. All analysis in these classes is rendered as explicit checks elsewhere.
 - NEW: Add `RegexPattern.CreatedVersion` and `RegexPattern.LastUpdatedVersion` to track version of rule introduction and last update to rule logic. This change has the result of emitting this information to the generated rules JSON metadata files.
 - PRF: Fewer intermediate allocations are performed by `SecretMasker.MaskSecrets`.
 
@@ -127,7 +128,7 @@
 # 1.9.1 - 11/18/2024
 - DEP: Removed dependency of the `base-62` crate in the Rust codebase, since it depended on the `failure` crate which has a known [vulnerability](https://github.com/advisories/GHSA-jq66-xh47-j9f3).
 - BUG: Fix unhandled exception raised by `CommonAnnotatedKey.TryCreate(string, out CommonAnnotatedKey)` when passed non-CASK secrets of length < 80.
-- BUG: Update `AzureEventGridIdentifiableKey` rule id to `SEC101/199` to be synced with source of the rule.
+- BUG: Correct `AzureEventGridIdentifiableKey` rule id from `SEC101/190` to `SEC101/199` to be synced with source of the rule.
 - BUG: Update `NuGetApiKey` rule id to `SEC101/031` to be synced with source of the rule.
 
 # 1.8.0 - 09/16/2024
@@ -210,7 +211,7 @@
 - NEW: Add `Identifiable.ComputeDerivedCommonAnnotatedKey` to generate keys derived from common annotated secrets.
 
 # 1.4.20 - 05/16/2024
-- RUL: Add `SEC101/199.AzureEventGridIdentifiableKey detection`.
+- RUL: Add `SEC101/199.AzureEventGridIdentifiableKey` detection.
 - BRK: Add `ComputeHash32(byte[], ulong, int, int)` helper to bring .NET framework and .NET core APIs into alignment.
 - BRK: Return value of `ISecretMaskerDetectSecrets(string)` is `IEnumerable<Detection>` (not `ICollection`) for best yield iterator compatibility.
 - BUG: Honor `url-safe` option in key `GenerateCommand` to produce URL-safe base64-encoded patterns.

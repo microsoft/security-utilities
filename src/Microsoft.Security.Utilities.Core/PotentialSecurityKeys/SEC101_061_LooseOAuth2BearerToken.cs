@@ -20,8 +20,6 @@ namespace Microsoft.Security.Utilities
 
         public override Version CreatedVersion => Releases.Version_01_05_00;
 
-        public override Version LastUpdatedVersion => Releases.Version_01_05_00;
-
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
             yield return $"Authorization: bearer notasecret==";
