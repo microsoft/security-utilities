@@ -18,7 +18,7 @@ namespace Microsoft.Security.Utilities
         {
             DetectionMetadata = DetectionMetadata.Identifiable;
             Pattern = $"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{52}}JQQJ99[{WellKnownRegexPatterns.Base62}][A-L]{PlatformData}{ProviderData}{ProviderSignature}[{WellKnownRegexPatterns.Base62}]{{4}})";
-            Signatures = new HashSet<string>([UnclassifiedLegacyCommonAnnotatedSecurityKey.LegacyCaskSignature]);
+            Signatures = new HashSet<string>([LegacyCaskSignature]);
         }
 
         public override Tuple<string, string> GetMatchIdAndName(string match)

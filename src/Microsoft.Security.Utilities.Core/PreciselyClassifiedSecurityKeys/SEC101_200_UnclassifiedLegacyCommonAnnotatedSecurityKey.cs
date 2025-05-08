@@ -25,7 +25,7 @@ namespace Microsoft.Security.Utilities
 #if HIGH_PERFORMANCE_CODEGEN
         IEnumerable<HighPerformancePattern> IHighPerformanceScannableKey.HighPerformancePatterns => [
             new(LegacyCaskSignature,
-                MakeHighPerformancePattern(Pattern, LegacyCaskSignature),
+                MakeHighPerformancePattern(LegacyCaskPattern, LegacyCaskSignature),
                 signaturePrefixLength: 52,
                 minMatchLength: 84,
                 maxMatchLength: 88),
