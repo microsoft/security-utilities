@@ -59,18 +59,63 @@ public static class LegacyCaskProviderSignatures
     /// <summary>
     /// The Azure Maps legacy CASK provider signature, as used by
     /// 'SEC101/203.AzureMapsLegacyCommonAnnotatedSecurityKey'.
-    // </summary>
+    /// </summary>
     public const string AzureMaps = "AZMP";
 
     /// <summary>
     /// The Azure Communication Services legacy CASK provider signature, as used by
     /// 'SEC101/204.AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey'.
-    // </summary>
+    /// </summary>
     public const string AzureCommunicationServices = "AZCS";
 
     /// <summary>
     /// The Azure Cognitice Services legacy CASK provider signature, as used by
-    /// 'SEC101/205.AzureAIServicesLegacyCommonAnnotatedSecurityKey'.
-    // </summary>
+    /// 'SEC101/205.AzureAIServicesLegacyCommonAnnotatedSecurityKey' (among many
+    /// other cognitive service providers).
+    /// </summary>
+    /// <remarks>
+    /// Rules that incorporate the general Cognitive Services provider signature
+    /// include SEC101/205.AzureAIServicesLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/206.AzureOpenAILegacyCommonAnnotatedSecurityKey,
+    /// SEC101/207.AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey,
+    /// SEC101/208.AzureAnomalyDetectorLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/209.AzureCognitiveServicesLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/210.AzureComputerVisionLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/211.AzureContentModeratorLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/212.AzureContentSafetyLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/213.AzureCustomVisionPredictionLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/214.AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/215.AzureFaceLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/216.AzureFormRecognizerLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/217.AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/218.AzureHealthInsightsLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/219.AzureImmersiveReaderLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/220.AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/221.AzureKnowledgeLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/222.AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/223.AzureLuisLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/224.AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/225.AzurePersonalizerLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/226.AzureQnAMakerLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/227.AzureQnAMakerv2LegacyCommonAnnotatedSecurityKey,
+    /// SEC101/228.AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/229.AzureSpeechServicesLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/230.AzureSpeechTranslationLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/231.AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/232.AzureTextTranslationLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/233.AzureDummyLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/234.AzureTranscriptionIntelligenceLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/235.AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/236.AzureBingAutosuggestLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/237.AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey,
+    /// SEC101/238.AzureBingCustomSearchLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/239.AzureBingCustomVisualSearchLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/240.AzureBingEntitySearchLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/241.AzureBingSearchLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/242.AzureBingSearchv7LegacyCommonAnnotatedSecurityKey,
+    /// SEC101/243.AzureBingSpeechLegacyCommonAnnotatedSecurityKey,
+    /// SEC101/244.AzureBingSpellCheckLegacyCommonAnnotatedSecurityKey, and
+    /// SEC101/245.AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey.  
+    /// </remarks>
     public const string AzureCognitiveServices = "ACOG";
 }

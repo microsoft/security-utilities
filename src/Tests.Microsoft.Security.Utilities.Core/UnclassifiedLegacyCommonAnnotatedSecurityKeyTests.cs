@@ -39,7 +39,7 @@ namespace Microsoft.Security.Utilities
         [TestMethod]
         public void LegacyCommonAnnotatedKey_AllProviderSignaturesPresent()
         {
-            foreach(FieldInfo fi in typeof(LegacyCaskProviderSignatures).GetFields(BindingFlags.Public | BindingFlags.Static))
+            foreach (FieldInfo fi in typeof(LegacyCaskProviderSignatures).GetFields(BindingFlags.Public | BindingFlags.Static))
             {
                 if (fi.Name == nameof(LegacyCaskProviderSignatures.All))
                 {

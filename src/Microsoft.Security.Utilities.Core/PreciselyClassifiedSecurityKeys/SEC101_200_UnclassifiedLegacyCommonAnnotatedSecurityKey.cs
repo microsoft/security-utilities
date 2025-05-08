@@ -35,7 +35,7 @@ namespace Microsoft.Security.Utilities
         {
             if (!LegacyCommonAnnotatedSecurityKey.TryCreate(match, out var legacyCask))
             {
-                return null;                        
+                return null;
             }
 
             if (LegacyCaskProviderSignatures.All.Contains(legacyCask.ProviderFixedSignature))
