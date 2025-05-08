@@ -8,8 +8,6 @@ namespace Microsoft.Security.Utilities
 {
     public abstract class LegacyCommonAnnotatedSecurityAccessKey : RegexPattern, IHighPerformanceScannableKey
     {
-        protected const string LegacyCaskSignature = "JQQJ";
-
         abstract protected string ProviderSignature { get; }
 
         protected virtual string PlatformData => $"[{WellKnownRegexPatterns.Base62}]{{12}}";
@@ -20,13 +18,14 @@ namespace Microsoft.Security.Utilities
         {
             DetectionMetadata = DetectionMetadata.Identifiable;
             Pattern = $"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{52}}JQQJ99[{WellKnownRegexPatterns.Base62}][A-L]{PlatformData}{ProviderData}{ProviderSignature}[{WellKnownRegexPatterns.Base62}]{{4}})";
-            Signatures = new HashSet<string>([LegacyCaskSignature]);
+            Signatures = new HashSet<string>([UnclassifiedLegacyCommonAnnotatedSecurityKey.LegacyCaskSignature]);
         }
 
 #if HIGH_PERFORMANCE_CODEGEN
         IEnumerable<HighPerformancePattern> IHighPerformanceScannableKey.HighPerformancePatterns => [
-            new(LegacyCaskSignature,
-                MakeHighPerformancePattern(Pattern, LegacyCaskSignature),
+            new(UnclassifiedLegacyCommonAnnotatedSecurityKey.LegacyCaskSignature,
+                MakeHighPerformancePattern(UnclassifiedLegacyCommonAnnotatedSecurityKey.LegacyCaskPattern,
+                                           UnclassifiedLegacyCommonAnnotatedSecurityKey.LegacyCaskSignature),
                 signaturePrefixLength: 52,
                 minMatchLength: 84,
                 maxMatchLength: 84),
@@ -36,6 +35,15 @@ namespace Microsoft.Security.Utilities
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
             if (!LegacyCommonAnnotatedSecurityKey.TryCreate(match, out var legacyCask))
+            {
+                return null;
+            }
+
+            // This is the check that distinguishes a legacy CASK derived or
+            // hashed key from the access key scenario. In practice, no provider
+            // shipped a hashed key. We are aware of some derived key
+            // implementations.
+            if (legacyCask.StandardFixedSignature != "JQQJ99")
             {
                 return null;
             }

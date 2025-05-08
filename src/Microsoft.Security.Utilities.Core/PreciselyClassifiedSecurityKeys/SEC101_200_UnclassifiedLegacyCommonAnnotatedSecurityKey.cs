@@ -9,7 +9,8 @@ namespace Microsoft.Security.Utilities
     public class UnclassifiedLegacyCommonAnnotatedSecurityKey : RegexPattern, IHighPerformanceScannableKey
     {
         // NOTE: Use 4 character signature for high-performance scanner compatibility.
-        public const string Signature = "JQQJ";
+        public const string LegacyCaskSignature = "JQQJ";
+        public const string LegacyCaskPattern = $"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{52}}{LegacyCaskSignature}9(?:9|D|H)[{WellKnownRegexPatterns.Base62}][A-L][{WellKnownRegexPatterns.Base62}]{{16}}[A-Za-z][{WellKnownRegexPatterns.Base62}]{{7}}(?:[{WellKnownRegexPatterns.Base62}]{{2}}==)?)";
 
         public UnclassifiedLegacyCommonAnnotatedSecurityKey()
         {
@@ -17,14 +18,14 @@ namespace Microsoft.Security.Utilities
             Name = nameof(UnclassifiedLegacyCommonAnnotatedSecurityKey);
             Label = "an unclassified legacy common annotated security key";
             DetectionMetadata = DetectionMetadata.Identifiable;
-            Pattern = $"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{52}}JQQJ9(?:9|D|H)[{WellKnownRegexPatterns.Base62}][A-L][{WellKnownRegexPatterns.Base62}]{{16}}[A-Za-z][{WellKnownRegexPatterns.Base62}]{{7}}(?:[{WellKnownRegexPatterns.Base62}]{{2}}==)?)";
-            Signatures = new HashSet<string>([Signature]);
+            Pattern = LegacyCaskPattern;
+            Signatures = new HashSet<string>([LegacyCaskSignature]);
         }
 
 #if HIGH_PERFORMANCE_CODEGEN
         IEnumerable<HighPerformancePattern> IHighPerformanceScannableKey.HighPerformancePatterns => [
-            new(Signature,
-                MakeHighPerformancePattern(Pattern, Signature),
+            new(LegacyCaskSignature,
+                MakeHighPerformancePattern(Pattern, LegacyCaskSignature),
                 signaturePrefixLength: 52,
                 minMatchLength: 84,
                 maxMatchLength: 88),
