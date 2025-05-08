@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -25,6 +26,22 @@ namespace Microsoft.Security.Utilities
             "SEC101/127.UrlCredentials",
             "SEC101/109.AzureContainerRegistryLegacyKey"
         };
+
+        [TestMethod]
+        public void KILLME()
+        {
+            var patterns = GetAllPatterns();
+
+            var sb = new StringBuilder();
+
+            foreach (RegexPattern pattern in patterns)
+            {
+                if (pattern.CreatedVersion.Minor != 18) { continue; }
+                sb.Append($"`{pattern.Id}.{pattern.Name}`,");
+            }
+
+            false.Should().BeTrue(because:sb.ToString());
+        }
 
         [TestMethod]
         public void WellKnownRegexPatterns_AllRulesProvideCreatedVersion()
