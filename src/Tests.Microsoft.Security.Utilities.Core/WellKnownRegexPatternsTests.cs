@@ -28,22 +28,6 @@ namespace Microsoft.Security.Utilities
         };
 
         [TestMethod]
-        public void KILLME()
-        {
-            var patterns = GetAllPatterns();
-
-            var sb = new StringBuilder();
-
-            foreach (RegexPattern pattern in patterns)
-            {
-                if (pattern.CreatedVersion.Minor != 18) { continue; }
-                sb.Append($"`{pattern.Id}.{pattern.Name}`,");
-            }
-
-            false.Should().BeTrue(because:sb.ToString());
-        }
-
-        [TestMethod]
         public void WellKnownRegexPatterns_AllRulesProvideCreatedVersion()
         {
             using var assertionScope = new AssertionScope();
