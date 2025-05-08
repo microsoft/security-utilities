@@ -15,6 +15,11 @@ public abstract class CognitiveServiceLegacyCommonAnnotatedSecurityKey : LegacyC
 
     public override Tuple<string, string> GetMatchIdAndName(string match)
     {
+        if (match.Length == 88)
+        {
+            return null;
+        }
+
         if (!LegacyCommonAnnotatedSecurityKey.TryCreate(match, out var legacyCask))
         {
             return null;
@@ -30,6 +35,6 @@ public abstract class CognitiveServiceLegacyCommonAnnotatedSecurityKey : LegacyC
             return null;
         }
 
-        return base.GetMatchIdAndName(match);
+        return new Tuple<string, string>(Id, Name);
     }
 }

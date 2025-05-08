@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities
 {
-    public abstract class LegacyCommonAnnotatedSecurityAccessKey : RegexPattern, IHighPerformanceScannableKey
+    public abstract class LegacyCommonAnnotatedSecurityAccessKey : UnclassifiedLegacyCommonAnnotatedSecurityKey
     {
         abstract protected string ProviderSignature { get; }
 
@@ -20,17 +20,6 @@ namespace Microsoft.Security.Utilities
             Pattern = $"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{52}}JQQJ99[{WellKnownRegexPatterns.Base62}][A-L]{PlatformData}{ProviderData}{ProviderSignature}[{WellKnownRegexPatterns.Base62}]{{4}})";
             Signatures = new HashSet<string>([UnclassifiedLegacyCommonAnnotatedSecurityKey.LegacyCaskSignature]);
         }
-
-#if HIGH_PERFORMANCE_CODEGEN
-        IEnumerable<HighPerformancePattern> IHighPerformanceScannableKey.HighPerformancePatterns => [
-            new(UnclassifiedLegacyCommonAnnotatedSecurityKey.LegacyCaskSignature,
-                MakeHighPerformancePattern(UnclassifiedLegacyCommonAnnotatedSecurityKey.LegacyCaskPattern,
-                                           UnclassifiedLegacyCommonAnnotatedSecurityKey.LegacyCaskSignature),
-                signaturePrefixLength: 52,
-                minMatchLength: 84,
-                maxMatchLength: 84),
-        ];
-#endif
 
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
@@ -49,7 +38,7 @@ namespace Microsoft.Security.Utilities
             }
 
             return legacyCask.ProviderFixedSignature == ProviderSignature
-                ? base.GetMatchIdAndName(match)
+                ? new Tuple<string, string>(Id, Name)
                 : null;
         }
 
