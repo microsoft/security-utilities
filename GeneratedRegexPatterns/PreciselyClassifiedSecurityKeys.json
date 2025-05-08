@@ -7,7 +7,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{52}JQQJ9(?:9|D|H)[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890][A-L][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{16}[A-Za-z][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{7}(?:[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{2}==)?)",
     "Signatures": [
       "JQQJ"
-    ]
+    ],
+    "CreatedVersion": "1.4.24",
+    "LastUpdatedVersion": "1.4.24"
   },
   {
     "Id": "SEC101/156",
@@ -18,7 +20,9 @@
     "Signatures": [
       "8Q~",
       "7Q~"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/158",
@@ -28,7 +32,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{44}AzFu[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_\\-]|$)",
     "Signatures": [
       "AzFu"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/166",
@@ -38,7 +44,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AzSe"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/167",
@@ -48,7 +56,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{42}AzSe[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AzSe"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/173",
@@ -58,7 +68,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+ARm[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+ARm"
-    ]
+    ],
+    "CreatedVersion": "1.4.10",
+    "LastUpdatedVersion": "1.4.10"
   },
   {
     "Id": "SEC101/172",
@@ -68,7 +80,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+AEh[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+AEh"
-    ]
+    ],
+    "CreatedVersion": "1.4.10",
+    "LastUpdatedVersion": "1.4.10"
   },
   {
     "Id": "SEC101/171",
@@ -78,7 +92,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}\\+ASb[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+ASb"
-    ]
+    ],
+    "CreatedVersion": "1.4.10",
+    "LastUpdatedVersion": "1.4.10"
   },
   {
     "Id": "SEC101/178",
@@ -88,7 +104,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AIoT[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AIoT"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/180",
@@ -98,7 +116,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AIoT[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AIoT"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/179",
@@ -108,7 +128,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AIoT[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AIoT"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/152",
@@ -118,7 +140,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}\\+ASt[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+ASt"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/160",
@@ -128,7 +152,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}ACDb[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "ACDb"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/163",
@@ -138,7 +164,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}\\+ABa[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+ABa"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/170",
@@ -148,7 +176,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}\\+AMC[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+AMC"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/181",
@@ -158,7 +188,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "APIM"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/182",
@@ -168,7 +200,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "APIM"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/183",
@@ -178,7 +212,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "APIM"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/184",
@@ -188,7 +224,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{76}APIM[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}[AQgw]==)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "APIM"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/154",
@@ -198,7 +236,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AzCa[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AzCa"
-    ]
+    ],
+    "CreatedVersion": "1.4.10",
+    "LastUpdatedVersion": "1.4.10"
   },
   {
     "Id": "SEC101/176",
@@ -208,7 +248,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{42}\\+ACR[A-D][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "+ACR"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/031",
@@ -219,7 +261,9 @@
     "Signatures": [
       "oy2",
       "OY2"
-    ]
+    ],
+    "CreatedVersion": "1.4.2",
+    "LastUpdatedVersion": "1.4.2"
   },
   {
     "Id": "SEC101/102",
@@ -227,7 +271,9 @@
     "Label": "an Azure DevOps legacy format personal access token (PAT)",
     "DetectionMetadata": "HighEntropy, EmbeddedChecksum",
     "Pattern": "(?:[^2-7a-z]|^)(?P<refine>[2-7a-z]{52})(?:[^2-7a-z]|$)",
-    "Signatures": null
+    "Signatures": null,
+    "CreatedVersion": "1.4.10",
+    "LastUpdatedVersion": "1.4.10"
   },
   {
     "Id": "SEC101/104",
@@ -235,7 +281,9 @@
     "Label": "an Azure Cosmos DB legacy format access key",
     "DetectionMetadata": "ObsoleteFormat, HighEntropy",
     "Pattern": "(?i)\\.documents\\.azure\\.com.+(?:^|[^0-9a-z\\/+])(?P<refine>[0-9a-z\\/+]{86}==)(?:[^=]|$)",
-    "Signatures": null
+    "Signatures": null,
+    "CreatedVersion": "1.4.10",
+    "LastUpdatedVersion": "1.4.10"
   },
   {
     "Id": "SEC101/106",
@@ -243,7 +291,9 @@
     "Label": "an Azure storage account legacy format access key",
     "DetectionMetadata": "HighEntropy",
     "Pattern": "(?i)(?:AccountName|StorageName|StorageAccount)\\s*=.+(?:Account|Storage)Key\\s*=\\s*(?P<refine>[0-9a-z\\\\\\/+]{86}==)(?:[^=]|$)",
-    "Signatures": null
+    "Signatures": null,
+    "CreatedVersion": "1.4.10",
+    "LastUpdatedVersion": "1.4.10"
   },
   {
     "Id": "SEC101/105",
@@ -253,7 +303,9 @@
     "Pattern": "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)",
     "Signatures": [
       ".servicebus"
-    ]
+    ],
+    "CreatedVersion": "1.4.12",
+    "LastUpdatedVersion": "1.4.12"
   },
   {
     "Id": "SEC101/110",
@@ -263,7 +315,9 @@
     "Pattern": "(?:^|[^0-9a-f\\-])(?P<refine>dapi[0-9a-f\\-]{32,34})(?:[^0-9a-f\\-]|$)",
     "Signatures": [
       "dapi"
-    ]
+    ],
+    "CreatedVersion": "1.4.12",
+    "LastUpdatedVersion": "1.4.12"
   },
   {
     "Id": "SEC101/199",
@@ -273,7 +327,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_\\-])(?P<refine>[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{33}AZEG[A-P][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/]{5}=)([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+/_=\\-]|$)",
     "Signatures": [
       "AZEG"
-    ]
+    ],
+    "CreatedVersion": "1.4.20",
+    "LastUpdatedVersion": "1.4.20"
   },
   {
     "Id": "SEC101/050",
@@ -283,7 +339,9 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>npm_[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]{36})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]|$)",
     "Signatures": [
       "npm_"
-    ]
+    ],
+    "CreatedVersion": "1.4.24",
+    "LastUpdatedVersion": "1.4.24"
   },
   {
     "Id": "SEC101/565",
@@ -293,6 +351,8 @@
     "Pattern": "(^|[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890])(?P<refine>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{5})([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890]|$)",
     "Signatures": [
       "ab85"
-    ]
+    ],
+    "CreatedVersion": "1.4.11",
+    "LastUpdatedVersion": "1.4.11"
   }
 ]

@@ -1,9 +1,13 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System;
 using System.Collections.Generic;
+
+#if NET6_0_OR_GREATER
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+#endif
 
 #nullable enable
 
@@ -11,6 +15,20 @@ namespace Microsoft.Security.Utilities
 {
     public class Pkcs12CertificatePrivateKeyBundle : RegexPattern
     {
+        public Pkcs12CertificatePrivateKeyBundle()
+        {
+            Id = "SEC101/055";
+            Name = nameof(Pkcs12CertificatePrivateKeyBundle);
+            Label = "a PKCS#12 certificate private key bundle";
+            DetectionMetadata = DetectionMetadata.MediumConfidence;
+            Pattern = @"MI[I-L][0-9a-zA-Z\/+]{2}[AQgw]IBAzCC";
+            Signatures = new HashSet<string>(["IBAzCC"]);
+        }
+
+        public override Version CreatedVersion => Releases.Version_01_14_00;
+
+        public override Version LastUpdatedVersion => Releases.Version_01_14_00;
+
         // _truePositiveExamples is used during testing, including a stress test where this code absent caching
         // is would case the stress test (n=1000) to take 10+ minutes to run due the expensive nature of generating
         // private keys and certificates. We use Lazy here since during non-test execution we do not want to incur
@@ -35,16 +53,6 @@ namespace Microsoft.Security.Utilities
 #endif
             return examples;
         });
-
-        public Pkcs12CertificatePrivateKeyBundle()
-        {
-            Id = "SEC101/055";
-            Name = nameof(Pkcs12CertificatePrivateKeyBundle);
-            Label = "a PKCS#12 certificate private key bundle";
-            DetectionMetadata = DetectionMetadata.MediumConfidence;
-            Pattern = @"MI[I-L][0-9a-zA-Z\/+]{2}[AQgw]IBAzCC";
-            Signatures = new HashSet<string>(["IBAzCC"]);
-        }
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {

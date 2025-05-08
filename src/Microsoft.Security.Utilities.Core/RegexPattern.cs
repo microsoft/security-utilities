@@ -57,6 +57,16 @@ public class RegexPattern
     }
 #pragma warning restore CS8618
 
+    /// <summary>
+    /// The version in which a pattern was created or null in cases where a
+    /// pattern is dynamically constructed.
+    /// </summary>
+    [DataMember(Order = 8)]
+    public virtual Version? CreatedVersion => null;
+
+    [DataMember(Order = 9)]
+    public virtual Version? LastUpdatedVersion => CreatedVersion;
+
     [ExcludeFromCodeCoverage]
     public override bool Equals(object? obj)
     {

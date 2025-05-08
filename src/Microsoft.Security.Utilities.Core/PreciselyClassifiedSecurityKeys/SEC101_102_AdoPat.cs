@@ -18,6 +18,8 @@ namespace Microsoft.Security.Utilities
             Pattern = "(?:[^2-7a-z]|^)(?P<refine>[2-7a-z]{52})(?:[^2-7a-z]|$)";
         }
 
+        public override Version CreatedVersion => Releases.Version_01_04_10;
+
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
             if (!IsChecksumValid(match, IdentifiableMetadata.AdoUserPatChecksumSeed) &&

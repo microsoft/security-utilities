@@ -22,6 +22,7 @@
 - BRK: `WellKnownRegexPatterns.*` properties are now of stronger type`IReadOnlyList<RegexPattern>` instead of `IEnumerable<RegexPattern>`.
 - BRK: `SecretMasker.SyncObject` is now a read-only property instead of a public mutable field.
 - NEW: `SecretMasker` is now capable of finding identifiable keys without relying on delimiting characters`.
+- NEW: Add `RegexPattern.CreatedVersion` and `RegexPattern.LastUpdatedVersion` to track version of rule introduction and last update to rule logic. These versions are emitted to generated rules JSON metadata files.
 - PRF: Add high-performance scanning for additional patterns: `SEC101/031.NuGetApiKey`, `SEC101/050.NpmAuthorKey`, `SEC101/110.AzureDatabricksPat`, and `SEC101/565.SecretScanningSampleToken`.
 - PRF: Fewer intermediate allocations are performed by `SecretMasker.MaskSecrets`.
 - FPS: Prevent `SEC101/105.AzureMessagingLegacyCredentials` from firing on non-legacy keys.
@@ -134,7 +135,7 @@
 # 1.9.1 - 11/18/2024
 - DEP: Removed dependency of the `base-62` crate in the Rust codebase, since it depended on the `failure` crate which has a known [vulnerability](https://github.com/advisories/GHSA-jq66-xh47-j9f3).
 - BUG: Fix unhandled exception raised by `CommonAnnotatedKey.TryCreate(string, out CommonAnnotatedKey)` when passed non-CASK secrets of length < 80.
-- BUG: Update `AzureEventGridIdentifiableKey` rule id to `SEC101/199` to be synced with source of the rule.
+- BUG: Correct `AzureEventGridIdentifiableKey` rule id from `SEC101/190` to `SEC101/199` to be synced with source of the rule.
 - BUG: Update `NuGetApiKey` rule id to `SEC101/031` to be synced with source of the rule.
 
 # 1.8.0 - 09/16/2024
@@ -202,7 +203,6 @@
 - BUG: Correct `AzureCosmosDBIdentifiableKey` rule id to `SEC101/160` (previously incorrectly listed as `SEC101/163`).
 - BUG: Correct length of `SEC101/166.AzureSearchIdentifiableQueryKey` and `SEC101/167.AzureSearchIdentifiableAdminKey` rules to 39 bytes and properly mark it as `DetectionMetadata.Identifiable`.
 - BUG: Remove `/AM7` signature + check from rust code.
-- NEW: Add `SEC101/190.AzureEventGridIdentifiableKey` check.
 - NEW: Create distinct `Detection.CrossCompanyCorrelatingId` property.
 - BUG: Harden `IdentifiableSecrets.TryValidateCommonAnnotatedKey` for a variety of invalid inputs.
 - BUG: Correct `SEC101/170.AzureMLWebServiceClassicIdentifiableKey` signature to `+AMC`.
@@ -218,10 +218,11 @@
 - NEW: Add `Identifiable.ComputeDerivedCommonAnnotatedKey` to generate keys derived from common annotated secrets.
 
 # 1.4.20 - 05/16/2024
+- RUL: Add `SEC101/199.AzureEventGridIdentifiableKey` detection.
 - BRK: Add `ComputeHash32(byte[], ulong, int, int)` helper to bring .NET framework and .NET core APIs into alignment.
 - BRK: Return value of `ISecretMaskerDetectSecrets(string)` is `IEnumerable<Detection>` (not `ICollection`) for best yield iterator compatibility.
 - BUG: Honor `url-safe` option in key `GenerateCommand` to produce URL-safe base64-encoded patterns.
-- NEW: Update `SEC101_158_AzureFunctionIdentifiableKey1` ,`SEC101_176_AzureContainerRegistryIdentifiableKey`, and `SEC101_190_AzureEventGridIdentifiableKey` to derive from `IdentifiableKey` base.
+- NEW: Update `SEC101/158.AzureFunctionIdentifiableKey` and `SEC101/176.AzureContainerRegistryIdentifiableKey` to derive from `IdentifiableKey` base.
 - NEW: Implement preliminary high-performance `IdentifiableScan` engine that consume Rust library for detections.
 
 # 1.4.19 - 05/10/2024
@@ -245,3 +246,56 @@
 
 ## 1.4.15 - 04/16/2024
 - NEW: Implement `IdentifiableSecrets.ComputeDerivedSymmetricKey` to generate identifiable derived keys from arbitrary identifiable secrets.
+
+## 1.4.14 - 04/16/2024
+## 1.4.13 - 04/09/2024
+
+## 1.4.12 - 04/09/2024
+- RUL: Add `SEC000/000.Unclassified32ByteBase64String` detection.
+- RUL: Add `SEC000/001.Unclassified64ByteBase64String` detection.
+- RUL: Add `SEC000/002.Unclassified16ByteHexadecimalString` detection.
+- RUL: Add `SEC101/105.AzureMessagingLegactyCredentials` detection.
+- RUL: Add `SEC101/110.AzureDatabricksPat` detection.
+
+## 1.4.11 - 04/08/2024
+- RUL: Add `SEC101/101.AadClientAppLegacyCredentials` detection.
+- RUL: Add `SEC101/565.SecretScanningSampleToken` detection.
+
+## 1.4.10 - 04/08/2024
+- RUL: Add `SEC101/102.AdoPat` detection.
+- RUL: Add `SEC101/104.AzureCosmosDBLegacyCredentials` detection.
+- RUL: Add `SEC101/106.AzureStorageAccountLegacyCredentials` detection.
+- RUL: Add `SEC101/154.AzireCacheForRedisIdentifiableKey` detection.
+- RUL: Add `SEC101/171.AzureServiceBusIdentifiableKey` detection.
+- RUL: Add `SEC101/172.AzureEventHubIdentifiableKey` detection.
+- RUL: Add `SEC101/173.AzureRelayIdentifiableKey` detection.
+
+## 1.4.9 - 04/03/2024
+## 1.4.8 - 04/02/2024
+## 1.4.7 - 04/02/2024
+## 1.4.6 - 03/20/2024
+## 1.4.5 - 03/19/2024
+## 1.4.4 - 03/18/2024
+## 1.4.3 - 03/13/2024
+
+## 1.4.2 - 03/13/2024
+- RUL: Add `SEC101/127.UrlCredentials` detection.
+- RUL: Add `SEC101/031.NuGetApiKey` detection.
+- RUL: Add `SEC101/152.AzureStorageAccountIdentifiableKey` detection.
+- RUL: Add `SEC101/156.AadClientAppSecret` detection.
+- RUL: Add `SEC101/158.AzureFunctionIdentifiableKey` detection.
+- RUL: Add `SEC101/160.AzureCosmosDbIdentifiableKey` detection.
+- RUL: Add `SEC101/163.AzureBatchIdentifiableKey` detection.
+- RUL: Add `SEC101/166.AzureSearchIdentifiableQueryKey` detection.
+- RUL: Add `SEC101/170.AzureMLWebServiceClassicIdentifiableKey` detection.
+- RUL: Add `SEC101/171.AzureServiceBusIdentifiableKey` detection.
+- RUL: Add `SEC101/172.AzureEventHubIdentifiableKey` detection.
+- RUL: Add `SEC101/173.AzureRelayIdentifiableKey` detection.
+- RUL: Add `SEC101/176.AzureContainerRegistryIdentifiableKey` detection.
+- RUL: Add `SEC101/178.AzureIotHubIdentifiableKey` detection.
+- RUL: Add `SEC101/179.AzureIotDeviceProvisioningIdentifiableKey` detection.
+- RUL: Add `SEC101/180.AzureIotDeviceIdentifiableKey` detection.
+- RUL: Add `SEC101/181.AzureApimIdentifiableDirectManagementKey` detection.
+- RUL: Add `SEC101/182.AzureApimIdentifiableSubscriptionKey` detection.
+- RUL: Add `SEC101/183.AzureApimIdentifiableGatewayKey` detection.
+- RUL: Add `SEC101/184.AzureApimIdentifiableRepositoryKey` detection.

@@ -23,6 +23,8 @@ public class AadClientAppLegacyCredentials34 : RegexPattern
         Pattern = $"^[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{34}}$";
     }
 
+    public override Version CreatedVersion => Releases.Version_01_04_11;
+
     public override Tuple<string, string> GetMatchIdAndName(string match)
     {
         if (!HasAtLeastOneSymbol(match))

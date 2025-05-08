@@ -18,6 +18,8 @@ namespace Microsoft.Security.Utilities
             Signatures = new HashSet<string>(new[] { ".servicebus" });
         }
 
+        public override Version CreatedVersion => Releases.Version_01_04_12;
+
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
             if (IdentifiableMetadata.IsAzureServiceBusIdentifiableKey(match))
