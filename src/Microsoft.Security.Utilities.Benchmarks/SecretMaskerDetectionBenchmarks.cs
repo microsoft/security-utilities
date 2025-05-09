@@ -135,7 +135,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
 
             while (examples.Count < examplesCount)
             {
-                foreach(IEnumerator<string> exampleGenerator in exampleGenerators)
+                foreach (IEnumerator<string> exampleGenerator in exampleGenerators)
                 {
                     if (exampleGenerator.Current != null)
                     {
