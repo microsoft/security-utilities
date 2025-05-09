@@ -34,12 +34,6 @@ namespace Microsoft.Security.Utilities
 
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
-#if DEBUG
-            if (!LegacyCommonAnnotatedSecurityKey.TryCreate(match, out var legacyCask))
-            {
-                return null;
-            }
-#endif
             string providerSignature = match.Substring(LegacyCommonAnnotatedSecurityKey.ProviderFixedSignatureOffset, 4);
 
             return LegacyCaskProviderSignatures.All.Contains(providerSignature)

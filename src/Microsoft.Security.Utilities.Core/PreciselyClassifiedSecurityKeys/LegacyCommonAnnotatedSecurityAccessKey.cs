@@ -24,16 +24,10 @@ namespace Microsoft.Security.Utilities
 
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
-#if DEBUG
-            if (!LegacyCommonAnnotatedSecurityKey.TryCreate(match, out var legacyCask))
-            {
-                return null;
-            }
-#endif
-
-            // This base class type is restricted to legacy CASK access keys, which are denoted by the
-            // reserved character '9' in the final position of the signature. An 'D' in this position
-            // denotes a 'derived' key. An 'H' denotes a 'hashed' key.
+            // This base class type is restricted to legacy CASK access keys,
+            // which are denoted by the reserved character '9' in the final
+            // position of the signature. An 'D' in this position denotes a
+            // 'derived' key. An 'H' denotes a 'hashed' key.
             if (match[LegacyCommonAnnotatedSecurityKey.StandardFixedSignatureOffset + 5] != '9')
             {
                 return null;
