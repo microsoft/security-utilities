@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureTextAnalytics)
     {
         Id = "SEC101/231";
         Name = nameof(AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey : CognitiveServi
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureTextAnalytics;
 }

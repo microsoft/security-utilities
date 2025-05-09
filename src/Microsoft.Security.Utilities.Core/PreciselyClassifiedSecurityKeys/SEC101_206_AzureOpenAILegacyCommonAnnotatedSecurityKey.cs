@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureOpenAILegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureOpenAILegacyCommonAnnotatedSecurityKey() : base()
+    public AzureOpenAILegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureOpenAI)
     {
         Id = "SEC101/206";
         Name = nameof(AzureOpenAILegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureOpenAILegacyCommonAnnotatedSecurityKey : CognitiveServiceLegac
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureOpenAI;
 }

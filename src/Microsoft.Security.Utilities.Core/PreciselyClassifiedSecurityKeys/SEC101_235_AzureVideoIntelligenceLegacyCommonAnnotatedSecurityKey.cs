@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureVideoIntelligence)
     {
         Id = "SEC101/235";
         Name = nameof(AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey : CognitiveS
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureVideoIntelligence;
 }

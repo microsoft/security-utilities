@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureSpeakerRecognition)
     {
         Id = "SEC101/228";
         Name = nameof(AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey : Cognitive
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureSpeakerRecognition;
 }

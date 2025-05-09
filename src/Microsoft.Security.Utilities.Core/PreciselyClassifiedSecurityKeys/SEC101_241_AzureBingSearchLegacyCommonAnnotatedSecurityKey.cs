@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureBingSearchLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureBingSearchLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureBingSearchLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureBingSearch)
     {
         Id = "SEC101/241";
         Name = nameof(AzureBingSearchLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureBingSearchLegacyCommonAnnotatedSecurityKey : CognitiveServiceL
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureBingSearch;
 }

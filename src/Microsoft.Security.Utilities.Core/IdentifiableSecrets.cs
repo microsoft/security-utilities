@@ -38,13 +38,13 @@ public static class IdentifiableSecrets
 
     public static uint LongFormEncodedCommonAnnotatedKeySize => 88;
 
-    public static string CommonAnnotatedKeyCoreSignature = "JQQJ";
+    public static string CommonAnnotatedKeyCoreSignature => "JQQJ";
 
-    public static string CommonAnnotatedKeySignature => $"{CommonAnnotatedKeyCoreSignature}99";
+    public static string CommonAnnotatedKeySignature { get; } = $"{CommonAnnotatedKeyCoreSignature}99";
 
-    internal static string CommonAnnotatedDerivedKeySignature => $"{CommonAnnotatedKeyCoreSignature}9D";
+    internal static string CommonAnnotatedDerivedKeySignature { get; } = $"{CommonAnnotatedKeyCoreSignature}9D";
 
-    internal static string CommonAnnotatedHashedDataSignature => $"{CommonAnnotatedKeyCoreSignature}9H";
+    internal static string CommonAnnotatedHashedDataSignature { get; } = $"{CommonAnnotatedKeyCoreSignature}9H";
 
     public static bool IsBase62EncodingChar(this char ch)
     {

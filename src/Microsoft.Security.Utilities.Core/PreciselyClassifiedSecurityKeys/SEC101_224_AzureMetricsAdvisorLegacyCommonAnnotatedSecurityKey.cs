@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureMetricsAdvisor)
     {
         Id = "SEC101/224";
         Name = nameof(AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey : CognitiveServ
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureMetricsAdvisor;
 }

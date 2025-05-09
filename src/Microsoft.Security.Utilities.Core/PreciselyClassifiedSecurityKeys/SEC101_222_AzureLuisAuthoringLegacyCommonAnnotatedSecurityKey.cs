@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureLuisAuthoring)
     {
         Id = "SEC101/222";
         Name = nameof(AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey : CognitiveServi
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureLuisAuthoring;
 }

@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureCustomVisionTraining)
     {
         Id = "SEC101/214";
         Name = nameof(AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey : Cogniti
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureCustomVisionTraining;
 }

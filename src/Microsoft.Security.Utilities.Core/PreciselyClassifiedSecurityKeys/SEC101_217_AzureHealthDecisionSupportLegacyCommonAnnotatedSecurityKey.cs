@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureHealthDecisionSupport)
     {
         Id = "SEC101/217";
         Name = nameof(AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey : Cognit
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureHealthDecisionSupport;
 }
