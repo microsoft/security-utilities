@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey() : base()
+    public AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureBingSpellCheckv7)
     {
         Id = "SEC101/245";
         Name = nameof(AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey : CognitiveSe
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureBingSpellCheckv7;
 }

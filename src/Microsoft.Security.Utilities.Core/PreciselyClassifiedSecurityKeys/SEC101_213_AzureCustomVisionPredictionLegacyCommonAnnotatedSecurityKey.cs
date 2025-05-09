@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureCustomVisionPredictionLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureCustomVisionPredictionLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureCustomVisionPredictionLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureCustomVisionPrediction)
     {
         Id = "SEC101/213";
         Name = nameof(AzureCustomVisionPredictionLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureCustomVisionPredictionLegacyCommonAnnotatedSecurityKey : Cogni
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureCustomVisionPrediction;
 }

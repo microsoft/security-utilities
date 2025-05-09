@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureSpeechTranslationLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureSpeechTranslationLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureSpeechTranslationLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureSpeechTranslation)
     {
         Id = "SEC101/230";
         Name = nameof(AzureSpeechTranslationLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureSpeechTranslationLegacyCommonAnnotatedSecurityKey : CognitiveS
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureSpeechTranslation;
 }

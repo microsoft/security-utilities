@@ -10,12 +10,13 @@ namespace Microsoft.Security.Utilities
     {
         abstract protected string ProviderSignature { get; }
 
-        protected virtual string PlatformData => $"[{WellKnownRegexPatterns.Base62}]{{12}}";
+        private const string PlatformData = $"[{WellKnownRegexPatterns.Base62}]{{12}}";
 
-        protected virtual string ProviderData => $"AAAA";
+        protected string ProviderData { get; }
 
-        public LegacyCommonAnnotatedSecurityAccessKey()
+        protected LegacyCommonAnnotatedSecurityAccessKey(string providerData = "AAAA")
         {
+            ProviderData = providerData;
             DetectionMetadata = DetectionMetadata.Identifiable;
             Pattern = $"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{52}}JQQJ99[{WellKnownRegexPatterns.Base62}][A-L]{PlatformData}{ProviderData}{ProviderSignature}[{WellKnownRegexPatterns.Base62}]{{4}})";
             Signatures = new HashSet<string>([LegacyCaskSignature]);
@@ -29,15 +30,22 @@ namespace Microsoft.Security.Utilities
                 return null;
             }
 #endif
-            string providerSignature = match.Substring(LegacyCommonAnnotatedSecurityKey.ProviderFixedSignatureOffset, 4);
-            if (providerSignature != ProviderSignature)
+            if (string.CompareOrdinal(match, LegacyCommonAnnotatedSecurityKey.ProviderFixedSignatureOffset, ProviderSignature, 0, 4) != 0)
             {
                 return null;
             }
 
-            return match[LegacyCommonAnnotatedSecurityKey.StandardFixedSignatureOffset + 5] == '9'
-                ? new Tuple<string, string>(Id, Name)
-                : null;
+            if (string.CompareOrdinal(match, LegacyCommonAnnotatedSecurityKey.ProviderReservedOffset, ProviderData, 0, 4) != 0)
+            {
+                return null;
+            }
+
+            if (match[LegacyCommonAnnotatedSecurityKey.StandardFixedSignatureOffset + 5] != '9')
+            {
+                return null;
+            }
+
+            return new Tuple<string, string>(Id, Name);
         }
 
         public override IEnumerable<string> GenerateTruePositiveExamples()

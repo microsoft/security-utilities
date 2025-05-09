@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureInternalAllInOne)
     {
         Id = "SEC101/220";
         Name = nameof(AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey : CognitiveSe
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureInternalAllInOne;
 }

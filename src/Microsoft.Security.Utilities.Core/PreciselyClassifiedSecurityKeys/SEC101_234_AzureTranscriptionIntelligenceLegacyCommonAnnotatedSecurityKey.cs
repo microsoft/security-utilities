@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureTranscriptionIntelligenceLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureTranscriptionIntelligenceLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureTranscriptionIntelligenceLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureTranscriptionIntelligence)
     {
         Id = "SEC101/234";
         Name = nameof(AzureTranscriptionIntelligenceLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureTranscriptionIntelligenceLegacyCommonAnnotatedSecurityKey : Co
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureTranscriptionIntelligence;
 }

@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureContentModeratorLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureContentModeratorLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureContentModeratorLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureContentModerator)
     {
         Id = "SEC101/211";
         Name = nameof(AzureContentModeratorLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureContentModeratorLegacyCommonAnnotatedSecurityKey : CognitiveSe
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureContentModerator;
 }

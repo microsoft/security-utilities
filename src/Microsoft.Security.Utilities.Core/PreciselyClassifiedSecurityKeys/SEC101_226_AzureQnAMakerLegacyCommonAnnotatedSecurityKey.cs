@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureQnAMakerLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureQnAMakerLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureQnAMakerLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureQnAMaker)
     {
         Id = "SEC101/226";
         Name = nameof(AzureQnAMakerLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureQnAMakerLegacyCommonAnnotatedSecurityKey : CognitiveServiceLeg
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureQnAMaker;
 }

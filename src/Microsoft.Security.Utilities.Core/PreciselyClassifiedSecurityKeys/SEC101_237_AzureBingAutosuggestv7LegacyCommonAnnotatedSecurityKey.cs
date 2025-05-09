@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey() : base()
+    public AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureBingAutosuggestv7)
     {
         Id = "SEC101/237";
         Name = nameof(AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey : CognitiveS
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureBingAutosuggestv7;
 }

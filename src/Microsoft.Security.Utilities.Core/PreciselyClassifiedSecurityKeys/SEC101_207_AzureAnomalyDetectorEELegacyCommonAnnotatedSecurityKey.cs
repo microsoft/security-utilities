@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey() : base()
+    public AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureAnomalyDetectorEE)
     {
         Id = "SEC101/207";
         Name = nameof(AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey : CognitiveS
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureAnomalyDetectorEE;
 }

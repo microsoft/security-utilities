@@ -201,7 +201,7 @@ public class SecretMaskerTests
                                     ? $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(standaloneSecret)}"
                                     : RegexPattern.FallbackRedactionToken;
 
-                                redacted.Should().Contain(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds}");
+                                redacted.Should().Contain(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds} for '{standaloneSecret}'");
                             }
 
                             foreach (string testExample in pattern.GenerateFalsePositiveExamples())

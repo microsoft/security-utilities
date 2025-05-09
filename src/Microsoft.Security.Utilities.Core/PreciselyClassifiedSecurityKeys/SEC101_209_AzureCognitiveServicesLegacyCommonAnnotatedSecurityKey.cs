@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureCognitiveServicesLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureCognitiveServicesLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureCognitiveServicesLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureCognitiveServices)
     {
         Id = "SEC101/209";
         Name = nameof(AzureCognitiveServicesLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureCognitiveServicesLegacyCommonAnnotatedSecurityKey : CognitiveS
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureCognitiveServices;
 }

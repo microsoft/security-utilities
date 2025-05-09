@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureHealthInsightsLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureHealthInsightsLegacyCommonAnnotatedSecurityKey() : base()
+    public AzureHealthInsightsLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureHealthInsights)
     {
         Id = "SEC101/218";
         Name = nameof(AzureHealthInsightsLegacyCommonAnnotatedSecurityKey);
@@ -15,6 +15,4 @@ public class AzureHealthInsightsLegacyCommonAnnotatedSecurityKey : CognitiveServ
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
-
-    protected override AzureCognitiveServices AzureCognitiveService => AzureCognitiveServices.AzureHealthInsights;
 }
