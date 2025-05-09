@@ -16,7 +16,7 @@ namespace Microsoft.Security.Utilities.Cli
         [Option(
             's',
             "string-input",
-            HelpText = "A path to a file to scan for identifiable secrets.")]
+            HelpText = "A hard-coded input to scan for identifiable secrets.")]
         public string StringInput { get; set; }
 
         [Option(

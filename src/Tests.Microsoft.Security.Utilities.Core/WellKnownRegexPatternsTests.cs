@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -51,6 +52,14 @@ namespace Microsoft.Security.Utilities
 
             foreach (RegexPattern pattern in patterns)
             {
+                if (pattern.Id == "SEC101/199")
+                {
+                    // These rules are an oddball. Event Grid has two version of
+                    // identifiable check, 'AzureEventGridIdentifiableKey' and
+                    // 'AzureEventGridLegacyCommonAnnotatedSecurityKey'.
+                    continue;
+                }
+
                 bool result = ruleIdsObserved.Contains(pattern.Id);
                 result.Should().BeFalse(because: $"Pattern '{pattern.GetType().Name}' should not share its Id with another rule: '{pattern.Id}'");
 

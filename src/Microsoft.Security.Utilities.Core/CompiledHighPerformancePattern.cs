@@ -21,8 +21,6 @@ namespace Microsoft.Security.Utilities;
 /// </remarks>
 internal sealed partial class CompiledHighPerformancePattern
 {
-
-
     /// <summary>
     /// The signature that identifies this pattern. This data must be found in
     /// the input using a fast, initial search operation; otherwise the regex

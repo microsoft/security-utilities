@@ -3,18 +3,17 @@
 
 using System;
 
-namespace Microsoft.Security.Utilities
-{
-    public class AzureEventGridIdentifiableKey : Azure32ByteIdentifiableKey
-    {
-        public AzureEventGridIdentifiableKey() : base(IdentifiableMetadata.AzureEventGridSignature)
-        {
-            Id = "SEC101/199";
-            Name = nameof(AzureEventGridIdentifiableKey);
-            Label = "an Azure Event Grid access key";
-            ChecksumSeeds = new[] { IdentifiableSecrets.VersionTwoChecksumSeed };
-        }
+namespace Microsoft.Security.Utilities;
 
-        public override Version CreatedVersion => Releases.Version_01_04_20;
+public class AzureEventGridIdentifiableKey : Azure32ByteIdentifiableKey
+{
+    public AzureEventGridIdentifiableKey() : base(IdentifiableMetadata.AzureEventGridSignature)
+    {
+        Id = "SEC101/199";
+        Name = nameof(AzureEventGridIdentifiableKey);
+        Label = "an Azure Event Grid legacy identifiable access key";
+        ChecksumSeeds = [0x53656e6452656376];
     }
+
+    public override Version CreatedVersion => Releases.Version_01_04_20;
 }

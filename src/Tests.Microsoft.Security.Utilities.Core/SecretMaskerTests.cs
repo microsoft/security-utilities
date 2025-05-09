@@ -68,11 +68,11 @@ public class SecretMaskerTests
                                 string context = testExample;
                                 var matches = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine");
                                 bool result = matches.Count() == 1;
-                                result.Should().BeTrue(because: $"Pattern {pattern.Id} should match '{context}' exactly once");
+                                result.Should().BeTrue(because: $"pattern {pattern.Id} should match '{context}' exactly once");
 
                                 string standaloneSecret = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine").First().Value;
 
-                                string moniker = pattern.GetMatchMoniker(standaloneSecret);
+                                string moniker = $"{pattern.Id}.{pattern.Name}";
 
                                 // 1. All generated test patterns should be detected by the masker.
                                 var detections = secretMasker.DetectSecrets(context).ToList();
@@ -106,8 +106,7 @@ public class SecretMaskerTests
                                                             : null;
 
                                 result = object.Equals(expectedC3id, actualC3id);
-                                result.Should().BeTrue(because: "C3id should be generated correctly");
-
+                                result.Should().BeTrue(because: $"'{expectedC3id}' redaction token expected for '{moniker}' instance but observed '{actualC3id}'");
 
                                 // 4. All high entropy secret kinds should generate a fingerprint, but only
                                 //    if the masker was initialized to produce them. Every low entropy model
@@ -119,7 +118,7 @@ public class SecretMaskerTests
                                                                     : "+++";
 
                                 result = actualRedactionToken.Equals(expectedRedactionToken);
-                                result.Should().BeTrue(because: "Redaction token should be generated correctly");
+                                result.Should().BeTrue(because: $"'{expectedRedactionToken}' redaction token expected for '{moniker}' finding but observed '{actualRedactionToken}'");
 
                                 // 5. Moniker that flows to classified secret should match the detection.
                                 result = detection.Moniker.Equals(moniker);
@@ -202,7 +201,7 @@ public class SecretMaskerTests
                                     ? $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(standaloneSecret)}"
                                     : RegexPattern.FallbackRedactionToken;
 
-                                redacted.Should().Contain(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds}");
+                                redacted.Should().Contain(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds} for '{standaloneSecret}'");
                             }
 
                             foreach (string testExample in pattern.GenerateFalsePositiveExamples())
