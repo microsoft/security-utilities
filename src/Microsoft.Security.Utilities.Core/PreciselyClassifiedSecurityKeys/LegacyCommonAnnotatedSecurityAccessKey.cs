@@ -23,21 +23,19 @@ namespace Microsoft.Security.Utilities
 
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
+#if DEBUG
             if (!LegacyCommonAnnotatedSecurityKey.TryCreate(match, out var legacyCask))
             {
                 return null;
             }
-
-            // This is the check that distinguishes a legacy CASK derived or
-            // hashed key from the access key scenario. In practice, no provider
-            // shipped a hashed key. We are aware of some derived key
-            // implementations.
-            if (legacyCask.StandardFixedSignature != "JQQJ99")
+#endif
+            string providerSignature = match.Substring(LegacyCommonAnnotatedSecurityKey.ProviderFixedSignatureOffset, 4);
+            if (providerSignature != ProviderSignature)
             {
                 return null;
             }
 
-            return legacyCask.ProviderFixedSignature == ProviderSignature
+            return match[LegacyCommonAnnotatedSecurityKey.StandardFixedSignatureOffset + 5] == '9'
                 ? new Tuple<string, string>(Id, Name)
                 : null;
         }

@@ -49,7 +49,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
         /// performance scanner is always used, but there's a test hook to turn
         /// it off, which we use to see how much it is optimizing.
         /// </summary>
-        [Params(true, false)]
+        //[Params(true, false)]
         public bool UseHighPerformanceScanner { get; set; } = true;
 
         /// <summary>
@@ -119,16 +119,34 @@ namespace Microsoft.Security.Utilities.Benchmarks
             return (value + multiple - 1) / multiple * multiple;
         }
 
-        private List<string> GenerateExamples(bool random, int prefixLength)
+        private List<string> GenerateExamples(bool random, int prefixLength, int examplesCount = 870)
         {
             var examples = new List<string>();
             var prefix = GeneratePrefix(prefixLength, random);
 
+            var exampleGenerators = new List<IEnumerator<string>>();
+
             foreach (var pattern in RegexPatterns)
             {
-                foreach (var example in pattern.GenerateTruePositiveExamples())
+                IEnumerator<string> enumerator = pattern.GenerateTruePositiveExamples().GetEnumerator();
+                exampleGenerators.Add(enumerator);
+                enumerator.MoveNext();
+            }
+
+            while (examples.Count < examplesCount)
+            {
+                foreach(IEnumerator<string> exampleGenerator in exampleGenerators)
                 {
-                    examples.Add($"{prefix} {example}");
+                    if (exampleGenerator.Current != null)
+                    {
+                        examples.Add(prefix + exampleGenerator.Current);
+                        exampleGenerator.MoveNext();
+                    }
+
+                    if (examples.Count >= examplesCount)
+                    {
+                        break;
+                    }
                 }
             }
 

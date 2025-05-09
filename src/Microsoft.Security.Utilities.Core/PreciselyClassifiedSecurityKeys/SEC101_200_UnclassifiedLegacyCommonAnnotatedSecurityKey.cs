@@ -34,17 +34,17 @@ namespace Microsoft.Security.Utilities
 
         public override Tuple<string, string> GetMatchIdAndName(string match)
         {
+#if DEBUG
             if (!LegacyCommonAnnotatedSecurityKey.TryCreate(match, out var legacyCask))
             {
                 return null;
             }
+#endif
+            string providerSignature = match.Substring(LegacyCommonAnnotatedSecurityKey.ProviderFixedSignatureOffset, 4);
 
-            if (LegacyCaskProviderSignatures.All.Contains(legacyCask.ProviderFixedSignature))
-            {
-                return null;
-            }
-
-            return base.GetMatchIdAndName(match);
+            return LegacyCaskProviderSignatures.All.Contains(providerSignature)
+                ? null
+                : new Tuple<string, string>(Id, Name);
         }
 
         public override Version CreatedVersion => Releases.Version_01_04_24;
