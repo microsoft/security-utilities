@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureComputerVisionLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureComputerVisionLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureComputerVision)
+    public AzureComputerVisionLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureComputerVision)
     {
         Id = "SEC101/210";
         Name = nameof(AzureComputerVisionLegacyCommonAnnotatedSecurityKey);

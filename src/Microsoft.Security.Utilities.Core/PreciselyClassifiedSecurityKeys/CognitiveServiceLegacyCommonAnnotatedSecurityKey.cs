@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public abstract class CognitiveServiceLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSecurityAccessKey
 {
-    protected CognitiveServiceLegacyCommonAnnotatedSecurityKey(AzureCognitiveServices service)
+    protected CognitiveServiceLegacyCommonAnnotatedSecurityKey(AzureCognitiveService service)
         : base(providerData: $"AAA{CustomAlphabetEncoder.DefaultBase64Alphabet[(int)service]}")
     {
         AzureCognitiveService = service;
@@ -15,11 +15,15 @@ public abstract class CognitiveServiceLegacyCommonAnnotatedSecurityKey : LegacyC
 
     protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureCognitiveServices;
 
-    protected AzureCognitiveServices AzureCognitiveService { get; }
+    protected AzureCognitiveService AzureCognitiveService { get; }
 
     public override Tuple<string, string> GetMatchIdAndName(string match)
     {
-        if (match.Length == 88) // comment or constant please
+        // No Cognitive Services provider supports a long-form key and so we can
+        // reject any matches that are 88 characters long. We can't push this check
+        // into the base class because the legacy CASK format permits long-form
+        // (88 character) access keys for other cases.
+        if (match.Length == 88)
         {
             return null;
         }

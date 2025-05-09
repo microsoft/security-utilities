@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureFaceLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureFaceLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureFace)
+    public AzureFaceLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureFace)
     {
         Id = "SEC101/215";
         Name = nameof(AzureFaceLegacyCommonAnnotatedSecurityKey);

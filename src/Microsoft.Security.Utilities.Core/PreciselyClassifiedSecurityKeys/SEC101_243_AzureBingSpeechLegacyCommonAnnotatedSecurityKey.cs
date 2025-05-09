@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureBingSpeechLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureBingSpeechLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureBingSpeech)
+    public AzureBingSpeechLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureBingSpeech)
     {
         Id = "SEC101/243";
         Name = nameof(AzureBingSpeechLegacyCommonAnnotatedSecurityKey);

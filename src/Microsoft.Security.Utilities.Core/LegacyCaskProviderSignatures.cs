@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public static class LegacyCaskProviderSignatures
 {
-    public static ISet<string> All = new HashSet<string>
+    public static ISet<string> All { get; } = new HashSet<string>
     {
         SqlServerPrivate,
         AzureAppConfiguration,

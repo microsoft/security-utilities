@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzurePersonalizerLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzurePersonalizerLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzurePersonalizer)
+    public AzurePersonalizerLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzurePersonalizer)
     {
         Id = "SEC101/225";
         Name = nameof(AzurePersonalizerLegacyCommonAnnotatedSecurityKey);

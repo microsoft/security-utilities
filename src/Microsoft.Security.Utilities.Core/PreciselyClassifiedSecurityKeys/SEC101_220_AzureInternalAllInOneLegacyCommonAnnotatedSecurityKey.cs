@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureInternalAllInOne)
+    public AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureInternalAllInOne)
     {
         Id = "SEC101/220";
         Name = nameof(AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey);

@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureAIServicesLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureAIServicesLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureAIServices)
+    public AzureAIServicesLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureAIServices)
     {
         Id = "SEC101/205";
         Name = nameof(AzureAIServicesLegacyCommonAnnotatedSecurityKey);

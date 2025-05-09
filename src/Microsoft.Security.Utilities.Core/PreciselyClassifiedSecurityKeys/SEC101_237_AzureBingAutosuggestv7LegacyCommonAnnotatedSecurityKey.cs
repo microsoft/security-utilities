@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureBingAutosuggestv7)
+    public AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureBingAutosuggestv7)
     {
         Id = "SEC101/237";
         Name = nameof(AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey);

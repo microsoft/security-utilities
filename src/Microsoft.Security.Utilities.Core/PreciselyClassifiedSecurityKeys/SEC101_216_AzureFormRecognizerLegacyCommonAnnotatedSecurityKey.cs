@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureFormRecognizerLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureFormRecognizerLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureFormRecognizer)
+    public AzureFormRecognizerLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureFormRecognizer)
     {
         Id = "SEC101/216";
         Name = nameof(AzureFormRecognizerLegacyCommonAnnotatedSecurityKey);

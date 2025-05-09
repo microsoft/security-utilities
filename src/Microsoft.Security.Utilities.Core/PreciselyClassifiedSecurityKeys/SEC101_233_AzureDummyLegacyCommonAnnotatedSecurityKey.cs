@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureDummyLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureDummyLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureDummy)
+    public AzureDummyLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureDummy)
     {
         Id = "SEC101/233";
         Name = nameof(AzureDummyLegacyCommonAnnotatedSecurityKey);

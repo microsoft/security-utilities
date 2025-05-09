@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureContentModeratorLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureContentModeratorLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureContentModerator)
+    public AzureContentModeratorLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureContentModerator)
     {
         Id = "SEC101/211";
         Name = nameof(AzureContentModeratorLegacyCommonAnnotatedSecurityKey);

@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureVideoIntelligence)
+    public AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureVideoIntelligence)
     {
         Id = "SEC101/235";
         Name = nameof(AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey);

@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureCustomVisionTraining)
+    public AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureCustomVisionTraining)
     {
         Id = "SEC101/214";
         Name = nameof(AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey);

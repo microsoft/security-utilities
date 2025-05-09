@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureTextTranslationLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureTextTranslationLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureTextTranslation)
+    public AzureTextTranslationLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureTextTranslation)
     {
         Id = "SEC101/232";
         Name = nameof(AzureTextTranslationLegacyCommonAnnotatedSecurityKey);

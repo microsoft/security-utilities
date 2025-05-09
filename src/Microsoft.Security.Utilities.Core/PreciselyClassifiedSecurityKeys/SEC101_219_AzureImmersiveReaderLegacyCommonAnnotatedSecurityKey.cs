@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureImmersiveReaderLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureImmersiveReaderLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureImmersiveReader)
+    public AzureImmersiveReaderLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureImmersiveReader)
     {
         Id = "SEC101/219";
         Name = nameof(AzureImmersiveReaderLegacyCommonAnnotatedSecurityKey);

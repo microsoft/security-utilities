@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureBingSpellCheckv7)
+    public AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureBingSpellCheckv7)
     {
         Id = "SEC101/245";
         Name = nameof(AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey);

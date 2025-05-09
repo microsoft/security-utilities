@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureSpeakerRecognition)
+    public AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureSpeakerRecognition)
     {
         Id = "SEC101/228";
         Name = nameof(AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey);

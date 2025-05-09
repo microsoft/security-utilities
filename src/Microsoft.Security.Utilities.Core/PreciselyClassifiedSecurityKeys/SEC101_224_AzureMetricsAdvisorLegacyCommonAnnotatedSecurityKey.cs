@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureMetricsAdvisor)
+    public AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureMetricsAdvisor)
     {
         Id = "SEC101/224";
         Name = nameof(AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey);

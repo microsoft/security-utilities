@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureTextAnalytics)
+    public AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureTextAnalytics)
     {
         Id = "SEC101/231";
         Name = nameof(AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey);

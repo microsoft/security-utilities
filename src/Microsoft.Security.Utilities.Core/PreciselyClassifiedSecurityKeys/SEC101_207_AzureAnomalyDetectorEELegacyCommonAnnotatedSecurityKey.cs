@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureAnomalyDetectorEE)
+    public AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureAnomalyDetectorEE)
     {
         Id = "SEC101/207";
         Name = nameof(AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey);

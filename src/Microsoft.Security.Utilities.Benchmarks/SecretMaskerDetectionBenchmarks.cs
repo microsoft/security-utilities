@@ -139,7 +139,7 @@ namespace Microsoft.Security.Utilities.Benchmarks
                 {
                     if (exampleGenerator.Current != null)
                     {
-                        examples.Add(prefix + exampleGenerator.Current);
+                        examples.Add($"{prefix} {exampleGenerator.Current}");
                         exampleGenerator.MoveNext();
                     }
 

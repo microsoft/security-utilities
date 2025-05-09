@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureOpenAILegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureOpenAILegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureOpenAI)
+    public AzureOpenAILegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureOpenAI)
     {
         Id = "SEC101/206";
         Name = nameof(AzureOpenAILegacyCommonAnnotatedSecurityKey);

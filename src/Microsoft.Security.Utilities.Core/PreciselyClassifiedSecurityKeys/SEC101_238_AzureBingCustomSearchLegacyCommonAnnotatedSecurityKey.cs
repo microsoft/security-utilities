@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureBingCustomSearchLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureBingCustomSearchLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureBingCustomSearch)
+    public AzureBingCustomSearchLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureBingCustomSearch)
     {
         Id = "SEC101/238";
         Name = nameof(AzureBingCustomSearchLegacyCommonAnnotatedSecurityKey);

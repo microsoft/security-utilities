@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureQnAMakerv2LegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureQnAMakerv2LegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureQnAMakerv2)
+    public AzureQnAMakerv2LegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureQnAMakerv2)
     {
         Id = "SEC101/227";
         Name = nameof(AzureQnAMakerv2LegacyCommonAnnotatedSecurityKey);

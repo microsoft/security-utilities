@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureLuisAuthoring)
+    public AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureLuisAuthoring)
     {
         Id = "SEC101/222";
         Name = nameof(AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey);

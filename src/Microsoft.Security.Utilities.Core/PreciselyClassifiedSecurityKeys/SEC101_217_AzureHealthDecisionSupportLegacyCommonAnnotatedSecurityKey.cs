@@ -7,7 +7,7 @@ namespace Microsoft.Security.Utilities;
 
 public class AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyCommonAnnotatedSecurityKey
 {
-    public AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveServices.AzureHealthDecisionSupport)
+    public AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey() : base(AzureCognitiveService.AzureHealthDecisionSupport)
     {
         Id = "SEC101/217";
         Name = nameof(AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey);

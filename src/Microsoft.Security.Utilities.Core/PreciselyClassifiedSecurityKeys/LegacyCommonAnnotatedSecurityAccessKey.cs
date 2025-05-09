@@ -18,7 +18,7 @@ namespace Microsoft.Security.Utilities
         {
             ProviderData = providerData;
             DetectionMetadata = DetectionMetadata.Identifiable;
-            Pattern = $"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{52}}JQQJ99[{WellKnownRegexPatterns.Base62}][A-L]{PlatformData}{ProviderData}{ProviderSignature}[{WellKnownRegexPatterns.Base62}]{{4}})";
+            Pattern = $"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{52}}JQQJ99[{WellKnownRegexPatterns.Base62}][A-L]{PlatformData}{ProviderData}{ProviderSignature}[{WellKnownRegexPatterns.Base62}]{{4}})(?:[{WellKnownRegexPatterns.Base62}]{{2}}==)?";
             Signatures = new HashSet<string>([LegacyCaskSignature]);
         }
 
@@ -30,17 +30,21 @@ namespace Microsoft.Security.Utilities
                 return null;
             }
 #endif
+
+            // This base class type is restricted to legacy CASK access keys, which are denoted by the
+            // reserved character '9' in the final position of the signature. An 'D' in this position
+            // denotes a 'derived' key. An 'H' denotes a 'hashed' key.
+            if (match[LegacyCommonAnnotatedSecurityKey.StandardFixedSignatureOffset + 5] != '9')
+            {
+                return null;
+            }
+
             if (string.CompareOrdinal(match, LegacyCommonAnnotatedSecurityKey.ProviderFixedSignatureOffset, ProviderSignature, 0, 4) != 0)
             {
                 return null;
             }
 
             if (string.CompareOrdinal(match, LegacyCommonAnnotatedSecurityKey.ProviderReservedOffset, ProviderData, 0, 4) != 0)
-            {
-                return null;
-            }
-
-            if (match[LegacyCommonAnnotatedSecurityKey.StandardFixedSignatureOffset + 5] != '9')
             {
                 return null;
             }
