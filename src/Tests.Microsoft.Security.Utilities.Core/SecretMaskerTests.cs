@@ -602,7 +602,6 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_MinimumLengthSetThroughProperty()
     {
-        SecretMasker.MinimumSecretLengthCeiling = 9;
         using var secretMasker = new SecretMasker { MinimumSecretLength = 9 };
 
         secretMasker.AddValue("efg");
@@ -664,7 +663,7 @@ public class SecretMaskerTests
     {
         foreach (string token in new[] { string.Empty, null, " " })
         {
-            using var secretMasker = new SecretMasker() { DefaultLiteralRedactionToken = token, DefaultRegexRedactionToken = token };
+            using var secretMasker = new SecretMasker(defaultLiteralRedactionToken: token, defaultRegexRedactionToken: token);
             secretMasker.AddValue("abc");
             secretMasker.AddRegex(new RegexPattern(id: "123", name: "Name", "a test secret", DetectionMetadata.None, pattern: "def"));
 
@@ -680,7 +679,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_DistinguishLiteralAndRegexRedactionTokens()
     {
-        using var secretMasker = new SecretMasker() { MinimumSecretLength = 3, DefaultRegexRedactionToken = "zzz", DefaultLiteralRedactionToken = "yyy" };
+        using var secretMasker = new SecretMasker(defaultRegexRedactionToken: "zzz", defaultLiteralRedactionToken: "yyy") { MinimumSecretLength = 3 };
 
         secretMasker.AddRegex(new RegexPattern(id: "1000", name: "Name", "a test secret", DetectionMetadata.None, pattern: "abc"));
         secretMasker.AddValue("123");
@@ -792,8 +791,8 @@ public class SecretMaskerTests
         string actual = secretMasker.MaskSecrets(input);
         Assert.AreEqual(input, actual);
     }
-    private static void ValidateTelemetry(SecretMasker testSecretMasker, int expectedRedactions = 0, bool usesMoniker = false)
+    private static void ValidateTelemetry(SecretMasker testSecretMasker)
     {
-        Assert.IsTrue(testSecretMasker.ElapsedMaskingTime > 0);
+        Assert.IsTrue(testSecretMasker.ElapsedMaskingTime.Ticks > 0);
     }
 }
