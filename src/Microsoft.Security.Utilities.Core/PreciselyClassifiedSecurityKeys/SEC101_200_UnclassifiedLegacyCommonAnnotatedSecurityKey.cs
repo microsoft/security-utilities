@@ -9,7 +9,8 @@ namespace Microsoft.Security.Utilities
     public class UnclassifiedLegacyCommonAnnotatedSecurityKey : RegexPattern, IHighPerformanceScannableKey
     {
         // NOTE: Use 4 character signature for high-performance scanner compatibility.
-        private const string Signature = "JQQJ";
+        public const string LegacyCaskSignature = "JQQJ";
+        public const string LegacyCaskPattern = $"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{52}}{LegacyCaskSignature}9(?:9|D|H)[{WellKnownRegexPatterns.Base62}][A-L][{WellKnownRegexPatterns.Base62}]{{16}}[A-Za-z][{WellKnownRegexPatterns.Base62}]{{7}}(?:[{WellKnownRegexPatterns.Base62}]{{2}}==)?)";
 
         public UnclassifiedLegacyCommonAnnotatedSecurityKey()
         {
@@ -17,19 +18,28 @@ namespace Microsoft.Security.Utilities
             Name = nameof(UnclassifiedLegacyCommonAnnotatedSecurityKey);
             Label = "an unclassified legacy common annotated security key";
             DetectionMetadata = DetectionMetadata.Identifiable;
-            Pattern = $"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{52}}JQQJ9(?:9|D|H)[{WellKnownRegexPatterns.Base62}][A-L][{WellKnownRegexPatterns.Base62}]{{16}}[A-Za-z][{WellKnownRegexPatterns.Base62}]{{7}}(?:[{WellKnownRegexPatterns.Base62}]{{2}}==)?)";
-            Signatures = new HashSet<string>([Signature]);
+            Pattern = LegacyCaskPattern;
+            Signatures = new HashSet<string>([LegacyCaskSignature]);
         }
 
 #if HIGH_PERFORMANCE_CODEGEN
         IEnumerable<HighPerformancePattern> IHighPerformanceScannableKey.HighPerformancePatterns => [
-            new(Signature,
-                MakeHighPerformancePattern(Pattern, Signature),
+            new(LegacyCaskSignature,
+                MakeHighPerformancePattern(LegacyCaskPattern, LegacyCaskSignature),
                 signaturePrefixLength: 52,
                 minMatchLength: 84,
                 maxMatchLength: 88),
         ];
 #endif
+
+        public override Tuple<string, string> GetMatchIdAndName(string match)
+        {
+            string providerSignature = match.Substring(LegacyCommonAnnotatedSecurityKey.ProviderFixedSignatureOffset, 4);
+
+            return LegacyCaskProviderSignatures.All.Contains(providerSignature)
+                ? null
+                : new Tuple<string, string>(Id, Name);
+        }
 
         public override Version CreatedVersion => Releases.Version_01_04_24;
 
