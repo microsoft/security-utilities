@@ -4,8 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -22,9 +20,20 @@ public delegate string LiteralEncoder(string literal);
 
 public sealed class SecretMasker : ISecretMasker
 {
+    private readonly bool _generateCorrelatingIds;
     private readonly IRegexEngine _regexEngine;
+    private readonly HashSet<LiteralEncoder> _literalEncoders;
+    private readonly HashSet<SecretLiteral> _encodedSecretLiterals;
+    private readonly HashSet<SecretLiteral> _explicitlyAddedSecretLiterals;
+    private readonly HashSet<RegexPattern> _regexPatterns;
+
+    private int _minimumSecretLength;
+    private long _elapsedMaskingTicks;
     private HighPerformanceScanner? _highPerformanceScanner;
     private Dictionary<string, List<RegexPattern>>? _highPerformanceSignatureToPatternsMap;
+
+    [ThreadStatic]
+    private static StringBuilder? s_stringBuilder;
 
     public static Version Version { get; } = RetrieveVersion();
 
@@ -59,24 +68,15 @@ public sealed class SecretMasker : ISecretMasker
         AddHighPerformancePatterns(_regexPatterns);
     }
 
-    [ThreadStatic]
-    private static StringBuilder? s_stringBuilder;
-
     public string DefaultRegexRedactionToken { get; }
 
     public string DefaultLiteralRedactionToken { get; }
-
-    private readonly HashSet<RegexPattern> _regexPatterns;
 
     /// <summary>
     /// Gets the total time spent masking content for the lifetime of this masker instance.
     /// </summary>
     public TimeSpan ElapsedMaskingTime => TimeSpan.FromTicks(_elapsedMaskingTicks);
-    private long _elapsedMaskingTicks;
 
-    /// <summary>
-    /// This implementation assumes no more than one thread is adding regexes, values, or encoders at any given time.
-    /// </summary>
     public void AddRegex(RegexPattern regexSecret)
     {
         AddPatterns([regexSecret]);
@@ -174,7 +174,7 @@ public sealed class SecretMasker : ISecretMasker
     }
 
     /// <summary>
-    /// Gets or sets the minimum allowable size of a string that's a candidate for masking.
+    /// Gets or sets the minimum length of a secret that can be detected or masked.
     /// </summary>
     public int MinimumSecretLength
     {
@@ -192,7 +192,6 @@ public sealed class SecretMasker : ISecretMasker
             }
         }
     }
-    private int _minimumSecretLength;
 
     public void AddValue(string value)
     {
@@ -266,7 +265,7 @@ public sealed class SecretMasker : ISecretMasker
 
     private List<Detection> DetectSecretsCore(string input)
     {
-        if (string.IsNullOrEmpty(input))
+        if (input == null || input.Length < MinimumSecretLength)
         {
             return [];
         }
@@ -434,11 +433,6 @@ public sealed class SecretMasker : ISecretMasker
         _highPerformanceScanner = null;
         _highPerformanceSignatureToPatternsMap = null;
     }
-
-    private readonly bool _generateCorrelatingIds;
-    private readonly HashSet<LiteralEncoder> _literalEncoders;
-    private readonly HashSet<SecretLiteral> _encodedSecretLiterals;
-    private readonly HashSet<SecretLiteral> _explicitlyAddedSecretLiterals;
 
     public ReaderWriterLockSlim SyncObject { get; } = new(LockRecursionPolicy.SupportsRecursion);
 }
