@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
@@ -22,9 +23,9 @@ namespace Tests.Microsoft.Security.Utilities.Core
             var classifier = new SecretScanningSampleToken();
             var masker = new SecretMasker(new[] { classifier });
             string example = classifier.GenerateTruePositiveExamples().First();
-            var detections = classifier.GetDetections(example, generateCrossCompanyCorrelatingIds: true);
+            IEnumerable<Detection> detections = classifier.GetDetections(example, generateCrossCompanyCorrelatingIds: true);
             detections?.Count().Should().Be(1);
-            var detection = detections.First();
+            Detection detection = detections.First();
             string truncated = Detections.TruncateSecret(example);
             string c3id = RegexPattern.GenerateCrossCompanyCorrelatingId(example);
             string expected = $"'{truncated}' is a non-functional secret scanning sample token. The correlating id for this detection is {c3id}.";

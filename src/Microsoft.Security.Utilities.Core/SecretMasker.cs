@@ -119,7 +119,7 @@ public class SecretMasker : ISecretMasker
             return string.Empty;
         }
 
-        var enumerableDetections = DetectSecrets(input);
+        IEnumerable<Detection> enumerableDetections = DetectSecrets(input);
 
         // Short-circuit if nothing to replace.
         if (!enumerableDetections.Any())
@@ -127,7 +127,7 @@ public class SecretMasker : ISecretMasker
             return input;
         }
 
-        List<Detection> detections = enumerableDetections.ToList();
+        var detections = enumerableDetections.ToList();
         detections.Sort((x, y) =>
         {
             int result = x.Start.CompareTo(y.Start);
@@ -348,7 +348,7 @@ public class SecretMasker : ISecretMasker
                     continue;
                 }
 
-                foreach (var detection in regexSecret.GetDetections(input, _generateCorrelatingIds, DefaultRegexRedactionToken, _regexEngine))
+                foreach (Detection detection in regexSecret.GetDetections(input, _generateCorrelatingIds, DefaultRegexRedactionToken, _regexEngine))
                 {
                     yield return detection;
                 }
@@ -356,7 +356,7 @@ public class SecretMasker : ISecretMasker
 
             foreach (SecretLiteral secretLiteral in EncodedSecretLiterals)
             {
-                foreach (var detection in secretLiteral.GetDetections(input, DefaultLiteralRedactionToken))
+                foreach (Detection detection in secretLiteral.GetDetections(input, DefaultLiteralRedactionToken))
                 {
                     yield return detection;
                 }
@@ -427,7 +427,7 @@ public class SecretMasker : ISecretMasker
         {
             SyncObject.EnterWriteLock();
 
-            foreach (var pattern in regexPatterns)
+            foreach (RegexPattern pattern in regexPatterns)
             {
                 RegexPatterns.Add(pattern);
             }
@@ -447,7 +447,7 @@ public class SecretMasker : ISecretMasker
     {
         List<CompiledHighPerformancePattern>? compiledHighPerformancePatterns = null;
 
-        foreach (var pattern in patterns)
+        foreach (RegexPattern pattern in patterns)
         {
             if (pattern is not IHighPerformanceScannableKey)
             {
@@ -460,7 +460,7 @@ public class SecretMasker : ISecretMasker
             Debug.Assert(pattern.Signatures != null, "High-performance scannable key must have non-null signatures.");
             foreach (string signature in pattern.Signatures!)
             {
-                var highPerformancePattern = CompiledHighPerformancePattern.ForSignature(signature)!;
+                CompiledHighPerformancePattern highPerformancePattern = CompiledHighPerformancePattern.ForSignature(signature)!;
                 Debug.Assert(highPerformancePattern != null, "Every signature of high-performance compatible patterns have a compiled counterpart.");
                 compiledHighPerformancePatterns.Add(highPerformancePattern!);
 

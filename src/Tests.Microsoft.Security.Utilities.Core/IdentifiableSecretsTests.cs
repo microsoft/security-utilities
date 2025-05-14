@@ -63,7 +63,7 @@ namespace Microsoft.Security.Utilities
         {
             string signature = GetRandomSignature();
 
-            DateTime allocationTime = new DateTime(2033, 7, 1, 0, 0, 0, DateTimeKind.Utc);
+            var allocationTime = new DateTime(2033, 7, 1, 0, 0, 0, DateTimeKind.Utc);
 
             string key = IdentifiableSecrets.GenerateCommonAnnotatedTestKey(new byte[64],
                                                                             ulong.MaxValue,
@@ -86,7 +86,7 @@ namespace Microsoft.Security.Utilities
         {
             string signature = GetRandomSignature();
 
-            DateTime allocationTime = new DateTime(2085, 12, 31, 23, 59, 59, 999, DateTimeKind.Utc);
+            var allocationTime = new DateTime(2085, 12, 31, 23, 59, 59, 999, DateTimeKind.Utc);
 
             string key = IdentifiableSecrets.GenerateCommonAnnotatedTestKey(new byte[64],
                                                                             ulong.MaxValue,
@@ -109,7 +109,7 @@ namespace Microsoft.Security.Utilities
         {
             string signature = GetRandomSignature();
 
-            DateTime allocationTime = new DateTime(2033, 7, 1, 0, 0, 0, DateTimeKind.Unspecified);
+            var allocationTime = new DateTime(2033, 7, 1, 0, 0, 0, DateTimeKind.Unspecified);
 
             Action action = () => IdentifiableSecrets.GenerateCommonAnnotatedTestKey(new byte[64],
                                                                                      ulong.MaxValue,
@@ -130,7 +130,7 @@ namespace Microsoft.Security.Utilities
         {
             string signature = GetRandomSignature();
 
-            DateTime allocationTime = new DateTime(2023, 7, 1, 0, 0, 0, DateTimeKind.Utc);
+            var allocationTime = new DateTime(2023, 7, 1, 0, 0, 0, DateTimeKind.Utc);
 
             Action action = () => IdentifiableSecrets.GenerateCommonAnnotatedTestKey(new byte[64],
                                                                                      ulong.MaxValue,
@@ -151,7 +151,7 @@ namespace Microsoft.Security.Utilities
         {
             string signature = GetRandomSignature();
 
-            DateTime allocationTime = new DateTime(2086, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var allocationTime = new DateTime(2086, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
             Action action = () => IdentifiableSecrets.GenerateCommonAnnotatedTestKey(new byte[64],
                                                                                      ulong.MaxValue,
@@ -588,7 +588,7 @@ namespace Microsoft.Security.Utilities
 
             foreach (string invalidSignature in new[] { "AbAA", "aaaB", "1AAA", "A?AA" })
             {
-                var action = () => IdentifiableSecrets.ValidateCommonAnnotatedKeySignature(invalidSignature);
+                Action action = () => IdentifiableSecrets.ValidateCommonAnnotatedKeySignature(invalidSignature);
                 action.Should().Throw<ArgumentException>(because: $"the signature '{invalidSignature}' is invalid");
             }
         }
@@ -794,7 +794,7 @@ namespace Microsoft.Security.Utilities
                 ("RWSeed00", 0x5257536565643030)
             };
 
-            foreach (var test in tests)
+            foreach ((string literal, ulong seed) test in tests)
             {
                 IdentifiableSecrets.ComputeHisV1ChecksumSeed(test.literal).Should().Be(test.seed);
             }
@@ -814,7 +814,7 @@ namespace Microsoft.Security.Utilities
 
                 foreach (string example in pattern.GenerateTruePositiveExamples())
                 {
-                    IIdentifiableKey identifiablePattern = pattern as IIdentifiableKey;
+                    var identifiablePattern = pattern as IIdentifiableKey;
                     if (identifiablePattern == null) { continue; }
 
                     bool matched = false;
@@ -1099,7 +1099,7 @@ namespace Microsoft.Security.Utilities
             // generation code isn't reliably producing keys using the complete
             // alphabet.
 
-            var keyLengthInBytesValues = new uint[]
+            uint[] keyLengthInBytesValues = new uint[]
             {
                 IdentifiableSecrets.MinimumGeneratedKeySize, IdentifiableSecrets.MinimumGeneratedKeySize + 1,
                 IdentifiableSecrets.MinimumGeneratedKeySize + 2, IdentifiableSecrets.MinimumGeneratedKeySize + 3,
@@ -1137,7 +1137,7 @@ namespace Microsoft.Security.Utilities
 
             for (int i = 0; i < 256; i++)
             {
-                var randomBytes = new byte[i];
+                byte[] randomBytes = new byte[i];
                 cryptoProvider.GetBytes(randomBytes);
 
                 string base64Encoded = Convert.ToBase64String(randomBytes);
@@ -1166,10 +1166,10 @@ namespace Microsoft.Security.Utilities
 
         private void ValidateSecret(string secret, ulong seed, string signature, bool encodeForUrl)
         {
-            var isValid = IdentifiableSecrets.ValidateBase64Key(secret, seed, signature, encodeForUrl);
+            bool isValid = IdentifiableSecrets.ValidateBase64Key(secret, seed, signature, encodeForUrl);
             Assert.IsTrue(isValid);
 
-            var base64EncodingKind = Base64EncodingKind.Unknown;
+            Base64EncodingKind base64EncodingKind = Base64EncodingKind.Unknown;
 
             if (secret.Contains('+') || secret.Contains('/'))
             {

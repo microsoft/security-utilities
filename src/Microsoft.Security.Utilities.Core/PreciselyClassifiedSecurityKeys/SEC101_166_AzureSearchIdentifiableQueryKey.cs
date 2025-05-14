@@ -36,7 +36,7 @@ namespace Microsoft.Security.Utilities
 
         public override IEnumerable<string> GenerateTruePositiveExamples()
         {
-            foreach (var example in base.GenerateTruePositiveExamples())
+            foreach (string example in base.GenerateTruePositiveExamples())
             {
                 if (example.Contains("_") || example.Contains("-")) { continue; }
                 yield return example;

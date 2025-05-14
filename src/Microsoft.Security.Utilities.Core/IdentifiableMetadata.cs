@@ -97,7 +97,7 @@ internal static class IdentifiableMetadata
 
     public static bool IsAzureAadClientAppIdentifiableSecret(string secret)
     {
-        CustomAlphabetEncoder encoder = new CustomAlphabetEncoder(AadClientPasswordCharacterSet);
+        var encoder = new CustomAlphabetEncoder(AadClientPasswordCharacterSet);
         int secretLength = secret.Length;
 
         string signature = secret.Substring(3, AadClientAppLegacySignature.Length);
@@ -124,7 +124,7 @@ internal static class IdentifiableMetadata
         // We are encoding a subset of ANSI, and Latin1
         // is reasonable approximation of the character
         // set we expect.
-        Encoding latin1Encoding = Encoding.GetEncoding("ISO-8859-1");
+        var latin1Encoding = Encoding.GetEncoding("ISO-8859-1");
         byte[] input = latin1Encoding.GetBytes(textToChecksum);
 
 #if !NET5_0_OR_GREATER

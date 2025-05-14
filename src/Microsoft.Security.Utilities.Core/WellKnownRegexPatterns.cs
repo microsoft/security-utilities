@@ -186,7 +186,7 @@ public static class WellKnownRegexPatterns
     private static IReadOnlyList<RegexPattern> CombineLists(params IReadOnlyList<RegexPattern>[] lists)
     {
         var combined = new List<RegexPattern>(lists.Sum(l => l.Count));
-        foreach (var list in lists)
+        foreach (IReadOnlyList<RegexPattern> list in lists)
         {
             combined.AddRange(list);
         }

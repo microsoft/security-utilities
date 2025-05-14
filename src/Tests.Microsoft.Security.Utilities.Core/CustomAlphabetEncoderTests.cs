@@ -24,7 +24,7 @@ namespace Microsoft.Security.Utilities
         [TestMethod]
         public void CustomAlphabetEncoder_EncodeUintWithTestCases()
         {
-            Random random = new Random();
+            var random = new Random();
 
             var testCases = new[]
             {
