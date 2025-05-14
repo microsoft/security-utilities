@@ -28,7 +28,7 @@ namespace Microsoft.Security.Utilities
                 return Uri.EscapeDataString(value);
             }
 
-            StringBuilder stringBuilder = new StringBuilder();
+            var stringBuilder = new StringBuilder();
             int num = 0;
             do
             {

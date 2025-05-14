@@ -43,7 +43,7 @@ namespace Microsoft.Security.Utilities.Cli
         {
             get
             {
-                if (ulong.TryParse(ChecksumSeedText, out var count))
+                if (ulong.TryParse(ChecksumSeedText, out ulong count))
                 {
                     return count;
                 }

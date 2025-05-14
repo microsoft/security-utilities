@@ -20,13 +20,13 @@ namespace Microsoft.Security.Utilities.Core
             var classifier = new Unclassified16ByteHexadecimalString();
             string validInput = "0123456789abcdef0123456789abcdef";
 
-            var result = classifier.GetMatchIdAndName(validInput);
+            Tuple<string, string>? result = classifier.GetMatchIdAndName(validInput);
 
             Assert.IsNotNull(result);
             Assert.AreEqual("SEC000/002", result.Item1);
             Assert.AreEqual("Unclassified16ByteHexadecimalString", result.Item2);
 
-            var detection =
+            Detection? detection =
                 classifier.GetDetections(validInput, generateCrossCompanyCorrelatingIds: false).FirstOrDefault();
 
             Assert.IsNotNull(detection);

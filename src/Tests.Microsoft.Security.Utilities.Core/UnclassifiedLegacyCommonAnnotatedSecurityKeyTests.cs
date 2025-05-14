@@ -30,7 +30,7 @@ namespace Microsoft.Security.Utilities
 
                 foreach (string secret in new[] { caskSecret, legacySecret })
                 {
-                    var action = () => LegacyCommonAnnotatedSecurityKey.TryCreate(secret, out LegacyCommonAnnotatedSecurityKey cask);
+                    Action action = () => LegacyCommonAnnotatedSecurityKey.TryCreate(secret, out LegacyCommonAnnotatedSecurityKey cask);
                     action.Should().NotThrow(because: "TryCreate should never throw");
                 }
             }

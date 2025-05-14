@@ -27,7 +27,7 @@ namespace Microsoft.Security.Utilities
 
         public static Regex GetOrCreateRegex(string pattern, RegexOptions? options = null)
         {
-            var key = (pattern, options ?? RegexDefaults.DefaultOptions);
+            (string, RegexOptions) key = (pattern, options ?? RegexDefaults.DefaultOptions);
             return RegexCache.GetOrAdd(key, key => new Regex(NormalizeGroupsPattern(key.Pattern), key.Options));
         }
 

@@ -32,7 +32,7 @@ namespace Microsoft.Security.Utilities
         {
             using var assertionScope = new AssertionScope();
 
-            var patterns = GetAllPatterns();
+            List<RegexPattern> patterns = GetAllPatterns();
             foreach (RegexPattern pattern in patterns)
             {
                 bool result = pattern.CreatedVersion == null;
@@ -45,10 +45,10 @@ namespace Microsoft.Security.Utilities
         {
             using var assertionScope = new AssertionScope();
 
-            var patterns = GetAllPatterns();
+            List<RegexPattern> patterns = GetAllPatterns();
 
-            HashSet<string> ruleIdsObserved = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            HashSet<string> ruleNamesObserved = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var ruleIdsObserved = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var ruleNamesObserved = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (RegexPattern pattern in patterns)
             {
@@ -76,18 +76,18 @@ namespace Microsoft.Security.Utilities
         {
             using var assertionScope = new AssertionScope();
 
-            var patterns = GetAllPatterns();
+            List<RegexPattern> patterns = GetAllPatterns();
 
             foreach (RegexPattern pattern in patterns)
             {
                 foreach (string example in pattern.GenerateTruePositiveExamples())
                 {
-                    var detection = pattern.GetDetections(example, generateCrossCompanyCorrelatingIds: false).FirstOrDefault();
+                    Detection detection = pattern.GetDetections(example, generateCrossCompanyCorrelatingIds: false).FirstOrDefault();
                     Assert.AreNotEqual(default, detection);
 
                     string preciseMatch = example.Substring(detection.Start, detection.Length);
 
-                    var idAndName = pattern.GetMatchIdAndName(preciseMatch);
+                    Tuple<string, string> idAndName = pattern.GetMatchIdAndName(preciseMatch);
 
                     Assert.AreEqual(pattern.Id, idAndName.Item1,
                                     $"Pattern '{pattern.GetType().Name}' id did not match 'GetMatchIdAndName' result");
@@ -103,7 +103,7 @@ namespace Microsoft.Security.Utilities
         {
             using var assertionScope = new AssertionScope();
 
-            var patterns = GetAllPatterns();
+            List<RegexPattern> patterns = GetAllPatterns();
 
             var masker = new SecretMasker(patterns,
                                           generateCorrelatingIds: true,
@@ -124,7 +124,7 @@ namespace Microsoft.Security.Utilities
                     // is no longer null post-detection.
                     string moniker = pattern.GetMatchMoniker(example);
 
-                    var detection = masker.DetectSecrets(example).FirstOrDefault();
+                    Detection detection = masker.DetectSecrets(example).FirstOrDefault();
 
                     bool result = detection != default;
                     result.Should().BeTrue(because: $"pattern '{pattern.GetType().Name}' should match '{example}'");
@@ -143,7 +143,7 @@ namespace Microsoft.Security.Utilities
             {
                 using var assertionScope = new AssertionScope();
 
-                var rulesets = new[] {
+                IReadOnlyList<RegexPattern>[] rulesets = new[] {
                     WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
                     WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys
                 };
@@ -191,7 +191,7 @@ namespace Microsoft.Security.Utilities
             {
                 using var assertionScope = new AssertionScope();
 
-                var rulesets = new[] {
+                IReadOnlyList<RegexPattern>[] rulesets = new[] {
                     WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
                     WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys
                 };
@@ -235,13 +235,13 @@ namespace Microsoft.Security.Utilities
         {
             using var assertionScope = new AssertionScope();
 
-            var rulesets = new[]{
+            IReadOnlyList<RegexPattern>[] rulesets = new[]{
                 WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
                 WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
                 WellKnownRegexPatterns.DataClassification,
             };
 
-            HashSet<string> wellKnownMonikers = new HashSet<string>();
+            var wellKnownMonikers = new HashSet<string>();
 
             foreach (IEnumerable<RegexPattern> ruleset in rulesets)
             {
@@ -261,7 +261,7 @@ namespace Microsoft.Security.Utilities
 
             Assembly coreAssembly = typeof(WellKnownRegexPatterns).Assembly;
 
-            HashSet<string> unrecognizedMonikers = new HashSet<string>();
+            var unrecognizedMonikers = new HashSet<string>();
 
             foreach (Type type in coreAssembly.GetTypes())
             {
@@ -270,7 +270,7 @@ namespace Microsoft.Security.Utilities
                     continue;
                 }
 
-                RegexPattern pattern = (RegexPattern)Activator.CreateInstance(type);
+                var pattern = (RegexPattern)Activator.CreateInstance(type);
 
                 foreach (string example in pattern.GenerateTruePositiveExamples())
                 {
@@ -304,7 +304,7 @@ namespace Microsoft.Security.Utilities
         {
             using var assertionScope = new AssertionScope();
 
-            var rulesets = new[]{
+            IReadOnlyList<RegexPattern>[] rulesets = new[]{
                 WellKnownRegexPatterns.UnclassifiedPotentialSecurityKeys,
                 WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
                 WellKnownRegexPatterns.DataClassification,
@@ -315,7 +315,7 @@ namespace Microsoft.Security.Utilities
                 foreach (RegexPattern pattern in ruleset)
                 {
                     Regex regex = CachedDotNetRegex.GetOrCreateRegex(pattern.Pattern, RegexOptions.ExplicitCapture);
-                    var groupNames = regex.GetGroupNames().Where(g => !int.TryParse(g, out _)).ToArray();
+                    string[] groupNames = regex.GetGroupNames().Where(g => !int.TryParse(g, out _)).ToArray();
                     if (groupNames.Length == 0)
                     {
                         continue;
@@ -335,7 +335,7 @@ namespace Microsoft.Security.Utilities
         public void WellKnownRegexPatterns_EnsureAllPatternsHaveSupersetOfDefaultOptions()
         {
             using var assertionScope = new AssertionScope();
-            var patterns = GetAllPatterns();
+            List<RegexPattern> patterns = GetAllPatterns();
             foreach (RegexPattern pattern in patterns)
             {
                 (pattern.RegexOptions & RegexDefaults.DefaultOptions).Should()

@@ -30,7 +30,7 @@ namespace Microsoft.Security.Utilities.Core
                                                 regex);
             var masker = new SecretMasker([regexPattern], regexEngine: RE2RegexEngine.Instance);
 
-            var detection = masker.DetectSecrets(scanData).FirstOrDefault();
+            Detection detection = masker.DetectSecrets(scanData).FirstOrDefault();
             detection.Should().NotBe(default);
 
             string refined = scanData.Substring(detection.Start, detection.Length);

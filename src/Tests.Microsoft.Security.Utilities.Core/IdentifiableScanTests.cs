@@ -28,7 +28,7 @@ namespace Tests.Microsoft.Security.Utilities.Core
 
             foreach (string example in examples)
             {
-                var exampleWithPrefixOrSuffix = "https://" + example;
+                string exampleWithPrefixOrSuffix = "https://" + example;
 
                 int found = masker.DetectSecrets(exampleWithPrefixOrSuffix).Count();
                 found.Should().Be(1);
@@ -55,7 +55,7 @@ namespace Tests.Microsoft.Security.Utilities.Core
             using var masker = new SecretMasker(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
                                                 generateCorrelatingIds: false);
 
-            foreach (var pattern in WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys)
+            foreach (RegexPattern pattern in WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys)
             {
                 var identifiable = pattern as IIdentifiableKey;
                 if (identifiable == null) { continue; }
@@ -105,7 +105,7 @@ namespace Tests.Microsoft.Security.Utilities.Core
 
                 standardMasker.DisableHighPerformanceScannerForTests();
 
-                foreach (var pattern in WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys)
+                foreach (RegexPattern pattern in WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys)
                 {
                     foreach (string example in pattern.GenerateTruePositiveExamples())
                     {

@@ -55,7 +55,7 @@ internal sealed class HighPerformanceScanner
 
         foreach (CompiledHighPerformancePattern newPattern in patterns)
         {
-            Debug.Assert(!_patternsByPackedSignature.TryGetValue(newPattern.PackedSignature, out var p) || p == newPattern, "Multiple compiled high-performance patterns with same packed signature.");
+            Debug.Assert(!_patternsByPackedSignature.TryGetValue(newPattern.PackedSignature, out CompiledHighPerformancePattern? p) || p == newPattern, "Multiple compiled high-performance patterns with same packed signature.");
             _patternsByPackedSignature[newPattern.PackedSignature] = newPattern;
         }
 

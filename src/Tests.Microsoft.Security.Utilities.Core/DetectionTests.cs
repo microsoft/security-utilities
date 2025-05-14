@@ -25,7 +25,7 @@ namespace Tests.Microsoft.Security.Utilities
             var metadata = (DetectionMetadata)0B_11111;
             int start = Math.Max(1, (int)DateTime.UtcNow.Ticks % 99);
             int length = Math.Max(1, (int)DateTime.UtcNow.Ticks % 99);
-            TimeSpan rotationPeriod = TimeSpan.FromSeconds(Math.Max(1, DateTime.UtcNow.Second));
+            var rotationPeriod = TimeSpan.FromSeconds(Math.Max(1, DateTime.UtcNow.Second));
 
             var detection = new Detection(id,
                                           name,

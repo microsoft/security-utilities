@@ -70,7 +70,7 @@ namespace Microsoft.Security.Utilities
         [TestMethod]
         public void MarvinVariousCases()
         {
-            Encoding latin1 = Encoding.GetEncoding("ISO-8859-1");
+            var latin1 = Encoding.GetEncoding("ISO-8859-1");
 
             foreach (TestCase testCase in TestCases)
             {
@@ -110,7 +110,7 @@ namespace Microsoft.Security.Utilities
         [TestMethod]
         public void Marvin_ComputeHash_ShouldThrowIfArgumentsAreInvalid()
         {
-            var data = new byte[4];
+            byte[] data = new byte[4];
             ulong seed = 0;
 
             var testCases = new[]
@@ -154,7 +154,7 @@ namespace Microsoft.Security.Utilities
         {
             ulong seed = 0xbeefbeefdeaddead;
 
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            using (var rng = new RNGCryptoServiceProvider())
             {
                 for (int i = 0; i < 12; i++)
                 {
@@ -203,9 +203,9 @@ namespace Microsoft.Security.Utilities
             int length = 64;
             byte[] buffer = new byte[length];
 
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            using (var rng = new RNGCryptoServiceProvider())
             {
-                Random random = new Random();
+                var random = new Random();
 
                 for (int i = 0; i < length; i++)
                 {
