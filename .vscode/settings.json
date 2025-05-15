@@ -1,0 +1,17 @@
+{
+  "dotnet.automaticallyCreateSolutionInWorkspace": false,
+  "dotnet.defaultSolution": "src/Microsoft.Security.Utilities.sln",
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "files.exclude": {
+    "bld/**": true,
+    "src/.vs/**": true,
+    "src/Key.snk": true
+  },
+  "[csharp]": {
+    "editor.detectIndentation": false,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.tabSize": 4,
+  },
+}
