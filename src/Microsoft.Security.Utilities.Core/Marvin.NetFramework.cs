@@ -112,32 +112,32 @@ public static class Marvin
                 switch (length)
                 {
                     case 0:
-                    p0 += 0x80u;
-                    break;
+                        p0 += 0x80u;
+                        break;
 
                     case 1:
-                    p0 += 0x8000u | data[remainingDataOffset];
-                    break;
+                        p0 += 0x8000u | data[remainingDataOffset];
+                        break;
 
                     case 2:
-                    fixed (byte* pb0 = &data[remainingDataOffset])
-                    {
-                        p0 += 0x800000u | *(ushort*)pb0;
-                    }
+                        fixed (byte* pb0 = &data[remainingDataOffset])
+                        {
+                            p0 += 0x800000u | *(ushort*)pb0;
+                        }
 
-                    break;
+                        break;
 
                     case 3:
-                    fixed (byte* pb0 = &data[remainingDataOffset], pb2 = &data[remainingDataOffset + 2])
-                    {
-                        p0 += 0x80000000u | ((uint)(*pb2) << 16) | *(ushort*)pb0;
-                    }
+                        fixed (byte* pb0 = &data[remainingDataOffset], pb2 = &data[remainingDataOffset + 2])
+                        {
+                            p0 += 0x80000000u | ((uint)(*pb2) << 16) | *(ushort*)pb0;
+                        }
 
-                    break;
+                        break;
 
                     default:
-                    Debug.Fail("Should not get here.");
-                    break;
+                        Debug.Fail("Should not get here.");
+                        break;
                 }
             }
         }
