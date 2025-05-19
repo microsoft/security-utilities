@@ -942,20 +942,20 @@ public static class IdentifiableSecrets
         switch (padding)
         {
             case 2:
-                {
-                    // Clear two bits where the signature will be right-shifted
-                    // to align on the base64-encoded 6-bit boundary.
-                    mask = 0xfcffffff;
-                    break;
-                }
+            {
+                // Clear two bits where the signature will be right-shifted
+                // to align on the base64-encoded 6-bit boundary.
+                mask = 0xfcffffff;
+                break;
+            }
 
             case 4:
-                {
-                    // Clear four bits where the signature will be right-shifted
-                    // to remain aligned with base64-encoded 6-bit boundary.
-                    mask = 0xf0ffffff;
-                    break;
-                }
+            {
+                // Clear four bits where the signature will be right-shifted
+                // to remain aligned with base64-encoded 6-bit boundary.
+                mask = 0xf0ffffff;
+                break;
+            }
         }
 
         signature &= mask;
