@@ -232,6 +232,7 @@ csharp_style_throw_expression = true:suggestion
 csharp_indent_labels = no_change
 csharp_space_around_binary_operators = before_and_after
 csharp_indent_case_contents = true
+csharp_indent_case_contents_when_block = false
 csharp_indent_braces = false
 
 [*.vb]
