@@ -60,7 +60,7 @@ public sealed class SecretMasker : ISecretMasker
         _encodedSecretLiterals = new HashSet<SecretLiteral>();
         _literalEncoders = new HashSet<LiteralEncoder>();
 
-        _regexEngine = regexEngine ??= CachedDotNetRegex.Instance;
+        _regexEngine = regexEngine ?? CachedDotNetRegex.Instance;
 
         DefaultRegexRedactionToken = defaultRegexRedactionToken ?? RegexPattern.FallbackRedactionToken;
         DefaultLiteralRedactionToken = defaultLiteralRedactionToken ?? SecretLiteral.FallbackRedactionToken;
