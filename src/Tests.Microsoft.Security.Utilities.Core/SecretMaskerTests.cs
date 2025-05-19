@@ -845,46 +845,46 @@ public class SecretMaskerTests
                         switch (operation)
                         {
                             case SecretMaskerOperation.AddValue:
-                                {
-                                    secretMasker.AddValue($"{threadId}_value_{index}");
-                                    secretMasker.AddValue("some constant value");
-                                    break;
-                                }
+                            {
+                                secretMasker.AddValue($"{threadId}_value_{index}");
+                                secretMasker.AddValue("some constant value");
+                                break;
+                            }
 
                             case SecretMaskerOperation.AddLiteralEncoder:
-                                {
-                                    secretMasker.AddLiteralEncoder(v => $"{threadId}_{v}_encoder_{index}");
-                                    secretMasker.AddLiteralEncoder(WellKnownLiteralEncoders.UnescapeBackslashes);
-                                    break;
-                                }
+                            {
+                                secretMasker.AddLiteralEncoder(v => $"{threadId}_{v}_encoder_{index}");
+                                secretMasker.AddLiteralEncoder(WellKnownLiteralEncoders.UnescapeBackslashes);
+                                break;
+                            }
 
                             case SecretMaskerOperation.AddRegex:
-                                {
-                                    secretMasker.AddRegex(new(id: $"{threadId}_id_{index}",
-                                                          name: $"{threadId}_name_{index}",
-                                                          label: $"{threadId}_label_{index}",
-                                                          patternMetadata: DetectionMetadata.None,
-                                                          pattern: $"{threadId}_pattern_{index}"));
+                            {
+                                secretMasker.AddRegex(new(id: $"{threadId}_id_{index}",
+                                                      name: $"{threadId}_name_{index}",
+                                                      label: $"{threadId}_label_{index}",
+                                                      patternMetadata: DetectionMetadata.None,
+                                                      pattern: $"{threadId}_pattern_{index}"));
 
-                                    IReadOnlyList<RegexPattern> patterns = WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys;
-                                    secretMasker.AddRegex(patterns[random.Next(patterns.Count)]);
-                                    break;
-                                }
+                                IReadOnlyList<RegexPattern> patterns = WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys;
+                                secretMasker.AddRegex(patterns[random.Next(patterns.Count)]);
+                                break;
+                            }
 
                             case SecretMaskerOperation.DetectSecrets:
-                                {
-                                    IEnumerable<Detection> detections = secretMasker.DetectSecrets(testInput);
-                                    List<string> secrets = detections.Select(d => testInput.Substring(d.Start, d.Length)).ToList();
-                                    CollectionAssert.AreEquivalent(expectedSecrets, secrets);
-                                    break;
-                                }
+                            {
+                                IEnumerable<Detection> detections = secretMasker.DetectSecrets(testInput);
+                                List<string> secrets = detections.Select(d => testInput.Substring(d.Start, d.Length)).ToList();
+                                CollectionAssert.AreEquivalent(expectedSecrets, secrets);
+                                break;
+                            }
 
                             case SecretMaskerOperation.MaskSecrets:
-                                {
-                                    string masked = secretMasker.MaskSecrets(testInput);
-                                    Assert.AreEqual(expectedOutput, masked);
-                                    break;
-                                }
+                            {
+                                string masked = secretMasker.MaskSecrets(testInput);
+                                Assert.AreEqual(expectedOutput, masked);
+                                break;
+                            }
                         }
                     }
                 }
