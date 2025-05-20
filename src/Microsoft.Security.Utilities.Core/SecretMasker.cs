@@ -27,7 +27,6 @@ public sealed class SecretMasker : ISecretMasker
     private readonly HashSet<SecretLiteral> _explicitlyAddedSecretLiterals;
     private readonly HashSet<RegexPattern> _regexPatterns;
 
-    private int _minimumSecretLength;
     private long _elapsedMaskingTicks;
     private HighPerformanceScanner? _highPerformanceScanner;
     private Dictionary<string, List<RegexPattern>>? _highPerformanceSignatureToPatternsMap;
@@ -125,7 +124,6 @@ public sealed class SecretMasker : ISecretMasker
 
         List<Detection> detections = DetectSecretsCore(input);
 
-        // Short-circuit if nothing to replace.
         if (detections.Count == 0)
         {
             return input;
@@ -176,22 +174,7 @@ public sealed class SecretMasker : ISecretMasker
     /// <summary>
     /// Gets or sets the minimum length of a secret that can be detected or masked.
     /// </summary>
-    public int MinimumSecretLength
-    {
-        get => _minimumSecretLength;
-        set
-        {
-            SyncObject.EnterWriteLock();
-            try
-            {
-                _minimumSecretLength = value;
-            }
-            finally
-            {
-                SyncObject.ExitWriteLock();
-            }
-        }
-    }
+    public int MinimumSecretLength { get; set; }
 
     public void AddValue(string value)
     {
@@ -200,10 +183,10 @@ public sealed class SecretMasker : ISecretMasker
             return;
         }
 
+        SecretLiteral literal = new SecretLiteral(value);
         SyncObject.EnterWriteLock();
         try
         {
-            SecretLiteral literal = new SecretLiteral(value);
             if (!_explicitlyAddedSecretLiterals.Add(literal))
             {
                 return;
@@ -265,26 +248,35 @@ public sealed class SecretMasker : ISecretMasker
 
     private List<Detection> DetectSecretsCore(string input)
     {
-        if (input == null || input.Length < MinimumSecretLength)
+        // NOTE: MinimumSecretLength changes are not protected by the lock. Make
+        // sure to read it only once in this method so that a single masking or
+        // detection operation does not use more than one value.
+        int minimumSecretLength = MinimumSecretLength;
+
+        if (input == null || input.Length < minimumSecretLength)
         {
             return [];
         }
 
+        var detections = new List<Detection>();
         SyncObject.EnterReadLock();
         try
         {
-            var detections = new List<Detection>();
             List<HighPerformanceDetection>? highPerformanceDetections = _highPerformanceScanner?.Scan(input);
 
             if (highPerformanceDetections != null)
             {
                 foreach (HighPerformanceDetection highPerformanceDetection in highPerformanceDetections)
                 {
+                    if (highPerformanceDetection.Length < minimumSecretLength)
+                    {
+                        continue;
+                    }
                     string found = input.Substring(highPerformanceDetection.Start, highPerformanceDetection.Length);
                     foreach (RegexPattern pattern in _highPerformanceSignatureToPatternsMap![highPerformanceDetection.Signature])
                     {
                         Detection? detection = FinalizeHighPerformanceDetection(highPerformanceDetection, found, pattern);
-                        if (detection != null && detection.Length >= MinimumSecretLength)
+                        if (detection != null)
                         {
                             detections.Add(detection);
                         }
@@ -301,7 +293,7 @@ public sealed class SecretMasker : ISecretMasker
 
                 foreach (var detection in regexSecret.GetDetections(input, _generateCorrelatingIds, DefaultRegexRedactionToken, _regexEngine))
                 {
-                    if (detection.Length >= MinimumSecretLength)
+                    if (detection.Length >= minimumSecretLength)
                     {
                         detections.Add(detection);
                     }
@@ -310,7 +302,7 @@ public sealed class SecretMasker : ISecretMasker
 
             foreach (SecretLiteral secretLiteral in _encodedSecretLiterals)
             {
-                if (secretLiteral.Value.Length < MinimumSecretLength)
+                if (secretLiteral.Value.Length < minimumSecretLength)
                 {
                     continue;
                 }
@@ -320,13 +312,13 @@ public sealed class SecretMasker : ISecretMasker
                     detections.Add(detection);
                 }
             }
-
-            return detections;
         }
         finally
         {
             SyncObject.ExitReadLock();
         }
+
+        return detections;
     }
 
     private Detection? FinalizeHighPerformanceDetection(HighPerformanceDetection detection, string found, RegexPattern pattern)

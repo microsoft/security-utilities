@@ -13,10 +13,10 @@
 - FNS => False negative reduction in static analysis.
 
 # UNRELEASED
-- BRK, NEW: A shared `SecretMasker` instance is now fully safe to use from multiple threads. To establish this, it is now sealed and properties that exposed unsynchronized mutable state have been made read-only or removed. The following properties are now read-only: `DefaultRegexRedactionToken`, `DefaultLiteralRedactionToken`. The following properties that returned mutable collections are now removed: `RegexPatterns`, `EncodedSecretLiterals`, `ExplicitlyAddedSecretLiterals`, `LiteralEncoders`.`EncodedSecretLiterals`, `ExplicitlyAddedSecretLiterals`. The limitation that `AddValue` and `AddLiteralEncoder` were only thread safe if there was only one thread adding values is also removed.
-- BRK, NEW: For clarity, `SecretMasker.ElapsedTime` now returns a `TimeSpan` instead of a `long` tick count.
 - BRK, BUG: `SecretMasker.MinimumSecretLengthCeiling` is removed. This property had no effect previously.
 - BRK, BUG: `SecretMasker.MinimumSecretLength` is now respected for regex match length in addition to literal value lengths.
+- BRK, NEW: A shared `SecretMasker` instance is now fully safe to use from multiple threads. To establish this, it is now sealed and properties that exposed unsynchronized mutable state have been made read-only or removed. The following properties are now read-only: `DefaultRegexRedactionToken`, `DefaultLiteralRedactionToken`. The following properties that returned mutable collections are now removed: `RegexPatterns`, `EncodedSecretLiterals`, `ExplicitlyAddedSecretLiterals`, `LiteralEncoders`.`EncodedSecretLiterals`, `ExplicitlyAddedSecretLiterals`. The limitation that `AddValue` and `AddLiteralEncoder` were only thread safe if there was only one thread adding values is also removed.
+- BRK, NEW: For clarity, `SecretMasker.ElapsedTime` now returns a `TimeSpan` instead of a `long` tick count.
 - BUG: Fix issue where `SecretMasker.ElapsedTime` could be incorrect when the `SecretMasker` was used concurrently from multiple threads.
 - BUG: Lengthening and re-shortening `SecretMasker.MinimumSecretLength` is no longer destructive.
 - NEW: `SecretMasker.ElapsedTime` now also counts time spent in `MaskSecrets` exclusive of `DetectSecrets`.

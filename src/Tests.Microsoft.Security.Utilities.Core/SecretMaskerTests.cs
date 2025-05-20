@@ -636,7 +636,7 @@ public class SecretMaskerTests
         result = secretMasker.MaskSecrets(input);
         result.Should().Be("+++fg***lmno***stuvw***z");
 
-        secretMasker.MinimumSecretLength = 3; // 
+        secretMasker.MinimumSecretLength = 3;
         Assert.AreEqual(3, secretMasker.MinimumSecretLength);
         result = secretMasker.MaskSecrets(input);
         result.Should().Be("+++fg***lmno***stuvwxyz");
@@ -661,6 +661,45 @@ public class SecretMaskerTests
         Assert.AreEqual(0, secretMasker.MinimumSecretLength);
         result = secretMasker.MaskSecrets(input);
         result.Should().Be("+++fg***lmno***stuvw***z");
+    }
+
+    [TestMethod]
+    public async Task SecretMasker_MinimumSecretLengthInParallel()
+    {
+        var random = new Random();
+        var secretMasker = new SecretMasker();
+        secretMasker.AddValue("a");
+        secretMasker.AddValue("de");
+        secretMasker.AddRegex(new("", "", "", 0, pattern: "hij"));
+
+        string testInput = "abcdefghij";
+        HashSet<string> expectedResults = [
+            "abcdefghij",     // MinimumSecretLength == 4
+            "abcdefg+++",     // MinimumSecretLength == 3
+            "abc***fg+++",    // MinimumSecretLength == 2
+            "***bc***fg+++",  // MinimumSecretLength == 1
+        ];
+
+        var task = Task.Run(() =>
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                string result = secretMasker.MaskSecrets(testInput);
+                Assert.IsTrue(expectedResults.Contains(result),
+                         $"""
+                          {result} is not one of the expected results. 
+                          Ensure that MinimumSecretLength is not read more than once per operation.
+                          """);
+            }
+        });
+
+        // Hammer MinimumSecretLength while the above task is running.
+        while (!task.IsCompleted)
+        {
+            secretMasker.MinimumSecretLength = random.Next(1, 5);
+        }
+
+        await task;
     }
 
     [TestMethod]
