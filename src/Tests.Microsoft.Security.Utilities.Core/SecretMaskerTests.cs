@@ -2,9 +2,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -599,34 +602,104 @@ public class SecretMaskerTests
     }
 
     [TestMethod]
-    public void SecretMasker_MinimumLengthSetThroughProperty()
+    public void SecretMasker_MinimumSecretLength()
     {
-        SecretMasker.MinimumSecretLengthCeiling = 9;
-        using var secretMasker = new SecretMasker { MinimumSecretLength = 9 };
+        using var secretMasker = new SecretMasker();
+        Assert.AreEqual(0, secretMasker.MinimumSecretLength);
 
-        secretMasker.AddValue("efg");
-        secretMasker.AddValue("bcd");
+        // Make abcde, hijk, pqr, and xy secrets stressing different code paths
+        // through adding values, literal encoders, and regexes.
 
-        string input = "abcdefgh";
+        // 1. Add value
+        secretMasker.AddValue("xy");
+
+        // 2. Add encoder *after* impacted value.
+        secretMasker.AddValue("1");
+        secretMasker.AddLiteralEncoder(v => v.Replace("1", "pqr"));
+
+        // 3. Add encoder *before* impacted value.
+        secretMasker.AddLiteralEncoder(v => v.Replace("2", "hijk"));
+        secretMasker.AddValue("2");
+
+        // 4. Add regex
+        secretMasker.AddRegex(new(id: "", name: "", label: "", patternMetadata: 0, pattern: "a.*e"));
+
+        // Mask with increasingly large minimum secret lengths to disqualify 1 secret at a time.
+        Assert.AreEqual(0, secretMasker.MinimumSecretLength);
+        string input = "abcdefghijklmnopqrstuvwxyz";
         string result = secretMasker.MaskSecrets(input);
+        result.Should().Be("+++fg***lmno***stuvw***z");
 
-        // two adjacent secrets are basically one big secret
+        secretMasker.MinimumSecretLength = 2;
+        Assert.AreEqual(2, secretMasker.MinimumSecretLength);
 
-        Assert.AreEqual("abcdefgh", result);
+        result = secretMasker.MaskSecrets(input);
+        result.Should().Be("+++fg***lmno***stuvw***z");
+
+        secretMasker.MinimumSecretLength = 3;
+        Assert.AreEqual(3, secretMasker.MinimumSecretLength);
+        result = secretMasker.MaskSecrets(input);
+        result.Should().Be("+++fg***lmno***stuvwxyz");
+
+        secretMasker.MinimumSecretLength = 4;
+        Assert.AreEqual(4, secretMasker.MinimumSecretLength);
+        result = secretMasker.MaskSecrets(input);
+        result.Should().Be("+++fg***lmnopqrstuvwxyz");
+
+        secretMasker.MinimumSecretLength = 5;
+        Assert.AreEqual(5, secretMasker.MinimumSecretLength);
+        result = secretMasker.MaskSecrets(input);
+        result.Should().Be("+++fghijklmnopqrstuvwxyz");
+
+        secretMasker.MinimumSecretLength = 6;
+        Assert.AreEqual(6, secretMasker.MinimumSecretLength);
+        result = secretMasker.MaskSecrets(input);
+        result.Should().Be("abcdefghijklmnopqrstuvwxyz");
+
+        // Make sure minimum secret length can be undone correctly.
+        secretMasker.MinimumSecretLength = 0;
+        Assert.AreEqual(0, secretMasker.MinimumSecretLength);
+        result = secretMasker.MaskSecrets(input);
+        result.Should().Be("+++fg***lmno***stuvw***z");
     }
 
     [TestMethod]
-    public void SecretMasker_MinimumLengthSetThroughPropertySetTwice()
+    public async Task SecretMasker_MinimumSecretLengthInParallel()
     {
-        using var secretMasker = new SecretMasker();
+        var random = new Random();
+        var secretMasker = new SecretMasker();
+        secretMasker.AddValue("a");
+        secretMasker.AddValue("de");
+        secretMasker.AddRegex(new("", "", "", 0, pattern: "hij"));
 
-        int minSecretLenFirst = 9;
-        secretMasker.MinimumSecretLength = minSecretLenFirst;
+        string testInput = "abcdefghij";
+        HashSet<string> expectedResults = [
+            "abcdefghij",     // MinimumSecretLength == 4
+            "abcdefg+++",     // MinimumSecretLength == 3
+            "abc***fg+++",    // MinimumSecretLength == 2
+            "***bc***fg+++",  // MinimumSecretLength == 1
+        ];
 
-        int minSecretLenSecond = 2;
-        secretMasker.MinimumSecretLength = minSecretLenSecond;
+        var task = Task.Run(() =>
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                string result = secretMasker.MaskSecrets(testInput);
+                Assert.IsTrue(expectedResults.Contains(result),
+                         $"""
+                          {result} is not one of the expected results. 
+                          Ensure that MinimumSecretLength is not read more than once per operation.
+                          """);
+            }
+        });
 
-        Assert.AreEqual(secretMasker.MinimumSecretLength, minSecretLenSecond);
+        // Hammer MinimumSecretLength while the above task is running.
+        while (!task.IsCompleted)
+        {
+            secretMasker.MinimumSecretLength = random.Next(1, 5);
+        }
+
+        await task;
     }
 
     [TestMethod]
@@ -663,7 +736,7 @@ public class SecretMaskerTests
     {
         foreach (string token in new[] { string.Empty, null, " " })
         {
-            using var secretMasker = new SecretMasker() { DefaultLiteralRedactionToken = token, DefaultRegexRedactionToken = token };
+            using var secretMasker = new SecretMasker(defaultLiteralRedactionToken: token, defaultRegexRedactionToken: token);
             secretMasker.AddValue("abc");
             secretMasker.AddRegex(new RegexPattern(id: "123", name: "Name", "a test secret", DetectionMetadata.None, pattern: "def"));
 
@@ -679,7 +752,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_DistinguishLiteralAndRegexRedactionTokens()
     {
-        using var secretMasker = new SecretMasker() { MinimumSecretLength = 3, DefaultRegexRedactionToken = "zzz", DefaultLiteralRedactionToken = "yyy" };
+        using var secretMasker = new SecretMasker(defaultRegexRedactionToken: "zzz", defaultLiteralRedactionToken: "yyy") { MinimumSecretLength = 3 };
 
         secretMasker.AddRegex(new RegexPattern(id: "1000", name: "Name", "a test secret", DetectionMetadata.None, pattern: "abc"));
         secretMasker.AddValue("123");
@@ -753,6 +826,132 @@ public class SecretMaskerTests
         Assert.AreEqual(" literal1".Length, detections[3].Length);
     }
 
+    private enum SecretMaskerOperation
+    {
+        AddValue,
+        AddLiteralEncoder,
+        AddRegex,
+        DetectSecrets,
+        MaskSecrets,
+    }
+
+    private const int MaxSecretMaskerOperation = (int)SecretMaskerOperation.MaskSecrets;
+
+    [TestMethod]
+    public void SecretMasker_BasicThreadingStress()
+    {
+        int threadCount = Math.Min(4, Environment.ProcessorCount / 2);
+        const int operationsPerThread = 200;
+
+        using var secretMasker = new SecretMasker();
+
+        // The values/encoders/regexes added on other threads won't impact this
+        // test case. Note that we can't assert masking or detection results
+        // based on the values/encoders/regexes added in parallel since they are
+        // added randomly in between maksing and detection operations. It
+        // stresses overlapping and non-overlapping code paths through mask
+        // secrets.
+        const string testInput = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt";
+        secretMasker.AddValue("Lorem");
+        secretMasker.AddValue("Lorem ipsum");
+        secretMasker.AddValue("elit");
+        string expectedOutput = testInput.Replace("Lorem ipsum", "***").Replace("elit", "***");
+        string[] expectedSecrets = ["Lorem", "Lorem ipsum", "elit"];
+
+        // Add values/encoders/regexes while masking and detecting secrets in
+        // parallel. Generally any incorrect synchronization of the masker state
+        // will manifest as an exception attempting to modify a collection while
+        // enumerating it.
+        var threads = new List<Thread>();
+        using var startBarrier = new Barrier(threadCount + 1);
+        var exceptions = new ConcurrentBag<Exception>();
+
+        for (int t = 0; t < threadCount; t++)
+        {
+            int threadId = t;
+            var thread = new Thread(() =>
+            {
+                try
+                {
+                    // Wait for all threads to be ready.
+                    startBarrier.SignalAndWait();
+
+                    var random = new Random();
+                    for (int i = 0; i < operationsPerThread; i++)
+                    {
+                        int index = i;
+                        var operation = (SecretMaskerOperation)random.Next(MaxSecretMaskerOperation + 1);
+                        switch (operation)
+                        {
+                            case SecretMaskerOperation.AddValue:
+                            {
+                                secretMasker.AddValue($"{threadId}_value_{index}");
+                                secretMasker.AddValue("some constant value");
+                                break;
+                            }
+
+                            case SecretMaskerOperation.AddLiteralEncoder:
+                            {
+                                secretMasker.AddLiteralEncoder(v => $"{threadId}_{v}_encoder_{index}");
+                                secretMasker.AddLiteralEncoder(WellKnownLiteralEncoders.UnescapeBackslashes);
+                                break;
+                            }
+
+                            case SecretMaskerOperation.AddRegex:
+                            {
+                                secretMasker.AddRegex(new(id: $"{threadId}_id_{index}",
+                                                      name: $"{threadId}_name_{index}",
+                                                      label: $"{threadId}_label_{index}",
+                                                      patternMetadata: DetectionMetadata.None,
+                                                      pattern: $"{threadId}_pattern_{index}"));
+
+                                IReadOnlyList<RegexPattern> patterns = WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys;
+                                secretMasker.AddRegex(patterns[random.Next(patterns.Count)]);
+                                break;
+                            }
+
+                            case SecretMaskerOperation.DetectSecrets:
+                            {
+                                IEnumerable<Detection> detections = secretMasker.DetectSecrets(testInput);
+                                var secrets = detections.Select(d => testInput.Substring(d.Start, d.Length)).ToList();
+                                CollectionAssert.AreEquivalent(expectedSecrets, secrets);
+                                break;
+                            }
+
+                            case SecretMaskerOperation.MaskSecrets:
+                            {
+                                string masked = secretMasker.MaskSecrets(testInput);
+                                Assert.AreEqual(expectedOutput, masked);
+                                break;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    exceptions.Add(ex);
+                }
+            });
+
+            threads.Add(thread);
+            thread.Start();
+        }
+
+        // Signal threads to start
+        startBarrier.SignalAndWait();
+
+        // Wait for all threads to complete
+        foreach (Thread thread in threads)
+        {
+            thread.Join();
+        }
+
+        if (exceptions.Count > 0)
+        {
+            throw new AggregateException("One or more exceptions occurred during the threading stress test", exceptions);
+        }
+    }
+
     [DataTestMethod]
     [DataRow("deaddeaddeaddeaddeaddeaddeaddeadde/dead+deaddeaddeaddeaddeaddeaddeaddeaddeadAPIMxxxxxQ==", "SEC102/102.Unclassified64ByteBase64String:1DC39072DA446911FE3E87EB697FB22ED6E2F75D7ECE4D0CE7CF4288CE0094D1")]
     [DataRow("deaddeaddeaddeaddeaddeaddeaddeadde/dead+deaddeaddeaddeaddeaddeaddeaddeaddeadACDbxxxxxQ==", "SEC102/102.Unclassified64ByteBase64String:6AB186D06C8C6FBA25D39806913A70A4D77AB97C526D42B8C8DA6D441DE9F3C5")]
@@ -791,8 +990,9 @@ public class SecretMaskerTests
         string actual = secretMasker.MaskSecrets(input);
         Assert.AreEqual(input, actual);
     }
-    private static void ValidateTelemetry(SecretMasker testSecretMasker, int expectedRedactions = 0, bool usesMoniker = false)
+
+    private static void ValidateTelemetry(SecretMasker testSecretMasker)
     {
-        Assert.IsTrue(testSecretMasker.ElapsedMaskingTime > 0);
+        Assert.IsTrue(testSecretMasker.ElapsedMaskingTime.Ticks > 0);
     }
 }

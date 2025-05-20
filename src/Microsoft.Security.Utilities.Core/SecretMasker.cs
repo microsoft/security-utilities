@@ -4,8 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -20,11 +18,21 @@ namespace Microsoft.Security.Utilities;
 /// <returns>The escaped or encoded literal.</returns>
 public delegate string LiteralEncoder(string literal);
 
-public class SecretMasker : ISecretMasker
+public sealed class SecretMasker : ISecretMasker
 {
+    private readonly bool _generateCorrelatingIds;
     private readonly IRegexEngine _regexEngine;
+    private readonly HashSet<LiteralEncoder> _literalEncoders;
+    private readonly HashSet<SecretLiteral> _encodedSecretLiterals;
+    private readonly HashSet<SecretLiteral> _explicitlyAddedSecretLiterals;
+    private readonly HashSet<RegexPattern> _regexPatterns;
+
+    private long _elapsedMaskingTicks;
     private HighPerformanceScanner? _highPerformanceScanner;
     private Dictionary<string, List<RegexPattern>>? _highPerformanceSignatureToPatternsMap;
+
+    [ThreadStatic]
+    private static StringBuilder? s_stringBuilder;
 
     public static Version Version { get; } = RetrieveVersion();
 
@@ -38,55 +46,37 @@ public class SecretMasker : ISecretMasker
     {
     }
 
-    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets,
+    public SecretMasker(IEnumerable<RegexPattern>? regexSecrets = null,
                         bool generateCorrelatingIds = false,
                         IRegexEngine? regexEngine = default,
                         string? defaultRegexRedactionToken = null,
                         string? defaultLiteralRedactionToken = null)
     {
-        _disposed = false;
-
-        RegexPatterns = regexSecrets != null
-            ? new HashSet<RegexPattern>(regexSecrets)
-            : new HashSet<RegexPattern>();
-
+        _regexPatterns = new HashSet<RegexPattern>(regexSecrets ?? []);
         _generateCorrelatingIds = generateCorrelatingIds;
 
-        ExplicitlyAddedSecretLiterals = new HashSet<SecretLiteral>();
-        EncodedSecretLiterals = new HashSet<SecretLiteral>();
-        LiteralEncoders = new HashSet<LiteralEncoder>();
+        _explicitlyAddedSecretLiterals = new HashSet<SecretLiteral>();
+        _encodedSecretLiterals = new HashSet<SecretLiteral>();
+        _literalEncoders = new HashSet<LiteralEncoder>();
 
-        _regexEngine = regexEngine ??= CachedDotNetRegex.Instance;
+        _regexEngine = regexEngine ?? CachedDotNetRegex.Instance;
 
         DefaultRegexRedactionToken = defaultRegexRedactionToken ?? RegexPattern.FallbackRedactionToken;
         DefaultLiteralRedactionToken = defaultLiteralRedactionToken ?? SecretLiteral.FallbackRedactionToken;
 
-        AddHighPerformancePatterns(RegexPatterns);
+        AddHighPerformancePatterns(_regexPatterns);
     }
 
-    // We don't permit secrets great than 5 characters in length to be
-    // skipped at masking time. The secrets that will be ignored when
-    // masking will N - 1 of this property value.
-    public static int MinimumSecretLengthCeiling { get; set; }
+    public string DefaultRegexRedactionToken { get; }
 
-    [ThreadStatic]
-    private static StringBuilder? s_stringBuilder;
-
-    public virtual string DefaultRegexRedactionToken { get; set; }
-
-    public virtual string DefaultLiteralRedactionToken { get; set; }
-
-    public virtual HashSet<RegexPattern> RegexPatterns { get; protected set; }
+    public string DefaultLiteralRedactionToken { get; }
 
     /// <summary>
-    /// Gets the total time in ticks spent masking content for the lifetime of this masker instance.
+    /// Gets the total time spent masking content for the lifetime of this masker instance.
     /// </summary>
-    public long ElapsedMaskingTime { get; private set; }
+    public TimeSpan ElapsedMaskingTime => TimeSpan.FromTicks(_elapsedMaskingTicks);
 
-    /// <summary>
-    /// This implementation assumes no more than one thread is adding regexes, values, or encoders at any given time.
-    /// </summary>
-    public virtual void AddRegex(RegexPattern regexSecret)
+    public void AddRegex(RegexPattern regexSecret)
     {
         AddPatterns([regexSecret]);
     }
@@ -114,20 +104,31 @@ public class SecretMasker : ISecretMasker
     /// <param name="detectionAction">An optional action to perform on each detection.</param>
     public string MaskSecrets(string input, Action<Detection>? detectionAction = null)
     {
-        if (input == null)
+        var stopwatch = Stopwatch.StartNew();
+        try
+        {
+            return MaskSecretsCore(input, detectionAction);
+        }
+        finally
+        {
+            Interlocked.Add(ref _elapsedMaskingTicks, stopwatch.ElapsedTicks);
+        }
+    }
+
+    private string MaskSecretsCore(string input, Action<Detection>? detectionAction)
+    {
+        if (string.IsNullOrEmpty(input))
         {
             return string.Empty;
         }
 
-        IEnumerable<Detection> enumerableDetections = DetectSecrets(input);
+        List<Detection> detections = DetectSecretsCore(input);
 
-        // Short-circuit if nothing to replace.
-        if (!enumerableDetections.Any())
+        if (detections.Count == 0)
         {
             return input;
         }
 
-        var detections = enumerableDetections.ToList();
         detections.Sort((x, y) =>
         {
             int result = x.Start.CompareTo(y.Start);
@@ -171,177 +172,119 @@ public class SecretMasker : ISecretMasker
     }
 
     /// <summary>
-    /// Gets or sets the minimum allowable size of a string that's a candidate for masking.
+    /// Gets or sets the minimum length of a secret that can be detected or masked.
     /// </summary>
-    public virtual int MinimumSecretLength { get; set; }
+    public int MinimumSecretLength { get; set; }
 
-    /// <summary>
-    /// This implementation assumes no more than one thread is adding regexes, values, or encoders at any given time.
-    /// </summary>
-    [ExcludeFromCodeCoverage]
     public void AddValue(string value)
     {
-        // Test for empty.
         if (string.IsNullOrEmpty(value))
         {
             return;
         }
 
-        if (value.Length < MinimumSecretLength)
-        {
-            return;
-        }
-
-        var secretLiterals = new List<SecretLiteral>(new[] { new SecretLiteral(value) });
-
-        // Read section.
-        LiteralEncoder[] literalEncoders;
+        var literal = new SecretLiteral(value);
+        SyncObject.EnterWriteLock();
         try
         {
-            SyncObject.EnterReadLock();
-
-            // Test whether already added.
-            if (ExplicitlyAddedSecretLiterals.Contains(secretLiterals[0]))
+            if (!_explicitlyAddedSecretLiterals.Add(literal))
             {
                 return;
             }
 
-            // Read the value encoders.
-            literalEncoders = LiteralEncoders.ToArray();
-        }
-        finally
-        {
-            if (SyncObject.IsReadLockHeld)
+            _encodedSecretLiterals.Add(literal);
+            foreach (LiteralEncoder literalEncoder in _literalEncoders)
             {
-                SyncObject.ExitReadLock();
-            }
-        }
-
-        // Compute the encoded values.
-        foreach (LiteralEncoder literalEncoder in literalEncoders)
-        {
-            string encodedValue = literalEncoder(value);
-            if (!string.IsNullOrEmpty(encodedValue) && encodedValue.Length >= MinimumSecretLength)
-            {
-                secretLiterals.Add(new SecretLiteral(encodedValue));
-            }
-        }
-
-        // Write section.
-        try
-        {
-            SyncObject.EnterWriteLock();
-
-            // Add the values.
-            _ = ExplicitlyAddedSecretLiterals.Add(secretLiterals[0]);
-            foreach (SecretLiteral secretLiteral in secretLiterals)
-            {
-                _ = EncodedSecretLiterals.Add(secretLiteral);
+                string encodedValue = literalEncoder(value);
+                if (!string.IsNullOrEmpty(encodedValue))
+                {
+                    _encodedSecretLiterals.Add(new SecretLiteral(encodedValue));
+                }
             }
         }
         finally
         {
-            if (SyncObject.IsWriteLockHeld)
-            {
-                SyncObject.ExitWriteLock();
-            }
+            SyncObject.ExitWriteLock();
         }
     }
 
-    /// <summary>
-    /// This implementation assumes no more than one thread is adding regexes, values, or encoders at any given time.
-    /// </summary>
     public void AddLiteralEncoder(LiteralEncoder encoder)
     {
-        SecretLiteral[] originalSecrets;
-
-        // Read section.
+        SyncObject.EnterWriteLock();
         try
         {
-            SyncObject.EnterReadLock();
-
-            if (LiteralEncoders.Contains(encoder))
+            if (!_literalEncoders.Add(encoder))
             {
                 return;
             }
 
-            // Read the original value secrets.
-            originalSecrets = ExplicitlyAddedSecretLiterals.ToArray();
-        }
-        finally
-        {
-            if (SyncObject.IsReadLockHeld)
+            foreach (SecretLiteral originalSecret in _explicitlyAddedSecretLiterals)
             {
-                SyncObject.ExitReadLock();
-            }
-        }
-
-        // Compute the encoded values.
-        var encodedSecrets = new List<SecretLiteral>();
-        foreach (SecretLiteral originalSecret in originalSecrets)
-        {
-            string encodedValue = encoder(originalSecret.Value);
-            if (!string.IsNullOrEmpty(encodedValue) && encodedValue.Length >= MinimumSecretLength)
-            {
-                encodedSecrets.Add(new SecretLiteral(encodedValue));
-            }
-        }
-
-        // Write section.
-        try
-        {
-            SyncObject.EnterWriteLock();
-
-            // Add the encoder.
-            _ = LiteralEncoders.Add(encoder);
-
-            // Add the values.
-            foreach (SecretLiteral encodedSecret in encodedSecrets)
-            {
-                _ = EncodedSecretLiterals.Add(encodedSecret);
+                string encodedValue = encoder(originalSecret.Value);
+                if (!string.IsNullOrEmpty(encodedValue))
+                {
+                    _encodedSecretLiterals.Add(new SecretLiteral(encodedValue));
+                }
             }
         }
         finally
         {
-            if (SyncObject.IsWriteLockHeld)
-            {
-                SyncObject.ExitWriteLock();
-            }
+            SyncObject.ExitWriteLock();
         }
     }
 
     public IEnumerable<Detection> DetectSecrets(string input)
     {
-        if (string.IsNullOrEmpty(input))
-        {
-            yield break;
-        }
-
-        // Read section.
+        var stopwatch = Stopwatch.StartNew();
         try
         {
-            SyncObject.EnterReadLock();
-            var stopwatch = Stopwatch.StartNew();
+            return DetectSecretsCore(input);
+        }
+        finally
+        {
+            Interlocked.Add(ref _elapsedMaskingTicks, stopwatch.ElapsedTicks);
+        }
+    }
 
-            if (_highPerformanceScanner != null)
+    private List<Detection> DetectSecretsCore(string input)
+    {
+        // NOTE: MinimumSecretLength changes are not protected by the lock. Make
+        // sure to read it only once in this method so that a single masking or
+        // detection operation does not use more than one value.
+        int minimumSecretLength = MinimumSecretLength;
+
+        if (input == null || input.Length < minimumSecretLength)
+        {
+            return [];
+        }
+
+        var detections = new List<Detection>();
+        SyncObject.EnterReadLock();
+        try
+        {
+            List<HighPerformanceDetection>? highPerformanceDetections = _highPerformanceScanner?.Scan(input);
+
+            if (highPerformanceDetections != null)
             {
-                foreach (HighPerformanceDetection highPerformanceDetection in _highPerformanceScanner.Scan(input))
+                foreach (HighPerformanceDetection highPerformanceDetection in highPerformanceDetections)
                 {
+                    if (highPerformanceDetection.Length < minimumSecretLength)
+                    {
+                        continue;
+                    }
                     string found = input.Substring(highPerformanceDetection.Start, highPerformanceDetection.Length);
                     foreach (RegexPattern pattern in _highPerformanceSignatureToPatternsMap![highPerformanceDetection.Signature])
                     {
                         Detection? detection = FinalizeHighPerformanceDetection(highPerformanceDetection, found, pattern);
                         if (detection != null)
                         {
-                            yield return detection;
-                            break;
+                            detections.Add(detection);
                         }
                     }
                 }
             }
 
-            // Get indexes and lengths of all substrings that will be replaced.
-            foreach (RegexPattern regexSecret in RegexPatterns)
+            foreach (RegexPattern regexSecret in _regexPatterns)
             {
                 if (_highPerformanceScanner != null && regexSecret is IHighPerformanceScannableKey)
                 {
@@ -350,27 +293,32 @@ public class SecretMasker : ISecretMasker
 
                 foreach (Detection detection in regexSecret.GetDetections(input, _generateCorrelatingIds, DefaultRegexRedactionToken, _regexEngine))
                 {
-                    yield return detection;
+                    if (detection.Length >= minimumSecretLength)
+                    {
+                        detections.Add(detection);
+                    }
                 }
             }
 
-            foreach (SecretLiteral secretLiteral in EncodedSecretLiterals)
+            foreach (SecretLiteral secretLiteral in _encodedSecretLiterals)
             {
+                if (secretLiteral.Value.Length < minimumSecretLength)
+                {
+                    continue;
+                }
+
                 foreach (Detection detection in secretLiteral.GetDetections(input, DefaultLiteralRedactionToken))
                 {
-                    yield return detection;
+                    detections.Add(detection);
                 }
             }
-
-            ElapsedMaskingTime += stopwatch.ElapsedTicks;
         }
         finally
         {
-            if (SyncObject.IsReadLockHeld)
-            {
-                SyncObject.ExitReadLock();
-            }
+            SyncObject.ExitReadLock();
         }
+
+        return detections;
     }
 
     private Detection? FinalizeHighPerformanceDetection(HighPerformanceDetection detection, string found, RegexPattern pattern)
@@ -407,39 +355,24 @@ public class SecretMasker : ISecretMasker
 
     public void Dispose()
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing && !_disposed)
-        {
-            SyncObject.Dispose();
-            _disposed = true;
-        }
+        SyncObject.Dispose();
     }
 
     public void AddPatterns(IEnumerable<RegexPattern> regexPatterns)
     {
-        // Write section.
+        SyncObject.EnterWriteLock();
         try
         {
-            SyncObject.EnterWriteLock();
-
             foreach (RegexPattern pattern in regexPatterns)
             {
-                RegexPatterns.Add(pattern);
+                _regexPatterns.Add(pattern);
             }
 
             AddHighPerformancePatterns(regexPatterns);
         }
         finally
         {
-            if (SyncObject.IsWriteLockHeld)
-            {
-                SyncObject.ExitWriteLock();
-            }
+            SyncObject.ExitWriteLock();
         }
     }
 
@@ -493,12 +426,5 @@ public class SecretMasker : ISecretMasker
         _highPerformanceSignatureToPatternsMap = null;
     }
 
-    private readonly bool _generateCorrelatingIds;
-    public HashSet<LiteralEncoder> LiteralEncoders { get; }
-    public HashSet<SecretLiteral> EncodedSecretLiterals { get; }
-    public HashSet<SecretLiteral> ExplicitlyAddedSecretLiterals { get; }
-
-    public ReaderWriterLockSlim SyncObject { get; } = new(LockRecursionPolicy.NoRecursion);
-
-    private bool _disposed;
+    public ReaderWriterLockSlim SyncObject { get; } = new(LockRecursionPolicy.SupportsRecursion);
 }
