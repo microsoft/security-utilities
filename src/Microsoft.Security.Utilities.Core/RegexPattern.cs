@@ -16,8 +16,6 @@ namespace Microsoft.Security.Utilities;
 [DataContract]
 public class RegexPattern
 {
-    public const string FallbackRedactionToken = "+++";
-
     /// <summary>Constructs a new instance of the RegexPattern class.</summary>
     /// <param name="id"> The unique identifier for the pattern.</param>
     /// <param name="name">The name of the pattern.</param>
@@ -186,7 +184,6 @@ public class RegexPattern
 
     public virtual IEnumerable<Detection> GetDetections(string input,
                                                         bool generateCrossCompanyCorrelatingIds,
-                                                        string defaultRedactionToken = FallbackRedactionToken,
                                                         IRegexEngine? regexEngine = null)
     {
         if (input == null)
@@ -222,18 +219,6 @@ public class RegexPattern
                         ? GenerateCrossCompanyCorrelatingId(match.Value)
                         : null;
 
-                string? redactionToken = crossCompanyCorrelatingId != null
-                        ? $"{Id}:{crossCompanyCorrelatingId}"
-                        : defaultRedactionToken;
-
-                // If the user has provided a null or empty redaction
-                // token, we will use the fallback so that redaction
-                // is clearly evident in the output.
-                if (string.IsNullOrWhiteSpace(redactionToken))
-                {
-                    redactionToken = FallbackRedactionToken;
-                }
-
                 Tuple<string, string>? moniker = GetMatchIdAndName(match.Value);
                 if (moniker == default)
                 {
@@ -248,12 +233,11 @@ public class RegexPattern
                                            label: Label,
                                            match.Index,
                                            match.Length,
+                                           DetectionKind.RegexPattern,
                                            DetectionMetadata,
                                            RotationPeriod,
-                                           crossCompanyCorrelatingId,
-                                           redactionToken);
+                                           crossCompanyCorrelatingId);
             }
-
         }
     }
 

@@ -95,7 +95,7 @@ public class SecretMaskerTests
                                 if (preciseClassifications)
                                 {
                                     result = detection.Metadata.HasFlag(DetectionMetadata.HighEntropy);
-                                    result.Should().BeTrue(because: $"{moniker} finding should be classified as high entropy");
+                                    result.Should().BeTrue(because: $"'{moniker}' finding should be classified as high entropy");
                                 }
 
                                 // 3. All high entropy secret kinds should generate a cross-company correlating id,
@@ -111,21 +111,13 @@ public class SecretMaskerTests
                                 result = object.Equals(expectedC3id, actualC3id);
                                 result.Should().BeTrue(because: $"'{expectedC3id}' redaction token expected for '{moniker}' instance but observed '{actualC3id}'");
 
-                                // 4. All high entropy secret kinds should generate a fingerprint, but only
-                                //    if the masker was initialized to produce them. Every low entropy model
-                                //    should refuse to generate a fingerprint, no matter how the masker is configured.
-                                string actualRedactionToken = detection.RedactionToken;
-                                string expectedRedactionToken = generateCrossCompanyCorrelatingIds &&
-                                                                detection.Metadata.HasFlag(DetectionMetadata.HighEntropy)
-                                                                    ? $"{pattern.Id}:{c3id}"
-                                                                    : "+++";
-
-                                result = actualRedactionToken.Equals(expectedRedactionToken);
-                                result.Should().BeTrue(because: $"'{expectedRedactionToken}' redaction token expected for '{moniker}' finding but observed '{actualRedactionToken}'");
+                                // 4. Every regex pattern detection should have the correct kind.
+                                result = detection.Kind == DetectionKind.RegexPattern;
+                                result.Should().Be(true, because: $"'{DetectionKind.RegexPattern}' detection kind expected for '{moniker}' but observed '{detection.Kind}'");
 
                                 // 5. Moniker that flows to classified secret should match the detection.
                                 result = detection.Moniker.Equals(moniker);
-                                result.Should().BeTrue(because: $"{moniker} finding should not be reported as {detection.Moniker} for test data {context}");
+                                result.Should().BeTrue(because: $"'{moniker}' finding should not be reported as '{detection.Moniker}' for test data '{context}'");
                             }
                         }
                     }
@@ -200,10 +192,7 @@ public class SecretMaskerTests
                                 result = redacted.Equals(testExample);
                                 result.Should().BeFalse(because: $"'{standaloneSecret}' for '{moniker}' should be redacted from scan text");
 
-                                string expectedRedactedValue = generateCrossCompanyCorrelatingIds
-                                    ? $"{pattern.Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(standaloneSecret)}"
-                                    : RegexPattern.FallbackRedactionToken;
-
+                                string expectedRedactedValue = SecretMasker.DefaultRegexRedactionToken;
                                 redacted.Should().Contain(expectedRedactedValue, because: $"generate correlating ids == {generateCrossCompanyCorrelatingIds} for '{standaloneSecret}'");
                             }
 
@@ -502,10 +491,9 @@ public class SecretMaskerTests
         using var secretMasker = new SecretMasker(new[] { new SecretScanningSampleToken() }, generateCorrelatingIds: true);
         IEnumerable<Detection> detections = secretMasker.DetectSecrets(secret);
         detections.Count().Should().Be(1);
-        Detection detection = detections.First();
+        Detection detection = detections.Single();
 
-        int colonIndex = detection.RedactionToken.IndexOf(':');
-        string correlatingId = detection.RedactionToken.Substring(colonIndex + 1);
+        string correlatingId = detection.CrossCompanyCorrelatingId;
         correlatingId.Should().Be("0W7kMOsBl4huQu/6Rekx");
         RegexPattern.GenerateCrossCompanyCorrelatingId(secret).Should().Be(correlatingId);
     }
@@ -719,7 +707,7 @@ public class SecretMaskerTests
     public void SecretMasker_NotAddShortEncodedSecrets()
     {
         string redactionToken = "qqq";
-        using var secretMasker = new SecretMasker(regexSecrets: null, defaultLiteralRedactionToken: redactionToken);
+        using var secretMasker = new SecretMasker(regexSecrets: null, literalRedactionToken: redactionToken);
         secretMasker.AddLiteralEncoder(new LiteralEncoder(x => x.Replace("123", "ab")));
         secretMasker.AddValue("123");
         secretMasker.AddValue("345");
@@ -736,7 +724,7 @@ public class SecretMaskerTests
     {
         foreach (string token in new[] { string.Empty, null, " " })
         {
-            using var secretMasker = new SecretMasker(defaultLiteralRedactionToken: token, defaultRegexRedactionToken: token);
+            using var secretMasker = new SecretMasker(literalRedactionToken: token, regexRedactionToken: token);
             secretMasker.AddValue("abc");
             secretMasker.AddRegex(new RegexPattern(id: "123", name: "Name", "a test secret", DetectionMetadata.None, pattern: "def"));
 
@@ -745,14 +733,14 @@ public class SecretMaskerTests
             string input = "abc def";
             string result = secretMasker.MaskSecrets(input);
 
-            Assert.AreEqual($"{SecretLiteral.FallbackRedactionToken} {RegexPattern.FallbackRedactionToken}", result);
+            Assert.AreEqual($"{SecretMasker.DefaultLiteralRedactionToken} {SecretMasker.DefaultRegexRedactionToken}", result);
         }
     }
 
     [TestMethod]
     public void SecretMasker_DistinguishLiteralAndRegexRedactionTokens()
     {
-        using var secretMasker = new SecretMasker(defaultRegexRedactionToken: "zzz", defaultLiteralRedactionToken: "yyy") { MinimumSecretLength = 3 };
+        using var secretMasker = new SecretMasker(regexRedactionToken: "zzz", literalRedactionToken: "yyy") { MinimumSecretLength = 3 };
 
         secretMasker.AddRegex(new RegexPattern(id: "1000", name: "Name", "a test secret", DetectionMetadata.None, pattern: "abc"));
         secretMasker.AddValue("123");
@@ -775,7 +763,7 @@ public class SecretMaskerTests
         var detections = new List<Detection>();
         string result = secretMasker.MaskSecrets(input, d => detections.Add(d));
 
-        Assert.AreEqual("yada yada +++ TEST000/002:UVpc+Yj5lkP42Qt1TT9Y *** yada yada", result); ;
+        Assert.AreEqual("yada yada +++ +++ *** yada yada", result); ;
 
         Assert.AreEqual(3, detections.Count);
 
@@ -805,11 +793,11 @@ public class SecretMaskerTests
         var detections = new List<Detection>();
         string result = secretMasker.MaskSecrets(input, d => detections.Add(d));
 
-        Assert.AreEqual("yada yada *** yada yada", result); ;
+        Assert.AreEqual("yada yada *** yada yada", result);
 
         Assert.AreEqual(4, detections.Count);
 
-        Assert.AreEqual(null, detections[0].Id); // tied for leftmost, wins because "***" sorts first
+        Assert.AreEqual(null, detections[0].Id); // tied for leftmost, wins because literal matches sort first
         Assert.AreEqual(input.IndexOf("pattern1 pattern2"), detections[0].Start);
         Assert.AreEqual("pattern1 pattern2".Length, detections[0].Length);
 

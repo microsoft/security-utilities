@@ -413,11 +413,10 @@ public class RegexPatternTests
         // It is critical that our hashing is consistent across the library's .NET FX
         // and .NET 5.0 versions, so we hard-code this test to ensure things are in sync.
         Assert.AreEqual($"rPHgxCVAOw6CZsT9xXEw", replacement.CrossCompanyCorrelatingId);
-        Assert.AreEqual($"{Id}:rPHgxCVAOw6CZsT9xXEw", replacement.RedactionToken);
     }
 
     [TestMethod]
-    public void RegexPatterns_GetDetections_ReturnsEmpty_WhenNoMatchesExist()
+    public void RegexPattern_GetDetections_ReturnsEmpty_WhenNoMatchesExist()
     {
         // Arrange
         var secret = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc");
@@ -431,7 +430,7 @@ public class RegexPatternTests
     }
 
     [TestMethod]
-    public void RegexPatterns_GetDetections_Returns_RefinedDetection()
+    public void RegexPattern_GetDetections_ReturnsRefinedDetection()
     {
         // Arrange
         var secret = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "a(?P<refine>b)c");
@@ -445,27 +444,27 @@ public class RegexPatternTests
 
         // Assert
         Assert.AreEqual(1, actual: detections.Count());
-
         Assert.AreEqual(match, actual: input.Substring(detection.Start, detection.Length));
-        Assert.AreEqual(redactionToken, actual: detection.RedactionToken);
     }
 
     [TestMethod]
-    public void RegexPatterns_GetDetections_Returns_SecureTelemetryTokenValue_WhenMonikerSpecified()
+    public void RegexPatterns_GetDetections_ReturnsMonikerAndCrossCompanyCorrelatingId()
     {
         // Arrange
         string ruleMoniker = $"{Id}.{Name}";
         var secret = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc");
         string input = "abc";
 
-        string redactionToken = $"{Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(input)}";
+        string correlatingId = RegexPattern.GenerateCrossCompanyCorrelatingId(input);
 
         // Act
         IEnumerable<Detection> replacements = secret.GetDetections(input, generateCrossCompanyCorrelatingIds: true);
 
         // Assert
         Assert.AreEqual(1, actual: replacements.Count());
-        Assert.AreEqual(redactionToken, actual: replacements.First().RedactionToken);
+        Detection detection = replacements.Single();
+        Assert.AreEqual(ruleMoniker, detection.Moniker);
+        Assert.AreEqual(correlatingId, detection.CrossCompanyCorrelatingId);
     }
 
     [TestMethod]

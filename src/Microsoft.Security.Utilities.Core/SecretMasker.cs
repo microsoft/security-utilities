@@ -48,9 +48,9 @@ public sealed class SecretMasker : ISecretMasker
 
     public SecretMasker(IEnumerable<RegexPattern>? regexSecrets = null,
                         bool generateCorrelatingIds = false,
-                        IRegexEngine? regexEngine = default,
-                        string? defaultRegexRedactionToken = null,
-                        string? defaultLiteralRedactionToken = null)
+                        IRegexEngine? regexEngine = null,
+                        string? regexRedactionToken = null,
+                        string? literalRedactionToken = null)
     {
         _regexPatterns = new HashSet<RegexPattern>(regexSecrets ?? []);
         _generateCorrelatingIds = generateCorrelatingIds;
@@ -61,15 +61,29 @@ public sealed class SecretMasker : ISecretMasker
 
         _regexEngine = regexEngine ?? CachedDotNetRegex.Instance;
 
-        DefaultRegexRedactionToken = defaultRegexRedactionToken ?? RegexPattern.FallbackRedactionToken;
-        DefaultLiteralRedactionToken = defaultLiteralRedactionToken ?? SecretLiteral.FallbackRedactionToken;
+        RegexRedactionToken = string.IsNullOrWhiteSpace(regexRedactionToken) ? DefaultRegexRedactionToken : regexRedactionToken!;
+        LiteralRedactionToken = string.IsNullOrWhiteSpace(literalRedactionToken) ? DefaultLiteralRedactionToken : literalRedactionToken!;
 
         AddHighPerformancePatterns(_regexPatterns);
     }
 
-    public string DefaultRegexRedactionToken { get; }
+    /// <summary>
+    /// The token that is used to redact secrets detected by regex patterns. Defaults to "+++".
+    /// </summary>
+    public string RegexRedactionToken { get; }
 
-    public string DefaultLiteralRedactionToken { get; }
+    /// <summary>
+    /// The default token that is used for <see cref="RegexRedactionToken"/> when not specified during construction.
+    /// </summary>
+    public static string DefaultRegexRedactionToken => "+++";
+
+
+    /// <summary>
+    /// The token that is used to redact secrets detected by literal value. Defaults to "***".
+    /// </summary>
+    public string LiteralRedactionToken { get; }
+
+    public static string DefaultLiteralRedactionToken => "***";
 
     /// <summary>
     /// Gets the total time spent masking content for the lifetime of this masker instance.
@@ -83,25 +97,28 @@ public sealed class SecretMasker : ISecretMasker
 
     /// <summary>
     /// Masks secrets detected by <see cref="DetectSecrets(string)"/> in the
-    /// input, replacing them with <see cref="Detection.RedactionToken"/>.
+    /// input. Secrets matched by literal value are replaced with <see
+    /// cref="LiteralRedactionToken"/> and secrets matched by 
     /// </summary>
     /// <remarks>
     /// When secrets overlap or are adjacent to each other, the entire range
     /// encompassing them is masked and the leftmost detection's redaction token
     /// is used. If there is more than one overlapping leftmost detection, then
-    /// the redaction token among them that sorts first by ordinal
-    /// case-sensitive string comparison is used.
+    /// then <see cref="LiteralRedactionToken"/> if any of them are matched by a
+    /// were matched by literal value, and <see cref="RegexRedactionToken"/>
+    /// otherwise when all of them were matched by regex.
     ///
     /// The detection action receives  all detections, including those that
     /// overlap or are adjacent to others. The detections are received in order
-    /// sorted from left to right, then by redaction token in ordinal
-    /// case-sensitive order. In the extreme case that there are multiple
-    /// detections with the same start index and the same redaction token, the
-    /// relative order in which these are received is arbitrary and may change
-    /// between runs.
+    /// sorted from left to right, then by <see cref="DetectionKind">. 
+    ///
+    /// In the extreme case that there are multiple detections with the same
+    /// start index and the same <see cref="DetectionKind">, the relative order
+    /// in which these are received is arbitrary and must not be depended upon.
     /// </remarks>
     /// <param name="input">The input to mask.</param>
-    /// <param name="detectionAction">An optional action to perform on each detection.</param>
+    /// <param name="detectionAction">An optional action to perform on each
+    /// detection.</param>
     public string MaskSecrets(string input, Action<Detection>? detectionAction = null)
     {
         var stopwatch = Stopwatch.StartNew();
@@ -134,7 +151,7 @@ public sealed class SecretMasker : ISecretMasker
             int result = x.Start.CompareTo(y.Start);
             if (result == 0)
             {
-                result = string.CompareOrdinal(x.RedactionToken, y.RedactionToken);
+                result = ((int)x.Kind).CompareTo((int)y.Kind);
             }
             return result;
         });
@@ -147,7 +164,6 @@ public sealed class SecretMasker : ISecretMasker
         {
             Detection detection = detections[i];
             detectionAction?.Invoke(detection);
-
             // Absorb overlapping and adjacent detections into leftmost detection.
             int endIndex = detection.End;
             while (i < detections.Count - 1 && detections[i + 1].Start <= endIndex)
@@ -158,8 +174,9 @@ public sealed class SecretMasker : ISecretMasker
                 i++;
             }
 
+            string redactionToken = detection.Kind == DetectionKind.RegexPattern ? RegexRedactionToken : LiteralRedactionToken;
             s_stringBuilder.Append(input, startIndex, detection.Start - startIndex);
-            s_stringBuilder.Append(detection.RedactionToken);
+            s_stringBuilder.Append(redactionToken);
             startIndex = endIndex;
         }
 
@@ -291,7 +308,7 @@ public sealed class SecretMasker : ISecretMasker
                     continue;
                 }
 
-                foreach (Detection detection in regexSecret.GetDetections(input, _generateCorrelatingIds, DefaultRegexRedactionToken, _regexEngine))
+                foreach (Detection detection in regexSecret.GetDetections(input, _generateCorrelatingIds, _regexEngine))
                 {
                     if (detection.Length >= minimumSecretLength)
                     {
@@ -307,7 +324,7 @@ public sealed class SecretMasker : ISecretMasker
                     continue;
                 }
 
-                foreach (Detection detection in secretLiteral.GetDetections(input, DefaultLiteralRedactionToken))
+                foreach (Detection detection in secretLiteral.GetDetections(input))
                 {
                     detections.Add(detection);
                 }
@@ -338,17 +355,13 @@ public sealed class SecretMasker : ISecretMasker
             c3id = RegexPattern.GenerateCrossCompanyCorrelatingId(found);
         }
 
-        string redactionToken = c3id != null
-            ? $"{preciseId}:{c3id}"
-            : RegexPattern.FallbackRedactionToken;
-
         return new Detection(id: preciseId,
                              name: result.Item2,
                              label: pattern.Label,
                              start: detection.Start,
                              length: detection.Length,
-                             redactionToken: redactionToken,
                              crossCompanyCorrelatingId: c3id,
+                             kind: DetectionKind.RegexPattern,
                              metadata: pattern.DetectionMetadata,
                              rotationPeriod: pattern.RotationPeriod);
     }

@@ -33,18 +33,16 @@ internal sealed class Unclassified64ByteBase64String : RegexPattern
     }
 
     public override IEnumerable<Detection> GetDetections(string input,
-                                                         bool generateSha256Hashes,
-                                                         string defaultRedactionToken = RegexPattern.FallbackRedactionToken,
+                                                         bool generateCrossCompanyCorrelatingIds,
                                                          IRegexEngine? regexEngine = null)
     {
-        foreach (Detection detection in base.GetDetections(input, generateSha256Hashes, defaultRedactionToken, regexEngine))
+        foreach (Detection detection in base.GetDetections(input, generateCrossCompanyCorrelatingIds, regexEngine))
         {
             string match = input.Substring(detection.Start, detection.Length);
 
-            if (!Equals(azure64ByteIdentifiableKeys.GetDetections(match,
-                                                                         generateSha256Hashes,
-                                                                         defaultRedactionToken,
-                                                                         regexEngine).FirstOrDefault(), objB: default))
+            if (azure64ByteIdentifiableKeys.GetDetections(match,
+                                                          generateCrossCompanyCorrelatingIds: false,
+                                                          regexEngine).Any())
             {
                 continue;
             }

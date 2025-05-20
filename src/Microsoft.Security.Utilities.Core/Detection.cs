@@ -16,18 +16,18 @@ public sealed class Detection
                      string? label,
                      int start,
                      int length,
+                     DetectionKind kind,
                      DetectionMetadata metadata,
                      TimeSpan rotationPeriod = default,
-                     string? crossCompanyCorrelatingId = null,
-                     string? redactionToken = null)
+                     string? crossCompanyCorrelatingId = null)
     {
         Id = id;
         Name = name;
         Label = label;
         Start = start;
         Length = length;
+        Kind = kind;
         Metadata = metadata;
-        RedactionToken = redactionToken;
         RotationPeriod = rotationPeriod;
         CrossCompanyCorrelatingId = crossCompanyCorrelatingId;
     }
@@ -57,18 +57,18 @@ public sealed class Detection
 
     public int End => Start + Length;
 
+    public DetectionKind Kind { get; }
+
     public DetectionMetadata Metadata { get; }
 
     public TimeSpan RotationPeriod { get; }
 
     public string? CrossCompanyCorrelatingId { get; }
 
-    public string? RedactionToken { get; }
-
 #if DEBUG
     public override string ToString()
     {
-        return $"{Id}.{Name}:{Start}-{Start + Length}:{Metadata}:{CrossCompanyCorrelatingId}:{RedactionToken}";
+        return $"{Id}.{Name}:{Start}-{Start + Length}:{Kind}:{Metadata}:{CrossCompanyCorrelatingId}";
     }
 #endif
 }

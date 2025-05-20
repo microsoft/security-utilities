@@ -8,34 +8,17 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities;
 
-public class SecretLiteral
+internal record struct SecretLiteral
 {
-    public const string FallbackRedactionToken = "***";
+    public string Value { get; }
 
     public SecretLiteral(string value)
     {
         Value = value ?? throw new ArgumentNullException(nameof(value));
     }
 
-    public override bool Equals(object? obj)
+    public IEnumerable<Detection> GetDetections(string input)
     {
-        var item = obj as SecretLiteral;
-        if (item == null)
-        {
-            return false;
-        }
-        return string.Equals(Value, item.Value, StringComparison.Ordinal);
-    }
-
-    public override int GetHashCode() => Value.GetHashCode();
-
-    public IEnumerable<Detection> GetDetections(string input, string redactionToken)
-    {
-        if (string.IsNullOrWhiteSpace(redactionToken))
-        {
-            redactionToken = FallbackRedactionToken;
-        }
-
         if (!string.IsNullOrEmpty(input) && !string.IsNullOrEmpty(Value))
         {
             int startIndex = 0;
@@ -51,15 +34,12 @@ public class SecretLiteral
                                                label: null,
                                                start: startIndex,
                                                length: Value.Length,
-                                               metadata: 0,
-                                               rotationPeriod: default,
-                                               crossCompanyCorrelatingId: null,
-                                               redactionToken);
+                                               DetectionKind.Literal,
+                                               DetectionMetadata.None,
+                                               rotationPeriod: default);
                     ++startIndex;
                 }
             }
         }
     }
-
-    public string Value { get; private set; }
 }

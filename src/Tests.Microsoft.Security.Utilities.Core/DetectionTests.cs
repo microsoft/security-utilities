@@ -6,7 +6,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Emit;
 
 namespace Tests.Microsoft.Security.Utilities
 {
@@ -23,6 +22,7 @@ namespace Tests.Microsoft.Security.Utilities
             string redactionToken = $"{Guid.NewGuid()}";
 
             var metadata = (DetectionMetadata)0B_11111;
+            var kind = (DetectionKind)42;
             int start = Math.Max(1, (int)DateTime.UtcNow.Ticks % 99);
             int length = Math.Max(1, (int)DateTime.UtcNow.Ticks % 99);
             var rotationPeriod = TimeSpan.FromSeconds(Math.Max(1, DateTime.UtcNow.Second));
@@ -32,10 +32,10 @@ namespace Tests.Microsoft.Security.Utilities
                                           label,
                                           start,
                                           length,
+                                          kind,
                                           metadata,
                                           rotationPeriod,
-                                          crossCompanyCorrelatingId,
-                                          redactionToken);
+                                          crossCompanyCorrelatingId);
 
             Assert.AreEqual(id, detection.Id);
             Assert.AreEqual(name, detection.Name);
@@ -43,9 +43,9 @@ namespace Tests.Microsoft.Security.Utilities
             Assert.AreEqual(start, detection.Start);
             Assert.AreEqual(length, detection.Length);
             Assert.AreEqual(metadata, detection.Metadata);
+            Assert.AreEqual(kind, detection.Kind);
             Assert.AreEqual(start + length, detection.End);
             Assert.AreEqual(rotationPeriod, detection.RotationPeriod);
-            Assert.AreEqual(redactionToken, detection.RedactionToken);
             Assert.AreEqual(crossCompanyCorrelatingId, detection.CrossCompanyCorrelatingId);
 
             detection = new Detection(string.Empty,
@@ -54,8 +54,8 @@ namespace Tests.Microsoft.Security.Utilities
                                       int.MinValue,
                                       int.MaxValue,
                                       0,
-                                      rotationPeriod: default,
-                                      string.Empty);
+                                      0,
+                                      rotationPeriod: default);
 
             Assert.AreNotEqual(id, detection.Id);
             Assert.AreNotEqual(name, detection.Name);
@@ -66,7 +66,6 @@ namespace Tests.Microsoft.Security.Utilities
             Assert.AreNotEqual(start + length, detection.End);
             Assert.AreNotEqual(rotationPeriod, detection.CrossCompanyCorrelatingId);
             Assert.AreNotEqual(rotationPeriod, detection.RotationPeriod);
-            Assert.AreNotEqual(redactionToken, detection.RedactionToken);
         }
     }
 }
