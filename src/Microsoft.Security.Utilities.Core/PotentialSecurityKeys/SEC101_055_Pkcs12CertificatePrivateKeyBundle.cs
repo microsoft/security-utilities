@@ -64,8 +64,8 @@ namespace Microsoft.Security.Utilities
         {
             using var rsa = RSA.Create(keyLength);
             var certRequest = new CertificateRequest("cn=Test", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-            using var cert = certRequest.CreateSelfSigned(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddYears(1));
-            var pkcs12 = cert.Export(X509ContentType.Pkcs12, password);
+            using X509Certificate2 cert = certRequest.CreateSelfSigned(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddYears(1));
+            byte[] pkcs12 = cert.Export(X509ContentType.Pkcs12, password);
             return Convert.ToBase64String(pkcs12);
         }
 #else

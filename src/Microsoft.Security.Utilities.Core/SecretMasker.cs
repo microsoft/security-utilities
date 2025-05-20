@@ -104,7 +104,7 @@ public sealed class SecretMasker : ISecretMasker
     /// <param name="detectionAction">An optional action to perform on each detection.</param>
     public string MaskSecrets(string input, Action<Detection>? detectionAction = null)
     {
-        Stopwatch stopwatch = Stopwatch.StartNew();
+        var stopwatch = Stopwatch.StartNew();
         try
         {
             return MaskSecretsCore(input, detectionAction);
@@ -183,7 +183,7 @@ public sealed class SecretMasker : ISecretMasker
             return;
         }
 
-        SecretLiteral literal = new SecretLiteral(value);
+        var literal = new SecretLiteral(value);
         SyncObject.EnterWriteLock();
         try
         {
@@ -291,7 +291,7 @@ public sealed class SecretMasker : ISecretMasker
                     continue;
                 }
 
-                foreach (var detection in regexSecret.GetDetections(input, _generateCorrelatingIds, DefaultRegexRedactionToken, _regexEngine))
+                foreach (Detection detection in regexSecret.GetDetections(input, _generateCorrelatingIds, DefaultRegexRedactionToken, _regexEngine))
                 {
                     if (detection.Length >= minimumSecretLength)
                     {
@@ -307,7 +307,7 @@ public sealed class SecretMasker : ISecretMasker
                     continue;
                 }
 
-                foreach (var detection in secretLiteral.GetDetections(input, DefaultLiteralRedactionToken))
+                foreach (Detection detection in secretLiteral.GetDetections(input, DefaultLiteralRedactionToken))
                 {
                     detections.Add(detection);
                 }
@@ -363,7 +363,7 @@ public sealed class SecretMasker : ISecretMasker
         SyncObject.EnterWriteLock();
         try
         {
-            foreach (var pattern in regexPatterns)
+            foreach (RegexPattern pattern in regexPatterns)
             {
                 _regexPatterns.Add(pattern);
             }
@@ -380,7 +380,7 @@ public sealed class SecretMasker : ISecretMasker
     {
         List<CompiledHighPerformancePattern>? compiledHighPerformancePatterns = null;
 
-        foreach (var pattern in patterns)
+        foreach (RegexPattern pattern in patterns)
         {
             if (pattern is not IHighPerformanceScannableKey)
             {
@@ -393,7 +393,7 @@ public sealed class SecretMasker : ISecretMasker
             Debug.Assert(pattern.Signatures != null, "High-performance scannable key must have non-null signatures.");
             foreach (string signature in pattern.Signatures!)
             {
-                var highPerformancePattern = CompiledHighPerformancePattern.ForSignature(signature)!;
+                CompiledHighPerformancePattern highPerformancePattern = CompiledHighPerformancePattern.ForSignature(signature)!;
                 Debug.Assert(highPerformancePattern != null, "Every signature of high-performance compatible patterns have a compiled counterpart.");
                 compiledHighPerformancePatterns.Add(highPerformancePattern!);
 

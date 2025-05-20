@@ -69,7 +69,7 @@ public class SecretMaskerTests
                             foreach (string testExample in pattern.GenerateTruePositiveExamples())
                             {
                                 string context = testExample;
-                                var matches = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine");
+                                IEnumerable<UniversalMatch> matches = CachedDotNetRegex.Instance.Matches(context, pattern.Pattern, captureGroup: "refine");
                                 bool result = matches.Count() == 1;
                                 result.Should().BeTrue(because: $"pattern {pattern.Id} should match '{context}' exactly once");
 
@@ -178,7 +178,7 @@ public class SecretMaskerTests
                             secretMasker.DisableHighPerformanceScannerForTests();
                         }
 
-                        foreach (var pattern in patterns)
+                        foreach (RegexPattern pattern in patterns)
                         {
                             if (!lowEntropyModels && !pattern.DetectionMetadata.HasFlag(DetectionMetadata.HighEntropy))
                             {
@@ -187,7 +187,7 @@ public class SecretMaskerTests
 
                             foreach (string testExample in pattern.GenerateTruePositiveExamples())
                             {
-                                var detection = secretMasker.DetectSecrets(testExample).FirstOrDefault();
+                                Detection detection = secretMasker.DetectSecrets(testExample).FirstOrDefault();
                                 bool result = detection != null;
                                 result.Should().BeTrue(because: $"'{testExample}' should contain a secret detected by at least one rule");
 
@@ -234,7 +234,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_UrlNotMasked()
     {
-        using var secretMasker = InitializeTestMasker();
+        using SecretMasker secretMasker = InitializeTestMasker();
         string input = "https://simpledomain@example.com";
         string output = secretMasker.MaskSecrets(input);
 
@@ -246,7 +246,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_ComplexUrlNotMasked()
     {
-        using var secretMasker = InitializeTestMasker();
+        using SecretMasker secretMasker = InitializeTestMasker();
         string input = "https://url.com:443/~user/foo=bar+42-18?what=this.is.an.example....~~many@&param=value";
 
         string actual = secretMasker.MaskSecrets(input);
@@ -258,7 +258,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_UrlCredentialsAreMasked()
     {
-        using var secretMasker = InitializeTestMasker();
+        using SecretMasker secretMasker = InitializeTestMasker();
         string input = "https://user:pass@example.com";
         string expected = "https://+++@example.com";
 
@@ -271,7 +271,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void IsUserInfoWithSpecialCharactersMaskedCorrectly()
     {
-        using var secretMasker = InitializeTestMasker();
+        using SecretMasker secretMasker = InitializeTestMasker();
 
         string input = @"https://user:pass4';.!&*()=,$-+~@example.com";
         string expected = "https://+++@example.com";
@@ -284,7 +284,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void IsUserInfoWithDigitsInNameMaskedCorrectly()
     {
-        using var secretMasker = InitializeTestMasker();
+        using SecretMasker secretMasker = InitializeTestMasker();
         string input = @"https://username123:password@example.com";
         string expected = "https://+++@example.com";
         string actual = secretMasker.MaskSecrets(input);
@@ -296,7 +296,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void IsUserInfoWithLongPasswordAndNameMaskedCorrectly()
     {
-        using var secretMasker = InitializeTestMasker();
+        using SecretMasker secretMasker = InitializeTestMasker();
         string input = @"https://username_loooooooooooooooooooooooooooooooooooooooooong:password_looooooooooooooooooooooooooooooooooooooooooooooooong@example.com";
         string expected = "https://+++@example.com";
         string actual = secretMasker.MaskSecrets(input);
@@ -308,7 +308,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void IsUserInfoWithEncodedCharactersInNameMaskedCorrectly()
     {
-        using var secretMasker = InitializeTestMasker();
+        using SecretMasker secretMasker = InitializeTestMasker();
         string input = @"https://username%10%A3%F6:password123@example.com";
         string expected = "https://+++@example.com";
         string actual = secretMasker.MaskSecrets(input);
@@ -320,7 +320,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void IsUserInfoWithEncodedAndEscapedCharactersInNameMaskedCorrectly()
     {
-        using var secretMasker = InitializeTestMasker();
+        using SecretMasker secretMasker = InitializeTestMasker();
         string input = @"https://username%AZP2510%AZP25A3%AZP25F6:password123@example.com";
         string expected = "https://+++@example.com";
         string actual = secretMasker.MaskSecrets(input);
@@ -394,7 +394,7 @@ public class SecretMaskerTests
         using (var secretMasker = new SecretMasker())
         {
             secretMasker.AddLiteralEncoder(encoder);
-            var value = string.Empty.PadRight(1, ' ');
+            string value = string.Empty.PadRight(1, ' ');
             secretMasker.AddValue(value);
             Assert.AreEqual("***", secretMasker.MaskSecrets(value));
             Assert.AreEqual("***", secretMasker.MaskSecrets(value.Replace(" ", "%20")));
@@ -403,7 +403,7 @@ public class SecretMaskerTests
         using (var secretMasker = new SecretMasker())
         {
             secretMasker.AddLiteralEncoder(encoder);
-            var value = string.Empty.PadRight(2, ' ');
+            string value = string.Empty.PadRight(2, ' ');
             secretMasker.AddValue(value);
             Assert.AreEqual("***", secretMasker.MaskSecrets(value));
             Assert.AreEqual("***", secretMasker.MaskSecrets(value.Replace(" ", "%20")));
@@ -412,7 +412,7 @@ public class SecretMaskerTests
         using (var secretMasker = new SecretMasker())
         {
             secretMasker.AddLiteralEncoder(encoder);
-            var value = string.Empty.PadRight(3, ' ');
+            string value = string.Empty.PadRight(3, ' ');
             secretMasker.AddValue(value);
             Assert.AreEqual("***", secretMasker.MaskSecrets(value));
             Assert.AreEqual("***", secretMasker.MaskSecrets(value.Replace(" ", "%20")));
@@ -421,7 +421,7 @@ public class SecretMaskerTests
         using (var secretMasker = new SecretMasker())
         {
             secretMasker.AddLiteralEncoder(encoder);
-            var value = string.Empty.PadRight(4, ' ');
+            string value = string.Empty.PadRight(4, ' ');
             secretMasker.AddValue(value);
             Assert.AreEqual("***", secretMasker.MaskSecrets(value));
             Assert.AreEqual("***", secretMasker.MaskSecrets(value.Replace(" ", "%20")));
@@ -430,7 +430,7 @@ public class SecretMaskerTests
         using (var secretMasker = new SecretMasker())
         {
             secretMasker.AddLiteralEncoder(encoder);
-            var value = string.Empty.PadRight(5, ' ');
+            string value = string.Empty.PadRight(5, ' ');
             secretMasker.AddValue(value);
             Assert.AreEqual("***", secretMasker.MaskSecrets(value));
             Assert.AreEqual("***", secretMasker.MaskSecrets(value.Replace(" ", "%20")));
@@ -439,7 +439,7 @@ public class SecretMaskerTests
         using (var secretMasker = new SecretMasker())
         {
             secretMasker.AddLiteralEncoder(encoder);
-            var value = string.Empty.PadRight(5, ' ');
+            string value = string.Empty.PadRight(5, ' ');
             secretMasker.AddValue(value);
             Assert.AreEqual("***", secretMasker.MaskSecrets(value));
             Assert.AreEqual("***", secretMasker.MaskSecrets(value.Replace(" ", "%20")));
@@ -448,7 +448,7 @@ public class SecretMaskerTests
         using (var secretMasker = new SecretMasker())
         {
             secretMasker.AddLiteralEncoder(encoder);
-            var value = string.Empty.PadRight(6, ' ');
+            string value = string.Empty.PadRight(6, ' ');
             secretMasker.AddValue(value);
             Assert.AreEqual("***", secretMasker.MaskSecrets(value));
             Assert.AreEqual("***", secretMasker.MaskSecrets(value.Replace(" ", "%20")));
@@ -458,7 +458,7 @@ public class SecretMaskerTests
         using (var secretMasker = new SecretMasker())
         {
             secretMasker.AddLiteralEncoder(encoder);
-            var value = string.Empty.PadRight(7, ' ');
+            string value = string.Empty.PadRight(7, ' ');
             secretMasker.AddValue(value);
             Assert.AreEqual("***", secretMasker.MaskSecrets(value));
             Assert.AreEqual("***", secretMasker.MaskSecrets(value.Replace(" ", "%20")));
@@ -467,7 +467,7 @@ public class SecretMaskerTests
         using (var secretMasker = new SecretMasker())
         {
             secretMasker.AddLiteralEncoder(encoder);
-            var value = "𐐷𐐷𐐷𐐷"; // surrogate pair
+            string value = "𐐷𐐷𐐷𐐷"; // surrogate pair
             secretMasker.AddValue(value);
             Assert.AreEqual("***", secretMasker.MaskSecrets(value));
         }
@@ -475,7 +475,7 @@ public class SecretMaskerTests
         using (var secretMasker = new SecretMasker())
         {
             secretMasker.AddLiteralEncoder(encoder);
-            var value = " 𐐷𐐷𐐷𐐷"; // shift by one non-surrogate character to ensure surrogate across segment boundary handled correctly
+            string value = " 𐐷𐐷𐐷𐐷"; // shift by one non-surrogate character to ensure surrogate across segment boundary handled correctly
             secretMasker.AddValue(value);
             Assert.AreEqual("***", secretMasker.MaskSecrets(value));
         }
@@ -487,7 +487,7 @@ public class SecretMaskerTests
         using var secretMasker = new SecretMasker();
         secretMasker.AddValue("abcd");
 
-        var result = secretMasker.MaskSecrets(null);
+        string result = secretMasker.MaskSecrets(null);
         Assert.AreEqual(string.Empty, result);
 
         result = secretMasker.MaskSecrets(string.Empty);
@@ -500,7 +500,7 @@ public class SecretMaskerTests
         string suffix = "00000";
         string secret = $"secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_{suffix}";
         using var secretMasker = new SecretMasker(new[] { new SecretScanningSampleToken() }, generateCorrelatingIds: true);
-        var detections = secretMasker.DetectSecrets(secret);
+        IEnumerable<Detection> detections = secretMasker.DetectSecrets(secret);
         detections.Count().Should().Be(1);
         Detection detection = detections.First();
 
@@ -514,9 +514,9 @@ public class SecretMaskerTests
     public void SecretMasker_HandlesNoMasks()
     {
         using var secretMasker = new SecretMasker();
-        var input = "abc";
+        string input = "abc";
 
-        var actual = secretMasker.MaskSecrets(input);
+        string actual = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual(input, actual);
     }
@@ -527,8 +527,8 @@ public class SecretMaskerTests
         using var secretMasker = new SecretMasker();
         secretMasker.AddValue("def");
 
-        var input = "abcdefg";
-        var result = secretMasker.MaskSecrets(input);
+        string input = "abcdefg";
+        string result = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual("abc***g", result);
     }
@@ -539,8 +539,8 @@ public class SecretMaskerTests
         using var secretMasker = new SecretMasker();
         secretMasker.AddValue("def");
 
-        var input = "abcdefgdef";
-        var result = secretMasker.MaskSecrets(input);
+        string input = "abcdefgdef";
+        string result = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual("abc***g***", result);
     }
@@ -551,8 +551,8 @@ public class SecretMaskerTests
         using var secretMasker = new SecretMasker();
         secretMasker.AddValue("abc");
 
-        var input = "abcabcdef";
-        var result = secretMasker.MaskSecrets(input);
+        string input = "abcabcdef";
+        string result = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual("***def", result);
     }
@@ -564,8 +564,8 @@ public class SecretMaskerTests
         secretMasker.AddValue("bcd");
         secretMasker.AddValue("fgh");
 
-        var input = "abcdefghi";
-        var result = secretMasker.MaskSecrets(input);
+        string input = "abcdefghi";
+        string result = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual("a***e***i", result);
     }
@@ -577,8 +577,8 @@ public class SecretMaskerTests
         secretMasker.AddValue("def");
         secretMasker.AddValue("bcd");
 
-        var input = "abcdefg";
-        var result = secretMasker.MaskSecrets(input);
+        string input = "abcdefg";
+        string result = secretMasker.MaskSecrets(input);
 
         // a naive replacement would replace "def" first, and never find "bcd", resulting in "abc+++g"
         // or it would replace "bcd" first, and never find "def", resulting in "a+++efg"
@@ -593,8 +593,8 @@ public class SecretMaskerTests
         secretMasker.AddValue("efg");
         secretMasker.AddValue("bcd");
 
-        var input = "abcdefgh";
-        var result = secretMasker.MaskSecrets(input);
+        string input = "abcdefgh";
+        string result = secretMasker.MaskSecrets(input);
 
         // two adjacent secrets are basically one big secret
 
@@ -709,8 +709,8 @@ public class SecretMaskerTests
         secretMasker.AddValue("efg");
         secretMasker.AddValue("bcd");
 
-        var input = "abcdefgh";
-        var result = secretMasker.MaskSecrets(input);
+        string input = "abcdefgh";
+        string result = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual("a***h", result);
     }
@@ -725,8 +725,8 @@ public class SecretMaskerTests
         secretMasker.AddValue("345");
         secretMasker.AddLiteralEncoder(new LiteralEncoder(x => x.Replace("345", "cd")));
 
-        var input = "ab123cd345";
-        var result = secretMasker.MaskSecrets(input);
+        string input = "ab123cd345";
+        string result = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual(redactionToken, result);
     }
@@ -742,8 +742,8 @@ public class SecretMaskerTests
 
             // There must be a space between the two matches to avoid coalescing
             // both finds into a single redaction operation.
-            var input = "abc def";
-            var result = secretMasker.MaskSecrets(input);
+            string input = "abc def";
+            string result = secretMasker.MaskSecrets(input);
 
             Assert.AreEqual($"{SecretLiteral.FallbackRedactionToken} {RegexPattern.FallbackRedactionToken}", result);
         }
@@ -757,8 +757,8 @@ public class SecretMaskerTests
         secretMasker.AddRegex(new RegexPattern(id: "1000", name: "Name", "a test secret", DetectionMetadata.None, pattern: "abc"));
         secretMasker.AddValue("123");
 
-        var input = "abcx123ab12";
-        var result = secretMasker.MaskSecrets(input);
+        string input = "abcx123ab12";
+        string result = secretMasker.MaskSecrets(input);
 
         Assert.AreEqual("zzzxyyyab12", result);
     }
@@ -913,7 +913,7 @@ public class SecretMaskerTests
                             case SecretMaskerOperation.DetectSecrets:
                             {
                                 IEnumerable<Detection> detections = secretMasker.DetectSecrets(testInput);
-                                List<string> secrets = detections.Select(d => testInput.Substring(d.Start, d.Length)).ToList();
+                                var secrets = detections.Select(d => testInput.Substring(d.Start, d.Length)).ToList();
                                 CollectionAssert.AreEquivalent(expectedSecrets, secrets);
                                 break;
                             }
@@ -941,7 +941,7 @@ public class SecretMaskerTests
         startBarrier.SignalAndWait();
 
         // Wait for all threads to complete
-        foreach (var thread in threads)
+        foreach (Thread thread in threads)
         {
             thread.Join();
         }

@@ -51,7 +51,7 @@ namespace Microsoft.Security.Utilities.Cli
                 string contents = File.ReadAllText(path);
                 bool foundAtLeastOne = false;
 
-                foreach (var detection in scan.DetectSecrets(contents))
+                foreach (Detection detection in scan.DetectSecrets(contents))
                 {
                     foundAtLeastOne = true;
                     Console.WriteLine($"{fileName} ({detection.Start},{detection.End}): {detection.Moniker} : {Detections.Format(detection, contents)}");
@@ -74,7 +74,7 @@ namespace Microsoft.Security.Utilities.Cli
             bool foundAtLeastOne = false;
 
             string contents = options.StringInput;
-            foreach (var detection in scan.DetectSecrets(contents))
+            foreach (Detection detection in scan.DetectSecrets(contents))
             {
                 foundAtLeastOne = true;
                 Console.WriteLine($"Offset {detection.Start},{detection.End} : {detection.Moniker} : {Detections.Format(detection, contents)}");

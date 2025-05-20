@@ -24,7 +24,7 @@ namespace Microsoft.Security.Utilities.Cli
                      "PreciselyClassifiedSecurityKeys.json",
                       WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys);
 
-            foreach (var precision in new[] { DetectionMetadata.HighConfidence, DetectionMetadata.MediumConfidence, DetectionMetadata.LowConfidence })
+            foreach (DetectionMetadata precision in new[] { DetectionMetadata.HighConfidence, DetectionMetadata.MediumConfidence, DetectionMetadata.LowConfidence })
             {
                 WriteJson(options,
                           $"{precision}SecurityModels.json",

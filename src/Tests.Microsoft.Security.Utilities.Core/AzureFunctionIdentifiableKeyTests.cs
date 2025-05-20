@@ -4,7 +4,7 @@
 using FluentAssertions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
+using System;
 using System.Linq;
 
 
@@ -21,11 +21,11 @@ namespace Microsoft.Security.Utilities.Core
             foreach (string example in classifier.GenerateTruePositiveExamples())
             {
                 var masker = new SecretMasker([classifier]);
-                var detection = masker.DetectSecrets(example).FirstOrDefault();
+                Detection detection = masker.DetectSecrets(example).FirstOrDefault();
                 detection.Should().NotBe(default);
 
                 string refined = example.Substring(detection.Start, detection.Length);
-                var result = classifier.GetMatchIdAndName(refined);
+                Tuple<string, string> result = classifier.GetMatchIdAndName(refined);
                 result.Should().NotBeNull();
             }
         }

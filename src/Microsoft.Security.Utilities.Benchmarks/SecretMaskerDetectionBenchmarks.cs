@@ -91,8 +91,8 @@ namespace Microsoft.Security.Utilities.Benchmarks
 
             if (random)
             {
-                var byteCount = Base64CharsToBytes(length);
-                var data = new byte[byteCount];
+                int byteCount = Base64CharsToBytes(length);
+                byte[] data = new byte[byteCount];
                 _rng.NextBytes(data);
                 prefix = Convert.ToBase64String(data).Substring(0, length);
             }
@@ -122,11 +122,11 @@ namespace Microsoft.Security.Utilities.Benchmarks
         private List<string> GenerateExamples(bool random, int prefixLength, int examplesCount = 870)
         {
             var examples = new List<string>();
-            var prefix = GeneratePrefix(prefixLength, random);
+            string prefix = GeneratePrefix(prefixLength, random);
 
             var exampleGenerators = new List<IEnumerator<string>>();
 
-            foreach (var pattern in RegexPatterns)
+            foreach (RegexPattern pattern in RegexPatterns)
             {
                 IEnumerator<string> enumerator = pattern.GenerateTruePositiveExamples().GetEnumerator();
                 exampleGenerators.Add(enumerator);

@@ -27,7 +27,7 @@ namespace Base62
         /// <returns>Base62 string</returns>
         public static string ToBase62(this short original, bool inverted = false)
         {
-            var array = BitConverter.GetBytes(original);
+            byte[] array = BitConverter.GetBytes(original);
 
             if (BitConverter.IsLittleEndian)
             {
@@ -45,7 +45,7 @@ namespace Base62
         /// <returns>Base62 string</returns>
         public static string ToBase62(this int original, bool inverted = false)
         {
-            var array = BitConverter.GetBytes(original);
+            byte[] array = BitConverter.GetBytes(original);
 
             if (BitConverter.IsLittleEndian)
             {
@@ -63,7 +63,7 @@ namespace Base62
         /// <returns>Base62 string</returns>
         public static string ToBase62(this long original, bool inverted = false)
         {
-            var array = BitConverter.GetBytes(original);
+            byte[] array = BitConverter.GetBytes(original);
 
             if (BitConverter.IsLittleEndian)
             {
@@ -92,13 +92,13 @@ namespace Base62
         /// <returns>Base62 string</returns>
         public static string ToBase62(this byte[] original, bool inverted = false)
         {
-            var characterSet = inverted ? InvertedCharacterSet : DefaultCharacterSet;
-            var arr = Array.ConvertAll(original, t => (int)t);
+            string characterSet = inverted ? InvertedCharacterSet : DefaultCharacterSet;
+            int[] arr = Array.ConvertAll(original, t => (int)t);
 
-            var converted = BaseConvert(arr, 256, 62);
+            int[] converted = BaseConvert(arr, 256, 62);
             s_sb ??= new StringBuilder();
             s_sb.Clear();
-            foreach (var t in converted)
+            foreach (int t in converted)
             {
                 s_sb.Append(characterSet[t]);
             }
@@ -113,7 +113,7 @@ namespace Base62
         /// <returns>Byte array</returns>
         public static T FromBase62<T>(this string base62, bool inverted = false)
         {
-            var array = base62.FromBase62(inverted);
+            byte[] array = base62.FromBase62(inverted);
 
             switch (Type.GetTypeCode(typeof(T)))
             {
@@ -158,26 +158,26 @@ namespace Base62
                 throw new ArgumentNullException(nameof(base62));
             }
 
-            var characterSet = inverted ? InvertedCharacterSet : DefaultCharacterSet;
-            var arr = Array.ConvertAll(base62.ToCharArray(), characterSet.IndexOf);
+            string characterSet = inverted ? InvertedCharacterSet : DefaultCharacterSet;
+            int[] arr = Array.ConvertAll(base62.ToCharArray(), characterSet.IndexOf);
 
-            var converted = BaseConvert(arr, 62, 256);
+            int[] converted = BaseConvert(arr, 62, 256);
             return Array.ConvertAll(converted, Convert.ToByte);
         }
 
         private static int[] BaseConvert(int[] source, int sourceBase, int targetBase)
         {
             var result = new List<int>();
-            var leadingZeroCount = Math.Min(source.TakeWhile(x => x == 0).Count(), source.Length - 1);
+            int leadingZeroCount = Math.Min(source.TakeWhile(x => x == 0).Count(), source.Length - 1);
             int count;
             while ((count = source.Length) > 0)
             {
                 var quotient = new List<int>();
-                var remainder = 0;
-                for (var i = 0; i != count; i++)
+                int remainder = 0;
+                for (int i = 0; i != count; i++)
                 {
-                    var accumulator = source[i] + remainder * sourceBase;
-                    var digit = accumulator / targetBase;
+                    int accumulator = source[i] + remainder * sourceBase;
+                    int digit = accumulator / targetBase;
                     remainder = accumulator % targetBase;
                     if (quotient.Count > 0 || digit > 0)
                     {

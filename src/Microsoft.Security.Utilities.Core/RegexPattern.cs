@@ -168,7 +168,7 @@ public class RegexPattern
             if (Signatures != null)
             {
                 int xor_0 = 0;
-                foreach (var sniffLiteral in Signatures)
+                foreach (string sniffLiteral in Signatures)
                 {
 #if NET5_0_OR_GREATER
                     xor_0 ^= sniffLiteral.GetHashCode(StringComparison.Ordinal);
@@ -234,7 +234,7 @@ public class RegexPattern
                     redactionToken = FallbackRedactionToken;
                 }
 
-                var moniker = GetMatchIdAndName(match.Value);
+                Tuple<string, string>? moniker = GetMatchIdAndName(match.Value);
                 if (moniker == default)
                 {
                     continue;
@@ -402,7 +402,7 @@ public class RegexPattern
     {
         string regexNormalizedSignature = Regex.Escape(signature);
 
-        foreach (var prefix in WellKnownRegexPatterns.AllPrefixes)
+        foreach (string prefix in WellKnownRegexPatterns.AllPrefixes)
         {
             if (pattern.StartsWith(prefix, StringComparison.Ordinal))
             {
@@ -411,7 +411,7 @@ public class RegexPattern
             }
         }
 
-        foreach (var suffix in WellKnownRegexPatterns.AllSuffixes)
+        foreach (string suffix in WellKnownRegexPatterns.AllSuffixes)
         {
             if (pattern.EndsWith(suffix, StringComparison.Ordinal))
             {

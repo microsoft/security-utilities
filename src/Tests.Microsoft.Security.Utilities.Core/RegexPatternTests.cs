@@ -24,7 +24,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc");
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsTrue(result);
@@ -38,7 +38,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "def");
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsFalse(result);
@@ -52,7 +52,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern($"{Guid.NewGuid()}", Name, Label, DetectionMetadata.Identifiable, "abc");
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsFalse(result);
@@ -66,7 +66,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, $"{Guid.NewGuid()}", Label, DetectionMetadata.Identifiable, "abc");
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsFalse(result);
@@ -84,7 +84,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.ObsoleteFormat, "abc");
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsFalse(result);
@@ -99,7 +99,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", signatures: signatures);
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsTrue(result);
@@ -114,7 +114,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", signatures: new HashSet<string>());
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsFalse(result);
@@ -129,7 +129,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", TimeSpan.FromSeconds(15));
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsTrue(result);
@@ -143,7 +143,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", TimeSpan.FromSeconds(300));
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsFalse(result);
@@ -158,7 +158,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", regexOptions: regexOptions);
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsTrue(result);
@@ -173,7 +173,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", regexOptions: RegexOptions.IgnorePatternWhitespace);
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsFalse(result);
@@ -182,14 +182,14 @@ public class RegexPatternTests
     [TestMethod]
     public void RegexPattern_Equals_ReturnsTrue_WhenLabelsAreEqual()
     {
-        var sampleGenerator = () => { return new[] { "abc" }; };
+        Func<string[]> sampleGenerator = () => { return new[] { "abc" }; };
 
         // Arrange
         var secret1 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", sampleGenerator: sampleGenerator);
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", sampleGenerator: sampleGenerator);
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsTrue(result);
@@ -204,7 +204,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, $"{Guid.NewGuid()}", DetectionMetadata.Identifiable, "abc");
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsTrue(result);
@@ -213,14 +213,14 @@ public class RegexPatternTests
     [TestMethod]
     public void RegexPattern_Equals_ReturnsTrue_WhenSampleGeneratorsAreEqual()
     {
-        var sampleGenerator = () => { return new[] { "abc" }; };
+        Func<string[]> sampleGenerator = () => { return new[] { "abc" }; };
 
         // Arrange
         var secret1 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", sampleGenerator: sampleGenerator);
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", sampleGenerator: sampleGenerator);
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsTrue(result);
@@ -229,15 +229,15 @@ public class RegexPatternTests
     [TestMethod]
     public void RegexPattern_Equals_ReturnsTrue_WhenSampleGeneratorsDiffer()
     {
-        var sampleGenerator1 = () => { return new[] { "abc" }; };
-        var sampleGenerator2 = () => { return new[] { "abcabc" }; };
+        Func<string[]> sampleGenerator1 = () => { return new[] { "abc" }; };
+        Func<string[]> sampleGenerator2 = () => { return new[] { "abcabc" }; };
 
         // Arrange
         var secret1 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", sampleGenerator: sampleGenerator1);
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", sampleGenerator: sampleGenerator1);
 
         // Act
-        var result = secret1.Equals(secret2);
+        bool result = secret1.Equals(secret2);
 
         // Assert
         Assert.IsTrue(result);
@@ -250,7 +250,7 @@ public class RegexPatternTests
         var secret1 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc");
 
         // Act
-        var result = secret1.Equals(null);
+        bool result = secret1.Equals(null);
 
         // Assert
         Assert.IsFalse(result);
@@ -265,7 +265,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "def");
 
         // Act
-        var hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
+        bool hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
 
         // Assert
         Assert.IsTrue(hashCodeDiffers);
@@ -280,7 +280,7 @@ public class RegexPatternTests
         var set = new HashSet<RegexPattern>(new[] { secret1 });
 
         // Act
-        var hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
+        bool hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
 
         // Assert
         Assert.IsTrue(hashCodeDiffers);
@@ -295,7 +295,7 @@ public class RegexPatternTests
         var set = new HashSet<RegexPattern>(new[] { secret1 });
 
         // Act
-        var hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
+        bool hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
 
         // Assert
         Assert.IsTrue(hashCodeDiffers);
@@ -309,7 +309,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", TimeSpan.FromHours(24));
 
         // Act
-        var hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
+        bool hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
 
         // Assert
         Assert.IsTrue(hashCodeDiffers);
@@ -323,7 +323,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.ObsoleteFormat, "abc");
 
         // Act
-        var hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
+        bool hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
 
         // Assert
         Assert.IsTrue(hashCodeDiffers);
@@ -337,7 +337,7 @@ public class RegexPatternTests
         var secret2 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", signatures: new HashSet<string>(new[] { "sniff2" }));
 
         // Act
-        var hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
+        bool hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
 
         // Assert
         Assert.IsTrue(hashCodeDiffers);
@@ -353,7 +353,7 @@ public class RegexPatternTests
         var set = new HashSet<RegexPattern>(new[] { secret1 });
 
         // Act
-        var hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
+        bool hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
 
         // Assert
         Assert.IsTrue(hashCodeDiffers);
@@ -362,8 +362,8 @@ public class RegexPatternTests
     [TestMethod]
     public void RegexPattern_GetHashCode_ReturnsConsistentValue_WhenSampleGeneratorsDiffer()
     {
-        var sampleGenerator1 = () => { return new[] { "abc" }; };
-        var sampleGenerator2 = () => { return new[] { "abcabc" }; };
+        Func<string[]> sampleGenerator1 = () => { return new[] { "abc" }; };
+        Func<string[]> sampleGenerator2 = () => { return new[] { "abcabc" }; };
 
         // Arrange
         var secret1 = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc", sampleGenerator: sampleGenerator1);
@@ -372,7 +372,7 @@ public class RegexPatternTests
         var set = new HashSet<RegexPattern>(new[] { secret1 });
 
         // Act
-        var hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
+        bool hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
 
         // Assert
         Assert.IsFalse(hashCodeDiffers);
@@ -381,8 +381,8 @@ public class RegexPatternTests
     [TestMethod]
     public void RegexPattern_GetHashCode_ReturnsConsistentValue_WhenLabelsDiffer()
     {
-        var sampleGenerator1 = () => { return new[] { "abc" }; };
-        var sampleGenerator2 = () => { return new[] { "abcabc" }; };
+        Func<string[]> sampleGenerator1 = () => { return new[] { "abc" }; };
+        Func<string[]> sampleGenerator2 = () => { return new[] { "abcabc" }; };
 
         // Arrange
         var secret1 = new RegexPattern(Id, Name, $"{Guid.NewGuid()}", DetectionMetadata.Identifiable, "abc", sampleGenerator: sampleGenerator1);
@@ -391,7 +391,7 @@ public class RegexPatternTests
         var set = new HashSet<RegexPattern>(new[] { secret1 });
 
         // Act
-        var hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
+        bool hashCodeDiffers = secret1.GetHashCode() != secret2.GetHashCode();
 
         // Assert
         Assert.IsFalse(hashCodeDiffers);
@@ -404,11 +404,11 @@ public class RegexPatternTests
         var secret = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "test", regexOptions: RegexOptions.Multiline);
 
         // Act
-        var replacements = secret.GetDetections("test", generateCrossCompanyCorrelatingIds: true);
+        IEnumerable<Detection> replacements = secret.GetDetections("test", generateCrossCompanyCorrelatingIds: true);
 
         // Assert
         Assert.AreEqual(1, actual: replacements.Count());
-        var replacement = replacements.First();
+        Detection replacement = replacements.First();
 
         // It is critical that our hashing is consistent across the library's .NET FX
         // and .NET 5.0 versions, so we hard-code this test to ensure things are in sync.
@@ -421,10 +421,10 @@ public class RegexPatternTests
     {
         // Arrange
         var secret = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc");
-        var input = "defdefdef";
+        string input = "defdefdef";
 
         // Act
-        var replacements = secret.GetDetections(input, generateCrossCompanyCorrelatingIds: true);
+        IEnumerable<Detection> replacements = secret.GetDetections(input, generateCrossCompanyCorrelatingIds: true);
 
         // Assert
         Assert.AreEqual(0, actual: replacements.Count());
@@ -435,13 +435,13 @@ public class RegexPatternTests
     {
         // Arrange
         var secret = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "a(?P<refine>b)c");
-        var input = "abc";
-        var match = "b";
+        string input = "abc";
+        string match = "b";
 
         // Act
-        var detections = secret.GetDetections(input, generateCrossCompanyCorrelatingIds: true);
+        IEnumerable<Detection> detections = secret.GetDetections(input, generateCrossCompanyCorrelatingIds: true);
         Detection detection = detections.First();
-        var redactionToken = $"{Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(match)}";
+        string redactionToken = $"{Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(match)}";
 
         // Assert
         Assert.AreEqual(1, actual: detections.Count());
@@ -454,14 +454,14 @@ public class RegexPatternTests
     public void RegexPatterns_GetDetections_Returns_SecureTelemetryTokenValue_WhenMonikerSpecified()
     {
         // Arrange
-        var ruleMoniker = $"{Id}.{Name}";
+        string ruleMoniker = $"{Id}.{Name}";
         var secret = new RegexPattern(Id, Name, Label, DetectionMetadata.Identifiable, "abc");
-        var input = "abc";
+        string input = "abc";
 
-        var redactionToken = $"{Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(input)}";
+        string redactionToken = $"{Id}:{RegexPattern.GenerateCrossCompanyCorrelatingId(input)}";
 
         // Act
-        var replacements = secret.GetDetections(input, generateCrossCompanyCorrelatingIds: true);
+        IEnumerable<Detection> replacements = secret.GetDetections(input, generateCrossCompanyCorrelatingIds: true);
 
         // Assert
         Assert.AreEqual(1, actual: replacements.Count());

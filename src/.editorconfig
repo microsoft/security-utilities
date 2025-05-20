@@ -234,6 +234,9 @@ csharp_space_around_binary_operators = before_and_after
 csharp_indent_case_contents = true
 csharp_indent_case_contents_when_block = false
 csharp_indent_braces = false
+csharp_style_var_for_built_in_types = false:warning
+csharp_style_var_when_type_is_apparent = true:warning
+csharp_style_var_elsewhere = false:warning
 
 [*.vb]
 dotnet_diagnostic.CA1047.severity=silent
