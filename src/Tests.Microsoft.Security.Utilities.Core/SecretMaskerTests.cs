@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -766,7 +767,7 @@ public class SecretMaskerTests
     [TestMethod]
     public void SecretMasker_ProvidesDetectionsViaCallback()
     {
-        using var secretMasker = new SecretMasker(Array.Empty<RegexPattern>(), generateCorrelatingIds: true);
+        using var secretMasker = new SecretMasker(generateCorrelatingIds: true);
         secretMasker.AddRegex(new RegexPattern(id: "TEST000/001", name: "Pattern1", label: "", DetectionMetadata.None, pattern: "pattern1"));
         secretMasker.AddRegex(new RegexPattern(id: "TEST000/002", name: "Pattern2", label: "", DetectionMetadata.HighEntropy, pattern: "pattern2"));
         secretMasker.AddValue("literal1");
@@ -793,37 +794,124 @@ public class SecretMaskerTests
     }
 
     [TestMethod]
-    public void SecretMasker_ProvidesOverlappingAndAdjacentDetectionsViaCallback()
+    public void SecretMasker_ProvidesOverlappingAndAdjacentDetectionsViaCallbackButSkipsDuplicates()
     {
-        using var secretMasker = new SecretMasker(Array.Empty<RegexPattern>(), generateCorrelatingIds: true);
-        secretMasker.AddRegex(new RegexPattern(id: "TEST000/001", name: "Pattern1", label: "", DetectionMetadata.None, pattern: "pattern1"));
-        secretMasker.AddRegex(new RegexPattern(id: "TEST000/002", name: "Pattern2", label: "", DetectionMetadata.HighEntropy, pattern: "pattern2"));
-        secretMasker.AddValue("pattern1 pattern2");
-        secretMasker.AddValue(" literal1");
+        using var secretMasker = new SecretMasker([]);
 
-        string input = "yada yada pattern1 pattern2 literal1 yada yada";
-        var detections = new List<Detection>();
-        string result = secretMasker.MaskSecrets(input, d => detections.Add(d));
+        string input = "The quick brown fox jumps over the lazy dog.";
 
-        Assert.AreEqual("yada yada *** yada yada", result); ;
+        string[] values = [
+            // Partially overlapping.
+            "lazy dog",
+            "y dog.",
+            // Nested.
+            "fox jumps",
+            "jumps",
+            // Same start position, different length.
+            "over",
+            "over the",
+            // Adjacent.
+            "quick",
+            " brown",
+        ];
 
-        Assert.AreEqual(4, detections.Count);
+        foreach (string value in values)
+        {
+            secretMasker.AddValue(value);
 
-        Assert.AreEqual(null, detections[0].Id); // tied for leftmost, wins because "***" sorts first
-        Assert.AreEqual(input.IndexOf("pattern1 pattern2"), detections[0].Start);
-        Assert.AreEqual("pattern1 pattern2".Length, detections[0].Length);
+            // These will all be duplicates because they have the same start and
+            // end and literal matches are preferred over regex matches.
+            secretMasker.AddRegex(new("", "", "", 0, pattern: value));
+        }
 
-        Assert.AreEqual("TEST000/001", detections[1].Id);
-        Assert.AreEqual(input.IndexOf("pattern1"), detections[1].Start);
-        Assert.AreEqual("pattern1".Length, detections[1].Length);
+        // NOTE: DetectSecrets returns all detections in unspecified order.
+        // while MaskSecrets invokes callback in documented order and excludes
+        // duplicates with same start and end position.
+        var maskedSecrets = new List<Detection>();
+        var detectedSecrets = secretMasker.DetectSecrets(input).OrderBy(x => x.Start).ToList();
+        string masked = secretMasker.MaskSecrets(input, maskedSecrets.Add);
 
-        Assert.AreEqual("TEST000/002", detections[2].Id);
-        Assert.AreEqual(input.IndexOf("pattern2"), detections[2].Start);
-        Assert.AreEqual("pattern2".Length, detections[2].Length);
+        masked.Should().Be("The *** *** *** ***", masked);
+        maskedSecrets.Should().HaveCount(8);
 
-        Assert.AreEqual(null, detections[3].Id);
-        Assert.AreEqual(input.IndexOf(" literal1"), detections[3].Start);
-        Assert.AreEqual(" literal1".Length, detections[3].Length);
+        // There should be twice as many results from DetectSecrets because
+        // there's a duplicate regex match for each value match.
+        detectedSecrets.Should().HaveCount(16);
+
+        // If we take all the results of DetectSecrets, filter to only the
+        // literal matches (regex matches are duplicates) we should get the same
+        // results as MaskSecrets (in unspecified order).
+        maskedSecrets.Should().BeEquivalentTo(detectedSecrets.Where(d => d.Kind == DetectionKind.Literal));
+
+        maskedSecrets.Select(s => input.Substring(s.Start, s.Length))
+                     .Should().BeEquivalentTo(["quick", " brown", "fox jumps", "jumps", "over the", "over", "lazy dog", "y dog."],
+                                              o => o.WithStrictOrdering());
+    }
+
+    [TestMethod]
+    public void SecretMasker_PrefersLiteralMatchesOverRegexMatches()
+    {
+        // Ensure that literal is preferred no matter how the redaction tokens sort.
+        foreach ((string literalToken, string regexToken) in new[] { ("A", "B"), ("B", "A") })
+        {
+            var masker = new SecretMasker(defaultLiteralRedactionToken: literalToken, defaultRegexRedactionToken: regexToken);
+            masker.AddValue("value");
+            masker.AddRegex(new("", "", "", 0, "value"));
+            string masked = masker.MaskSecrets("This has a value that also matches a regex");
+            masked.Should().Be($"This has a {literalToken} that also matches a regex", because: $"literalToken={literalToken}");
+        }
+    }
+
+    [TestMethod]
+    public void SecretMasker_DetectionRepresentingDuplicateDoesNotDependOnC3ID()
+    {
+        var r1 = new RegexPattern("ID1", "", "", DetectionMetadata.HighEntropy, "mask");
+        var r2 = new RegexPattern("ID2", "", "", DetectionMetadata.HighEntropy, "mask");
+        var r3 = new RegexPattern("ID3", "", "", DetectionMetadata.HighEntropy, "mask");
+
+        foreach (bool generateCorrelatingIds in new[] { false, true })
+        {
+            var detections = new List<Detection>();
+            var masker = new SecretMasker([r3, r2, r1], generateCorrelatingIds: generateCorrelatingIds);
+            string masked = masker.MaskSecrets("Please mask this", detections.Add);
+
+            string redactionToken = generateCorrelatingIds ? "ID1:Sen+1PEeyyaiGi88hAdz" : "+++";
+            string expected = $"Please {redactionToken} this";
+            masked.Should().Be(expected);
+            detections.Should().HaveCount(1, because: "the others are treated as duplicate.");
+            detections[0].Id.Should().Be("ID1", because: "'ID1' sorts first");
+        }
+    }
+
+    [TestMethod]
+    public void SecretMasker_SortsDetectionsForMaskingInCorrectOrder()
+    {
+        var d1 = new Detection(id: "A", "", "", start: 0, length: 6, 0, redactionToken: "a", kind: DetectionKind.Literal);
+        var d2 = new Detection(id: "A", "", "", start: 0, length: 5, 0, redactionToken: "a", kind: DetectionKind.Literal);
+        var d3 = new Detection(id: "A", "", "", start: 0, length: 5, 0, redactionToken: "b", kind: DetectionKind.Literal);
+        var d4 = new Detection(id: "B", "", "", start: 0, length: 5, 0, redactionToken: "a", kind: DetectionKind.Literal);
+        var d5 = new Detection(id: "A", "", "", start: 0, length: 5, 0, redactionToken: "a", kind: DetectionKind.Regex);
+        var d6 = new Detection(id: "A", "", "", start: 1, length: 5, 0, redactionToken: "a", kind: DetectionKind.Literal);
+
+        // Start with reverse order.
+        List<Detection> detections = [d6, d5, d4, d3, d2, d1];
+
+        // Sort and expect sorted order.
+        List<Detection> sorted = [d1, d2, d3, d4, d5, d6];
+        SecretMasker.SortDetectionsForMasking(detections);
+        detections.Should().BeEquivalentTo(sorted, o => o.WithStrictOrdering());
+
+#if NET
+        // Also test with randomly shuffled order when shuffle API is available.
+        int seed = unchecked((int)DateTime.Now.Ticks);
+        var random = new Random(seed);
+
+        random.Shuffle(CollectionsMarshal.AsSpan(detections));
+        SecretMasker.SortDetectionsForMasking(detections);
+        detections.Should().BeEquivalentTo(sorted,
+                                           o => o.WithStrictOrdering(),
+                                           because: $"we shuffled using random seed={seed} and then sorted");
+#endif
     }
 
     private enum SecretMaskerOperation

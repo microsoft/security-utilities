@@ -86,19 +86,19 @@ public sealed class SecretMasker : ISecretMasker
     /// input, replacing them with <see cref="Detection.RedactionToken"/>.
     /// </summary>
     /// <remarks>
-    /// When secrets overlap or are adjacent to each other, the entire range
-    /// encompassing them is masked and the leftmost detection's redaction token
-    /// is used. If there is more than one overlapping leftmost detection, then
-    /// the redaction token among them that sorts first by ordinal
-    /// case-sensitive string comparison is used.
+    /// Detections are sorted by their start index ascending (leftmost first),
+    /// then by length descending (longest first), then by ID, and finally by
+    /// redaction token. The callback receives detections in this order.
     ///
-    /// The detection action receives  all detections, including those that
-    /// overlap or are adjacent to others. The detections are received in order
-    /// sorted from left to right, then by redaction token in ordinal
-    /// case-sensitive order. In the extreme case that there are multiple
-    /// detections with the same start index and the same redaction token, the
-    /// relative order in which these are received is arbitrary and may change
-    /// between runs.
+    /// When secrets overlap or are adjacent to each other, the entire range
+    /// encompassing them is masked and the redaction token of the detection
+    /// among them that sorts first is used.
+    ///
+    /// Detections that have identical range (start index and length) are treated
+    /// as duplicates and only the one that sorts first is sent to the callback.
+    ///
+    /// All other detections, including those that partially overlap or are adjacent
+    /// to each other will be sent to the callback.
     /// </remarks>
     /// <param name="input">The input to mask.</param>
     /// <param name="detectionAction">An optional action to perform on each detection.</param>
@@ -129,33 +129,27 @@ public sealed class SecretMasker : ISecretMasker
             return input;
         }
 
-        detections.Sort((x, y) =>
-        {
-            int result = x.Start.CompareTo(y.Start);
-            if (result == 0)
-            {
-                result = string.CompareOrdinal(x.RedactionToken, y.RedactionToken);
-            }
-            return result;
-        });
+        SortDetectionsForMasking(detections);
 
         s_stringBuilder ??= new StringBuilder();
         s_stringBuilder.Length = 0;
 
         int startIndex = 0;
-        for (int i = 0; i < detections.Count; i++)
+        int index;
+        for (index = 0; index < detections.Count; index++)
         {
-            Detection detection = detections[i];
+            Detection detection = detections[index];
             detectionAction?.Invoke(detection);
+            SkipDuplicates(detection);
 
-            // Absorb overlapping and adjacent detections into leftmost detection.
+            // Absorb overlapping and adjacent detections into one redaction.
             int endIndex = detection.End;
-            while (i < detections.Count - 1 && detections[i + 1].Start <= endIndex)
+            while (index < detections.Count - 1 && detections[index + 1].Start <= endIndex)
             {
-                Detection absorbedDetection = detections[i + 1];
+                Detection absorbedDetection = detections[++index];
                 detectionAction?.Invoke(absorbedDetection);
+                SkipDuplicates(absorbedDetection);
                 endIndex = Math.Max(endIndex, absorbedDetection.End);
-                i++;
             }
 
             s_stringBuilder.Append(input, startIndex, detection.Start - startIndex);
@@ -169,6 +163,50 @@ public sealed class SecretMasker : ISecretMasker
         }
 
         return s_stringBuilder.ToString();
+
+        // Given sorted order established above, skip any detection that has the
+        // same start index and length as previous one.
+        void SkipDuplicates(Detection detection)
+        {
+            while (index < detections.Count - 1 &&
+                detections[index + 1].Start == detection.Start &&
+                detections[index + 1].Length == detection.Length)
+            {
+                index++;
+            }
+        }
+    }
+
+    internal static void SortDetectionsForMasking(List<Detection> detections)
+    {
+        detections.Sort(static (x, y) =>
+        {
+            // Sort by start position. (Leftmost first.)
+            int result = x.Start.CompareTo(y.Start);
+            if (result != 0) return result;
+
+            // Then by length descending. (Longest first.)
+            result = y.Length.CompareTo(x.Length);
+            if (result != 0) return result;
+
+            // Then by kind. (Literal matches before regex matches.) Note that
+            // we do not rely on the the differences in redaction token nor ID
+            // to ensure this because regexes can have null ID and redaction
+            // literal vs regex redaction token can be configured.
+            result = x.Kind.CompareTo(y.Kind);
+            if (result != 0) return result;
+
+            // Then by ID. This ensures that the C3ID generation option doesn't
+            // impact ordering.
+            result = string.CompareOrdinal(x.Id, y.Id);
+            if (result != 0) return result;
+
+            // And finally by redaction token. This ensures that the redaction
+            // result is well-defined even in the unlikely case that there are
+            // detections that are tied on all of the above.
+            result = string.CompareOrdinal(x.RedactionToken, y.RedactionToken);
+            return result;
+        });
     }
 
     /// <summary>
