@@ -12,7 +12,7 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# UNRELEASED
+# 1.19.0 - 06/05/2025
 - BRK, BUG: `SecretMasker.MinimumSecretLengthCeiling` is removed. This property had no effect previously.
 - BRK, BUG: `SecretMasker.MinimumSecretLength` is now respected for regex match length in addition to literal value lengths.
 - BRK, NEW: A shared `SecretMasker` instance is now fully safe to use from multiple threads. To establish this, it is now sealed and properties that exposed unsynchronized mutable state have been made read-only or removed. The following properties are now read-only: `DefaultRegexRedactionToken`, `DefaultLiteralRedactionToken`. The following properties that returned mutable collections are now removed: `RegexPatterns`, `EncodedSecretLiterals`, `ExplicitlyAddedSecretLiterals`, `LiteralEncoders`.`EncodedSecretLiterals`, `ExplicitlyAddedSecretLiterals`. The limitation that `AddValue` and `AddLiteralEncoder` were only thread safe if there was only one thread adding values is also removed.
