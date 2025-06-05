@@ -19,7 +19,8 @@ public sealed class Detection
                      DetectionMetadata metadata,
                      TimeSpan rotationPeriod = default,
                      string? crossCompanyCorrelatingId = null,
-                     string? redactionToken = null)
+                     string? redactionToken = null,
+                     DetectionKind kind = DetectionKind.Regex)
     {
         Id = id;
         Name = name;
@@ -30,6 +31,7 @@ public sealed class Detection
         RedactionToken = redactionToken;
         RotationPeriod = rotationPeriod;
         CrossCompanyCorrelatingId = crossCompanyCorrelatingId;
+        Kind = kind;
     }
 
     /// <summary>
@@ -65,10 +67,12 @@ public sealed class Detection
 
     public string? RedactionToken { get; }
 
+    public DetectionKind Kind { get; }
+
 #if DEBUG
     public override string ToString()
     {
-        return $"{Id}.{Name}:{Start}-{Start + Length}:{Metadata}:{CrossCompanyCorrelatingId}:{RedactionToken}";
+        return $"{Id}.{Name}:{Start}-{Start + Length}:{Metadata}:{CrossCompanyCorrelatingId}:{RedactionToken}:{Kind}";
     }
 #endif
 }

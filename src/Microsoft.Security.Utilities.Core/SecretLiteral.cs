@@ -54,7 +54,8 @@ public class SecretLiteral
                                                metadata: 0,
                                                rotationPeriod: default,
                                                crossCompanyCorrelatingId: null,
-                                               redactionToken);
+                                               redactionToken,
+                                               kind: DetectionKind.Literal);
                     ++startIndex;
                 }
             }
