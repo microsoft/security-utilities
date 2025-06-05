@@ -189,11 +189,12 @@ public sealed class SecretMasker : ISecretMasker
             result = y.Length.CompareTo(x.Length);
             if (result != 0) return result;
 
-            // Then by kind. (Literal matches before regex matches.) Note that
-            // we do not rely on the the differences in redaction token nor ID
-            // to ensure this because regexes can have null ID and redaction
+            // Then by kind descending. (Literal matches before regex matches,
+            // which is descending by underlying enum value.) Note that we do
+            // not rely on the the differences in redaction token nor ID to
+            // ensure this because regexes can have null ID and redaction
             // literal vs regex redaction token can be configured.
-            result = x.Kind.CompareTo(y.Kind);
+            result = y.Kind.CompareTo(x.Kind);
             if (result != 0) return result;
 
             // Then by ID. This ensures that the C3ID generation option doesn't
