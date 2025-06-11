@@ -116,13 +116,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Detection_HighConfidenceFormat" xml:space="preserve">
-    <value>'{0}' is {1}.{2}</value>
+    <value>'{0}' is {1}.</value>
   </data>
   <data name="Detection_LowConfidenceFormat" xml:space="preserve">
-    <value>'{0}' may comprise {1}.{2}</value>
+    <value>'{0}' may comprise {1}.</value>
   </data>
   <data name="Detection_CorrelatingIdSuffix" xml:space="preserve">
-    <value> The correlating id for this detection is {0}.</value>
+    <value>The correlating id for this detection is {0}.</value>
   </data>
   <data name="Label_DAT101_001_GuidValue" xml:space="preserve">
     <value>a GUID</value>

@@ -31,12 +31,12 @@ namespace Microsoft.Security.Utilities
             bool isHighConfidence = detection.Metadata.HasFlag(DetectionMetadata.HighConfidence);
 
             string suffix = !string.IsNullOrEmpty(detection.CrossCompanyCorrelatingId)
-                ? string.Format(Resources.Detection_CorrelatingIdSuffix, detection.CrossCompanyCorrelatingId)
+                ? " " + string.Format(Resources.Detection_CorrelatingIdSuffix, detection.CrossCompanyCorrelatingId)
                 : string.Empty;
 
             string formatString = isHighConfidence ? Resources.Detection_HighConfidenceFormat : Resources.Detection_LowConfidenceFormat;
 
-            return string.Format(formatString, truncated, detection.Label, suffix);
+            return string.Format(formatString, truncated, detection.Label) + suffix;
         }
 
         /// <summary>
