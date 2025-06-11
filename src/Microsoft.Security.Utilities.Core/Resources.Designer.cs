@@ -70,29 +70,20 @@ namespace Microsoft.Security.Utilities {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to '{0}' {1} {2}.{3}.
+        ///   Looks up a localized string similar to '{0}' is {1}.{2}.
         /// </summary>
-        internal static string Detection_FormatString {
+        internal static string Detection_HighConfidenceFormat {
             get {
-                return ResourceManager.GetString("Detection_FormatString", resourceCulture);
+                return ResourceManager.GetString("Detection_HighConfidenceFormat", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to is.
+        ///   Looks up a localized string similar to '{0}' may comprise {1}.{2}.
         /// </summary>
-        internal static string Detection_HighConfidenceVerb {
+        internal static string Detection_LowConfidenceFormat {
             get {
-                return ResourceManager.GetString("Detection_HighConfidenceVerb", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to may comprise.
-        /// </summary>
-        internal static string Detection_LowConfidenceVerb {
-            get {
-                return ResourceManager.GetString("Detection_LowConfidenceVerb", resourceCulture);
+                return ResourceManager.GetString("Detection_LowConfidenceFormat", resourceCulture);
             }
         }
 

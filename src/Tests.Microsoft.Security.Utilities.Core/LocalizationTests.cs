@@ -14,10 +14,9 @@ namespace Tests.Microsoft.Security.Utilities.Core
         public void Resources_ContainExpectedStrings()
         {
             // Verify that our resource strings contain the expected values
-            Resources.Detection_HighConfidenceVerb.Should().Be("is");
-            Resources.Detection_LowConfidenceVerb.Should().Be("may comprise");
+            Resources.Detection_HighConfidenceFormat.Should().Be("'{0}' is {1}.{2}");
+            Resources.Detection_LowConfidenceFormat.Should().Be("'{0}' may comprise {1}.{2}");
             Resources.Detection_CorrelatingIdSuffix.Should().Be(" The correlating id for this detection is {0}.");
-            Resources.Detection_FormatString.Should().Be("'{0}' {1} {2}.{3}");
         }
 
         [TestMethod]

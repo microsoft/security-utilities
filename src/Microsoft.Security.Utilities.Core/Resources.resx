@@ -117,21 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Detection_HighConfidenceVerb" xml:space="preserve">
-    <value>is</value>
-    <comment>Verb used when detection has high confidence (e.g., "'abc123' is an API key")</comment>
+  <data name="Detection_HighConfidenceFormat" xml:space="preserve">
+    <value>'{0}' is {1}.{2}</value>
+    <comment>Format string for high confidence detections. {0}=truncated secret, {1}=label, {2}=correlating ID suffix or empty</comment>
   </data>
-  <data name="Detection_LowConfidenceVerb" xml:space="preserve">
-    <value>may comprise</value>
-    <comment>Verb used when detection has low confidence (e.g., "'abc123' may comprise an API key")</comment>
+  <data name="Detection_LowConfidenceFormat" xml:space="preserve">
+    <value>'{0}' may comprise {1}.{2}</value>
+    <comment>Format string for low confidence detections. {0}=truncated secret, {1}=label, {2}=correlating ID suffix or empty</comment>
   </data>
   <data name="Detection_CorrelatingIdSuffix" xml:space="preserve">
     <value> The correlating id for this detection is {0}.</value>
     <comment>Suffix added to detection message when a cross-company correlating ID is available. {0} is the correlating ID.</comment>
-  </data>
-  <data name="Detection_FormatString" xml:space="preserve">
-    <value>'{0}' {1} {2}.{3}</value>
-    <comment>Format string for detection message. {0}=truncated secret, {1}=verb (is/may comprise), {2}=label, {3}=suffix</comment>
   </data>
   <data name="Label_DAT101_001_GuidValue" xml:space="preserve">
     <value>a GUID</value>

@@ -30,13 +30,13 @@ namespace Microsoft.Security.Utilities
 
             bool isHighConfidence = detection.Metadata.HasFlag(DetectionMetadata.HighConfidence);
 
-            string verb = isHighConfidence ? Resources.Detection_HighConfidenceVerb : Resources.Detection_LowConfidenceVerb;
-
             string suffix = !string.IsNullOrEmpty(detection.CrossCompanyCorrelatingId)
                 ? string.Format(Resources.Detection_CorrelatingIdSuffix, detection.CrossCompanyCorrelatingId)
                 : string.Empty;
 
-            return string.Format(Resources.Detection_FormatString, truncated, verb, detection.Label, suffix);
+            string formatString = isHighConfidence ? Resources.Detection_HighConfidenceFormat : Resources.Detection_LowConfidenceFormat;
+
+            return string.Format(formatString, truncated, detection.Label, suffix);
         }
 
         /// <summary>
