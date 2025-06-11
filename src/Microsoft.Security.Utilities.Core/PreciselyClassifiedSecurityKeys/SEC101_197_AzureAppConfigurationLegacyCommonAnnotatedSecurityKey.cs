@@ -11,7 +11,7 @@ public class AzureAppConfigurationLegacyCommonAnnotatedSecurityKey : LegacyCommo
     {
         Id = "SEC101/197";
         Name = nameof(AzureAppConfigurationLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure App Configuration legacy common annotated security key";
+        Label = Resources.Label_SEC101_197_AzureAppConfigurationLegacyCommonAnnotatedSecurityKey;
     }
 
     protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureAppConfiguration;

@@ -11,7 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/106";
             Name = nameof(AzureStorageAccountLegacyCredentials);
-            Label = "an Azure storage account legacy format access key";
+            Label = Resources.Label_SEC101_106_AzureStorageAccountLegacyCredentials;
             DetectionMetadata = DetectionMetadata.HighEntropy;
             Pattern = "(?i)(?:AccountName|StorageName|StorageAccount)\\s*=.+(?:Account|Storage)Key\\s*=\\s*(?P<refine>[0-9a-z\\\\\\/+]{86}==)(?:[^=]|$)";
         }

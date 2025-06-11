@@ -11,7 +11,7 @@ public class AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey : Cognitive
     {
         Id = "SEC101/228";
         Name = nameof(AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Speaker Recognition (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_228_AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

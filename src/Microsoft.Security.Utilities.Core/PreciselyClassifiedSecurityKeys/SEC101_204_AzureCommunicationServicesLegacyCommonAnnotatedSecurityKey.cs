@@ -11,7 +11,7 @@ public class AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey : Legacy
     {
         Id = "SEC101/204";
         Name = nameof(AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Communication Services legacy common annotated security key";
+        Label = Resources.Label_SEC101_204_AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey;
     }
 
     protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureCommunicationServices;

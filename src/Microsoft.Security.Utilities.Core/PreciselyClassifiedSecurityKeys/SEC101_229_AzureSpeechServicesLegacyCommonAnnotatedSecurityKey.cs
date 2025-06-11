@@ -11,7 +11,7 @@ public class AzureSpeechServicesLegacyCommonAnnotatedSecurityKey : CognitiveServ
     {
         Id = "SEC101/229";
         Name = nameof(AzureSpeechServicesLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Speech Services (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_229_AzureSpeechServicesLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

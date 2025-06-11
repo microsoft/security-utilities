@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/166";
             Name = nameof(AzureSearchIdentifiableQueryKey);
-            Label = "an Azure Search query key";
+            Label = Resources.Label_SEC101_166_AzureSearchIdentifiableQueryKey;
             ChecksumSeeds = new[] { IdentifiableMetadata.AzureSearchQueryKeyChecksumSeed };
             Pattern = @$"{WellKnownRegexPatterns.PrefixAllBase64}(?P<refine>[{WellKnownRegexPatterns.Base62}]{{42}}{Regex.Escape(Signature)}[A-D][{WellKnownRegexPatterns.Base62}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}";
         }

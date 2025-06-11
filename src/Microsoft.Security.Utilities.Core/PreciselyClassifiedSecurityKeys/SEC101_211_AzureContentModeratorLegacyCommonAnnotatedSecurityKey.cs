@@ -11,7 +11,7 @@ public class AzureContentModeratorLegacyCommonAnnotatedSecurityKey : CognitiveSe
     {
         Id = "SEC101/211";
         Name = nameof(AzureContentModeratorLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Content Moderator (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_211_AzureContentModeratorLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

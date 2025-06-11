@@ -12,7 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/172";
             Name = nameof(AzureEventHubIdentifiableKey);
-            Label = "an Azure Event Hub access key";
+            Label = Resources.Label_SEC101_172_AzureEventHubIdentifiableKey;
             Signatures = new HashSet<string>([IdentifiableMetadata.AzureEventHubSignature]);
         }
 

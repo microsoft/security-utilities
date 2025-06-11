@@ -11,7 +11,7 @@ public class AzureTranscriptionIntelligenceLegacyCommonAnnotatedSecurityKey : Co
     {
         Id = "SEC101/234";
         Name = nameof(AzureTranscriptionIntelligenceLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Transcription Intelligence (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_234_AzureTranscriptionIntelligenceLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

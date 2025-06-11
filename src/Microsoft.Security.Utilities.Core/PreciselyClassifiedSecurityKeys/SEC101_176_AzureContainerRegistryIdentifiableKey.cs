@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/176";
             Name = nameof(AzureContainerRegistryIdentifiableKey);
-            Label = "an Azure Container Registry access key";
+            Label = Resources.Label_SEC101_176_AzureContainerRegistryIdentifiableKey;
             ChecksumSeeds = new[] { IdentifiableMetadata.AzureContainerRegistryChecksumSeed };
             Pattern = @$"{WellKnownRegexPatterns.PrefixAllBase64}(?P<refine>[{WellKnownRegexPatterns.Base64}]{{42}}{Regex.Escape(Signature)}[A-D][{WellKnownRegexPatterns.Base64}]{{5}}){WellKnownRegexPatterns.SuffixAllBase64}";
         }

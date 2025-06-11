@@ -11,7 +11,7 @@ public class AzurePersonalizerLegacyCommonAnnotatedSecurityKey : CognitiveServic
     {
         Id = "SEC101/225";
         Name = nameof(AzurePersonalizerLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Personalizer (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_225_AzurePersonalizerLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

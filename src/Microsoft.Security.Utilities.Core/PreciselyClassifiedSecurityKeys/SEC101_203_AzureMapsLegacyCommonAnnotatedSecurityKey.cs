@@ -11,7 +11,7 @@ public class AzureMapsLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnotatedSe
     {
         Id = "SEC101/203";
         Name = nameof(AzureMapsLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Maps legacy common annotated security key";
+        Label = Resources.Label_SEC101_203_AzureMapsLegacyCommonAnnotatedSecurityKey;
     }
 
     protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureMaps;

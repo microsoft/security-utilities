@@ -11,7 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/160";
             Name = nameof(AzureCosmosDBIdentifiableKey);
-            Label = "an Azure CosmosDB access key";
+            Label = Resources.Label_SEC101_160_AzureCosmosDbIdentifiableKey;
             ChecksumSeeds = new[] {
                 IdentifiableMetadata.AzureCosmosDBDataEncryptionKeyChecksumSeed,
                 IdentifiableMetadata.AzureCosmosDBMasterReadOnlyKeyChecksumSeed,

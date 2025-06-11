@@ -11,7 +11,7 @@ public class AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey : CognitiveS
     {
         Id = "SEC101/207";
         Name = nameof(AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Anomaly Detector EE (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_207_AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

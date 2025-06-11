@@ -20,7 +20,7 @@ namespace Microsoft.Security.Utilities
             // https://github.com/NuGet/NuGetGallery/blob/main/src/NuGetGallery.Services/Authentication/ApiKeyV4.cs
             Pattern = "(?i)(^|[^a-z0-9])(?P<refine>oy2[a-z2-7]{43})([^a-z0-9]|$)";
             Signatures = new HashSet<string>(new[] { "oy2", "OY2" });
-            Label = "a NuGet API key";
+            Label = Resources.Label_SEC101_031_NuGetApiKey;
         }
 
         public override Version CreatedVersion => Releases.Version_01_04_02;

@@ -11,7 +11,7 @@ public class AzureEventGridIdentifiableKey : Azure32ByteIdentifiableKey
     {
         Id = "SEC101/199";
         Name = nameof(AzureEventGridIdentifiableKey);
-        Label = "an Azure Event Grid legacy identifiable access key";
+        Label = Resources.Label_SEC101_199_AzureEventGridIdentifiableKey;
         ChecksumSeeds = [0x53656e6452656376];
     }
 

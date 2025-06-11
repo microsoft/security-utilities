@@ -11,7 +11,7 @@ public class AzureEventGridLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnota
     {
         Id = "SEC101/199";
         Name = nameof(AzureEventGridLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Event Grid legacy common annotated security key";
+        Label = Resources.Label_SEC101_199_AzureEventGridLegacyCommonAnnotatedSecurityKey;
     }
 
     protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureEventGrid;

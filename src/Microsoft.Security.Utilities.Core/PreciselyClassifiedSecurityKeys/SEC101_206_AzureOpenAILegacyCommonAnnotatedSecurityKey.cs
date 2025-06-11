@@ -11,7 +11,7 @@ public class AzureOpenAILegacyCommonAnnotatedSecurityKey : CognitiveServiceLegac
     {
         Id = "SEC101/206";
         Name = nameof(AzureOpenAILegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure OpenAI (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_206_AzureOpenAILegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

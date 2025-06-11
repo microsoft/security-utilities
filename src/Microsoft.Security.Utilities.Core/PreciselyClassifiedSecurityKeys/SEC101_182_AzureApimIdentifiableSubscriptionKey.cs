@@ -11,7 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/182";
             Name = nameof(AzureApimIdentifiableSubscriptionKey);
-            Label = "an Azure API Management subscription key";
+            Label = Resources.Label_SEC101_182_AzureApimIdentifiableSubscriptionKey;
             ChecksumSeeds = new[] { IdentifiableMetadata.AzureApimSubscriptionChecksumSeed };
         }
 

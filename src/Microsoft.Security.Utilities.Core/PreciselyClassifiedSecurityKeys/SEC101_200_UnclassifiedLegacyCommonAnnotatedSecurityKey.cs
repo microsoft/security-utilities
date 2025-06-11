@@ -16,7 +16,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/200";
             Name = nameof(UnclassifiedLegacyCommonAnnotatedSecurityKey);
-            Label = "an unclassified legacy common annotated security key";
+            Label = Resources.Label_SEC101_200_UnclassifiedLegacyCommonAnnotatedSecurityKey;
             DetectionMetadata = DetectionMetadata.Identifiable;
             Pattern = LegacyCaskPattern;
             Signatures = new HashSet<string>([LegacyCaskSignature]);

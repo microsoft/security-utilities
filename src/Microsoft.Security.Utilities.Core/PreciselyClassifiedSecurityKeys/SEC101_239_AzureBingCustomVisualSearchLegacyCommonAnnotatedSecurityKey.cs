@@ -11,7 +11,7 @@ public class AzureBingCustomVisualSearchLegacyCommonAnnotatedSecurityKey : Cogni
     {
         Id = "SEC101/239";
         Name = nameof(AzureBingCustomVisualSearchLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Bing Custom VisualSearch (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_239_AzureBingCustomVisualSearchLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

@@ -11,7 +11,7 @@ public class AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey : CognitiveS
     {
         Id = "SEC101/235";
         Name = nameof(AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Video Intelligence (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_235_AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

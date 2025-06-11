@@ -11,7 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/171";
             Name = nameof(AzureServiceBusIdentifiableKey);
-            Label = "an Azure Service Bus access key";
+            Label = Resources.Label_SEC101_171_AzureServiceBusIdentifiableKey;
         }
 
         public override Version CreatedVersion => Releases.Version_01_04_10;

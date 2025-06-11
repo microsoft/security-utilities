@@ -12,7 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/105";
             Name = nameof(AzureMessagingLegacyCredentials);
-            Label = "an Azure messaging legacy format access key";
+            Label = Resources.Label_SEC101_105_AzureMessagingLegacyCredentials;
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat | DetectionMetadata.MediumConfidence;
             Pattern = "(?i)\\.servicebus\\.windows.+[^0-9a-z\\/+](?P<refine>[0-9a-z\\/+]{43}=)(?:[^=]|$)";
             Signatures = new HashSet<string>(new[] { ".servicebus" });

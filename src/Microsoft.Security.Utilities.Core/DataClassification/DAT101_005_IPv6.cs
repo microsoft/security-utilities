@@ -12,7 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "DAT101/005";
             Name = nameof(IPv6);
-            Label = "an IPv6 address";
+            Label = Resources.Label_DAT101_005_IPv6;
             Pattern = @"(?i)^([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$";
         }
 

@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/102";
             Name = nameof(AdoLegacyPat);
-            Label = "an Azure DevOps legacy format personal access token (PAT)";
+            Label = Resources.Label_SEC101_102_AdoPat;
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.EmbeddedChecksum;
             Pattern = "(?:[^2-7a-z]|^)(?P<refine>[2-7a-z]{52})(?:[^2-7a-z]|$)";
         }

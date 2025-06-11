@@ -11,7 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "DAT101/001";
             Name = nameof(GuidValue);
-            Label = "a GUID";
+            Label = Resources.Label_DAT101_001_GuidValue;
             Pattern = @"(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$";
         }
 

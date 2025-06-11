@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/565";
             Name = nameof(SecretScanningSampleToken);
-            Label = "a non-functional secret scanning sample token";
+            Label = Resources.Label_SEC101_565_SecretScanningSampleToken;
             DetectionMetadata = DetectionMetadata.FixedSignature | DetectionMetadata.HighEntropy | DetectionMetadata.HighConfidence;
             Pattern = @$"{WellKnownRegexPatterns.PrefixBase62}(?P<refine>secret_scanning_ab85fc6f8d7638cf1c11da812da308d43_[0-9A-Za-z]{{5}}){WellKnownRegexPatterns.SuffixBase62}";
             Signatures = new HashSet<string>(["ab85"]);

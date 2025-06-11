@@ -11,7 +11,7 @@ public class AzureBingAutosuggestLegacyCommonAnnotatedSecurityKey : CognitiveSer
     {
         Id = "SEC101/236";
         Name = nameof(AzureBingAutosuggestLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Bing Autosuggest (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_236_AzureBingAutosuggestLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

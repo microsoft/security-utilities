@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/152";
             Name = nameof(AzureStorageAccountIdentifiableKey);
-            Label = "an Azure storage account access key";
+            Label = Resources.Label_SEC101_152_AzureStorageAccountIdentifiableKey;
             ChecksumSeeds = new[] { IdentifiableMetadata.AzureStorageAccountChecksumSeed };
         }
 

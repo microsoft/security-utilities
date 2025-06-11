@@ -11,7 +11,7 @@ public class AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey : Cogniti
     {
         Id = "SEC101/214";
         Name = nameof(AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Custom Vision Training (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_214_AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

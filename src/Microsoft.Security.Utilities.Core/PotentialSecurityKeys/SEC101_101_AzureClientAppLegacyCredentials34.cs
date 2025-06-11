@@ -18,7 +18,7 @@ public class AadClientAppLegacyCredentials34 : RegexPattern
     {
         Id = "SEC101/101";
         Name = AadClientAppLegacyCredentials;
-        Label = "an Azure Entra client application legacy format password";
+        Label = Resources.Label_SEC101_101_AzureClientAppLegacyCredentials34;
         DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.ObsoleteFormat | DetectionMetadata.LowConfidence;
         Pattern = $"^[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{34}}$";
     }

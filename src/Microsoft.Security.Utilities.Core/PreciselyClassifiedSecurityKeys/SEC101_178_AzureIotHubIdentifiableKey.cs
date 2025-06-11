@@ -11,7 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/178";
             Name = nameof(AzureIotHubIdentifiableKey);
-            Label = "an Azure IoT Hub access key";
+            Label = Resources.Label_SEC101_178_AzureIotHubIdentifiableKey;
             ChecksumSeeds = new[] { IdentifiableMetadata.AzureIotHubChecksumSeed };
         }
 

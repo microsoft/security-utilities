@@ -11,7 +11,7 @@ public class AzureKnowledgeLegacyCommonAnnotatedSecurityKey : CognitiveServiceLe
     {
         Id = "SEC101/221";
         Name = nameof(AzureKnowledgeLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Knowledge (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_221_AzureKnowledgeLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

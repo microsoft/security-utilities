@@ -11,7 +11,7 @@ public class AzureDevOpsLegacyCommonAnnotatedSecurityKeyPat : LegacyCommonAnnota
     {
         Id = "SEC101/201";
         Name = nameof(AzureDevOpsLegacyCommonAnnotatedSecurityKeyPat);
-        Label = "an Azure DevOps legacy CASK personal access token (PAT)";
+        Label = Resources.Label_SEC101_201_AzureDevOpsLegacyCommonAnnotatedSecurityKeyPat;
     }
 
     protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureDevOps;

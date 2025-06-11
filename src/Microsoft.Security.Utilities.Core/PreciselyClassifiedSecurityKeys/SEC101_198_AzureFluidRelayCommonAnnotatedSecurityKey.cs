@@ -11,7 +11,7 @@ public class AzureFluidRelayLegacyCommonAnnotatedSecurityKey : LegacyCommonAnnot
     {
         Id = "SEC101/198";
         Name = nameof(AzureFluidRelayLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Fluid Relay legacy common annotated security key";
+        Label = Resources.Label_SEC101_198_AzureFluidRelayCommonAnnotatedSecurityKey;
     }
 
     protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureFluidRelay;
