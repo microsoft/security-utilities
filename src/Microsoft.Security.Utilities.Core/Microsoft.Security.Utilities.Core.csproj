@@ -3,7 +3,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <!-- netstandard2.0 must be first here or T4 will break -->
-    <TargetFrameworks>netstandard2.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <EnableNETAnalyzers>false</EnableNETAnalyzers>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RootNamespace>Microsoft.Security.Utilities.Core</RootNamespace>

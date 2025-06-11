@@ -2,8 +2,8 @@
   
   <PropertyGroup>
     <IsTestProject>true</IsTestProject>
-    <TargetFrameworks>net8.0;net9.0;net472</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net472</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0</TargetFrameworks>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
