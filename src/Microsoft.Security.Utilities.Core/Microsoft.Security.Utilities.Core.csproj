@@ -6,7 +6,7 @@
     <TargetFrameworks>netstandard2.0;net8.0;net9.0</TargetFrameworks>
     <EnableNETAnalyzers>false</EnableNETAnalyzers>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <RootNamespace>Microsoft.Security.Utilities.Core</RootNamespace>
+    <RootNamespace>Microsoft.Security.Utilities</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
