@@ -11,7 +11,7 @@ public class AzureComputerVisionLegacyCommonAnnotatedSecurityKey : CognitiveServ
     {
         Id = "SEC101/210";
         Name = nameof(AzureComputerVisionLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Computer Vision (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_210_AzureComputerVisionLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

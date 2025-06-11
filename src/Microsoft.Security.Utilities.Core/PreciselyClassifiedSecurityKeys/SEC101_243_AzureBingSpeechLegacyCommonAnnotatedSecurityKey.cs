@@ -11,7 +11,7 @@ public class AzureBingSpeechLegacyCommonAnnotatedSecurityKey : CognitiveServiceL
     {
         Id = "SEC101/243";
         Name = nameof(AzureBingSpeechLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Bing Speech (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_243_AzureBingSpeechLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

@@ -11,7 +11,7 @@ public class AzureImmersiveReaderLegacyCommonAnnotatedSecurityKey : CognitiveSer
     {
         Id = "SEC101/219";
         Name = nameof(AzureImmersiveReaderLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Immersive Reader (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_219_AzureImmersiveReaderLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

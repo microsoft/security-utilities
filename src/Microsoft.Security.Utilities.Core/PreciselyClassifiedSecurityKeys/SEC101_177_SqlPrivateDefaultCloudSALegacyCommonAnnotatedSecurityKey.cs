@@ -11,7 +11,7 @@ public class SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey : LegacyCo
     {
         Id = "SEC101/177";
         Name = nameof(SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey);
-        Label = "a SQL private default cloud SA legacy common annotated security key";
+        Label = Resources.Label_SEC101_177_SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey;
     }
 
     protected override string ProviderSignature => LegacyCaskProviderSignatures.SqlServerPrivate;

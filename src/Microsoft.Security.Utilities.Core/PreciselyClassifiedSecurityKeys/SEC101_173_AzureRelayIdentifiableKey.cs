@@ -11,7 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/173";
             Name = nameof(AzureRelayIdentifiableKey);
-            Label = "an Azure Relay access key";
+            Label = Resources.Label_SEC101_173_AzureRelayIdentifiableKey;
         }
 
         public override Version CreatedVersion => Releases.Version_01_04_10;

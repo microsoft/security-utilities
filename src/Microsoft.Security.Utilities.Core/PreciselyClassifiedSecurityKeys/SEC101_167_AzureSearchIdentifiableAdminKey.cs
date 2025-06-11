@@ -12,7 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/167";
             Name = nameof(AzureSearchIdentifiableAdminKey);
-            Label = "an Azure Search admin key";
+            Label = Resources.Label_SEC101_167_AzureSearchIdentifiableAdminKey;
             ChecksumSeeds = new[] { IdentifiableMetadata.AzureSearchAdminKeyChecksumSeed };
         }
 

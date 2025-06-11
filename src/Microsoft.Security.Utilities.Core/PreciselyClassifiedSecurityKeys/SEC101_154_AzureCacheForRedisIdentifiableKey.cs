@@ -12,7 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/154";
             Name = nameof(AzureCacheForRedisIdentifiableKey);
-            Label = "an Azure Cache for Redis access key";
+            Label = Resources.Label_SEC101_154_AzureCacheForRedisIdentifiableKey;
             ChecksumSeeds = new[] { IdentifiableMetadata.AzureCacheForRedisChecksumSeed };
         }
 

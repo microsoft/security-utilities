@@ -12,7 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "DAT101/004";
             Name = nameof(Float);
-            Label = "a floating point number";
+            Label = Resources.Label_DAT101_004_Float;
             Pattern = @"^-?(\d+)?\.\d+$";
         }
 

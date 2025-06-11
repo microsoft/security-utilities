@@ -11,7 +11,7 @@ public class AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey : CognitiveServ
     {
         Id = "SEC101/224";
         Name = nameof(AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Metrics Advisor (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_224_AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

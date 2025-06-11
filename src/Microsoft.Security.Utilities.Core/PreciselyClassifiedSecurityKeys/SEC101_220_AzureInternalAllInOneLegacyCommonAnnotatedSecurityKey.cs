@@ -11,7 +11,7 @@ public class AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey : CognitiveSe
     {
         Id = "SEC101/220";
         Name = nameof(AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Internal All-In-One (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_220_AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

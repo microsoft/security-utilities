@@ -11,7 +11,7 @@ public class AzureQnAMakerv2LegacyCommonAnnotatedSecurityKey : CognitiveServiceL
     {
         Id = "SEC101/227";
         Name = nameof(AzureQnAMakerv2LegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure QnA Maker v2 (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_227_AzureQnAMakerv2LegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

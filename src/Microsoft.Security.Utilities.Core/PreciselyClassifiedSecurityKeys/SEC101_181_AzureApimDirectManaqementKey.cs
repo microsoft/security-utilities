@@ -11,7 +11,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/181";
             Name = nameof(AzureApimIdentifiableDirectManagementKey);
-            Label = "an Azure API Management direct management key";
+            Label = Resources.Label_SEC101_181_AzureApimDirectManaqementKey;
             ChecksumSeeds = new[] { IdentifiableMetadata.AzureApimDirectManagementChecksumSeed };
         }
 

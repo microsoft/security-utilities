@@ -95,5 +95,977 @@ namespace Microsoft.Security.Utilities {
                 return ResourceManager.GetString("Detection_LowConfidenceVerb", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to a GUID.
+        /// </summary>
+        internal static string Label_DAT101_001_GuidValue {
+            get {
+                return ResourceManager.GetString("Label_DAT101_001_GuidValue", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an IPv4 address.
+        /// </summary>
+        internal static string Label_DAT101_002_IPv4 {
+            get {
+                return ResourceManager.GetString("Label_DAT101_002_IPv4", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an integer.
+        /// </summary>
+        internal static string Label_DAT101_003_Integer {
+            get {
+                return ResourceManager.GetString("Label_DAT101_003_Integer", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to a floating point number.
+        /// </summary>
+        internal static string Label_DAT101_004_Float {
+            get {
+                return ResourceManager.GetString("Label_DAT101_004_Float", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an IPv6 address.
+        /// </summary>
+        internal static string Label_DAT101_005_IPv6 {
+            get {
+                return ResourceManager.GetString("Label_DAT101_005_IPv6", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an unclassified 32-byte base64 string.
+        /// </summary>
+        internal static string Label_SEC000_000_Unclassified32ByteBase64String {
+            get {
+                return ResourceManager.GetString("Label_SEC000_000_Unclassified32ByteBase64String", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an unclassified 64-byte base64 string.
+        /// </summary>
+        internal static string Label_SEC000_001_Unclassified64ByteBase64String {
+            get {
+                return ResourceManager.GetString("Label_SEC000_001_Unclassified64ByteBase64String", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an unclassified 16-byte hexadecimal string.
+        /// </summary>
+        internal static string Label_SEC000_002_Unclassified16ByteHexadecimalString {
+            get {
+                return ResourceManager.GetString("Label_SEC000_002_Unclassified16ByteHexadecimalString", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to a NuGet API key.
+        /// </summary>
+        internal static string Label_SEC101_031_NuGetApiKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_031_NuGetApiKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an NPM author key.
+        /// </summary>
+        internal static string Label_SEC101_050_NpmAuthorKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_050_NpmAuthorKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to a PKCS#12 certificate private key bundle.
+        /// </summary>
+        internal static string Label_SEC101_055_Pkcs12CertificatePrivateKeyBundle {
+            get {
+                return ResourceManager.GetString("Label_SEC101_055_Pkcs12CertificatePrivateKeyBundle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to a loose SAS HMAC.
+        /// </summary>
+        internal static string Label_SEC101_060_LooseSasSecret {
+            get {
+                return ResourceManager.GetString("Label_SEC101_060_LooseSasSecret", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to a loose OAuth2 bearer token.
+        /// </summary>
+        internal static string Label_SEC101_061_LooseOAuth2BearerToken {
+            get {
+                return ResourceManager.GetString("Label_SEC101_061_LooseOAuth2BearerToken", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Entra client application legacy format password.
+        /// </summary>
+        internal static string Label_SEC101_101_AzureClientAppLegacyCredentials34 {
+            get {
+                return ResourceManager.GetString("Label_SEC101_101_AzureClientAppLegacyCredentials34", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure DevOps legacy format personal access token (PAT).
+        /// </summary>
+        internal static string Label_SEC101_102_AdoPat {
+            get {
+                return ResourceManager.GetString("Label_SEC101_102_AdoPat", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Cosmos DB legacy format access key.
+        /// </summary>
+        internal static string Label_SEC101_104_AzureCosmosDBLegacyCredentials {
+            get {
+                return ResourceManager.GetString("Label_SEC101_104_AzureCosmosDBLegacyCredentials", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure messaging legacy format access key.
+        /// </summary>
+        internal static string Label_SEC101_105_AzureMessagingLegacyCredentials {
+            get {
+                return ResourceManager.GetString("Label_SEC101_105_AzureMessagingLegacyCredentials", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure storage account legacy format access key.
+        /// </summary>
+        internal static string Label_SEC101_106_AzureStorageAccountLegacyCredentials {
+            get {
+                return ResourceManager.GetString("Label_SEC101_106_AzureStorageAccountLegacyCredentials", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Databricks personal access token (PAT).
+        /// </summary>
+        internal static string Label_SEC101_110_AzureDatabricksPat {
+            get {
+                return ResourceManager.GetString("Label_SEC101_110_AzureDatabricksPat", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure storage account access key.
+        /// </summary>
+        internal static string Label_SEC101_152_AzureStorageAccountIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_152_AzureStorageAccountIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Cache for Redis access key.
+        /// </summary>
+        internal static string Label_SEC101_154_AzureCacheForRedisIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_154_AzureCacheForRedisIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Entra client app password.
+        /// </summary>
+        internal static string Label_SEC101_156_AzureClientAppIdentifiableCredentials {
+            get {
+                return ResourceManager.GetString("Label_SEC101_156_AzureClientAppIdentifiableCredentials", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Functions access key.
+        /// </summary>
+        internal static string Label_SEC101_158_AzureFunctionIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_158_AzureFunctionIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure CosmosDB access key.
+        /// </summary>
+        internal static string Label_SEC101_160_AzureCosmosDbIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_160_AzureCosmosDbIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Batch access key.
+        /// </summary>
+        internal static string Label_SEC101_163_AzureBatchIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_163_AzureBatchIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Search query key.
+        /// </summary>
+        internal static string Label_SEC101_166_AzureSearchIdentifiableQueryKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_166_AzureSearchIdentifiableQueryKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Search admin key.
+        /// </summary>
+        internal static string Label_SEC101_167_AzureSearchIdentifiableAdminKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_167_AzureSearchIdentifiableAdminKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure ML web service (classic) access key.
+        /// </summary>
+        internal static string Label_SEC101_170_AzureMLWebServiceClassicIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_170_AzureMLWebServiceClassicIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Service Bus access key.
+        /// </summary>
+        internal static string Label_SEC101_171_AzureServiceBusIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_171_AzureServiceBusIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Event Hub access key.
+        /// </summary>
+        internal static string Label_SEC101_172_AzureEventHubIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_172_AzureEventHubIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Relay access key.
+        /// </summary>
+        internal static string Label_SEC101_173_AzureRelayIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_173_AzureRelayIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Data Lake access key.
+        /// </summary>
+        internal static string Label_SEC101_174_AzureDataLakeIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_174_AzureDataLakeIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Key Vault access key.
+        /// </summary>
+        internal static string Label_SEC101_175_AzureKeyVaultIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_175_AzureKeyVaultIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Container Registry access key.
+        /// </summary>
+        internal static string Label_SEC101_176_AzureContainerRegistryIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_176_AzureContainerRegistryIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Redis access key.
+        /// </summary>
+        internal static string Label_SEC101_176_AzureRedisIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_176_AzureRedisIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to a SQL private default cloud SA legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_177_SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_177_SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure IoT Hub access key.
+        /// </summary>
+        internal static string Label_SEC101_178_AzureIotHubIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_178_AzureIotHubIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure IoT device provisioning key.
+        /// </summary>
+        internal static string Label_SEC101_179_AzureIotDeviceProvisioningIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_179_AzureIotDeviceProvisioningIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure IoT device access key.
+        /// </summary>
+        internal static string Label_SEC101_180_AzureIotDeviceIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_180_AzureIotDeviceIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure API Management direct management key.
+        /// </summary>
+        internal static string Label_SEC101_181_AzureApimDirectManaqementKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_181_AzureApimDirectManaqementKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure API Management subscription key.
+        /// </summary>
+        internal static string Label_SEC101_182_AzureApimIdentifiableSubscriptionKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_182_AzureApimIdentifiableSubscriptionKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure API Management gateway key.
+        /// </summary>
+        internal static string Label_SEC101_183_AzureApimIdentifiableGatewayKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_183_AzureApimIdentifiableGatewayKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure API Management repository key.
+        /// </summary>
+        internal static string Label_SEC101_184_AzureApimIdentifiableRepositoryKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_184_AzureApimIdentifiableRepositoryKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure App Configuration legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_197_AzureAppConfigurationLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_197_AzureAppConfigurationLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Fluid Relay legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_198_AzureFluidRelayCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_198_AzureFluidRelayCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Event Grid legacy identifiable access key.
+        /// </summary>
+        internal static string Label_SEC101_199_AzureEventGridIdentifiableKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_199_AzureEventGridIdentifiableKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Event Grid legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_199_AzureEventGridLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_199_AzureEventGridLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an unclassified legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_200_UnclassifiedLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_200_UnclassifiedLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure DevOps legacy CASK personal access token (PAT).
+        /// </summary>
+        internal static string Label_SEC101_201_AzureDevOpsLegacyCommonAnnotatedSecurityKeyPat {
+            get {
+                return ResourceManager.GetString("Label_SEC101_201_AzureDevOpsLegacyCommonAnnotatedSecurityKeyPat", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Mixed Reality legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_202_AzureMixedRealityLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_202_AzureMixedRealityLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Maps legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_203_AzureMapsLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_203_AzureMapsLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Digital Twins legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_203_AzureDigitalTwinsLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_203_AzureDigitalTwinsLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Communication Services legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_204_AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_204_AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure AI Services (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_205_AzureAIServicesLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_205_AzureAIServicesLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Attestation legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_205_AzureAttestationLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_205_AzureAttestationLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure OpenAI (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_206_AzureOpenAILegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_206_AzureOpenAILegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Anomaly Detector EE (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_207_AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_207_AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Anomaly Detector (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_208_AzureAnomalyDetectorLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_208_AzureAnomalyDetectorLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to a general Azure Cognitive Services legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_209_AzureCognitiveServicesLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_209_AzureCognitiveServicesLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Computer Vision (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_210_AzureComputerVisionLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_210_AzureComputerVisionLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Content Moderator (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_211_AzureContentModeratorLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_211_AzureContentModeratorLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Content Safety (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_212_AzureContentSafetyLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_212_AzureContentSafetyLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Custom Vision Prediction (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_213_AzureCustomVisionPredictionLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_213_AzureCustomVisionPredictionLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Custom Vision Training (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_214_AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_214_AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Face (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_215_AzureFaceLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_215_AzureFaceLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Form Recognizer (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_216_AzureFormRecognizerLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_216_AzureFormRecognizerLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Health Decision Support (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_217_AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_217_AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Language Understanding (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_217_AzureLanguageUnderstandingLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_217_AzureLanguageUnderstandingLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Health Insights (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_218_AzureHealthInsightsLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_218_AzureHealthInsightsLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Immersive Reader (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_219_AzureImmersiveReaderLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_219_AzureImmersiveReaderLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Internal All-In-One (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_220_AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_220_AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Knowledge (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_221_AzureKnowledgeLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_221_AzureKnowledgeLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Luis Authoring (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_222_AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_222_AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Language (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_222_AzureLanguageLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_222_AzureLanguageLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Luis (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_223_AzureLuisLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_223_AzureLuisLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Metrics Advisor (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_224_AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_224_AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Personalizer (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_225_AzurePersonalizerLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_225_AzurePersonalizerLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure QnA Maker (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_226_AzureQnAMakerLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_226_AzureQnAMakerLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure QnA Maker v2 (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_227_AzureQnAMakerv2LegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_227_AzureQnAMakerv2LegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Speaker Recognition (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_228_AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_228_AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Speech Services (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_229_AzureSpeechServicesLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_229_AzureSpeechServicesLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Speech Translation (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_230_AzureSpeechTranslationLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_230_AzureSpeechTranslationLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Text Analytics (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_231_AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_231_AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Text Translation (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_232_AzureTextTranslationLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_232_AzureTextTranslationLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Dummy (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_233_AzureDummyLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_233_AzureDummyLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Transcription Intelligence (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_234_AzureTranscriptionIntelligenceLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_234_AzureTranscriptionIntelligenceLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Video Intelligence (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_235_AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_235_AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Autosuggest (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_236_AzureBingAutosuggestLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_236_AzureBingAutosuggestLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Autosuggest v7 (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_237_AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_237_AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Custom Search (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_238_AzureBingCustomSearchLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_238_AzureBingCustomSearchLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Custom VisualSearch (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_239_AzureBingCustomVisualSearchLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_239_AzureBingCustomVisualSearchLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Entity Search (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_240_AzureBingEntitySearchLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_240_AzureBingEntitySearchLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Search (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_241_AzureBingSearchLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_241_AzureBingSearchLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Search v7 (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_242_AzureBingSearchv7LegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_242_AzureBingSearchv7LegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Speech (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_243_AzureBingSpeechLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_243_AzureBingSpeechLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Spell Check (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_244_AzureBingSpellCheckLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_244_AzureBingSpellCheckLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Spell Check v7 (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_245_AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_245_AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Stateless Image Search (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_246_AzureBingStatelessImageSearchLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_246_AzureBingStatelessImageSearchLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Stateless Search (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_247_AzureBingStatelessSearchLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_247_AzureBingStatelessSearchLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Stateless Video Search (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_248_AzureBingStatelessVideoSearchLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_248_AzureBingStatelessVideoSearchLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Stateless Visual Search (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_249_AzureBingStatelessVisualSearchLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_249_AzureBingStatelessVisualSearchLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Video Search (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_250_AzureBingVideoSearchLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_250_AzureBingVideoSearchLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Visual Search (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_251_AzureBingVisualSearchLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_251_AzureBingVisualSearchLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Web Search (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_252_AzureBingWebSearchLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_252_AzureBingWebSearchLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an Azure Bing Stateless News Search (Cognitive Services) legacy common annotated security key.
+        /// </summary>
+        internal static string Label_SEC101_253_AzureBingStatelessNewsSearchLegacyCommonAnnotatedSecurityKey {
+            get {
+                return ResourceManager.GetString("Label_SEC101_253_AzureBingStatelessNewsSearchLegacyCommonAnnotatedSecurityKey", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to an unclassified JWT token.
+        /// </summary>
+        internal static string Label_SEC101_528_UnclassifiedJwt {
+            get {
+                return ResourceManager.GetString("Label_SEC101_528_UnclassifiedJwt", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to a non-functional secret scanning sample token.
+        /// </summary>
+        internal static string Label_SEC101_565_SecretScanningSampleToken {
+            get {
+                return ResourceManager.GetString("Label_SEC101_565_SecretScanningSampleToken", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to a URL with login credentials.
+        /// </summary>
+        internal static string Label_UrlCredentials {
+            get {
+                return ResourceManager.GetString("Label_UrlCredentials", resourceCulture);
+            }
+        }
     }
 }

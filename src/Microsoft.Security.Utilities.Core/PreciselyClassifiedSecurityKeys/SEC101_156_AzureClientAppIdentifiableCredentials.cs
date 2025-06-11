@@ -12,7 +12,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/156";
             Name = "AadClientAppIdentifiableCredentials";
-            Label = "an Azure Entra client app password";
+            Label = Resources.Label_SEC101_156_AzureClientAppIdentifiableCredentials;
             DetectionMetadata = DetectionMetadata.Identifiable;
             Pattern = $"{WellKnownRegexPatterns.PrefixUrlUnreserved}(?P<refine>[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{3}}(7|8)Q~[{WellKnownRegexPatterns.RegexEncodedUrlUnreserved}]{{31,34}}){WellKnownRegexPatterns.SuffixUrlUnreserved}";
             Signatures = new HashSet<string>(new[] { "8Q~", "7Q~" });

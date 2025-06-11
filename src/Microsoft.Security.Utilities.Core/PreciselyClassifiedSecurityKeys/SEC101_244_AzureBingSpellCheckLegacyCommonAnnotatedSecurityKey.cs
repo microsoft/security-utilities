@@ -11,7 +11,7 @@ public class AzureBingSpellCheckLegacyCommonAnnotatedSecurityKey : CognitiveServ
     {
         Id = "SEC101/244";
         Name = nameof(AzureBingSpellCheckLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Bing Spell Check (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_244_AzureBingSpellCheckLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

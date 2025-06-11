@@ -13,7 +13,7 @@ namespace Microsoft.Security.Utilities
         {
             Id = "SEC101/528";
             Name = nameof(UnclassifiedJwt);
-            Label = "an unclassified JWT token";
+            Label = Resources.Label_SEC101_528_UnclassifiedJwt;
             DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.MediumConfidence;
             Pattern = @$"(?:^|[^0-9A-Za-z-_.])e[0-9A-Za-z-_=]{{23,}}\.e[0-9A-Za-z-_=]{{23,}}\.[0-9A-Za-z-_=]{{24,}}(?:[^0-9A-Za-z-_]|$)";
             // These signatures represent base64-encoding of the following

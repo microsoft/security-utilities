@@ -11,7 +11,7 @@ public class AzureBingEntitySearchLegacyCommonAnnotatedSecurityKey : CognitiveSe
     {
         Id = "SEC101/240";
         Name = nameof(AzureBingEntitySearchLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Bing Entity Search (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_240_AzureBingEntitySearchLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

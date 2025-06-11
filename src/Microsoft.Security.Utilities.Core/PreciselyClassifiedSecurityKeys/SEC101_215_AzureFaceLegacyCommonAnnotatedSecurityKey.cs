@@ -11,7 +11,7 @@ public class AzureFaceLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyC
     {
         Id = "SEC101/215";
         Name = nameof(AzureFaceLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Face (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_215_AzureFaceLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

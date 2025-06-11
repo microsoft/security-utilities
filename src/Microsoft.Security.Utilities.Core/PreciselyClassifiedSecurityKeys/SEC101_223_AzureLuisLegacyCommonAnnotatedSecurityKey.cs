@@ -11,7 +11,7 @@ public class AzureLuisLegacyCommonAnnotatedSecurityKey : CognitiveServiceLegacyC
     {
         Id = "SEC101/223";
         Name = nameof(AzureLuisLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Luis (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_223_AzureLuisLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

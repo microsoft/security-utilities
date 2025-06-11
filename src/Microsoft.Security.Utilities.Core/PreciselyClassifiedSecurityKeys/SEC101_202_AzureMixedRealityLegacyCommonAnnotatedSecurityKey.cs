@@ -11,7 +11,7 @@ public class AzureMixedRealityLegacyCommonAnnotatedSecurityKeyPat : LegacyCommon
     {
         Id = "SEC101/202";
         Name = nameof(AzureMixedRealityLegacyCommonAnnotatedSecurityKeyPat);
-        Label = "an Azure Mixed Reality legacy common annotated security key";
+        Label = Resources.Label_SEC101_202_AzureMixedRealityLegacyCommonAnnotatedSecurityKey;
     }
 
     protected override string ProviderSignature => LegacyCaskProviderSignatures.AzureMixedReality;

@@ -17,7 +17,7 @@ internal sealed class Unclassified16ByteHexadecimalString : RegexPattern
     {
         Id = "SEC000/002";
         Name = nameof(Unclassified16ByteHexadecimalString);
-        Label = "an unclassified 16-byte hexadecimal string";
+        Label = Resources.Label_SEC000_002_Unclassified16ByteHexadecimalString;
         Pattern = $@"{WellKnownRegexPatterns.PrefixHexadecimal}[{WellKnownRegexPatterns.Hexadecimal}]{{32}}{WellKnownRegexPatterns.SuffixHexadecimal}";
         DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.Unclassified | DetectionMetadata.LowConfidence;
     }

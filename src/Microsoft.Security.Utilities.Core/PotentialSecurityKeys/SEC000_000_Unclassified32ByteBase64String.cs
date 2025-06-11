@@ -17,7 +17,7 @@ internal sealed class Unclassified32ByteBase64String : RegexPattern
     {
         Id = "SEC000/000";
         Name = nameof(Unclassified32ByteBase64String);
-        Label = "an unclassified 32-byte base64 string";
+        Label = Resources.Label_SEC000_000_Unclassified32ByteBase64String;
         Pattern = $@"{WellKnownRegexPatterns.PrefixAllBase64}[{WellKnownRegexPatterns.Base64}]{{43}}=";
         DetectionMetadata = DetectionMetadata.HighEntropy | DetectionMetadata.Unclassified | DetectionMetadata.LowConfidence;
     }

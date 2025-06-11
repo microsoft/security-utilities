@@ -11,7 +11,7 @@ public class AzureFormRecognizerLegacyCommonAnnotatedSecurityKey : CognitiveServ
     {
         Id = "SEC101/216";
         Name = nameof(AzureFormRecognizerLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Form Recognizer (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_216_AzureFormRecognizerLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

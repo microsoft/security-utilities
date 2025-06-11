@@ -11,7 +11,7 @@ public class AzureCustomVisionPredictionLegacyCommonAnnotatedSecurityKey : Cogni
     {
         Id = "SEC101/213";
         Name = nameof(AzureCustomVisionPredictionLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Custom Vision Prediction (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_213_AzureCustomVisionPredictionLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;

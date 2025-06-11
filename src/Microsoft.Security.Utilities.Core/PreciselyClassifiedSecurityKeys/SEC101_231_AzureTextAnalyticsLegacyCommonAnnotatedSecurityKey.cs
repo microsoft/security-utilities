@@ -11,7 +11,7 @@ public class AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey : CognitiveServi
     {
         Id = "SEC101/231";
         Name = nameof(AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey);
-        Label = "an Azure Text Analytics (Cognitive Services) legacy common annotated security key";
+        Label = Resources.Label_SEC101_231_AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey;
     }
 
     public override Version CreatedVersion => Releases.Version_01_18_00;
