@@ -1053,9 +1053,9 @@ namespace Microsoft.Security.Utilities {
         /// <summary>
         ///   Looks up a localized string similar to a URL with login credentials.
         /// </summary>
-        internal static string Label_UrlCredentials {
+        internal static string Label_SEC101_127_UrlCredentials {
             get {
-                return ResourceManager.GetString("Label_UrlCredentials", resourceCulture);
+                return ResourceManager.GetString("Label_SEC101_127_UrlCredentials", resourceCulture);
             }
         }
     }

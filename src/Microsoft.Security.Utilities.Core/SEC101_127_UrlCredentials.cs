@@ -6,13 +6,13 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities;
 
-public sealed class UrlCredentials : RegexPattern
+public sealed class SEC101_127_UrlCredentials : RegexPattern
 {
-    public UrlCredentials()
+    public SEC101_127_UrlCredentials()
     {
         Id = "SEC101/127";
-        Name = nameof(UrlCredentials);
-        Label = Resources.Label_UrlCredentials;
+        Name = nameof(SEC101_127_UrlCredentials);
+        Label = Resources.Label_SEC101_127_UrlCredentials;
         Pattern = @"($|\b)(ftps?|https?):\/\/(?P<refine>[^:@\/]+:[^:@?\/]+)@";
         DetectionMetadata = DetectionMetadata.MediumConfidence;
         Signatures = new HashSet<string>(new[]

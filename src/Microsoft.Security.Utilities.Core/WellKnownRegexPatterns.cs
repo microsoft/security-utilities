@@ -21,7 +21,7 @@ public static class WellKnownRegexPatterns
 
     public static IReadOnlyList<RegexPattern> UnclassifiedPotentialSecurityKeys { get; } =
         CreateList(new UnclassifiedJwt(),
-                   new UrlCredentials(),
+                   new SEC101_127_UrlCredentials(),
                    new LooseSasSecret(),
                    new OAuth2BearerToken(),
                    new Unclassified32ByteBase64String(),

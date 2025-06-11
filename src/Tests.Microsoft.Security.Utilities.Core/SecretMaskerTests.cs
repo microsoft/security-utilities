@@ -227,7 +227,7 @@ public class SecretMaskerTests
 
     private SecretMasker InitializeTestMasker(bool generateCorrelatingIds = false)
     {
-        var testSecretMasker = new SecretMasker(new[] { new UrlCredentials() },
+        var testSecretMasker = new SecretMasker(new[] { new SEC101_127_UrlCredentials() },
                                                 generateCorrelatingIds: generateCorrelatingIds);
         return testSecretMasker;
     }

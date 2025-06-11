@@ -17,14 +17,12 @@
     <resheader name="version">2.0</resheader>
     <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
     <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
     <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
     <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
         <value>[base64 mime encoded serialized .NET Framework object]</value>
     </data>
     <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
     </data>
                 
     There are any number of "resheader" rows that contain simple 
@@ -119,446 +117,335 @@
   </resheader>
   <data name="Detection_HighConfidenceFormat" xml:space="preserve">
     <value>'{0}' is {1}.{2}</value>
-    <comment>Format string for high confidence detections. {0}=truncated secret, {1}=label, {2}=correlating ID suffix or empty</comment>
   </data>
   <data name="Detection_LowConfidenceFormat" xml:space="preserve">
     <value>'{0}' may comprise {1}.{2}</value>
-    <comment>Format string for low confidence detections. {0}=truncated secret, {1}=label, {2}=correlating ID suffix or empty</comment>
   </data>
   <data name="Detection_CorrelatingIdSuffix" xml:space="preserve">
     <value> The correlating id for this detection is {0}.</value>
-    <comment>Suffix added to detection message when a cross-company correlating ID is available. {0} is the correlating ID.</comment>
   </data>
   <data name="Label_DAT101_001_GuidValue" xml:space="preserve">
     <value>a GUID</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_DAT101_002_IPv4" xml:space="preserve">
     <value>an IPv4 address</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_DAT101_003_Integer" xml:space="preserve">
     <value>an integer</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_DAT101_004_Float" xml:space="preserve">
     <value>a floating point number</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_DAT101_005_IPv6" xml:space="preserve">
     <value>an IPv6 address</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC000_000_Unclassified32ByteBase64String" xml:space="preserve">
     <value>an unclassified 32-byte base64 string</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC000_001_Unclassified64ByteBase64String" xml:space="preserve">
     <value>an unclassified 64-byte base64 string</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC000_002_Unclassified16ByteHexadecimalString" xml:space="preserve">
     <value>an unclassified 16-byte hexadecimal string</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_031_NuGetApiKey" xml:space="preserve">
     <value>a NuGet API key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_050_NpmAuthorKey" xml:space="preserve">
     <value>an NPM author key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_055_Pkcs12CertificatePrivateKeyBundle" xml:space="preserve">
     <value>a PKCS#12 certificate private key bundle</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_060_LooseSasSecret" xml:space="preserve">
     <value>a loose SAS HMAC</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_061_LooseOAuth2BearerToken" xml:space="preserve">
     <value>a loose OAuth2 bearer token</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_101_AzureClientAppLegacyCredentials34" xml:space="preserve">
     <value>an Azure Entra client application legacy format password</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_102_AdoPat" xml:space="preserve">
     <value>an Azure DevOps legacy format personal access token (PAT)</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_104_AzureCosmosDBLegacyCredentials" xml:space="preserve">
     <value>an Azure Cosmos DB legacy format access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_105_AzureMessagingLegacyCredentials" xml:space="preserve">
     <value>an Azure messaging legacy format access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_106_AzureStorageAccountLegacyCredentials" xml:space="preserve">
     <value>an Azure storage account legacy format access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_110_AzureDatabricksPat" xml:space="preserve">
     <value>an Azure Databricks personal access token (PAT)</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_152_AzureStorageAccountIdentifiableKey" xml:space="preserve">
     <value>an Azure storage account access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_154_AzureCacheForRedisIdentifiableKey" xml:space="preserve">
     <value>an Azure Cache for Redis access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_156_AzureClientAppIdentifiableCredentials" xml:space="preserve">
     <value>an Azure Entra client app password</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_158_AzureFunctionIdentifiableKey" xml:space="preserve">
     <value>an Azure Functions access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_160_AzureCosmosDbIdentifiableKey" xml:space="preserve">
     <value>an Azure CosmosDB access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_163_AzureBatchIdentifiableKey" xml:space="preserve">
     <value>an Azure Batch access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_166_AzureSearchIdentifiableQueryKey" xml:space="preserve">
     <value>an Azure Search query key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_167_AzureSearchIdentifiableAdminKey" xml:space="preserve">
     <value>an Azure Search admin key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_170_AzureMLWebServiceClassicIdentifiableKey" xml:space="preserve">
     <value>an Azure ML web service (classic) access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_171_AzureServiceBusIdentifiableKey" xml:space="preserve">
     <value>an Azure Service Bus access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_172_AzureEventHubIdentifiableKey" xml:space="preserve">
     <value>an Azure Event Hub access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_173_AzureRelayIdentifiableKey" xml:space="preserve">
     <value>an Azure Relay access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_174_AzureDataLakeIdentifiableKey" xml:space="preserve">
     <value>an Azure Data Lake access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_175_AzureKeyVaultIdentifiableKey" xml:space="preserve">
     <value>an Azure Key Vault access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_176_AzureContainerRegistryIdentifiableKey" xml:space="preserve">
     <value>an Azure Container Registry access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_176_AzureRedisIdentifiableKey" xml:space="preserve">
     <value>an Azure Redis access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_177_SqlPrivateDefaultCloudSALegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>a SQL private default cloud SA legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_178_AzureIotHubIdentifiableKey" xml:space="preserve">
     <value>an Azure IoT Hub access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_179_AzureIotDeviceProvisioningIdentifiableKey" xml:space="preserve">
     <value>an Azure IoT device provisioning key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_180_AzureIotDeviceIdentifiableKey" xml:space="preserve">
     <value>an Azure IoT device access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_181_AzureApimDirectManaqementKey" xml:space="preserve">
     <value>an Azure API Management direct management key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_182_AzureApimIdentifiableSubscriptionKey" xml:space="preserve">
     <value>an Azure API Management subscription key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_183_AzureApimIdentifiableGatewayKey" xml:space="preserve">
     <value>an Azure API Management gateway key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_184_AzureApimIdentifiableRepositoryKey" xml:space="preserve">
     <value>an Azure API Management repository key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_197_AzureAppConfigurationLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure App Configuration legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_198_AzureFluidRelayCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Fluid Relay legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_199_AzureEventGridIdentifiableKey" xml:space="preserve">
     <value>an Azure Event Grid legacy identifiable access key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_199_AzureEventGridLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Event Grid legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_200_UnclassifiedLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an unclassified legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_201_AzureDevOpsLegacyCommonAnnotatedSecurityKeyPat" xml:space="preserve">
     <value>an Azure DevOps legacy CASK personal access token (PAT)</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_202_AzureMixedRealityLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Mixed Reality legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_203_AzureMapsLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Maps legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_203_AzureDigitalTwinsLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Digital Twins legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_204_AzureCommunicationServicesLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Communication Services legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_205_AzureAIServicesLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure AI Services (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_205_AzureAttestationLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Attestation legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_206_AzureOpenAILegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure OpenAI (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_207_AzureAnomalyDetectorEELegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Anomaly Detector EE (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_208_AzureAnomalyDetectorLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Anomaly Detector (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_209_AzureCognitiveServicesLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>a general Azure Cognitive Services legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_210_AzureComputerVisionLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Computer Vision (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_211_AzureContentModeratorLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Content Moderator (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_212_AzureContentSafetyLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Content Safety (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_213_AzureCustomVisionPredictionLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Custom Vision Prediction (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_214_AzureCustomVisionTrainingLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Custom Vision Training (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_215_AzureFaceLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Face (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_216_AzureFormRecognizerLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Form Recognizer (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_217_AzureHealthDecisionSupportLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Health Decision Support (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_217_AzureLanguageUnderstandingLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Language Understanding (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_218_AzureHealthInsightsLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Health Insights (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_219_AzureImmersiveReaderLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Immersive Reader (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_220_AzureInternalAllInOneLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Internal All-In-One (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_221_AzureKnowledgeLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Knowledge (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_222_AzureLuisAuthoringLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Luis Authoring (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_222_AzureLanguageLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Language (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_223_AzureLuisLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Luis (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_224_AzureMetricsAdvisorLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Metrics Advisor (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_225_AzurePersonalizerLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Personalizer (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_226_AzureQnAMakerLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure QnA Maker (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_227_AzureQnAMakerv2LegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure QnA Maker v2 (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_228_AzureSpeakerRecognitionLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Speaker Recognition (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_229_AzureSpeechServicesLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Speech Services (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_230_AzureSpeechTranslationLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Speech Translation (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_231_AzureTextAnalyticsLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Text Analytics (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_232_AzureTextTranslationLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Text Translation (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_233_AzureDummyLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Dummy (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_234_AzureTranscriptionIntelligenceLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Transcription Intelligence (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_235_AzureVideoIntelligenceLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Video Intelligence (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_236_AzureBingAutosuggestLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Autosuggest (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_237_AzureBingAutosuggestv7LegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Autosuggest v7 (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_238_AzureBingCustomSearchLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Custom Search (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_239_AzureBingCustomVisualSearchLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Custom VisualSearch (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_240_AzureBingEntitySearchLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Entity Search (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_241_AzureBingSearchLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Search (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_242_AzureBingSearchv7LegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Search v7 (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_243_AzureBingSpeechLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Speech (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_244_AzureBingSpellCheckLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Spell Check (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_245_AzureBingSpellCheckv7LegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Spell Check v7 (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_246_AzureBingStatelessImageSearchLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Stateless Image Search (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_247_AzureBingStatelessSearchLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Stateless Search (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_248_AzureBingStatelessVideoSearchLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Stateless Video Search (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_249_AzureBingStatelessVisualSearchLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Stateless Visual Search (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_250_AzureBingVideoSearchLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Video Search (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_251_AzureBingVisualSearchLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Visual Search (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_252_AzureBingWebSearchLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Web Search (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_253_AzureBingStatelessNewsSearchLegacyCommonAnnotatedSecurityKey" xml:space="preserve">
     <value>an Azure Bing Stateless News Search (Cognitive Services) legacy common annotated security key</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_528_UnclassifiedJwt" xml:space="preserve">
     <value>an unclassified JWT token</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
   <data name="Label_SEC101_565_SecretScanningSampleToken" xml:space="preserve">
     <value>a non-functional secret scanning sample token</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
-  <data name="Label_UrlCredentials" xml:space="preserve">
+  <data name="Label_SEC101_127_UrlCredentials" xml:space="preserve">
     <value>a URL with login credentials</value>
-    <comment>Label for RegexPattern detection</comment>
   </data>
 </root>
