@@ -80,7 +80,7 @@ namespace Microsoft.Security.Utilities
 
             foreach (RegexPattern pattern in patterns)
             {
-                foreach (string example in pattern.GenerateTruePositiveExamples())
+                foreach (StringInput example in pattern.GenerateTruePositiveExamples())
                 {
                     Detection detection = pattern.GetDetections(example, generateCrossCompanyCorrelatingIds: false).FirstOrDefault();
                     Assert.AreNotEqual(default, detection);

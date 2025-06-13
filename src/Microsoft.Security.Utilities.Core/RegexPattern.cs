@@ -184,16 +184,11 @@ public class RegexPattern
         return result;
     }
 
-    public virtual IEnumerable<Detection> GetDetections(string input,
-                                                        bool generateCrossCompanyCorrelatingIds,
-                                                        string defaultRedactionToken = FallbackRedactionToken,
-                                                        IRegexEngine? regexEngine = null)
+    internal virtual IEnumerable<Detection> GetDetections(StringInput input,
+                                                          bool generateCrossCompanyCorrelatingIds,
+                                                          string defaultRedactionToken = FallbackRedactionToken,
+                                                          IRegexEngine? regexEngine = null)
     {
-        if (input == null)
-        {
-            yield break;
-        }
-
         bool runRegexes = Signatures == null;
 
         if (Signatures != null)
@@ -212,10 +207,8 @@ public class RegexPattern
         {
             regexEngine ??= CachedDotNetRegex.Instance;
 
-            int startIndex;
             foreach (UniversalMatch match in regexEngine.Matches(input, Pattern, RegexOptions, captureGroup: "refine"))
             {
-                startIndex = match.Index + 1;
 
                 string? crossCompanyCorrelatingId =
                     generateCrossCompanyCorrelatingIds && DetectionMetadata.HasFlag(DetectionMetadata.HighEntropy)

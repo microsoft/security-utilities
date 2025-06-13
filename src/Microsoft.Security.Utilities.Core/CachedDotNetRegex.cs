@@ -44,32 +44,91 @@ namespace Microsoft.Security.Utilities
             Regex regex = GetOrCreateRegex(pattern, options);
             foreach (Match m in regex.Matches(input))
             {
-                yield return ToFlex(m, captureGroup);
+                yield return CreateUniversalMatch(captureGroup: captureGroup, match: m);
 
                 // Instance Regex.Matches has no overload; check timeout between matches
-                // (MatchesCollection *is* lazily computed).
+                // (MatchCollection *is* lazily computed).
                 if (w.Elapsed > timeout) { break; }
             }
         }
 
-        internal static UniversalMatch ToFlex(Match match, string captureGroup = null)
+#if NET
+        public IEnumerable<UniversalMatch> Matches(ReadOnlySpan<char> input, string pattern, RegexOptions? options = null, TimeSpan timeout = default, string captureGroup = null)
         {
-            int index = match.Index;
-            int length = match.Length;
-            string value = match.Value;
+            if (timeout == default) { timeout = DefaultTimeout; }
+            var w = Stopwatch.StartNew();
+
+            // Using a list because ValueMatchEnumerator is a ref struct and can't cross yield boundaries.
+            List<UniversalMatch> list = null;
+            Regex regex = GetOrCreateRegex(pattern, options);
+
+            foreach (ValueMatch m in regex.EnumerateMatches(input))
+            {
+                list ??= new();
+                list.Add(CreateUniversalMatch(m, captureGroup, regex, input));
+
+                // Instance Regex.EnumerateMatches has no overload; check timeout between matches
+                // (ValueMatchEnumerator *is* lazily computed).
+                if (w.Elapsed > timeout) { break; }
+            }
+
+            return (IEnumerable<UniversalMatch>)list ?? Array.Empty<UniversalMatch>();
+        }
+
+        private static UniversalMatch CreateUniversalMatch(ValueMatch match, string captureGroup, Regex regex, ReadOnlySpan<char> input)
+        {
+            if (captureGroup == null)
+            {
+                return CreateUniversalMatchWithNoCapture(match, input);
+            }
+
+            // https://github.com/dotnet/runtime/issues/73223: There is no
+            // capture group support when matching against a span. Workaround:
+            // rerun the match against a substring that contains only the match.
+            Match rematch = regex.Match(input.Slice(match.Index, match.Length).ToString());
+            Debug.Assert(rematch.Success && rematch.Index == 0 && rematch.Length == match.Length, "Rematch should succeed and produce same result.");
+            UniversalMatch universalMatch = CreateUniversalMatch(rematch, captureGroup);
+            universalMatch.Index += match.Index; // Adjust index to be relative to original input
+            return universalMatch;
+        }
+
+        private static UniversalMatch CreateUniversalMatchWithNoCapture(ValueMatch match, ReadOnlySpan<char> input)
+        {
+            return new UniversalMatch
+            {
+                Success = true,
+                Index = match.Index,
+                Length = match.Length,
+                Value = input.Slice(match.Index, match.Length).ToString()
+            };
+        }
+#endif
+
+        private static UniversalMatch CreateUniversalMatch(Match match, string captureGroup)
+        {
+            // NOTE: Value property allocates. Don't call it twice when there's
+            // a capture. With more refactoring, we could and should eliminate
+            // the Value property on UniversalMatch and encourage callers to
+            // work with the text in the matched range without allocating a
+            // substring.
+            Group group = match;
 
             if (captureGroup != null)
             {
-                Group group = match.Groups[captureGroup];
-                if (group.Success)
+                Group capture = match.Groups[captureGroup];
+                if (capture.Success)
                 {
-                    value = group.Value;
-                    index = group.Index;
-                    length = group.Length;
+                    group = capture;
                 }
             }
 
-            return new UniversalMatch() { Success = match.Success, Index = index, Length = length, Value = value };
+            return new UniversalMatch
+            {
+                Success = group.Success, 
+                Index = group.Index,
+                Length = group.Length,
+                Value = group.Value
+            };
         }
     }
 }
