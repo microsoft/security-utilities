@@ -28,10 +28,8 @@ namespace Microsoft.Security.Utilities
             {
                 return engine.Matches(s, pattern, options, timeout, captureGroup);
             }
-            else
-            {
-                return engine.Matches(input.Span, pattern, options, timeout, captureGroup);
-            }
+
+            return engine.Matches(input.Span, pattern, options, timeout, captureGroup);
 #else
             return engine.Matches(input.String, pattern, options, timeout, captureGroup);
 #endif

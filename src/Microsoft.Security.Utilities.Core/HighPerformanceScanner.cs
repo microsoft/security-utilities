@@ -79,6 +79,8 @@ internal sealed class HighPerformanceScanner
             return [];
         }
 
+        // It's tempting to use StringInput throughout this class, but chatty
+        // Memory to Span conversion can add up, so do it once up-front.
 #if NET
         HighPerformanceStringInput highPerformanceInput = input.Span;
 #else
@@ -133,6 +135,11 @@ internal sealed class HighPerformanceScanner
 
 #if NET8_0_OR_GREATER
         // This API is non-allocating, but only available in .NET 8.0 and later.
+        // There is no non-allocating single-match API but EnumerateMatches is
+        // lazy so we can just use it and take the first match. It is important
+        // that we always do single matching with the scoped regexes as they are
+        // only meant to check for one match where a corresponding signature was
+        // found.
         Regex.ValueMatchEnumerator matches = pattern.ScopedRegex.EnumerateMatches(input.Slice(start, length));
         if (!matches.MoveNext())
         {

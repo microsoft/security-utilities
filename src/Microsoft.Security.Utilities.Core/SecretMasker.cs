@@ -298,7 +298,6 @@ public sealed class SecretMasker : ISecretMasker
 
     private IEnumerable<Detection> DetectSecrets(StringInput input)
     {
-
         var stopwatch = Stopwatch.StartNew();
         try
         {

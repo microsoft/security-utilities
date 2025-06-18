@@ -21,7 +21,7 @@ namespace Microsoft.Security.Utilities.Core
         [TestMethod]
         public void RegexEngine_CachedDotNet_RefineGroup()
         {
-            RegexEngine_RefineGroup(RE2RegexEngine.Instance);
+            RegexEngine_RefineGroup(CachedDotNetRegex.Instance);
         }
 
         private static void RegexEngine_RefineGroup(IRegexEngine engine)
@@ -41,40 +41,56 @@ namespace Microsoft.Security.Utilities.Core
                                                 regex);
             var masker = new SecretMasker([regexPattern], regexEngine: RE2RegexEngine.Instance);
 
-            Detection detection = masker.DetectSecrets(scanData).FirstOrDefault();
+            Detection detection = masker.DetectSecrets(scanData).Single();
             detection.Should().NotBe(default);
 
             string refined = scanData.Substring(detection.Start, detection.Length);
             refined.Should().Be(nameof(scanData));
 
             // Run the same test directly against the engine.
-            UniversalMatch match = engine.Matches(scanData, regex, captureGroup: "refine").FirstOrDefault();
-            match.Should().NotBeNull();
+            UniversalMatch match = engine.Matches(scanData, regex, captureGroup: "refine").Single();
             match.Success.Should().BeTrue();
-            match.Index.Should().Be(1); // 'x' at the start
+            match.Index.Should().Be(1); // after 'x' at the start
             match.Length.Should().Be(nameof(scanData).Length);
             match.Value.Should().Be(nameof(scanData));
         }
 
-
+#if NET
         [TestMethod]
-        public void RegexEngine_RE2_NoCaptureGroup()
+        public void RegexEngine_CachedDotNet_RefineGroupUsingSpan()
         {
-            RegexEngine_NoCaptureGroup(RE2RegexEngine.Instance);
-        }
-
-        [TestMethod]
-        public void RegexEngine_CachedDotNet_NoCaptureGroup()
-        {
-            RegexEngine_NoCaptureGroup(RE2RegexEngine.Instance);
-        }
-
-        private static void RegexEngine_NoCaptureGroup(IRegexEngine engine)
-        {
-            string scanData = $"x{nameof(scanData)}x";
+            ReadOnlySpan<char> scanData;
+            string fullString = $"yx{nameof(scanData)}xy";
+            scanData = fullString.AsSpan()[1..^1]; // Exclude leading and trailing 'y'
             string regex = $"x(?P<refine>{nameof(scanData)})x";
 
-            UniversalMatch match = engine.Matches(scanData, regex).FirstOrDefault();
+            UniversalMatch match = CachedDotNetRegex.Instance.Matches(scanData, regex, captureGroup: "refine").Single();
+            match.Should().NotBeNull();
+            match.Success.Should().BeTrue();
+            match.Index.Should().Be(1); // after 'x' at the start
+            match.Length.Should().Be(nameof(scanData).Length);
+            match.Value.Should().Be(nameof(scanData));
+        }
+#endif
+
+        [TestMethod]
+        public void RegexEngine_RE2_NoCaptureGroupRequested()
+        {
+            RegexEngine_NoCaptureGroupRequested(RE2RegexEngine.Instance);
+        }
+
+        [TestMethod]
+        public void RegexEngine_CachedDotNet_NoCaptureGroupRequested()
+        {
+            RegexEngine_NoCaptureGroupRequested(CachedDotNetRegex.Instance);
+        }
+
+        private static void RegexEngine_NoCaptureGroupRequested(IRegexEngine engine)
+        {
+            string scanData = $"x{nameof(scanData)}x";
+            string regex = $"x(?P<unused>{nameof(scanData)})x";
+
+            UniversalMatch match = engine.Matches(scanData, regex).Single();
             match.Should().NotBeNull();
             match.Success.Should().BeTrue();
             match.Index.Should().Be(0);
@@ -84,14 +100,14 @@ namespace Microsoft.Security.Utilities.Core
 
 #if NET
         [TestMethod]
-        public void RegexEngine_CachedDotNet_NoCaptureGroupUsingSpan()
+        public void RegexEngine_CachedDotNet_NoCaptureGroupRequestedUsingSpan()
         {
             ReadOnlySpan<char> scanData;
             string fullString = $"yx{nameof(scanData)}xy";
             scanData = fullString.AsSpan()[1..^1]; // Exclude leading and trailing 'y'
-            string regex = $"x(?P<refine>{nameof(scanData)})x";
+            string regex = $"x(?P<unused>{nameof(scanData)})x";
 
-            UniversalMatch match = CachedDotNetRegex.Instance.Matches(scanData, regex).FirstOrDefault();
+            UniversalMatch match = CachedDotNetRegex.Instance.Matches(scanData, regex).Single();
             match.Should().NotBeNull();
             match.Success.Should().BeTrue();
             match.Index.Should().Be(0);
