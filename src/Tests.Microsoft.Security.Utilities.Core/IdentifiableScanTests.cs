@@ -1,6 +1,7 @@
 ﻿// Copyright(c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
@@ -93,21 +94,20 @@ namespace Tests.Microsoft.Security.Utilities.Core
         {
             using var assertionScope = new AssertionScope();
 
+            var highPerformancePatterns = WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys.Where(p => p is IHighPerformanceScannableKey).ToList();
+
             foreach (bool generateCorrelatingIds in new[] { true, false })
             {
-                using var standardMasker =
-                    new SecretMasker(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
-                                     generateCorrelatingIds);
-
-                using var highPerformanceMasker =
-                    new SecretMasker(WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys,
-                                     generateCorrelatingIds);
-
+                using var standardMasker = new SecretMasker(highPerformancePatterns, generateCorrelatingIds);
                 standardMasker.DisableHighPerformanceScannerForTests();
 
-                foreach (RegexPattern pattern in WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys)
+                using var highPerformanceMasker = new SecretMasker(highPerformancePatterns, generateCorrelatingIds);
+
+                foreach (RegexPattern pattern in highPerformancePatterns)
                 {
-                    foreach (string example in pattern.GenerateTruePositiveExamples())
+                    IEnumerable<string> allExamples = pattern.GenerateTruePositiveExamples().Concat(pattern.GenerateFalsePositiveExamples());
+
+                    foreach (string example in allExamples)
                     {
                         var standardDetections = standardMasker.DetectSecrets(example).ToList();
 
@@ -115,7 +115,7 @@ namespace Tests.Microsoft.Security.Utilities.Core
 
                         highPerformanceDetections.Should().BeEquivalentTo(standardDetections,
                             options => options.WithStrictOrdering(),
-                            because: $"the high-performance scanner should match the standard scanner for '{example}'");
+                            because: $"the high-performance scanner should match the standard scanner for example '{example}' from '{pattern.Id}.{pattern.Name}.");
                     }
                 }
             }
