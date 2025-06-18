@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Security.Utilities;
 
-public class SecretLiteral
+internal readonly record struct SecretLiteral
 {
     public const string FallbackRedactionToken = "***";
 
@@ -17,26 +17,14 @@ public class SecretLiteral
         Value = value ?? throw new ArgumentNullException(nameof(value));
     }
 
-    public override bool Equals(object? obj)
-    {
-        var item = obj as SecretLiteral;
-        if (item == null)
-        {
-            return false;
-        }
-        return string.Equals(Value, item.Value, StringComparison.Ordinal);
-    }
-
-    public override int GetHashCode() => Value.GetHashCode();
-
-    public IEnumerable<Detection> GetDetections(string input, string redactionToken)
+    public IEnumerable<Detection> GetDetections(StringInput input, string redactionToken)
     {
         if (string.IsNullOrWhiteSpace(redactionToken))
         {
             redactionToken = FallbackRedactionToken;
         }
 
-        if (!string.IsNullOrEmpty(input) && !string.IsNullOrEmpty(Value))
+        if (input.Length > 0 && !string.IsNullOrEmpty(Value))
         {
             int startIndex = 0;
             while (startIndex > -1 &&
@@ -62,5 +50,5 @@ public class SecretLiteral
         }
     }
 
-    public string Value { get; private set; }
+    public string Value { get; }
 }

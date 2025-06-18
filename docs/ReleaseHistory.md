@@ -12,6 +12,10 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# UNRELEASED
+- BRK: `SecretLiteral` and `RegexPattern.GetDetections` are no longer public.
+- NEW: On .NET 8+, `SecretMasker.DetectSecrets` and `SecretMasker.MaskSecrets` now provide overloads that accept `ReadOnlyMemory<char>` input to allow the caller to avoid string allocation.
+
 # 1.19.0 - 06/05/2025
 - BRK, BUG: `SecretMasker.MinimumSecretLengthCeiling` is removed. This property had no effect previously.
 - BRK, BUG: `SecretMasker.MinimumSecretLength` is now respected for regex match length in addition to literal value lengths.
