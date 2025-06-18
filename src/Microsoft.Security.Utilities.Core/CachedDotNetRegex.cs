@@ -11,7 +11,7 @@ namespace Microsoft.Security.Utilities
 {
     /// <summary>
     ///  CachedDotNetRegex is an IRegex implementation which pre-compiles all Regexes and then
-    ///  calls through to .NET's System.Text.RegularExpressions.Regex.
+    ///  calls through to .NET's <see cref="Regex" />.
     /// </summary>
     public class CachedDotNetRegex : IRegexEngine
     {
