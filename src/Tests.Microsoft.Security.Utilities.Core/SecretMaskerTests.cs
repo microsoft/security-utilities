@@ -55,7 +55,7 @@ public class SecretMaskerTests
             using var scope = new AssertionScope();
 
             foreach ((IRegexEngine engine, bool useMemory) in new[] {
-                (RE2RegexEngine.Instance, false), 
+                (RE2RegexEngine.Instance, false),
                 (CachedDotNetRegex.Instance, false),
 #if NET
                 (CachedDotNetRegex.Instance, true)

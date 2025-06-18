@@ -124,7 +124,7 @@ namespace Microsoft.Security.Utilities
 
             return new UniversalMatch
             {
-                Success = group.Success, 
+                Success = group.Success,
                 Index = group.Index,
                 Length = group.Length,
                 Value = group.Value
