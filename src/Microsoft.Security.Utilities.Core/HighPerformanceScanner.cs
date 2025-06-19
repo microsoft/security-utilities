@@ -100,9 +100,26 @@ internal sealed class HighPerformanceScanner
             if (Match(pattern, highPerformanceInput, index, out HighPerformanceDetection detection))
             {
                 detections.Add(detection);
+
+                // We skip over any match because we do not support overlapping
+                // of high-performance matches. Given that all patterns have
+                // high-entropy and high-confidence, it is reasonable to assume
+                // that the only way their matches could overlap would be if
+                // they are not independently generated true secrets. This can
+                // improve performance in scenarios like secret classification
+                // where matches are frequently encountered.
+                index = detection.Start + detection.Length;
+                continue;
             }
 
-            index += pattern.Signature.Length;
+            // We must not skip the whole signature here. If the regex fails,
+            // then the signature we found can still be a non-signature portion
+            // of another match. (This is not currently possible for the
+            // existing set of high-performance patterns but there is little
+            // benefit to skipping a handful of chars here and it would be a
+            // strange requirement to impose on future patterns to keep that
+            // so.)
+            index++;
         } while (index < input.Length);
 
         return detections;
@@ -253,6 +270,9 @@ internal sealed class HighPerformanceScanner
             return null;
         }
 
+        // We do not allow 3-character signatures that are prefixes of
+        // four-character signatures and therefore cannot match two signatures
+        // here.
         int shortPackedSignature = s0 | (s1 << 8) | (s2 << 16);
         int longPackedSignature = shortPackedSignature | (s3 << 24);
 
