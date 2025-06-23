@@ -29,7 +29,7 @@ internal readonly struct StringInput
     //
     // * It is important that we do not retain the backing ReadOnlyMemory<char>
     //   beyond the end of a DetectSecrets or MaskSecrets call. The caller owns
-    //   the memory. One of the disadvantage of using ReadOnlyMemory instead of 
+    //   the memory. One of the disadvantages of using ReadOnlyMemory instead of
     //   ReadOnlySpan here is that this is not enforced by the compiler.
     //
     // * We could add dependencies to use Memory or Span on .NET
