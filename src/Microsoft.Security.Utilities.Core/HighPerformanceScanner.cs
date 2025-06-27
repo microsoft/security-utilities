@@ -173,7 +173,6 @@ internal sealed class HighPerformanceScanner
         Debug.Assert(match.Index == start, "The regex should be anchored to the beginning.");
 #endif
 
-        length = match.Length;
         detection = new HighPerformanceDetection(pattern.Signature, start, match.Length);
         return true;
     }
