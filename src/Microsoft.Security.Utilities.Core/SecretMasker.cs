@@ -104,6 +104,18 @@ public sealed class SecretMasker : ISecretMasker
     /// <param name="detectionAction">An optional action to perform on each detection.</param>
     public string MaskSecrets(string input, Action<Detection>? detectionAction = null)
     {
+        return MaskSecrets(new StringInput(input), detectionAction);
+    }
+
+#if NET
+    public string MaskSecrets(ReadOnlyMemory<char> input, Action<Detection>? detectionAction = null)
+    {
+        return MaskSecrets(new StringInput(input), detectionAction);
+    }
+#endif
+
+    private string MaskSecrets(StringInput input, Action<Detection>? detectionAction = null)
+    {
         var stopwatch = Stopwatch.StartNew();
         try
         {
@@ -115,9 +127,9 @@ public sealed class SecretMasker : ISecretMasker
         }
     }
 
-    private string MaskSecretsCore(string input, Action<Detection>? detectionAction)
+    private string MaskSecretsCore(StringInput input, Action<Detection>? detectionAction)
     {
-        if (string.IsNullOrEmpty(input))
+        if (input.Length == 0)
         {
             return string.Empty;
         }
@@ -126,7 +138,7 @@ public sealed class SecretMasker : ISecretMasker
 
         if (detections.Count == 0)
         {
-            return input;
+            return input.ToString();
         }
 
         SortDetectionsForMasking(detections);
@@ -274,6 +286,18 @@ public sealed class SecretMasker : ISecretMasker
 
     public IEnumerable<Detection> DetectSecrets(string input)
     {
+        return DetectSecrets(new StringInput(input));
+    }
+
+#if NET
+    public IEnumerable<Detection> DetectSecrets(ReadOnlyMemory<char> input)
+    {
+        return DetectSecrets(new StringInput(input));
+    }
+#endif
+
+    private IEnumerable<Detection> DetectSecrets(StringInput input)
+    {
         var stopwatch = Stopwatch.StartNew();
         try
         {
@@ -285,14 +309,23 @@ public sealed class SecretMasker : ISecretMasker
         }
     }
 
-    private List<Detection> DetectSecretsCore(string input)
+    // NOTE: It is important that this method, through which all calls to public
+    // DetectSecrets and MaskSecrets API are routed, is not implemented using an
+    // iterator (yield return). We must guarantee the following:
+    //
+    //  1. Any lock taken during a call to the library will released before the
+    //     method returns.
+    //
+    //  2. Any ReadOnlyMemory<char> passed to the library will not be used after
+    //     the method returns.
+    private List<Detection> DetectSecretsCore(StringInput input)
     {
         // NOTE: MinimumSecretLength changes are not protected by the lock. Make
         // sure to read it only once in this method so that a single masking or
         // detection operation does not use more than one value.
         int minimumSecretLength = MinimumSecretLength;
 
-        if (input == null || input.Length < minimumSecretLength)
+        if (input.Length == 0 || input.Length < minimumSecretLength)
         {
             return [];
         }

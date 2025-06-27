@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -53,7 +54,13 @@ public class SecretMaskerTests
         {
             using var scope = new AssertionScope();
 
-            foreach (IRegexEngine engine in new[] { RE2RegexEngine.Instance, CachedDotNetRegex.Instance })
+            foreach ((IRegexEngine engine, bool useMemory) in new[] {
+                (RE2RegexEngine.Instance, false),
+                (CachedDotNetRegex.Instance, false),
+#if NET
+                (CachedDotNetRegex.Instance, true)
+#endif
+            })
             {
                 foreach (bool generateCrossCompanyCorrelatingIds in new[] { true, false })
                 {
@@ -72,8 +79,19 @@ public class SecretMaskerTests
 
                             string standaloneSecret = matches[0].Value;
 
-                            // 1. All generated test patterns should be detected by the masker.
-                            var detections = secretMasker.DetectSecrets(context).ToList();
+                            List<Detection> detections;
+#if NET
+                            if (useMemory)
+                            {
+                                detections = secretMasker.DetectSecrets(new ReadOnlyMemory<char>(context.ToCharArray())).ToList();
+                            }
+                            else
+#endif
+                            {
+                                Assert.IsFalse(useMemory, "Can't test non-existent memory overload on .NET Framework.");
+                                detections = secretMasker.DetectSecrets(context).ToList();
+                            }
+
                             if (allowAdditionalFindings)
                             {
                                 // TODO duplication in analysis has snuck in.
@@ -126,7 +144,20 @@ public class SecretMaskerTests
                         foreach (string testExample in pattern.GenerateFalsePositiveExamples())
                         {
                             // 6. All generated false positive test patterns should not return any detections matching their moniker.
-                            IEnumerable<Detection> detections = secretMasker.DetectSecrets(testExample).Where(d => d.Moniker == moniker);
+                            IEnumerable<Detection> detections;
+#if NET
+                            if (useMemory)
+                            {
+                                detections = secretMasker.DetectSecrets(new ReadOnlyMemory<char>(testExample.ToCharArray())).ToList();
+                            }
+                            else
+#endif
+                            {
+                                Assert.IsFalse(useMemory, "Can't test non-existent memory overload on .NET Framework.");
+                                detections = secretMasker.DetectSecrets(testExample).ToList();
+                            }
+
+                            detections = secretMasker.DetectSecrets(testExample).Where(d => d.Moniker == moniker);
                             detections.Should().BeEmpty(because: $"false positive example '{testExample}' should not result in any findings for '{moniker}'");
                         }
                     }
@@ -222,6 +253,59 @@ public class SecretMaskerTests
                                                 generateCorrelatingIds: generateCorrelatingIds);
         return testSecretMasker;
     }
+
+#if NET
+    [TestMethod]
+    public void SecretMasker_ScansAndMasksStringSegmentWithMatches()
+    {
+        using var secretMasker = new SecretMasker();
+        secretMasker.AddValue("testvalue");
+        secretMasker.AddRegex(new RegexPattern("", "", "", DetectionMetadata.None, pattern: "testregex"));
+        string fullString = "testvalue tesregex --> testvalue testregex <-- testvalue testregex";
+        int start = fullString.IndexOf("-->") + 3;
+        int length = fullString.IndexOf("<--") - start;
+        ReadOnlyMemory<char> segment = fullString.AsMemory(start, length);
+
+        var detectionsFromDetectSecrets = secretMasker.DetectSecrets(segment).ToList();
+        SecretMasker.SortDetectionsForMasking(detectionsFromDetectSecrets);
+
+        var detectionsFromMaskSecrets = new List<Detection>();
+        string masked = secretMasker.MaskSecrets(segment, detectionsFromMaskSecrets.Add);
+        Assert.AreEqual(" *** +++ ", masked);
+
+        detectionsFromDetectSecrets.Should().BeEquivalentTo(detectionsFromMaskSecrets, options => options.WithStrictOrdering());
+        List<Detection> detections = detectionsFromMaskSecrets;
+
+        Assert.AreEqual(2, detections.Count);
+        Assert.AreEqual(1, detections[0].Start);
+        Assert.AreEqual(9, detections[0].Length);
+        Assert.AreEqual(DetectionKind.Literal, detections[0].Kind);
+        Assert.AreEqual(11, detections[1].Start);
+        Assert.AreEqual(9, detections[1].Length);
+        Assert.AreEqual(DetectionKind.Regex, detections[1].Kind);
+    }
+
+    [TestMethod]
+    public void SecretMasker_ScansAndMasksStringSegmentWithNoMatch()
+    {
+        using var secretMasker = new SecretMasker();
+        secretMasker.AddValue("testvalue");
+        secretMasker.AddRegex(new RegexPattern("", "", "", DetectionMetadata.None, pattern: "testregex"));
+        string fullString = "testvalue tesregex --> yada yada yada <-- testvalue testregex";
+        int start = fullString.IndexOf("-->") + 3;
+        int length = fullString.IndexOf("<--") - start;
+        ReadOnlyMemory<char> segment = fullString.AsMemory(start, length);
+
+        var detectionsFromDetectSecrets = secretMasker.DetectSecrets(segment).ToList();
+        var detectionsFromMaskSecrets = new List<Detection>();
+        string masked = secretMasker.MaskSecrets(segment, detectionsFromMaskSecrets.Add);
+        Assert.AreEqual(" yada yada yada ", masked);
+
+        detectionsFromDetectSecrets.Should().BeEmpty();
+        detectionsFromMaskSecrets.Should().BeEmpty();
+        List<Detection> detections = detectionsFromMaskSecrets;
+    }
+#endif
 
     [TestMethod]
     public void SecretMasker_UrlNotMasked()
@@ -477,13 +561,31 @@ public class SecretMaskerTests
     public void SecretMasker_HandlesEmptyInput()
     {
         using var secretMasker = new SecretMasker();
-        secretMasker.AddValue("abcd");
+        secretMasker.AddValue(null);
+        secretMasker.AddValue(string.Empty);
 
-        string result = secretMasker.MaskSecrets(null);
+        string result = secretMasker.MaskSecrets((string)null);
         Assert.AreEqual(string.Empty, result);
 
         result = secretMasker.MaskSecrets(string.Empty);
         Assert.AreEqual(string.Empty, result);
+
+        IEnumerable<Detection> detections = secretMasker.DetectSecrets((string)null);
+        Assert.IsTrue(!detections.Any(), "No detections expected for null input.");
+
+        detections = secretMasker.DetectSecrets(string.Empty);
+        Assert.IsTrue(!detections.Any(), "No detections expected for empty input");
+    }
+
+    [TestMethod]
+    public void SecretMasker_ProvidesVersion()
+    {
+        var expected = new Version(FileVersionInfo.GetVersionInfo(typeof(SecretMasker).Assembly.Location).FileVersion);
+        Version actual = SecretMasker.Version;
+        Assert.AreEqual(expected.Major, actual.Major);
+        Assert.AreEqual(expected.Minor, actual.Minor);
+        Assert.AreEqual(expected.Build, actual.Build);
+        Assert.AreEqual(-1, actual.Revision); // SecretMasker.Version does not include revision.
     }
 
     [TestMethod]

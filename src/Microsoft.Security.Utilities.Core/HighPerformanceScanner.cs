@@ -11,9 +11,9 @@ using System.Text.RegularExpressions;
 
 #if NET8_0_OR_GREATER
 using System.Buffers;
-using StringInput = System.ReadOnlySpan<char>;
+using HighPerformanceStringInput = System.ReadOnlySpan<char>;
 #else
-using StringInput = string;
+using HighPerformanceStringInput = string;
 #endif
 
 namespace Microsoft.Security.Utilities;
@@ -79,17 +79,25 @@ internal sealed class HighPerformanceScanner
             return [];
         }
 
+        // It's tempting to use StringInput throughout this class, but chatty
+        // Memory to Span conversion can add up, so do it once up-front.
+#if NET
+        HighPerformanceStringInput highPerformanceInput = input.Span;
+#else
+        HighPerformanceStringInput highPerformanceInput = input.String;
+#endif
+
         var detections = new List<HighPerformanceDetection>();
         int index = 0;
         do
         {
-            CompiledHighPerformancePattern? pattern = FindNextSignature(input, ref index);
+            CompiledHighPerformancePattern? pattern = FindNextSignature(highPerformanceInput, ref index);
             if (pattern == null)
             {
                 break;
             }
 
-            if (Match(pattern, input, index, out HighPerformanceDetection detection))
+            if (Match(pattern, highPerformanceInput, index, out HighPerformanceDetection detection))
             {
                 detections.Add(detection);
             }
@@ -106,7 +114,7 @@ internal sealed class HighPerformanceScanner
     /// with a detection to be returned to the caller. Otherwise, return false.
     /// </summary>
     private static bool Match(CompiledHighPerformancePattern pattern,
-                              StringInput input,
+                              HighPerformanceStringInput input,
                               int index,
                               out HighPerformanceDetection detection)
     {
@@ -127,6 +135,11 @@ internal sealed class HighPerformanceScanner
 
 #if NET8_0_OR_GREATER
         // This API is non-allocating, but only available in .NET 8.0 and later.
+        // There is no non-allocating single-match API but EnumerateMatches is
+        // lazy so we can just use it and take the first match. It is important
+        // that we always do single matching with the scoped regexes as they are
+        // only meant to check for one match where a corresponding signature was
+        // found.
         Regex.ValueMatchEnumerator matches = pattern.ScopedRegex.EnumerateMatches(input.Slice(start, length));
         if (!matches.MoveNext())
         {
@@ -156,7 +169,7 @@ internal sealed class HighPerformanceScanner
     /// The performance of this method is highly sensitive to the version of
     /// .NET that is used.
     /// </summary>
-    private CompiledHighPerformancePattern? FindNextSignature(StringInput input, ref int index)
+    private CompiledHighPerformancePattern? FindNextSignature(HighPerformanceStringInput input, ref int index)
     {
 #if NET9_0_OR_GREATER
         Debug.Assert(_signatures != null, "We should not scan for signatures when no patterns have been added.");
@@ -215,7 +228,7 @@ internal sealed class HighPerformanceScanner
     /// packing 3 and 4 ASCII characters into integers and looking them up in
     /// a dictionary indexed by packed signatures.
     /// </summary>
-    private CompiledHighPerformancePattern? GetPatternForSignature(StringInput input, int index)
+    private CompiledHighPerformancePattern? GetPatternForSignature(HighPerformanceStringInput input, int index)
     {
         if ((input.Length - index) < 4)
         {
