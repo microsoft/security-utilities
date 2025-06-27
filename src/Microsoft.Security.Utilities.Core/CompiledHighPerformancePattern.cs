@@ -121,15 +121,46 @@ internal sealed partial class CompiledHighPerformancePattern
                                           Regex scopedRegex)
     {
 #if HIGH_PERFORMANCE_CODEGEN // This validation happens at compile time and needn't be repeated at runtime.
+        if (signature.Length != 3 && signature.Length != 4)
+        {
+            throw new ArgumentException($"The signature must be 3 or 4 characters long: '{signature}'.", nameof(signature));
+        }
+
+        if (signaturePrefixLength < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(signaturePrefixLength), "The signature prefix length must be non-negative.");
+        }
+
+        if (minMatchLength < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(minMatchLength), "The minimum match length must be non-negative.");
+        }
+
+        if (maxMatchLength < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(maxMatchLength), "The maximum match length must be non-negative.");
+        }
+
+        if (maxMatchLength < minMatchLength)
+        {
+            throw new ArgumentException("The maximum match length must be greater than or equal to the minimum match length.");
+        }
+
+        if (minMatchLength < (signature.Length + signaturePrefixLength))
+        {
+            throw new ArgumentException("The minimum match length can't be smaller than the signature prefix length plus the signature length.");
+        }
+
+        if (signature.Length == 3 && minMatchLength == (signature.Length + signaturePrefixLength))
+        {
+            throw new ArgumentException("Three character signatures can't be expected at the end of input.");
+        }
+
         if (!scopedRegex.ToString().StartsWith("^"))
         {
             throw new ArgumentException($"The regular expression must be anchored to the beginning of the input: '{scopedRegex}'", nameof(scopedRegex));
         }
 
-        if (signature.Length != 3 && signature.Length != 4)
-        {
-            throw new ArgumentException($"The signature must be 3 or 4 characters long: '{signature}'.", nameof(signature));
-        }
 #endif
         char s0 = signature[0];
         char s1 = signature[1];
@@ -170,6 +201,19 @@ internal sealed partial class CompiledHighPerformancePattern
     /// </summary>
     internal static string GenerateAdditionalCode()
     {
+        IEnumerable<HighPerformancePattern> patterns = EnumerateAllHighPerformancePatterns();
+        return GenerateAdditionalCode(patterns);
+    }
+
+    internal static IEnumerable<HighPerformancePattern> EnumerateAllHighPerformancePatterns()
+    {
+        return WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys
+                                     .OfType<IHighPerformanceScannableKey>()
+                                     .SelectMany(k => k.HighPerformancePatterns);
+    }
+
+    internal static string GenerateAdditionalCode(IEnumerable<HighPerformancePattern> highPerformancePatterns)
+    {
         var sb = new StringBuilder();
         sb.AppendLine(
             """
@@ -192,44 +236,60 @@ internal sealed partial class CompiledHighPerformancePattern
         // Key = signature, Value = code to construct its CompiledHighPerformancePattern.
         Dictionary<string, string> patterns = [];
 
-        foreach (IHighPerformanceScannableKey generalPattern in WellKnownRegexPatterns.PreciselyClassifiedSecurityKeys.OfType<IHighPerformanceScannableKey>())
+        foreach (HighPerformancePattern pattern in highPerformancePatterns)
         {
-            foreach (HighPerformancePattern pattern in generalPattern.HighPerformancePatterns)
+            if (!regexes.TryGetValue(pattern.ScopedRegex, out int id))
             {
-                if (!regexes.TryGetValue(pattern.ScopedRegex, out int id))
+                id = regexId++;
+                regexes[pattern.ScopedRegex] = id;
+            }
+
+            // Generate the call to the pattern constructor.
+            string code = $"""new("{pattern.Signature}", {pattern.SignaturePrefixLength}, {pattern.MinMatchLength}, {pattern.MaxMatchLength}, Regex{id})""";
+
+            // Also call the constructor now to catch bad inputs during code generation.
+            new CompiledHighPerformancePattern(
+                pattern.Signature,
+                pattern.SignaturePrefixLength,
+                pattern.MinMatchLength,
+                pattern.MaxMatchLength,
+                new Regex(pattern.ScopedRegex, Options));
+
+            if (patterns.TryGetValue(pattern.Signature, out string? existingCode))
+            {
+                if (code != existingCode)
                 {
-                    id = regexId++;
-                    regexes[pattern.ScopedRegex] = id;
+                    throw new ArgumentException(
+                        $"""
+                        There are multiple patterns for '{pattern.Signature}' that generate different code.
+                        This is not supported.
+
+                        < {existingCode}
+                        > {code}
+                        """,
+                        nameof(highPerformancePatterns));
                 }
+                continue;
+            }
 
-                // Generate the call to the pattern constructor.
-                string code = $"""new("{pattern.Signature}", {pattern.SignaturePrefixLength}, {pattern.MinMatchLength}, {pattern.MaxMatchLength}, Regex{id})""";
+            patterns.Add(pattern.Signature, code);
+        }
 
-                // Also call the constructor now to catch bad inputs during code generation.
-                new CompiledHighPerformancePattern(
-                    pattern.Signature,
-                    pattern.SignaturePrefixLength,
-                    pattern.MinMatchLength,
-                    pattern.MaxMatchLength,
-                    new Regex(pattern.ScopedRegex, Options));
-
-                if (patterns.TryGetValue(pattern.Signature, out string? existingCode))
+        // Check that there are no short signatures that are prefixes of longer
+        // signatures. (We could optimize this by knowing that signatures are
+        // always 3 or 4 characters long, but this code only runs at
+        // code-generation time and there aren't many signatures, so it's better
+        // to not depend on this here in case that changes.)
+        foreach (string shortSignature in patterns.Keys)
+        {
+            foreach (string longSignature in patterns.Keys)
+            {
+                if (shortSignature.Length < longSignature.Length && longSignature.StartsWith(shortSignature))
                 {
-                    if (code != existingCode)
-                    {
-                        throw new InvalidOperationException(
-                            $"""
-                            There are multiple patterns for '{pattern.Signature}' that generate different code.
-                            This is not supported.
-
-                            < {existingCode}
-                            > {code}
-                            """);
-                    }
-                    continue;
+                    throw new ArgumentException(
+                        $"Signature '{shortSignature}' is a prefix of longer signature '{longSignature}'. This is not supported.",
+                        nameof(highPerformancePatterns));
                 }
-
-                patterns.Add(pattern.Signature, code);
             }
         }
 

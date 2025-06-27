@@ -32,7 +32,7 @@ private string GenerateCode()
     try
     {
         var type = typeof(SecretMasker).Assembly.GetType("Microsoft.Security.Utilities.CompiledHighPerformancePattern", throwOnError: true);
-        var method = type.GetMethod("GenerateAdditionalCode", BindingFlags.Static | BindingFlags.NonPublic);
+        var method = type.GetMethod("GenerateAdditionalCode", BindingFlags.Static | BindingFlags.NonPublic, binder: null, types: Array.Empty<Type>(), modifiers: null);
         if (method == null)
         {
             throw new InvalidOperationException("Method 'GenerateAdditionalCode' not found. Make sure to use 'Debug' configuration.");
