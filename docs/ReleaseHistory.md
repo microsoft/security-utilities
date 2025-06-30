@@ -12,7 +12,7 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
-# UNRELEASED
+# 1.20.0 - 06/30/2025
 - BRK: `SecretLiteral` and `RegexPattern.GetDetections` are no longer public.
 - NEW: On .NET 8+, `SecretMasker.DetectSecrets` and `SecretMasker.MaskSecrets` now provide overloads that accept `ReadOnlyMemory<char>` input to allow the caller to avoid string allocation.
 
