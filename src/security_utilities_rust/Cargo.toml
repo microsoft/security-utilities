@@ -7,15 +7,7 @@ edition = "2021"
 
 [dependencies]
 base64 = "0.21.0"
-chrono = "0.4.38"
-lazy_static = "1.4.0"
-rand_chacha = "0.3.1"
-rand_core = "0.6.4"
-rand = "0.8.4"
-regex = "1.7.1"
 sha2 = "0.10.8"
-substring = "1.4.5"
-uuid = { version = "1.8.0", features = ["v4"] }
 
 [dev-dependencies]
 criterion = "0.5.1"
@@ -26,10 +18,6 @@ harness = false
 
 [[bench]]
 name = "identifiable_scans"
-harness = false
-
-[[bench]]
-name = "identifiable_secrets"
 harness = false
 
 [[bench]]
