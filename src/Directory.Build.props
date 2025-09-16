@@ -2,7 +2,7 @@
   <PropertyGroup Label="Build">
     <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>13</LangVersion>
     <OutputSubDir>$(Platform)_$(Configuration)</OutputSubDir>
     <IntermediateOutputPath>$(MsBuildThisFileDirectory)..\bld\obj\$(OutputSubDir)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <OutputPath>$(MsBuildThisFileDirectory)..\bld\bin\$(OutputSubDir)\$(MSBuildProjectName)\</OutputPath>
