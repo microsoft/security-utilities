@@ -15,6 +15,7 @@
 # 1.20.0 - 06/30/2025
 - BRK: `SecretLiteral` and `RegexPattern.GetDetections` are no longer public.
 - NEW: On .NET 8+, `SecretMasker.DetectSecrets` and `SecretMasker.MaskSecrets` now provide overloads that accept `ReadOnlyMemory<char>` input to allow the caller to avoid string allocation.
+- PRF: Don't check for overlapping matches during high-performance scanning of high-confidence, high-entropy patterns.
 
 # 1.19.0 - 06/05/2025
 - BRK, BUG: `SecretMasker.MinimumSecretLengthCeiling` is removed. This property had no effect previously.

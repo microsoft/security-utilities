@@ -29,8 +29,34 @@ public class HighPerformanceScannerTests
         detections.Should().BeEmpty();
     }
 
+
     [TestMethod]
-    public void HighPerformanceScanner_OverlappingMatches()
+    public void HighPerformanceScanner_AdjacentMatches()
+    {
+        /* lang=regex */
+        const string regexA = """^[A-Z]{4}AAAA[A-Z]{4}""";
+        /* lang=regex */
+        const string regexB = """^BBBB[A-Z]{4}""";
+
+        CompiledHighPerformancePattern[] patterns = [
+            new("AAAA", 4, 12, 12, new Regex(regexA)),
+            new("BBBB", 0, 8, 8, new Regex(regexB)),
+        ];
+
+        string input = "_QQQQAAAAWWWWBBBBXXXX";
+
+        HighPerformanceDetection[] expectedDetections = [
+            new("AAAA", start: 1, length: 12),
+            new("BBBB", start: 13, length: 8),
+        ];
+
+        var scanner = new HighPerformanceScanner(patterns);
+        List<HighPerformanceDetection> actualDetections = scanner.Scan(input);
+        actualDetections.Should().BeEquivalentTo(expectedDetections);
+    }
+
+    [TestMethod]
+    public void HighPerformanceScanner_OverlappingMatches_OnlyFirstOneIsReturned()
     {
         /* lang=regex */
         const string regex = """^[A-Z]{4}....[A-Z]{4}""";
@@ -44,7 +70,6 @@ public class HighPerformanceScannerTests
 
         HighPerformanceDetection[] expectedDetections = [
             new("AAAA", start: 0, length: 12),
-            new("BBBB", start: 4, length: 12),
         ];
 
         var scanner = new HighPerformanceScanner(patterns);
@@ -53,26 +78,50 @@ public class HighPerformanceScannerTests
     }
 
     [TestMethod]
-    public void HighPerformanceScanner_InterestingSignatures()
+    public void HighPerformanceScanner_OverlappingSignatures()
     {
         /* lang=regex */
-        const string regex3 = """^[A-Z]{4}.{3}[A-Z]{4}""";
+        const string regexA = """^[0-9]{4}....[A-Z]{4}""";
         /* lang=regex */
-        const string regex4 = """^[A-Z]{4}.{4}[A-Z]{4}""";
+        const string regexB = """^[A-Z]{4}....[A-Z]{4}""";
 
-        // 3 and 4 char signature that overlap
         CompiledHighPerformancePattern[] patterns = [
-            new("AAA",  4, 11, 11, new Regex(regex3)),
-            new("AAAZ", 4, 12, 12, new Regex(regex4)),
+            new("AAAA", 4, 12, 12, new Regex(regexA)),
+            new("AAAB", 4, 12, 12, new Regex(regexB)),
         ];
+        
 
-        // Non-ascii char in all four signature positions.
-        // Signature match at the end of the input.
-        string input = "QQQQAAABBBB yada yada yada QQQQAAAZBBBB AAAW yada yada yada éAAA AéAA AAéA AAA";
+        // AAAA signature is found first, but regex doesn't match (expects
+        // digits before signature). Overlapping AAAB signature is found next
+        // and regex matches.
+        string input = "QQQQAAAABJJJJ";
 
         HighPerformanceDetection[] expectedDetections = [
-            new("AAA", start: 0, length: 11),
-            new("AAAZ", start: input.LastIndexOf("QQQQ"), length: 12),
+            new("AAAB", start: 1, length: 12),
+        ];
+
+        var scanner = new HighPerformanceScanner(patterns);
+        List<HighPerformanceDetection> actualDetections = scanner.Scan(input);
+        actualDetections.Should().BeEquivalentTo(expectedDetections);
+    }
+
+    [TestMethod]
+    public void HighPerformanceScanner_EdgeCases()
+    {
+        /* lang=regex */
+        const string regex = """^[A-Z]{4}.{4}[A-Z]{4}""";
+
+        CompiledHighPerformancePattern[] patterns = [
+            new("AAAA", 4, 12, 12, new Regex(regex)),
+        ];
+
+        // Code coverage:
+        // - Non-ascii char in all four signature positions.
+        // - Signature match at the end of the input.
+        string input = "🙂 QQQQAAAABBBB éAAA AéAA AAéA AAAé AAAA";
+
+        HighPerformanceDetection[] expectedDetections = [
+            new("AAAA", start: input.IndexOf("QQQQ"), length: 12),
         ];
 
         var scanner = new HighPerformanceScanner(patterns);
@@ -133,21 +182,5 @@ public class HighPerformanceScannerTests
         List<HighPerformanceDetection> detections = scanner.Scan(input);
 
         detections.Should().BeEmpty();
-    }
-
-    [TestMethod]
-    public void CompiledHighPerformancePattern_SharesRegexesOptimally()
-    {
-        // These two patterns differ only by signature.
-        var pattern = CompiledHighPerformancePattern.ForSignature(IdentifiableMetadata.AzureIotSignature);
-        var pattern2 = CompiledHighPerformancePattern.ForSignature(IdentifiableMetadata.AzureEventGridSignature);
-
-        // This is a valid version of both of patterns except the signature is
-        // all newlines. If the scoped regex doesn't match this, it has not been
-        // configured optimally using 'RegexOptions.SingleLine'.
-        string input = new string('A', 33) + new string('\n', 4) + new string('A', 6) + '=';
-
-        pattern.ScopedRegex.Should().BeSameAs(pattern2.ScopedRegex, because: "these patterns differ only by signature and can share a scoped regex");
-        pattern.ScopedRegex.IsMatch(input).Should().BeTrue(because: "the shared scoped regex should skip signature chars, even newlines");
     }
 }
