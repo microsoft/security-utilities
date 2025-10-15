@@ -13,7 +13,7 @@
 - FNS => False negative reduction in static analysis.
 
 # 1.21.0 - 10/15/2025
-- BUG: Sign all dlls in nugpkg.
+- BUG: Sign all dlls in nupkg.
 
 # 1.20.0 - 06/30/2025
 - BRK: `SecretLiteral` and `RegexPattern.GetDetections` are no longer public.
