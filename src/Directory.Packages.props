@@ -16,7 +16,7 @@
   </ItemGroup>
   <ItemGroup Label="Global Build-Only Dependencies">
     <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
-    <GlobalPackageReference Include="Nerdbank.GitVersioning"  Version="3.6.133" />
+    <GlobalPackageReference Include="Nerdbank.GitVersioning"  Version="3.7.115" />
   </ItemGroup>
   <ItemGroup Label="Test-Only Dependencies" Condition="$(MSBuildProjectName.StartsWith('Tests.'))">
     <PackageVersion Include="FluentAssertions" Version="5.10.3" />
