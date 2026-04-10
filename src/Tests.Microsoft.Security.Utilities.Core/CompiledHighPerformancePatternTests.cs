@@ -61,7 +61,7 @@ public class CompiledHighPerformancePatternTests
                 case 2:
                     minMatchLength++;
                     break;
-                  case 3:
+                case 3:
                     maxMatchLength++;
                     break;
             }

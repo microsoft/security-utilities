@@ -89,7 +89,6 @@ public class HighPerformanceScannerTests
             new("AAAA", 4, 12, 12, new Regex(regexA)),
             new("AAAB", 4, 12, 12, new Regex(regexB)),
         ];
-        
 
         // AAAA signature is found first, but regex doesn't match (expects
         // digits before signature). Overlapping AAAB signature is found next
