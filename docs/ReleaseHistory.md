@@ -12,6 +12,9 @@
 - FPS => False positive reduction in static analysis.
 - FNS => False negative reduction in static analysis.
 
+# Unreleased
+- DEP: Update build-only Microsoft.SourceLink.GitHub to 10.0.111 to resolve CVE-2026-62900 in its Microsoft.Build.Tasks.Git dependency.
+
 # 1.21.0 - 10/15/2025
 - BUG: Sign all dlls in nupkg.
 
