@@ -4,6 +4,8 @@ on:
     branches: [ "main", "release/**" ]
   pull_request:
     branches: [ "main", "release/**" ]
+permissions:
+  contents: read
 jobs:
   test:
     name: Test Marvin (${{ matrix.nodeVersion }} x ${{ matrix.os }})
