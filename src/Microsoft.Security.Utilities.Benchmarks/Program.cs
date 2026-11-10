@@ -7,17 +7,17 @@
  * one of the following commands, depending on which target framework you want
  * to benchmark:
  *
- *   dotnet run -c Release -f net8.0 dotnet run -c Release -f net472
+ *   dotnet run -c Release -f net10.0 dotnet run -c Release -f net472
  *
  * This will prompt you on which benchmarks to run.
  *
  * You can also specify a glob filter to select without prompts:
  *
- *   dotnet run -c Release -f net8.0 --filter *Hash*
+ *   dotnet run -c Release -f net10.0 --filter *Hash*
  *
  * Or pass other options to BenchmarkDotNet. For help:
  *
- *   dotnet run -c Release -f net8.0 -- --help
+ *   dotnet run -c Release -f net10.0 -- --help
  *
  * NOTE: '--' delimiter ensures --help goes to BenchmarkDotNet, not dotnet.
  *
