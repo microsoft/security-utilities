@@ -74,7 +74,7 @@ if (-not $NoTest) {
 }
 
 Write-Information "Exporting rules data.."
-Invoke-Expression ("$RepoRoot\bld\bin\AnyCPU_$Configuration\Microsoft.Security.Utilities.Cli\net8.0\Microsoft.Security.Utilities.Cli.exe export --output $RepoRoot\GeneratedRegexPatterns\")
+Invoke-Expression ("$RepoRoot\bld\bin\AnyCPU_$Configuration\Microsoft.Security.Utilities.Cli\net10.0\Microsoft.Security.Utilities.Cli.exe export --output $RepoRoot\GeneratedRegexPatterns\")
 if ($LASTEXITCODE -ne 0) {
     Exit-WithFailureMessage $ScriptName "Rules export failed."
 }
@@ -93,7 +93,7 @@ if ($Configuration -eq 'Release') {
     }
 
     if (-not $NoTest) {
-        foreach ($fx in "net8.0", "net9.0", "net472") {
+        foreach ($fx in "net10.0", "net472") {
             Write-Information "Running API examples using compiled Microsoft.Security.Utilities.Core package on $fx..."
             Invoke-Expression "$RepoRoot\src\SecurityUtilitiesPackageReference\SecurityUtilitiesApiUtilizationExample\bin\$Configuration\$fx\SecurityUtilitiesApiUtilizationExample.exe"
             if ($LASTEXITCODE -ne 0) {

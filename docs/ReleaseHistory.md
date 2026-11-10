@@ -13,6 +13,7 @@
 - FNS => False negative reduction in static analysis.
 
 # Unreleased
+- BRK: Replace the .NET 8 and .NET 9 targets with .NET 10. The .NET Standard 2.0 target remains available, but .NET 8 and .NET 9 consumers lose APIs that were only present in the .NET-specific assemblies.
 - DEP: Update build-only Microsoft.SourceLink.GitHub to 10.0.111 to resolve CVE-2026-62900 in its Microsoft.Build.Tasks.Git dependency.
 
 # 1.21.0 - 10/15/2025
